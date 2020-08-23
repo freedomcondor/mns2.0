@@ -34,18 +34,31 @@ if(ARGOS_COMPILE_QTOPENGL)
       ${SROCS_BUILDERBOT_LIBRARY})
 endif(ARGOS_COMPILE_QTOPENGL)
 
+# Copy lua files
 file(COPY        ${CMAKE_SOURCE_DIR}/experiment/api
      DESTINATION ${CMAKE_BINARY_DIR}/experiment)
 file(COPY        ${CMAKE_SOURCE_DIR}/experiment/utils
      DESTINATION ${CMAKE_BINARY_DIR}/experiment)
+file(COPY        ${CMAKE_SOURCE_DIR}/experiment/vns
+     DESTINATION ${CMAKE_BINARY_DIR}/experiment)
 
 # Configure examples
 
-configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/environment_setup/vns.argos.in
-               ${CMAKE_BINARY_DIR}/experiment/testing/environment_setup/vns.argos)
-configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/environment_setup/drone.lua
-               ${CMAKE_BINARY_DIR}/experiment/testing/environment_setup/drone.lua)
-configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/environment_setup/pipuck.lua
-               ${CMAKE_BINARY_DIR}/experiment/testing/environment_setup/pipuck.lua)
+# 00_environment_setup
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/00_environment_setup/vns.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/testing/00_environment_setup/vns.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/00_environment_setup/drone.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/00_environment_setup/drone.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/00_environment_setup/pipuck.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/00_environment_setup/pipuck.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/00_environment_setup/builderbot.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/00_environment_setup/builderbot.lua)
 
+# 01_recruit_assign_drive
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/01_recruit_assign_drive/vns.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/testing/01_recruit_assign_drive/vns.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/01_recruit_assign_drive/drone.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/01_recruit_assign_drive/drone.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/01_recruit_assign_drive/pipuck.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/01_recruit_assign_drive/pipuck.lua)
 

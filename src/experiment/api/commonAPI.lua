@@ -20,12 +20,20 @@ function api.debug.drawArrow(color, begin, finish)
 		tostring(finish) .. ")"
 	)
 end
+
 function api.debug.showVirtualFrame()
 	api.debug.drawArrow(
 		"red", 
-		vector3(0,0,0), 
-		vector3(0.1,0,0.1):rotate(api.virtualFrame.orientationQ)
+		vector3(0,0,0.1), 
+		vector3(0.2,0,0.1):rotate(api.virtualFrame.orientationQ)
 	)
+end
+
+function api.debug.showChildren(vns)
+	-- draw children location
+	for i, robot in pairs(vns.childrenRT) do
+		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robot.positionV3)))
+	end
 end
 
 ---- Step Function ----------------------------
@@ -96,6 +104,7 @@ function api.linkRobotInterface(VNS)
 	end
 
 	VNS.Driver.move = api.move
+	VNS.api = api
 end
 
 return api

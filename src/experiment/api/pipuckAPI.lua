@@ -40,7 +40,8 @@ end
 function api.pipuckSetRotationSpeed(x, th)
 	-- x, in m/s, x front,
 	-- th in rad/s, counter-clockwise positive
-	local scalar = 0.23
+	--local scalar = 0.23
+	local scalar = 0.80
 	local aug = scalar * th
 	api.pipuckSetWheelSpeed(x - aug, x + aug)
 end

@@ -10,6 +10,8 @@
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.h>
 #include <argos3/plugins/robots/builderbot/simulator/builderbot_entity.h>
 #include <argos3/plugins/simulator/entities/block_entity.h>
+#include <argos3/plugins/robots/pi-puck/simulator/pipuck_entity.h>
+#include <argos3/plugins/robots/drone/simulator/drone_entity.h>
 #include <argos3/plugins/simulator/entities/debug_entity.h>
 
 #include <QDockWidget>
@@ -105,6 +107,9 @@ namespace argos {
 
    CBuilderBotQtOpenGLUserFunctions::CBuilderBotQtOpenGLUserFunctions() {
       RegisterUserFunction<CBuilderBotQtOpenGLUserFunctions, CBuilderBotEntity>(&CBuilderBotQtOpenGLUserFunctions::Draw);
+      RegisterUserFunction<CBuilderBotQtOpenGLUserFunctions, CBlockEntity>(&CBuilderBotQtOpenGLUserFunctions::Annotate);
+      RegisterUserFunction<CBuilderBotQtOpenGLUserFunctions, CPiPuckEntity>(&CBuilderBotQtOpenGLUserFunctions::Annotate);
+      RegisterUserFunction<CBuilderBotQtOpenGLUserFunctions, CDroneEntity>(&CBuilderBotQtOpenGLUserFunctions::Annotate);
    }
 
    /********************************************************************************/
@@ -366,6 +371,53 @@ namespace argos {
    /********************************************************************************/
    /********************************************************************************/
 
+   void CBuilderBotQtOpenGLUserFunctions::Annotate(CDebugEntity& c_debug_entity,
+                                                   const SAnchor& s_anchor) {
+      glDisable(GL_LIGHTING);
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      const CVector3& cPosition = s_anchor.Position;
+      const CQuaternion& cOrientation = s_anchor.Orientation;
+      CRadians cZAngle, cYAngle, cXAngle;
+      cOrientation.ToEulerAngles(cZAngle, cYAngle, cXAngle);
+      glPushMatrix();
+      glTranslatef(cPosition.GetX(), cPosition.GetY(), cPosition.GetZ());
+      glRotatef(ToDegrees(cXAngle).GetValue(), 1.0f, 0.0f, 0.0f);
+      glRotatef(ToDegrees(cYAngle).GetValue(), 0.0f, 1.0f, 0.0f);
+      glRotatef(ToDegrees(cZAngle).GetValue(), 0.0f, 0.0f, 1.0f);
+      std::istringstream issInstructions, issArgument;
+      issInstructions.str(c_debug_entity.GetBuffer("draw"));
+      for(std::string strInstruction; std::getline(issInstructions, strInstruction); ) {
+         std::vector<std::string> vecArguments;
+         Tokenize(strInstruction, vecArguments, "()");
+         if(vecArguments.size() == 4 && vecArguments[0] == "arrow") {
+            CColor cColor;
+            CVector3 cTo, cFrom;
+            std::istringstream(vecArguments[1]) >> cColor;
+            std::istringstream(vecArguments[2]) >> cFrom;
+            std::istringstream(vecArguments[3]) >> cTo;
+            glColor4ub(cColor.GetRed(), cColor.GetGreen(), cColor.GetBlue(), 128u);
+            DrawArrow3(cFrom, cTo);
+         }
+         else if(vecArguments.size() == 4 && vecArguments[0] == "ring") {
+            CColor cColor;
+            CVector3 cCenter;
+            Real fRadius;
+            std::istringstream(vecArguments[1]) >> cColor;
+            std::istringstream(vecArguments[2]) >> cCenter;
+            std::istringstream(vecArguments[3]) >> fRadius;
+            glColor4ub(cColor.GetRed(), cColor.GetGreen(), cColor.GetBlue(), 128u);
+            DrawRing3(cCenter, fRadius);
+         }
+      }
+      glPopMatrix();
+      glDisable(GL_BLEND);
+      glEnable(GL_LIGHTING);
+   }
+
+   /********************************************************************************/
+   /********************************************************************************/
+
    void CBuilderBotQtOpenGLUserFunctions::Init(TConfigurationNode& t_tree) {
       m_pcMouseWheelEventHandler = 
          new CBuilderBotQtOpenGLUserFunctionsMouseWheelEventHandler(&GetQTOpenGLWidget(), this);
@@ -415,6 +467,7 @@ namespace argos {
    /********************************************************************************/
 
    void CBuilderBotQtOpenGLUserFunctions::ProcessStepDone(int n_step) {
+try {
       // create a local cache of interfaces
       std::list<std::pair<std::string, SUserInterface> > lstRobotUserInterfaces;
       lstRobotUserInterfaces.swap(m_lstRobotUserInterfaces);
@@ -448,6 +501,8 @@ namespace argos {
          delete itRemove->second.Widget;
          lstRobotUserInterfaces.pop_front();
       }
+}
+catch(CARGoSException& ex) {}
    }
 
    /********************************************************************************/

@@ -12,6 +12,10 @@ class QTabWidget;
 
 #include <argos3/plugins/simulator/visualizations/qt-opengl/qtopengl_user_functions.h>
 #include <argos3/plugins/robots/builderbot/simulator/builderbot_entity.h>
+#include <argos3/plugins/robots/pi-puck/simulator/pipuck_entity.h>
+#include <argos3/plugins/robots/drone/simulator/drone_entity.h>
+#include <argos3/plugins/simulator/entities/block_entity.h>
+#include <argos3/plugins/simulator/entities/debug_entity.h>
 #include <argos3/core/utility/datatypes/datatypes.h>
 
 namespace argos {
@@ -48,6 +52,23 @@ namespace argos {
       using CQTOpenGLUserFunctions::Draw;
       virtual void Draw(CBuilderBotEntity& c_builderbot);
 
+      inline void Annotate(CBlockEntity& c_entity) {
+         Annotate(c_entity.GetDebugEntity(),
+                  c_entity.GetEmbodiedEntity().GetOriginAnchor());
+      }
+
+      inline void Annotate(CDroneEntity& c_entity) {
+         Annotate(c_entity.GetDebugEntity(),
+                  c_entity.GetEmbodiedEntity().GetOriginAnchor());
+      }
+
+      inline void Annotate(CPiPuckEntity& c_entity) {
+         Annotate(c_entity.GetDebugEntity(),
+                  c_entity.GetEmbodiedEntity().GetOriginAnchor());
+      }
+
+      void Annotate(CDebugEntity& c_debug_entity,
+                    const SAnchor& s_anchor);
 
 
    public slots:
