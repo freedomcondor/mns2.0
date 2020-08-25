@@ -28,7 +28,7 @@
         <pipuck_rangefinders implementation="default" show_rays="true" />
         <wifi implementation="default" show_rays="false" />
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/testing/00_environment_setup/pipuck.lua" />
+      <params script="@CMAKE_BINARY_DIR@/experiment/testing/02_allocate/pipuck.lua" />
     </lua_controller>
 
      <!-- Drone Controller -->
@@ -46,81 +46,69 @@
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/testing/00_environment_setup/drone.lua" />
-    </lua_controller>
-
-    <!-- Builderbot Controller -->
-    <lua_controller id="builderbot">
-      <actuators>
-        <builderbot_electromagnet_system implementation="default" />
-        <builderbot_differential_drive implementation="default" />
-        <builderbot_lift_system implementation="default" />
-        <builderbot_nfc implementation="default" />
-        <wifi implementation="default" />
-        <debug implementation="default">
-          <interface id="draw" />
-        </debug>
-      </actuators>
-      <sensors>
-        <builderbot_camera_system implementation="default"
-          show_frustum="true" show_tag_rays="false" show_led_rays="false" />
-        <builderbot_rangefinders implementation="default" show_rays="false" />
-        <builderbot_differential_drive implementation="default"/>
-        <builderbot_electromagnet_system implementation="default" />
-        <builderbot_lift_system implementation="default" />
-        <builderbot_nfc implementation="default" show_rays="false" />
-        <builderbot_system implementation="default" />
-        <wifi implementation="default" />
-      </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/testing/00_environment_setup/builderbot.lua" />
+      <params script="@CMAKE_BINARY_DIR@/experiment/testing/02_allocate/drone.lua" />
     </lua_controller>
   </controllers>
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="1.5, 4, 2.5" center="0, 0, 1">
+  <arena size="10, 10, 2.5" center="0, 0, 1">
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
-
-    <!-- add builderbots -->
-    <!--
-    <builderbot id="builderbot0" debug="false">
-      <body position="0,0,0" orientation="0,0,0"/>
-      <controller config="builderbot"/>
-    </builderbot> 
-    -->
 
     <!-- add drones -->
     <drone id="drone1">
-      <body position="-0.5,0,0" orientation="0,0,0"/>
+      <body position="0,-0.5,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
 
     <drone id="drone2">
+      <body position="-1,-0.5,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <!--
+    <drone id="drone3">
       <body position="-0.5,1,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
 
+    <drone id="drone4">
+      <body position="-0.5,2,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+    -->
+
     <!-- add pi-puck robots -->
-    <pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags">
-      <body position="-0.3,1,0" orientation="0,0,0"/>
+    <pipuck id="pipuck6" wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.3,1.7,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck>
+    <pipuck id="pipuck5" wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.3,1.6,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+    <pipuck id="pipuck4" wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.3,1.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck3" wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.5,1.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+    <!--
+    -->
 
     <pipuck id="pipuck2" wifi_medium="wifi" tag_medium="tags">
-      <body position="-0.5,-1.2,0" orientation="0,0,0"/>
+      <body position="-0.3,-0.5,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck>
 
-    <!--distribute>
-      <position method="uniform" min="-4.5,-4.5,0" max="4.5,4.5,0" />
-      <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="20" max_trials="100">
-        <pipuck id="pipuck">
-          <controller config="pipuck"/>
-        </pipuck>
-      </entity>
-    </distribute-->
+    <pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.5,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
   </arena>
 
   <!-- ******************* -->
@@ -156,43 +144,8 @@
   <!-- ****************** -->
   <visualization>
     <qt-opengl lua_editor="true" show_boundary="false">
-		<user_functions library="@CMAKE_BINARY_DIR@/libbuilderbot_qtopengl_user_functions"
+		  <user_functions library="@CMAKE_BINARY_DIR@/libbuilderbot_qtopengl_user_functions"
                       label="builderbot_qtopengl_user_functions" >
-         <!--camera Paths is not supported by user function any more-->>
-         <!--camera_paths>
-            <path duration="250">
-              <start position="  0,-15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-              <end position=" 12.5,-12.5, 10"  look_at="0,0,0.25" lens_focal_length="70" />
-            </path>
-            <path duration="250">
-              <start position=" 12.5,-12.5, 10"  look_at="0,0,0.25" lens_focal_length="70" />
-              <end position=" 15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-            </path>
-            <path duration="250">
-              <start position=" 15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-              <end position=" 12.5, 12.5, 10"  look_at="0,0,0.25" lens_focal_length="70" />
-            </path>
-            <path duration="250">
-              <start position=" 12.5, 12.5, 10"  look_at="0,0,0.25" lens_focal_length="70" />
-              <end position="  0, 15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-            </path>
-            <path duration="250">
-              <start position="  0, 15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-              <end position="-12.5, 12.5, 10"  look_at="0,0,0.25" lens_focal_length="70" />
-            </path>
-            <path duration="250">
-              <start position="-12.5, 12.5, 10"  look_at="0,0,0.25" lens_focal_length="70" />
-              <end position="-15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-            </path>
-            <path duration="250">
-              <start position="-15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-              <end position="-12.5,-12.5, 10"  look_at="0,0,0.25" lens_focal_length="70" />
-            </path>
-            <path duration="250">
-              <start position="-12.5,-12.5, 10"  look_at="0,0,0.25" lens_focal_length="70" />
-              <end position="0, -15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-            </path>
-         </camera_paths-->
       </user_functions>
       <camera>
         <placement idx="0" position="  0,  0, 20"  look_at="0,0,10"   lens_focal_length="50" up="1,0,0"/>

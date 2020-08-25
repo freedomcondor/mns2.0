@@ -2,6 +2,8 @@ package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/api/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/utils/?.lua"
 --package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/VNS/?.lua"
 
+pairs = require("RandomPairs")
+
 logger = require("Logger")
 local api = require("pipuckAPI")
 local BT = require("BehaviorTree")

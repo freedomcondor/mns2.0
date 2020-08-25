@@ -55,7 +55,6 @@ function Driver.step(vns)
 				) + 
 				vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3)
 			)
-
 			local receivedOrientationQ = vns.api.virtualFrame.Q_RtoV(
 				msgM.dataT.orientationQ * vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
 			)
@@ -72,11 +71,14 @@ function Driver.step(vns)
 				)
 			)
 
+			if vns.goal.positionV3 ~= nil then receivedPositionV3 = vns.goal.positionV3 end
+			if vns.goal.orientationQ ~= nil then receivedOrientationQ = vns.goal.orientationQ end
+
 			-- calc speed
 			-- the speed to go to goal point (received position)
 			local goalPointTransV3, goalPointRotateV3
 
-			local speed = 0.1
+			local speed = 0.05
 			local threshold = 0.35
 			local reach_threshold = 0.05
 			local dV3 = receivedPositionV3

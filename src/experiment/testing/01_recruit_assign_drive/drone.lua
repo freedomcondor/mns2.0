@@ -2,12 +2,13 @@ package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/api/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/utils/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/vns/?.lua"
 
+pairs = require("RandomPairs")
+
 -- includes -------------
 logger = require("Logger")
 local api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
-pairs = require("RandomPairs")
 logger.enable()
 
 -- datas ----------------
@@ -37,11 +38,13 @@ function step()
 	vns.preStep(vns)
 
 	-- step
+	-- set children goal point to 0.5m to the back
 	for idS, childR in pairs(vns.childrenRT) do
 		childR.goal.positionV3 = vector3(-0.5,0,0)
 		childR.goal.orientationQ = quaternion(0, vector3(0,0,1))
 	end
 
+	-- find the nearest children to the goal point, assign others to it
 	local minChildR = nil 
 	local minDis = math.huge
 	for idS, childR in pairs(vns.childrenRT) do

@@ -54,6 +54,8 @@ function DroneConnector.step(vns)
 			orientationQ = vns.api.virtualFrame.Q_RtoV(robotR.orientationQ),
 		}
 	end
+
+	vns.connector.seenRobots = {}
 end
 
 function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
@@ -61,7 +63,7 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 	for _, robotR in pairs(yourVehiclesTR) do
 		if myVehiclesTR[robotR.idS] ~= nil and
 		   myVehiclesTR[robotR.idS].robotTypeS ~= "drone" then
-			myRobotR = myVehiclesTR[robotR.idS]
+			local myRobotR = myVehiclesTR[robotR.idS]
 			quadR = {
 				idS = idS,
 				positionV3 = myRobotR.positionV3 +

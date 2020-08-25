@@ -9,8 +9,8 @@ VNS.PipuckConnector = require("PipuckConnector")
 
 VNS.ScaleManager = require("ScaleManager")
 VNS.Assigner = require("Assigner")
---[[
 VNS.Allocator = require("Allocator")
+--[[
 VNS.Avoider = require("Avoider")
 VNS.Spreader = require("Spreader")
 --]]
@@ -20,11 +20,12 @@ VNS.Modules = {
 	VNS.DroneConnector,
 	VNS.PipuckConnector,
 	VNS.Connector,
+	VNS.Assigner,
+
 	VNS.ScaleManager,
 
-	VNS.Assigner,
---[[
 	VNS.Allocator,
+--[[
 	VNS.Avoider,
 	VNS.Spreader,
 --]]
@@ -158,10 +159,10 @@ function VNS.create_vns_node_without_driver(vns)
 	{type = "sequence", children = {
 		vns.create_preconnector_node(vns),
 		vns.Connector.create_connector_node(vns),
-		vns.ScaleManager.create_scalemanager_node(vns),
 		vns.Assigner.create_assigner_node(vns),
-		--[[
+		vns.ScaleManager.create_scalemanager_node(vns),
 		vns.Allocator.create_allocator_node(vns),
+		--[[
 		vns.Avoider.create_avoider_node(vns),
 		vns.Spreader.create_spreader_node(vns),
 		]]

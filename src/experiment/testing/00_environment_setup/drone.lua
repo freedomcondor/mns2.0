@@ -2,6 +2,8 @@ package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/api/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/utils/?.lua"
 --package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/VNS/?.lua"
 
+pairs = require("RandomPairs")
+
 logger = require("Logger")
 local api = require("droneAPI")
 local BT = require("BehaviorTree")
@@ -18,6 +20,12 @@ function init()
 				return false, true
 			end,
 		}}
+
+	-- test pairs
+	local tabletest = {"a", "b" , "c"}
+	for i, v in pairs(tabletest) do print(i, v) end
+	tabletest.aaa = "aaa"
+	for i, v in pairs(tabletest) do print(i, v) end
 end
 
 function step()

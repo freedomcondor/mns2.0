@@ -62,3 +62,14 @@ configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/01_recruit_assign_drive/dr
 configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/01_recruit_assign_drive/pipuck.lua
                ${CMAKE_BINARY_DIR}/experiment/testing/01_recruit_assign_drive/pipuck.lua)
 
+# 02_allocate
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/vns.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/vns.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/drone.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/drone.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/pipuck.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/pipuck.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology.lua
+               COPYONLY)
+
