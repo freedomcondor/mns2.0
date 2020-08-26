@@ -22,15 +22,15 @@ function Driver.addChild(vns, robotR)
 	}
 end
 
-function Driver.prestep(vns)
+function Driver.preStep(vns)
 	vns.goal.positionV3 = nil
 	vns.goal.orientationQ = nil
 	vns.goal.transV3 = vector3()
 	vns.goal.rotateV3 = vector3()
 
 	for idS, childR in pairs(vns.childrenRT) do
-		childR.goal.positionV3 = robotR.positionV3
-		childR.goal.orientationQ = robotR.orientationQ
+		childR.goal.positionV3 = childR.positionV3
+		childR.goal.orientationQ = childR.orientationQ
 		childR.goal.transV3 = vector3()
 		childR.goal.rotateV3 = vector3()
 	end

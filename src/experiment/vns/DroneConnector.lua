@@ -54,8 +54,6 @@ function DroneConnector.step(vns)
 			orientationQ = vns.api.virtualFrame.Q_RtoV(robotR.orientationQ),
 		}
 	end
-
-	vns.connector.seenRobots = {}
 end
 
 function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
