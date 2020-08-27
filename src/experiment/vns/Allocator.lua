@@ -131,9 +131,7 @@ function Allocator.step(vns)
 				local IToDestinyV3 = vector3(robotR.match.positionV3)
 				childToDestinyV3.z = 0
 				IToDestinyV3.z = 0
-				logger("deciding", robotR.idS)
 				if childToDestinyV3:length() + 0.05 * 2 < IToDestinyV3:length() then
-					logger(robotR.idS, "assigned")
 					vns.Assigner.assign(vns, idS, vns.parentR.idS)	
 				end
 				--robotR.goal.positionV3 = vns.parentR.positionV3
@@ -166,8 +164,6 @@ function Allocator.step(vns)
 			end
 			robotR.goal.positionV3 = robotR.match.positionV3
 			robotR.goal.orientationQ = robotR.match.orientationQ
-		else
-			logger("something wrong, I don't have a match")
 		end
 	end
 end
@@ -222,11 +218,6 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 	end
 
 	Allocator.GraphMatch(sourceList, targetList, originCost)
-
-	logger("multi_branch_sourceList")
-	logger(sourceList)
-	logger("multi_branch_targetList")
-	logger(targetList)
 
 	-- mark children
 	for i = 1, #sourceList do
@@ -313,13 +304,6 @@ function Allocator.allocate(vns, allocating_type)
 	end
 
 	Allocator.GraphMatch(sourceList, targetList, originCost)
-
-	---[[
-	logger("sourceList")
-	logger(sourceList)
-	logger("targetList")
-	logger(targetList)
-	--]]
 
 	-- multiple (including one) sources to one target
 	for j = 1, #targetList do

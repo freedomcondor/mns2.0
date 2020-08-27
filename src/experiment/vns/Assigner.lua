@@ -16,6 +16,9 @@ function Assigner.reset(vns)
 	vns.assigner.targetS = nil
 end
 
+function Assigner.deleteParent(vns)
+	vns.assigner.targetS = nil
+end
 
 function Assigner.assign(vns, childIdS, assignToIdS)
 	local childR = vns.childrenRT[childIdS]
@@ -57,7 +60,6 @@ function Assigner.step(vns)
 	-- listen to recruit from assigner.targetS
 	for _, msgM in ipairs(vns.Msg.getAM(vns.assigner.targetS, "recruit")) do
 		vns.Msg.send(msgM.fromS, "ack")
-		vns.Msg.send(msgM.fromS, "assign_ack", {assignFrom = vns.parentR.idS})
 		if vns.parentR ~= nil and vns.parentR.idS ~= vns.assigner.targetS then
 			vns.Msg.send(vns.parentR.idS, "assign_dismiss")
 			vns.parentR = nil

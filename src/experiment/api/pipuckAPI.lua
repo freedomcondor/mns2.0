@@ -49,9 +49,9 @@ end
 function api.pipuckSetSpeed(x, y)
 	local th = math.atan(y/x)
 	if x == 0 and y == 0 then th = 0 end
-	local limit = math.pi / 50
-	if th > limit then th = limit
-	elseif th < -limit then th = -limit end
+	local limit = math.pi / 45
+	if th > limit then th = limit; x = x/2
+	elseif th < -limit then th = -limit; x = x/2 end
 	api.pipuckSetRotationSpeed(x, th)
 end
 

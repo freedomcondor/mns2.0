@@ -72,4 +72,7 @@ configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/pipuck.lua
 configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology.lua
                ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology.lua
                COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology_classic.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology_classic.lua
+               COPYONLY)
 

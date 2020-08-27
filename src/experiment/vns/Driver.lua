@@ -78,9 +78,9 @@ function Driver.step(vns)
 			-- the speed to go to goal point (received position)
 			local goalPointTransV3, goalPointRotateV3
 
-			local speed = 0.05
+			local speed = 0.03
 			local threshold = 0.35
-			local reach_threshold = 0.05
+			local reach_threshold = 0.01
 			local dV3 = receivedPositionV3
 			dV3.z = 0
 			local d = dV3:length()
