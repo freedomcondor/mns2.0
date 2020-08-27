@@ -57,6 +57,7 @@ function Assigner.step(vns)
 	-- listen to recruit from assigner.targetS
 	for _, msgM in ipairs(vns.Msg.getAM(vns.assigner.targetS, "recruit")) do
 		vns.Msg.send(msgM.fromS, "ack")
+		vns.Msg.send(msgM.fromS, "assign_ack", {assignFrom = vns.parentR.idS})
 		if vns.parentR ~= nil and vns.parentR.idS ~= vns.assigner.targetS then
 			vns.Msg.send(vns.parentR.idS, "assign_dismiss")
 			vns.parentR = nil
@@ -99,6 +100,22 @@ function Assigner.step(vns)
 			vns.deleteChild(vns, msgM.fromS)
 		end
 	end
+
+	-- listen to assign_dismiss
+	--[[
+	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "assign_ack")) do
+		if vns.childrenRT[msgM.fromS] ~= nil then
+			local assignFrom = msgM.dataT.assignFrom
+			if vns.childrenRT[assignFrom] ~= nil then
+				vns.childrenRT[assignFrom].scale_assign_offset = vns.ScaleManager.Scale:new()
+				vns.childrenRT[assignFrom].scale_assign_offset[vns.childrenRT[msgM.fromS].robotTypeS] = -1
+			elseif vns.parentR ~= nil and vns.parentR.idS == assignFrom then
+				vns.parentR.scale_assign_offset = vns.ScaleManager.Scale:new()
+				vns.parentR.scale_assign_offset[vns.childrenRT[msgM.fromS].robotTypeS] = -1	
+			end
+		end
+	end
+	--]]
 	-- update assigning goalPoint
 	--[[ goal is not related anymore
 	for idS, childR in pairs(vns.childrenRT) do

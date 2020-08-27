@@ -74,6 +74,15 @@ function Allocator.step(vns)
 		vns.goal.orientationQ = targetOrientationQ
 
 		-- TODO transfer branch location
+		if vns.allocator.target.children ~= nil then
+			for _, branchR in ipairs(vns.allocator.target.children) do
+				branchR.positionV3_backup = vector3(branchR.positionV3)
+				branchR.orientationQ_backup = quaternion(branchR.orientationQ)
+				branchR.positionV3 = vector3(branchR.positionV3):rotate(vns.goal.orientationQ) + vns.goal.positionV3
+				branchR.orientationQ = branchR.orientationQ * vns.goal.orientationQ
+			end
+		end
+
 	end end
 
 	-- receive branches
@@ -91,6 +100,18 @@ function Allocator.step(vns)
 			)
 			branch.positionV3 = targetPositionV3
 			branch.orientationQ = targetOrientationQ
+
+			-- TODO transfer branch location
+			if branch.children ~= nil then
+				for _, branch_childR in ipairs(branch.children) do
+					branch_childR.positionV3_backup = vector3(branch_childR.positionV3)
+					branch_childR.orientationQ_backup = quaternion(branch_childR.orientationQ)
+					branch_childR.positionV3 = vector3(branch_childR.positionV3):rotate(branch.orientationQ) + branch.positionV3
+					branch_childR.orientationQ = branch_childR.orientationQ * branch.orientationQ
+				end
+			end
+
+
 		end
 		Allocator.multi_branch_allocate(vns, msgM.dataT.robotTypeS, branches)
 	end end
@@ -110,11 +131,15 @@ function Allocator.step(vns)
 				local IToDestinyV3 = vector3(robotR.match.positionV3)
 				childToDestinyV3.z = 0
 				IToDestinyV3.z = 0
+				logger("deciding", robotR.idS)
 				if childToDestinyV3:length() + 0.05 * 2 < IToDestinyV3:length() then
+					logger(robotR.idS, "assigned")
 					vns.Assigner.assign(vns, idS, vns.parentR.idS)	
 				end
-				robotR.goal.positionV3 = vns.parentR.positionV3
-				robotR.goal.orientationQ = vns.parentR.orientationQ
+				--robotR.goal.positionV3 = vns.parentR.positionV3
+				--robotR.goal.orientationQ = vns.parentR.orientationQ
+				robotR.goal.positionV3 = robotR.match.positionV3
+				robotR.goal.orientationQ = robotR.match.orientationQ
 			end
 		end
 	end
@@ -127,6 +152,7 @@ function Allocator.step(vns)
 		if robotR.match ~= nil and robotR.allocated_in_multi_branch ~= true then
 			local assignToidS = robotR.match.match
 			local goodToAssignParent = true
+			--[[ TODO: debug scale manager
 			if vns.parentR ~= nil and assignToidS == vns.parentR.idS and vns.robotTypeS ~= robotR.robotTypeS then
 				local childToParentV3 = robotR.positionV3 - vns.parentR.positionV3
 				local ParentV3 = vector3(vns.parentR.positionV3)
@@ -134,6 +160,7 @@ function Allocator.step(vns)
 				ParentV3.z = 0
 				goodToAssignParent = (childToParentV3:length() < ParentV3:length())
 			end
+			--]]
 			if assignToidS ~= idS and goodToAssignParent then
 				vns.Assigner.assign(vns, idS, assignToidS)	
 			end
@@ -260,12 +287,15 @@ function Allocator.allocate(vns, allocating_type)
 
 	-- add parent as a target
 	if sourceSum > targetSum and vns.parentR ~= nil then
+		local parentScale = vns.ScaleManager.Scale:new()
+		parentScale[allocating_type] = sourceSum - targetSum
 		targetList[#targetList + 1] = {
 			number = sourceSum - targetSum,
 			index = {
 				idN = -1,
 				positionV3 = vns.parentR.positionV3,
 				orientationQ = vns.parentR.orientationQ,
+				scale = parentScale,
 			}
 		}
 	end

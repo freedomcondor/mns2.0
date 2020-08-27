@@ -31,6 +31,7 @@ end
 function ScaleManager.addChild(vns, robotR)
 	robotR.scale = ScaleManager.Scale:new()
 	vns.scalemanager.buffer[robotR.idS] = ScaleManager.Scale:new()
+	vns.scalemanager.buffer[robotR.idS][robotR.robotTypeS] = ScaleManager.Scale:new()
 	vns.scalemanager.steady_countdown = vns.scalemanager.steady_countdown_period
 end
 
@@ -48,7 +49,7 @@ function ScaleManager.step(vns)
 	for idS, robotR in pairs(vns.childrenRT) do 
 		for _, msgM in ipairs(vns.Msg.getAM(idS, "scale")) do
 			local temp = ScaleManager.Scale:new(msgM.dataT.scale)
-			if vns.scalemanager.buffer[idS] ~= temp then
+			if not (vns.scalemanager.buffer[idS] == temp) then
 				vns.scalemanager.steady_countdown = vns.scalemanager.steady_countdown_period
 			end
 			vns.scalemanager.buffer[idS] = temp
@@ -79,7 +80,7 @@ function ScaleManager.step(vns)
 			biggest_child_number = robotR.scale:totalNumber()
 		end
 	end
-	vns.scalemanager.steady_countdown_period = biggest_child_number + 2
+	vns.scalemanager.steady_countdown_period = biggest_child_number * 2 + 2
 
 	-- sum up scale
 	local sumScale = ScaleManager.Scale:new()
@@ -101,12 +102,14 @@ function ScaleManager.step(vns)
 		toReport = sumScale - vns.parentR.scale 
 		if toReport ~= vns.parentR.lastSendScale then
 			vns.Msg.send(vns.parentR.idS, "scale", {scale = toReport})
+			vns.parentR.lastSendScale = toReport
 		end
 	end
 	for idS, robotR in pairs(vns.childrenRT) do 
 		toReport = sumScale - robotR.scale 
 		if toReport ~= robotR.lastSendScale then
 			vns.Msg.send(idS, "scale", {scale = toReport})
+			robotR.lastSendScale = toReport
 		end
 	end
 end
