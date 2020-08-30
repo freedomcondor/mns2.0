@@ -26,7 +26,6 @@ function Allocator.deleteChild(vns)
 end
 
 function Allocator.addParent(vns)
-	vns.Allocator.setMorphology(vns, nil)
 end
 
 function Allocator.deleteParent(vns)
@@ -49,6 +48,8 @@ function Allocator.preStep(vns)
 	for idS, childR in pairs(vns.childrenRT) do
 		childR.allocated_in_multi_branch = nil
 		childR.match = nil
+		childR.pre_match = nil
+		childR.divided = nil
 	end
 	if vns.allocator.target ~= nil and vns.allocator.target.children ~= nil then
 		for _, branch in pairs(vns.allocator.target.children) do
@@ -73,7 +74,6 @@ function Allocator.step(vns)
 		vns.goal.positionV3 = targetPositionV3
 		vns.goal.orientationQ = targetOrientationQ
 
-		-- TODO transfer branch location
 		if vns.allocator.target.children ~= nil then
 			for _, branchR in ipairs(vns.allocator.target.children) do
 				branchR.positionV3_backup = vector3(branchR.positionV3)
@@ -82,7 +82,6 @@ function Allocator.step(vns)
 				branchR.orientationQ = branchR.orientationQ * vns.goal.orientationQ
 			end
 		end
-
 	end end
 
 	-- receive branches
@@ -101,7 +100,6 @@ function Allocator.step(vns)
 			branch.positionV3 = targetPositionV3
 			branch.orientationQ = targetOrientationQ
 
-			-- TODO transfer branch location
 			if branch.children ~= nil then
 				for _, branch_childR in ipairs(branch.children) do
 					branch_childR.positionV3_backup = vector3(branch_childR.positionV3)
@@ -110,8 +108,6 @@ function Allocator.step(vns)
 					branch_childR.orientationQ = branch_childR.orientationQ * branch.orientationQ
 				end
 			end
-
-
 		end
 		Allocator.multi_branch_allocate(vns, msgM.dataT.robotTypeS, branches)
 	end end
@@ -126,19 +122,11 @@ function Allocator.step(vns)
 		if robotR.match ~= nil and robotR.match.idN ~= mybranchidN then
 			-- this is a hand up child
 			robotR.allocated_in_multi_branch = true
-			if vns.parentR ~= nil then
-				local childToDestinyV3 = robotR.positionV3 - robotR.match.positionV3
-				local IToDestinyV3 = vector3(robotR.match.positionV3)
-				childToDestinyV3.z = 0
-				IToDestinyV3.z = 0
-				if childToDestinyV3:length() + 0.05 * 2 < IToDestinyV3:length() then
-					vns.Assigner.assign(vns, idS, vns.parentR.idS)	
-				end
-				--robotR.goal.positionV3 = vns.parentR.positionV3
-				--robotR.goal.orientationQ = vns.parentR.orientationQ
-				robotR.goal.positionV3 = robotR.match.positionV3
-				robotR.goal.orientationQ = robotR.match.orientationQ
-			end
+			vns.Assigner.assign(vns, idS, vns.parentR.idS)	
+			--robotR.goal.positionV3 = robotR.match.positionV3
+			--robotR.goal.orientationQ = robotR.match.orientationQ
+			robotR.goal.positionV3 = vns.parentR.positionV3
+			robotR.goal.orientationQ = vns.parentR.orientationQ
 		end
 	end
 
@@ -149,17 +137,10 @@ function Allocator.step(vns)
 	for idS, robotR in pairs(vns.childrenRT) do
 		if robotR.match ~= nil and robotR.allocated_in_multi_branch ~= true then
 			local assignToidS = robotR.match.match
-			local goodToAssignParent = true
-			--[[ TODO: debug scale manager
-			if vns.parentR ~= nil and assignToidS == vns.parentR.idS and vns.robotTypeS ~= robotR.robotTypeS then
-				local childToParentV3 = robotR.positionV3 - vns.parentR.positionV3
-				local ParentV3 = vector3(vns.parentR.positionV3)
-				childToParentV3.z = 0
-				ParentV3.z = 0
-				goodToAssignParent = (childToParentV3:length() < ParentV3:length())
-			end
-			--]]
-			if assignToidS ~= idS and goodToAssignParent then
+			if assignToidS ~= idS and 
+			   ((vns.parentR ~= nil and vns.parentR.idS == assignToidS) or
+			    (vns.childrenRT[assignToidS] ~= nil and vns.childrenRT[assignToidS].divided == nil)
+			   ) then
 				vns.Assigner.assign(vns, idS, assignToidS)	
 			end
 			robotR.goal.positionV3 = robotR.match.positionV3
@@ -214,10 +195,18 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
 			relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
+			if sourceList[i].index.robotTypeS ~= allocating_type then
+				originCost[i][j] = originCost[i][j] + 100000
+			end
 		end
 	end
 
 	Allocator.GraphMatch(sourceList, targetList, originCost)
+
+	logger("multi-sourceList")
+	logger(sourceList)
+	logger("multi-targetList")
+	logger(targetList)
 
 	-- mark children
 	for i = 1, #sourceList do
@@ -236,7 +225,7 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 	end
 
 	-- set myself branch if I'm the right type
-	if vns.robotTypeS == allocating_type then
+	if vns.robotTypeS == allocating_type and sourceList[1].to[1] ~= nil then
 		Allocator.setMorphology(vns, targetList[sourceList[1].to[1].target].index)
 		vns.goal.positionV3 = targetList[sourceList[1].to[1].target].index.positionV3
 		vns.goal.orientationQ = targetList[sourceList[1].to[1].target].index.orientationQ
@@ -300,18 +289,37 @@ function Allocator.allocate(vns, allocating_type)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
 			relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
+			if sourceList[i].index.robotTypeS ~= allocating_type then
+				originCost[i][j] = originCost[i][j] + 100000
+			end
 		end
 	end
 
 	Allocator.GraphMatch(sourceList, targetList, originCost)
 
+	logger("sourceList")
+	logger(sourceList)
+	logger("targetList")
+	logger(targetList)
+
 	-- multiple (including one) sources to one target
 	for j = 1, #targetList do
 		-- mark all allocating type, single target child to the branch
 		for _, fromTable in ipairs(targetList[j].from) do
-			if #(sourceList[fromTable.source].to) == 1 and
-			   sourceList[fromTable.source].index.robotTypeS == allocating_type then
-				sourceList[fromTable.source].index.match = targetList[j].index
+			if #(sourceList[fromTable.source].to) == 1 then
+				if sourceList[fromTable.source].index.robotTypeS == allocating_type then
+					sourceList[fromTable.source].index.match = targetList[j].index
+					if sourceList[fromTable.source].index.pre_match ~= nil and 
+					   sourceList[fromTable.source].index.pre_match ~= targetList[j].index then
+						sourceList[fromTable.source].index.divided = true
+					end
+				else
+					sourceList[fromTable.source].index.pre_match = targetList[j].index
+					if sourceList[fromTable.source].index.match ~= nil and 
+					   sourceList[fromTable.source].index.match ~= targetList[j].index then
+						sourceList[fromTable.source].index.divided = true
+					end
+				end
 			end
 		end
 
@@ -368,6 +376,7 @@ function Allocator.allocate(vns, allocating_type)
 				}
 			end
 			vns.Msg.send(sourceList[i].index.idS, "multiple-branch", {branches = branches, robotTypeS = allocating_type})
+			sourceList[i].index.divided = true
 		end
 	end
 end

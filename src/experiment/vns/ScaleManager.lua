@@ -16,11 +16,6 @@ ScaleManager.Scale = require("Scale")
 
 function ScaleManager.create(vns)
 	ScaleManager.reset(vns)
-	vns.scalemanager = {
-		buffer = {}, 
-		steady_countdown_period = 3,
-		steady_countdown = 3,
-	}
 end
 
 function ScaleManager.reset(vns)
@@ -30,14 +25,19 @@ end
 
 function ScaleManager.addChild(vns, robotR)
 	robotR.scale = ScaleManager.Scale:new()
-	vns.scalemanager.buffer[robotR.idS] = ScaleManager.Scale:new()
-	vns.scalemanager.buffer[robotR.idS][robotR.robotTypeS] = ScaleManager.Scale:new()
-	vns.scalemanager.steady_countdown = vns.scalemanager.steady_countdown_period
+	robotR.scale[robotR.robotTypeS] = 1
 end
 
 function ScaleManager.deleteChild(vns, idS)
-	vns.scalemanager.buffer[idS] = nil
-	vns.scalemanager.steady_countdown = vns.scalemanager.steady_countdown_period
+end
+
+function ScaleManager.preStep(vns)
+	for idS, childR in pairs(vns.childrenRT) do
+		childR.scale_assign_offset = nil
+	end
+	if vns.parentR ~= nil then
+		vns.parentR.scale_assign_offset = nil
+	end
 end
 
 function ScaleManager.step(vns)
@@ -48,51 +48,31 @@ function ScaleManager.step(vns)
 	-- receive scale from children
 	for idS, robotR in pairs(vns.childrenRT) do 
 		for _, msgM in ipairs(vns.Msg.getAM(idS, "scale")) do
-			local temp = ScaleManager.Scale:new(msgM.dataT.scale)
-			if not (vns.scalemanager.buffer[idS] == temp) then
-				vns.scalemanager.steady_countdown = vns.scalemanager.steady_countdown_period
-			end
-			vns.scalemanager.buffer[idS] = temp
-			--robotR.scale = ScaleManager.Scale:new(msgM.dataT.scale)
+			robotR.scale = ScaleManager.Scale:new(msgM.dataT.scale)
 		end 
-	end
-
-	-- countdown and try update children
-	vns.scalemanager.steady_countdown = vns.scalemanager.steady_countdown - 1
-	if vns.scalemanager.steady_countdown <= 0 then
-		for idS, robotR in pairs(vns.childrenRT) do
-			robotR.scale = vns.scalemanager.buffer[idS] 
-		end
 	end
 
 	-- add assign_offset
 	for idS, robotR in pairs(vns.childrenRT) do 
 		if robotR.scale_assign_offset ~= nil then
 			robotR.scale = robotR.scale + robotR.scale_assign_offset
-			robotR.scale_assign_offset = nil
+			--robotR.scale_assign_offset = nil
 		end
 	end
-
-	-- find the biggest child number and make it count down period
-	local biggest_child_number = 0
-	for idS, robotR in pairs(vns.childrenRT) do 
-		if robotR.scale:totalNumber() > biggest_child_number then
-			biggest_child_number = robotR.scale:totalNumber()
-		end
+	if vns.parentR ~= nil and vns.parentR.scale_assign_offset ~= nil then
+		vns.parentR.scale = vns.parentR.scale + vns.parentR.scale_assign_offset
+		--vns.parentR.scale_assign_offset = nil
 	end
-	vns.scalemanager.steady_countdown_period = biggest_child_number * 2 + 2
 
 	-- sum up scale
 	local sumScale = ScaleManager.Scale:new()
+	-- add myself
+	sumScale:inc(vns.robotTypeS)
+	-- add parent
 	if vns.parentR ~= nil then sumScale = sumScale + vns.parentR.scale end
+	-- add children
 	for idS, robotR in pairs(vns.childrenRT) do 
 		sumScale = sumScale + robotR.scale
-	end
-	-- add myself
-	if sumScale[vns.robotTypeS] == nil then
-		sumScale[vns.robotTypeS] = 1
-	else
-		sumScale[vns.robotTypeS] = sumScale[vns.robotTypeS] + 1
 	end
 	vns.scale = sumScale
 
