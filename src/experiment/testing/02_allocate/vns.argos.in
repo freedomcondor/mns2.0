@@ -81,19 +81,18 @@
       <body position="-1,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
-<!--
-
     <drone id="drone6">
       <body position="-2,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
+<!--
 -->
 
     <!-- add pi-puck robots -->
     <distribute>
       <position method="uniform" min="-2.5,-1.5,0" max="0.5,0.5,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="12" base_num="1" max_trials="100">
+      <entity quantity="14" base_num="1" max_trials="100">
         <pipuck id="pipuck"  wifi_medium="wifi" tag_medium="tags">
           <controller config="pipuck"/>
         </pipuck>

@@ -75,4 +75,7 @@ configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology.lua
 configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology_classic.lua
                ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology_classic.lua
                COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology_classic_variation.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology_classic_variation.lua
+               COPYONLY)
 

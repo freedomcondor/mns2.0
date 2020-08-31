@@ -203,10 +203,12 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 
 	Allocator.GraphMatch(sourceList, targetList, originCost)
 
+	--[[
 	logger("multi-sourceList")
 	logger(sourceList)
 	logger("multi-targetList")
 	logger(targetList)
+	--]]
 
 	-- mark children
 	for i = 1, #sourceList do
@@ -278,6 +280,18 @@ function Allocator.allocate(vns, allocating_type)
 				scale = parentScale,
 			}
 		}
+	elseif sourceSum > targetSum and vns.parentR == nil then
+		local parentScale = vns.ScaleManager.Scale:new()
+		parentScale[allocating_type] = sourceSum - targetSum
+		targetList[#targetList + 1] = {
+			number = sourceSum - targetSum,
+			index = {
+				idN = -2,
+				positionV3 = vector3(),
+				orientationQ = quaternion(),
+				scale = parentScale,
+			}
+		}
 	end
 
 	-- create a cost matrix
@@ -297,10 +311,12 @@ function Allocator.allocate(vns, allocating_type)
 
 	Allocator.GraphMatch(sourceList, targetList, originCost)
 
+	--[[
 	logger("sourceList")
 	logger(sourceList)
 	logger("targetList")
 	logger(targetList)
+	--]]
 
 	-- multiple (including one) sources to one target
 	for j = 1, #targetList do
@@ -324,6 +340,11 @@ function Allocator.allocate(vns, allocating_type)
 		end
 
 		if targetList[j].index.idN == -1 then targetList[j].index.match = vns.parentR.idS end
+		if targetList[j].index.idN == -2 then targetList[j].index.match = {
+			idS = vns.idS,
+			positionV3 = vector3(),
+			orientationQ = quaternion(),
+		} end
 		if targetList[j].index.robotTypeS == allocating_type then
 			-- find the farthest allocating type source to target j
 			local farthestDis = 0
@@ -533,6 +554,7 @@ end
 function Allocator.create_allocator_node(vns)
 	return function()
 		Allocator.step(vns)
+		return false, true
 	end
 end
 

@@ -232,6 +232,7 @@ function Connector.create_connector_node(vns)
 		Connector.step(vns)
 		Connector.ackAll(vns)
 		Connector.recruitAll(vns)
+		return false, true
 	end
 end
 

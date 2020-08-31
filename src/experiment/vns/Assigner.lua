@@ -143,6 +143,7 @@ end
 function Assigner.create_assigner_node(vns)
 	return function()
 		Assigner.step(vns)
+		return false, true
 	end
 end
 
