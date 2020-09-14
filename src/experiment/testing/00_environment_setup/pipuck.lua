@@ -12,6 +12,10 @@ logger.enable()
 local bt
 
 function init()
+	logger(robot.id, "-----------------------")
+	logger("robot")
+	logger(robot)
+
 	api.init()
 	bt = BT.create
 		{type = "sequence", children = {

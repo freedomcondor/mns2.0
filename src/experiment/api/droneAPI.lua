@@ -24,7 +24,7 @@ end
 
 api.commonPostStep = api.postStep
 function api.postStep()
-	robot.flight_system.set_targets(api.actuator.newPosition, api.actuator.newRad)
+	robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
 	api.commonPostStep()
 end
 
@@ -79,7 +79,7 @@ api.setSpeed = api.droneSetSpeed
 
 ---- Cameras -------------------------
 function api.droneEnableCameras()
-	for index, camera in ipairs(robot.cameras_system) do
+	for index, camera in pairs(robot.cameras_system) do
 		camera.enable()
 	end 
 end
@@ -94,7 +94,7 @@ function api.droneDetectLeds()
 	vector3(0, -led_dis, 0)
 	} -- start from x+ , counter-closewise
 
-	for _, camera in ipairs(robot.cameras_system) do
+	for _, camera in pairs(robot.cameras_system) do
 		for _, tag in ipairs(camera.tags) do
 			tag.type = 0
 			for j, led_loc in ipairs(led_loc_for_tag) do
@@ -117,7 +117,7 @@ function api.droneDetectTags()
 
 	-- add tags 
 	tags = {}
-	for _, camera in ipairs(robot.cameras_system) do
+	for _, camera in pairs(robot.cameras_system) do
 		for _, newTag in ipairs(camera.tags) do
 			local positionV3 = 
 			  (
