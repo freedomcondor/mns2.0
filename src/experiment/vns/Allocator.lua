@@ -2,6 +2,7 @@
 ------------------------------------------------------
 --local Arrangement = require("Arrangement")
 local MinCostFlowNetwork = require("MinCostFlowNetwork")
+local DeepCopy = require("DeepCopy")
 
 local Allocator = {}
 
@@ -33,14 +34,15 @@ function Allocator.deleteParent(vns)
 end
 
 function Allocator.setGene(vns, morph)
-	if morph.robotTypeS ~= vns.robotTypeS then morph = nil return end
 	vns.allocator.morphIdCount = 0
+	vns.allocator.gene_index = {}
 	Allocator.calcMorphScale(vns, morph)
 	vns.allocator.gene = morph
 	vns.Allocator.setMorphology(vns, morph)
 end
 
 function Allocator.setMorphology(vns, morph)
+	if morph.robotTypeS ~= vns.robotTypeS then morph = nil return end
 	vns.allocator.target = morph
 end
 
@@ -61,6 +63,9 @@ end
 function Allocator.step(vns)
 	-- receive branch
 	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "branch")) do
+		if msgM.dataT.branch.idN > 0 then
+			msgM.dataT.branch.children = DeepCopy(vns.allocator.gene_index[msgM.dataT.branch.idN].children)
+		end
 		Allocator.setMorphology(vns, msgM.dataT.branch)
 		local targetPositionV3 = vns.api.virtualFrame.V3_RtoV(
 			vector3(msgM.dataT.branch.positionV3):rotate(
@@ -99,6 +104,10 @@ function Allocator.step(vns)
 			)
 			branch.positionV3 = targetPositionV3
 			branch.orientationQ = targetOrientationQ
+
+			if branch.idN > 0 then
+				branch.children = DeepCopy(vns.allocator.gene_index[branch.idN].children)
+			end
 
 			if branch.children ~= nil then
 				for _, branch_childR in ipairs(branch.children) do
@@ -369,7 +378,7 @@ function Allocator.allocate(vns, allocating_type)
 					{branch = {
 						positionV3 = vns.api.virtualFrame.V3_VtoR(targetList[j].index.positionV3),
 						orientationQ = vns.api.virtualFrame.Q_VtoR(targetList[j].index.orientationQ),
-						children = targetList[j].index.children,
+						--children = targetList[j].index.children,
 						scale = targetList[j].index.scale, 
 						idN = targetList[j].index.idN,
 						robotTypeS = targetList[j].index.robotTypeS,
@@ -389,7 +398,7 @@ function Allocator.allocate(vns, allocating_type)
 				branches[#branches + 1] = {
 					positionV3 = vns.api.virtualFrame.V3_VtoR(branch.positionV3),
 					orientationQ = vns.api.virtualFrame.Q_VtoR(branch.orientationQ),
-					children = branch.children,
+					--children = branch.children,
 					scale = branch.scale,
 					idN = branch.idN,
 					number = sourceList[i].to[j].number,
@@ -519,6 +528,7 @@ end
 function Allocator.calcMorphChildrenScale(vns, morph)
 	vns.allocator.morphIdCount = vns.allocator.morphIdCount + 1
 	morph.idN = vns.allocator.morphIdCount 
+	vns.allocator.gene_index[morph.idN] = morph
 
 	local sum = vns.ScaleManager.Scale:new()
 	if morph.children ~= nil then
