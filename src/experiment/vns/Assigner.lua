@@ -25,9 +25,9 @@ function Assigner.deleteParent(vns)
 	end
 end
 
-function Assigner.deleteChild(vns, idS)
+function Assigner.deleteChild(vns, deleting_idS)
 	for idS, childR in pairs(vns.childrenRT) do
-		if childR.assignTargetS == idS then
+		if childR.assignTargetS == deleting_idS then
 			Assigner.assign(vns, idS, nil)
 		end
 	end
