@@ -27,7 +27,14 @@ end
 --- reset
 function reset()
 	vns.reset(vns)
-	bt = BT.create(VNS.create_vns_node(vns))
+	bt = BT.create
+		{type = "sequence", children = {
+			vns.create_preconnector_node(vns),
+			vns.Connector.create_connector_node(vns),
+			vns.Assigner.create_assigner_node(vns),
+			vns.ScaleManager.create_scalemanager_node(vns),
+			vns.Driver.create_driver_node(vns),
+		}}
 end
 
 --- step
