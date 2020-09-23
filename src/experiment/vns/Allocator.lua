@@ -42,7 +42,7 @@ function Allocator.setGene(vns, morph)
 end
 
 function Allocator.setMorphology(vns, morph)
-	if morph.robotTypeS ~= vns.robotTypeS then morph = nil return end
+	if morph ~= nil and morph.robotTypeS ~= vns.robotTypeS then morph = nil return end
 	vns.allocator.target = morph
 end
 
