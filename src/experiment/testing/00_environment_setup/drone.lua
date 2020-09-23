@@ -30,6 +30,9 @@ function init()
 	for i, v in pairs(tabletest) do print(i, v) end
 	tabletest.aaa = "aaa"
 	for i, v in pairs(tabletest) do print(i, v) end
+	-- test vector3
+	logger("vector3")
+	logger(getmetatable(vector3()))
 end
 
 function step()

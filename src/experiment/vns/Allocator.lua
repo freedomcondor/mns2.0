@@ -93,6 +93,10 @@ function Allocator.step(vns)
 	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "multiple-branch")) do
 		local branches = msgM.dataT.branches
 		for i, branch in ipairs(branches) do
+			if branch.idN > 0 then
+				branch.children = DeepCopy(vns.allocator.gene_index[branch.idN].children)
+			end
+
 			local targetPositionV3 = vns.api.virtualFrame.V3_RtoV(
 				vector3(branch.positionV3):rotate(
 					vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
@@ -104,10 +108,6 @@ function Allocator.step(vns)
 			)
 			branch.positionV3 = targetPositionV3
 			branch.orientationQ = targetOrientationQ
-
-			if branch.idN > 0 then
-				branch.children = DeepCopy(vns.allocator.gene_index[branch.idN].children)
-			end
 
 			if branch.children ~= nil then
 				for _, branch_childR in ipairs(branch.children) do
@@ -122,7 +122,12 @@ function Allocator.step(vns)
 	end end
 
 	-- by now, I should have received a branch, either from branch or chosen from multiple-branch
-	-- from multiple branches, some of my children should be hand up to my parent
+	-- from multiple branches, 
+	-- if I get my branch from multiple branches, all of my children should have a match
+	--    if match.idN = -1 then this child should be hand up to my parent
+	--    if match.idN doesn't matches my branch then this child should be hand up to my parent
+	--    if match.idN matches my branch then keep it for later allocation
+	-- all handed up children is marked with allocated_in_multi_branch
 	local mybranchidN = nil
 	if vns.allocator.target ~= nil then
 		mybranchidN = vns.allocator.target.idN
@@ -142,6 +147,9 @@ function Allocator.step(vns)
 	-- allocate the rest children
 	Allocator.allocate(vns, "pipuck")
 	Allocator.allocate(vns, "drone")
+
+	-- everyone expect for allocated_in_multi_branch (handing up) should have a match
+	-- every position should have a match
 	-- check inter types assign
 	for idS, robotR in pairs(vns.childrenRT) do
 		if robotR.match ~= nil and robotR.allocated_in_multi_branch ~= true then
@@ -166,6 +174,7 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 			number = 1,
 			index = {
 				positionV3 = vector3(),
+				robotTypeS = vns.robotTypeS,
 			},
 		}
 	end
@@ -214,17 +223,30 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 
 	--[[
 	logger("multi-sourceList")
-	logger(sourceList)
+	for i, source in ipairs(sourceList) do
+		logger(i)
+		logger(source, 1, "index")
+		logger("\tid = ", source.index.idS or source.index.idN)
+		logger("\tposition = ", source.index.positionV3)
+	end
 	logger("multi-targetList")
-	logger(targetList)
+	for i, target in ipairs(targetList) do
+		logger(i)
+		logger(target, 1, "index")
+		logger("\tid = ", target.index.idS or target.index.idN)
+		logger("\tposition = ", target.index.positionV3)
+	end
+	logger("cost")
+	logger(originCost)
 	--]]
 
 	-- mark children
 	for i = 1, #sourceList do
-		-- one target case
 		if sourceList[i].index.robotTypeS == allocating_type then
+			-- one target case 
 			if #(sourceList[i].to) == 1 then
 				sourceList[i].index.match = targetList[sourceList[i].to[1].target].index
+			-- more target or no target case
 			else
 				sourceList[i].index.match = {
 					idN = -1,
@@ -322,9 +344,19 @@ function Allocator.allocate(vns, allocating_type)
 
 	--[[
 	logger("sourceList")
-	logger(sourceList)
+	for i, source in ipairs(sourceList) do
+		logger(i)
+		logger(source, 1, "index")
+		logger("\tid = ", source.index.idS or source.index.idN)
+		logger("\tposition = ", source.index.positionV3)
+	end
 	logger("targetList")
-	logger(targetList)
+	for i, target in ipairs(targetList) do
+		logger(i)
+		logger(target, 1, "index")
+		logger("\tid = ", target.index.idS or target.index.idN)
+		logger("\tposition = ", target.index.positionV3)
+	end
 	--]]
 
 	-- multiple (including one) sources to one target
@@ -356,13 +388,18 @@ function Allocator.allocate(vns, allocating_type)
 		} end
 		if targetList[j].index.robotTypeS == allocating_type then
 			-- find the farthest allocating type source to target j
-			local farthestDis = 0
+			local farthestDis = -math.huge
 			local farthestI = nil
 			for _, fromTable in ipairs(targetList[j].from) do
 				if #(sourceList[fromTable.source].to) == 1 and
 				   sourceList[fromTable.source].index.robotTypeS == allocating_type then
-					local dis = (sourceList[fromTable.source].index.positionV3 - 
-								 targetList[j].index.positionV3):length()
+					local me_to_robot = vector3(sourceList[fromTable.source].index.positionV3)
+					local me_to_target = vector3(targetList[j].index.positionV3)
+					me_to_robot.z = 0
+					me_to_target.z = 0
+					local dis = -me_to_robot:dot(me_to_target:normalize())
+					--local dis = (sourceList[fromTable.source].index.positionV3 - 
+					--			 targetList[j].index.positionV3):length()
 					if dis > farthestDis then
 						farthestDis = dis
 						farthestI = fromTable.source
@@ -374,6 +411,7 @@ function Allocator.allocate(vns, allocating_type)
 				-- mark the farthest match from source to target
 				targetList[j].index.match = sourceList[farthestI].index.idS
 				-- send branch to the farthest source
+				vns.Assigner.assign(vns, sourceList[farthestI].index.idS, nil)
 				vns.Msg.send(sourceList[farthestI].index.idS, "branch", 
 					{branch = {
 						positionV3 = vns.api.virtualFrame.V3_VtoR(targetList[j].index.positionV3),
@@ -405,6 +443,7 @@ function Allocator.allocate(vns, allocating_type)
 					robotTypeS = branch.robotTypeS,
 				}
 			end
+			vns.Assigner.assign(vns, sourceList[i].index.idS, nil)
 			vns.Msg.send(sourceList[i].index.idS, "multiple-branch", {branches = branches, robotTypeS = allocating_type})
 			sourceList[i].index.divided = true
 		end
