@@ -32,12 +32,6 @@ function ScaleManager.deleteChild(vns, idS)
 end
 
 function ScaleManager.preStep(vns)
-	for idS, childR in pairs(vns.childrenRT) do
-		childR.scale_assign_offset = nil
-	end
-	if vns.parentR ~= nil then
-		vns.parentR.scale_assign_offset = nil
-	end
 end
 
 function ScaleManager.step(vns)

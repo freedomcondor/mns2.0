@@ -19,6 +19,14 @@ function Scale:inc(robotTypeS)
 	end
 end
 
+function Scale:dec(robotTypeS)
+	if self[robotTypeS] == nil then
+		self[robotTypeS] = -1
+	else
+		self[robotTypeS] = self[robotTypeS] - 1
+	end
+end
+
 function Scale:totalNumber()
 	local sum = 0
 	for i, v in pairs(self) do
