@@ -14,7 +14,7 @@ logger.enable()
 -- datas ----------------
 local bt
 --local vns
-local structure = require("morphology_classic")
+local structure = require("morphology_classic_variation")
 
 -- argos functions ------
 --- init

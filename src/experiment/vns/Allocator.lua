@@ -221,7 +221,7 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 
 	Allocator.GraphMatch(sourceList, targetList, originCost)
 
-	--[[
+	---[[
 	logger("multi-sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -342,7 +342,7 @@ function Allocator.allocate(vns, allocating_type)
 
 	Allocator.GraphMatch(sourceList, targetList, originCost)
 
-	--[[
+	---[[
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
