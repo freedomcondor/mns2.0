@@ -172,7 +172,9 @@ function Connector.recruitAll(vns)
 end
 
 function Connector.ackAll(vns)
-	-- check acks
+	-- check acks, ack the nearest valid recruit
+	local MinDis = math.huge
+	local MinMsg = nil
 	for _, msgM in pairs(vns.Msg.getAM("ALLMSG", "recruit")) do
 		-- see if this is a changeing id recruit
 		local changing_id = false
@@ -192,37 +194,51 @@ function Connector.ackAll(vns)
 		     (vns.connector.locker_count == 0)
 		    )
 		   ) then
-			-- send ack
-			vns.Msg.send(msgM.fromS, "ack")
-			-- create robotR
-			local robotR = {
-				idS = msgM.fromS,
-				positionV3 = 
+			local disVec = 
 					vns.api.virtualFrame.V3_RtoV(
 						vector3(-msgM.dataT.positionV3):rotate(msgM.dataT.orientationQ:inverse())
-					),
-				orientationQ = 
-					vns.api.virtualFrame.Q_RtoV(
-						msgM.dataT.orientationQ:inverse()
-					),
-				robotTypeS = msgM.dataT.fromTypeS,
-			}
-			-- delete all parent and children (recruit again with the new idS)
-			if vns.parentR ~= nil then
-				vns.Msg.send(vns.parentR.idS, "dismiss")
-				vns.deleteParent(vns)
+					)
+			disVec.z = 0
+			local dis = disVec:length()
+			if dis < MinDis then 
+				MinDis = dis
+				MinMsg = msgM
 			end
-			for idS, childR in pairs(vns.childrenRT) do
-				vns.Msg.send(idS, "dismiss")
-				vns.deleteChild(vns, idS)
-			end
-
-			-- update vns id
-			vns.idS = msgM.dataT.idS
-			vns.idN = msgM.dataT.idN
-			vns.addParent(vns, robotR)
 		end
-		break
+	end
+
+	-- ack according to the nearest message
+	if MinMsg ~= nil then
+		local msgM = MinMsg
+		-- send ack
+		vns.Msg.send(msgM.fromS, "ack")
+		-- create robotR
+		local robotR = {
+			idS = msgM.fromS,
+			positionV3 = 
+				vns.api.virtualFrame.V3_RtoV(
+					vector3(-msgM.dataT.positionV3):rotate(msgM.dataT.orientationQ:inverse())
+				),
+			orientationQ = 
+				vns.api.virtualFrame.Q_RtoV(
+					msgM.dataT.orientationQ:inverse()
+				),
+			robotTypeS = msgM.dataT.fromTypeS,
+		}
+		-- delete all parent and children (recruit again with the new idS)
+		if vns.parentR ~= nil then
+			vns.Msg.send(vns.parentR.idS, "dismiss")
+			vns.deleteParent(vns)
+		end
+		for idS, childR in pairs(vns.childrenRT) do
+			vns.Msg.send(idS, "dismiss")
+			vns.deleteChild(vns, idS)
+		end
+
+		-- update vns id
+		vns.idS = msgM.dataT.idS
+		vns.idN = msgM.dataT.idN
+		vns.addParent(vns, robotR)
 	end
 end
 
