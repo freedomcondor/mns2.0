@@ -38,7 +38,7 @@ end
 --- step
 function step()
 	-- prestep
-	logger(robot.id, "-----------------------")
+	--logger(robot.id, "-----------------------")
 	api.preStep()
 	vns.preStep(vns)
 

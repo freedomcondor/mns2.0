@@ -42,7 +42,7 @@ function Allocator.setGene(vns, morph)
 end
 
 function Allocator.setMorphology(vns, morph)
-	if morph ~= nil and morph.robotTypeS ~= vns.robotTypeS then morph = nil return end
+	if morph ~= nil and morph.robotTypeS ~= vns.robotTypeS then morph = nil end
 	vns.allocator.target = morph
 end
 
@@ -215,7 +215,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	---[[
+	--[[
 	logger("multi-sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -336,7 +336,7 @@ function Allocator.allocate(vns)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	---[[
+	--[[
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
