@@ -69,6 +69,7 @@ configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/drone.lua
                ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/drone.lua)
 configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/pipuck.lua
                ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/pipuck.lua)
+
 configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology.lua
                ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology.lua
                COPYONLY)
@@ -77,5 +78,8 @@ configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology_cla
                COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology_classic_variation.lua
                ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology_classic_variation.lua
+               COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology_5_children.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology_5_children.lua
                COPYONLY)
 

@@ -15,6 +15,7 @@ logger.enable()
 local bt
 --local vns
 local structure = require("morphology_classic_variation")
+--local structure = require("morphology_5_children")
 
 -- argos functions ------
 --- init
@@ -35,7 +36,7 @@ end
 --- step
 function step()
 	-- prestep
-	logger(robot.id, "-----------------------")
+	--logger(robot.id, "-----------------------")
 	api.preStep()
 	vns.preStep(vns)
 
