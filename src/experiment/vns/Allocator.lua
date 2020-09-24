@@ -50,8 +50,6 @@ function Allocator.preStep(vns)
 	for idS, childR in pairs(vns.childrenRT) do
 		childR.allocated_in_multi_branch = nil
 		childR.match = nil
-		childR.pre_match = nil
-		childR.divided = nil
 	end
 	if vns.allocator.target ~= nil and vns.allocator.target.children ~= nil then
 		for _, branch in pairs(vns.allocator.target.children) do
@@ -118,10 +116,10 @@ function Allocator.step(vns)
 				end
 			end
 		end
-		Allocator.multi_branch_allocate(vns, msgM.dataT.robotTypeS, branches)
+		Allocator.multi_branch_allocate(vns, branches)
 	end end
 
-	-- by now, I should have received a branch, either from branch or chosen from multiple-branch
+	-- by now, I should have received a branch (or multi-branch decided I should be reporting up), either from branch or chosen from multiple-branch
 	-- from multiple branches, 
 	-- if I get my branch from multiple branches, all of my children should have a match
 	--    if match.idN = -1 then this child should be hand up to my parent
@@ -145,18 +143,16 @@ function Allocator.step(vns)
 	end
 
 	-- allocate the rest children
-	Allocator.allocate(vns, "pipuck")
-	Allocator.allocate(vns, "drone")
+	Allocator.allocate(vns)
 
 	-- everyone expect for allocated_in_multi_branch (handing up) should have a match
-	-- every position should have a match
 	-- check inter types assign
 	for idS, robotR in pairs(vns.childrenRT) do
 		if robotR.match ~= nil and robotR.allocated_in_multi_branch ~= true then
 			local assignToidS = robotR.match.match
 			if assignToidS ~= idS and 
 			   ((vns.parentR ~= nil and vns.parentR.idS == assignToidS) or
-			    (vns.childrenRT[assignToidS] ~= nil and vns.childrenRT[assignToidS].divided == nil)
+			    (vns.childrenRT[assignToidS] ~= nil)
 			   ) then
 				vns.Assigner.assign(vns, idS, assignToidS)	
 			end
@@ -166,26 +162,25 @@ function Allocator.step(vns)
 	end
 end
 
-function Allocator.multi_branch_allocate(vns, allocating_type, branches)
+function Allocator.multi_branch_allocate(vns, branches)
 	local sourceList = {}
 	-- create sources from myself
-	if vns.robotTypeS == allocating_type then
-		sourceList[#sourceList + 1] = {
-			number = 1,
-			index = {
-				positionV3 = vector3(),
-				robotTypeS = vns.robotTypeS,
-			},
-		}
-	end
+	local tempScale = vns.ScaleManager.Scale:new()
+	tempScale:inc(vns.robotTypeS)
+	sourceList[#sourceList + 1] = {
+		number = tempScale,
+		index = {
+			positionV3 = vector3(),
+			robotTypeS = vns.robotTypeS,
+		},
+	}
+
 	-- create sources from children
 	for idS, robotR in pairs(vns.childrenRT) do
-		if robotR.scale[allocating_type] ~= nil and robotR.scale[allocating_type] ~= 0 then
-			sourceList[#sourceList + 1] = {
-				number = robotR.scale[allocating_type],
-				index = robotR,
-			}
-		end
+		sourceList[#sourceList + 1] = {
+			number = robotR.scale,
+			index = robotR,
+		}
 	end
 
 	if #sourceList == 0 then return end
@@ -193,16 +188,12 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 	-- create targets from branches
 	local targetList = {}
 	for _, branchR in ipairs(branches) do
-		if branchR.scale[allocating_type] ~= nil and branchR.scale[allocating_type] ~= 0 then
-			targetList[#targetList + 1] = {
-				--number = branchR.scale[allocating_type],
-				number = branchR.number,
-				index = branchR
-			}
-		end
+		targetList[#targetList + 1] = {
+			--number = branchR.scale[allocating_type],
+			number = vns.ScaleManager.Scale:new(branchR.number),
+			index = branchR
+		}
 	end
-
-	-- sum number of source and target should be the same
 
 	-- create a cost matrix
 	local originCost = {}
@@ -213,15 +204,18 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
 			relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
-			if sourceList[i].index.robotTypeS ~= allocating_type then
+			---[[
+			if sourceList[i].index.robotTypeS ~= targetList[j].index.robotTypeS then
 				originCost[i][j] = originCost[i][j] + 100000
 			end
+			--]]
 		end
 	end
 
-	Allocator.GraphMatch(sourceList, targetList, originCost)
+	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
+	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	--[[
+	---[[
 	logger("multi-sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -242,42 +236,39 @@ function Allocator.multi_branch_allocate(vns, allocating_type, branches)
 
 	-- mark children
 	for i = 1, #sourceList do
-		if sourceList[i].index.robotTypeS == allocating_type then
-			-- one target case 
-			if #(sourceList[i].to) == 1 then
-				sourceList[i].index.match = targetList[sourceList[i].to[1].target].index
-			-- more target or no target case
-			else
-				sourceList[i].index.match = {
-					idN = -1,
-					positionV3 = vns.parentR.positionV3,
-					orientationQ = vns.parentR.orientationQ,
-				}
-			end
+		-- zero target case, I keep this child, don't mark it
+		-- one target case 
+		if #(sourceList[i].to) == 1 then
+			sourceList[i].index.match = targetList[sourceList[i].to[1].target].index
+		-- more target case
+		elseif  #(sourceList[i].to) > 1 then
+			sourceList[i].index.match = {
+				idN = -1,
+				positionV3 = vns.parentR.positionV3,
+				orientationQ = vns.parentR.orientationQ,
+			}
 		end
 	end
 
 	-- set myself branch if I'm the right type
-	if vns.robotTypeS == allocating_type and sourceList[1].to[1] ~= nil then
+	if sourceList[1].to[1] ~= nil then
 		Allocator.setMorphology(vns, targetList[sourceList[1].to[1].target].index)
 		vns.goal.positionV3 = targetList[sourceList[1].to[1].target].index.positionV3
 		vns.goal.orientationQ = targetList[sourceList[1].to[1].target].index.orientationQ
 	end
 end
 
-function Allocator.allocate(vns, allocating_type)
+function Allocator.allocate(vns)
 	-- create sources from children
 	local sourceList = {}
-	local sourceSum = 0
+	local sourceSum = vns.ScaleManager.Scale:new()
 	for idS, robotR in pairs(vns.childrenRT) do
-		if robotR.scale[allocating_type] ~= nil and 
-		   robotR.scale[allocating_type] ~= 0 and 
-		   robotR.allocated_in_multi_branch == nil then
+		if robotR.allocated_in_multi_branch == nil then
 			sourceList[#sourceList + 1] = {
-				number = robotR.scale[allocating_type],
+				number = robotR.scale,
 				index = robotR,
 			}
-			sourceSum = sourceSum + robotR.scale[allocating_type]
+			sourceSum = sourceSum + robotR.scale
 		end
 	end
 
@@ -285,25 +276,27 @@ function Allocator.allocate(vns, allocating_type)
 
 	-- create targets from branch
 	local targetList = {}
-	local targetSum = 0
+	local targetSum = vns.ScaleManager.Scale:new()
 	if vns.allocator.target ~= nil and vns.allocator.target.children ~= nil then
 		for _, branchR in ipairs(vns.allocator.target.children) do
-			if branchR.scale[allocating_type] ~= nil and branchR.scale[allocating_type] ~= 0 then
-				targetList[#targetList + 1] = {
-					number = branchR.scale[allocating_type],
-					index = branchR
-				}
-				targetSum = targetSum + branchR.scale[allocating_type]
-			end
+			targetList[#targetList + 1] = {
+				number = branchR.scale,
+				index = branchR,
+			}
+			targetSum = targetSum + branchR.scale
 		end
 	end
 
 	-- add parent as a target
-	if sourceSum > targetSum and vns.parentR ~= nil then
-		local parentScale = vns.ScaleManager.Scale:new()
-		parentScale[allocating_type] = sourceSum - targetSum
+	local diffSum = sourceSum - targetSum
+	for i, v in pairs(diffSum) do
+		if diffSum[i] ~= nil and diffSum[i] < 0 then
+			diffSum[i] = 0
+		end
+	end
+	if diffSum:totalNumber() > 0 and vns.parentR ~= nil then
 		targetList[#targetList + 1] = {
-			number = sourceSum - targetSum,
+			number = diffSum,
 			index = {
 				idN = -1,
 				positionV3 = vns.parentR.positionV3,
@@ -311,11 +304,9 @@ function Allocator.allocate(vns, allocating_type)
 				scale = parentScale,
 			}
 		}
-	elseif sourceSum > targetSum and vns.parentR == nil then
-		local parentScale = vns.ScaleManager.Scale:new()
-		parentScale[allocating_type] = sourceSum - targetSum
+	elseif diffSum:totalNumber() > 0 and vns.parentR == nil then
 		targetList[#targetList + 1] = {
-			number = sourceSum - targetSum,
+			number = diffSum,
 			index = {
 				idN = -2,
 				positionV3 = vector3(),
@@ -334,15 +325,18 @@ function Allocator.allocate(vns, allocating_type)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
 			relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
-			if sourceList[i].index.robotTypeS ~= allocating_type then
+			---[[
+			if sourceList[i].index.robotTypeS ~= targetList[j].index.robotTypeS then
 				originCost[i][j] = originCost[i][j] + 100000
 			end
+			--]]
 		end
 	end
 
-	Allocator.GraphMatch(sourceList, targetList, originCost)
+	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
+	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	--[[
+	---[[
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -361,68 +355,55 @@ function Allocator.allocate(vns, allocating_type)
 
 	-- multiple (including one) sources to one target
 	for j = 1, #targetList do
-		-- mark all allocating type, single target child to the branch
+		-- mark match all single target child with the branch (match = branch)
 		for _, fromTable in ipairs(targetList[j].from) do
 			if #(sourceList[fromTable.source].to) == 1 then
-				if sourceList[fromTable.source].index.robotTypeS == allocating_type then
-					sourceList[fromTable.source].index.match = targetList[j].index
-					if sourceList[fromTable.source].index.pre_match ~= nil and 
-					   sourceList[fromTable.source].index.pre_match ~= targetList[j].index then
-						sourceList[fromTable.source].index.divided = true
-					end
-				else
-					sourceList[fromTable.source].index.pre_match = targetList[j].index
-					if sourceList[fromTable.source].index.match ~= nil and 
-					   sourceList[fromTable.source].index.match ~= targetList[j].index then
-						sourceList[fromTable.source].index.divided = true
-					end
-				end
+				sourceList[fromTable.source].index.match = targetList[j].index
 			end
 		end
 
+		-- mark match all target with the source (or a virtual parent/self robot)
 		if targetList[j].index.idN == -1 then targetList[j].index.match = vns.parentR.idS end
 		if targetList[j].index.idN == -2 then targetList[j].index.match = {
 			idS = vns.idS,
 			positionV3 = vector3(),
 			orientationQ = quaternion(),
 		} end
-		if targetList[j].index.robotTypeS == allocating_type then
-			-- find the farthest allocating type source to target j
-			local farthestDis = -math.huge
-			local farthestI = nil
-			for _, fromTable in ipairs(targetList[j].from) do
-				if #(sourceList[fromTable.source].to) == 1 and
-				   sourceList[fromTable.source].index.robotTypeS == allocating_type then
-					local me_to_robot = vector3(sourceList[fromTable.source].index.positionV3)
-					local me_to_target = vector3(targetList[j].index.positionV3)
-					me_to_robot.z = 0
-					me_to_target.z = 0
-					local dis = -me_to_robot:dot(me_to_target:normalize())
-					--local dis = (sourceList[fromTable.source].index.positionV3 - 
-					--			 targetList[j].index.positionV3):length()
-					if dis > farthestDis then
-						farthestDis = dis
-						farthestI = fromTable.source
-					end
+		-- find the farthest same type source to target j
+		local farthestDis = -math.huge
+		local farthestI = nil
+		for _, fromTable in ipairs(targetList[j].from) do
+			if #(sourceList[fromTable.source].to) == 1 and
+			   sourceList[fromTable.source].index.robotTypeS == targetList[j].index.robotTypeS then
+				local me_to_robot = vector3(sourceList[fromTable.source].index.positionV3)
+				local me_to_target = vector3(targetList[j].index.positionV3)
+				me_to_robot.z = 0
+				me_to_target.z = 0
+				local dis = -me_to_robot:dot(me_to_target:normalize())
+				--local dis = (sourceList[fromTable.source].index.positionV3 - 
+				--			 targetList[j].index.positionV3):length()
+				if dis > farthestDis then
+					farthestDis = dis
+					farthestI = fromTable.source
 				end
 			end
-			-- if there is a same type robot matches this branch
-			if farthestI ~= nil and targetList[j].index.robotTypeS == allocating_type then
-				-- mark the farthest match from source to target
-				targetList[j].index.match = sourceList[farthestI].index.idS
-				-- send branch to the farthest source
-				vns.Assigner.assign(vns, sourceList[farthestI].index.idS, nil)
-				vns.Msg.send(sourceList[farthestI].index.idS, "branch", 
-					{branch = {
-						positionV3 = vns.api.virtualFrame.V3_VtoR(targetList[j].index.positionV3),
-						orientationQ = vns.api.virtualFrame.Q_VtoR(targetList[j].index.orientationQ),
-						--children = targetList[j].index.children,
-						scale = targetList[j].index.scale, 
-						idN = targetList[j].index.idN,
-						robotTypeS = targetList[j].index.robotTypeS,
-					}}	
-				)
-			end
+		end
+		-- if I find one
+		if farthestI ~= nil then
+			-- mark the farthest match from source to target
+			targetList[j].index.match = sourceList[farthestI].index.idS
+			-- send branch to the farthest source
+			vns.Assigner.assign(vns, sourceList[farthestI].index.idS, nil)
+			vns.Msg.send(sourceList[farthestI].index.idS, "branch", 
+				{branch = {
+					positionV3 = vns.api.virtualFrame.V3_VtoR(targetList[j].index.positionV3),
+					orientationQ = vns.api.virtualFrame.Q_VtoR(targetList[j].index.orientationQ),
+					--children = targetList[j].index.children,
+					scale = targetList[j].index.scale, 
+					idN = targetList[j].index.idN,
+					robotTypeS = targetList[j].index.robotTypeS,
+				}}	
+			)
 		end
 	end
 
@@ -445,13 +426,21 @@ function Allocator.allocate(vns, allocating_type)
 			end
 			vns.Assigner.assign(vns, sourceList[i].index.idS, nil)
 			vns.Msg.send(sourceList[i].index.idS, "multiple-branch", {branches = branches, robotTypeS = allocating_type})
-			sourceList[i].index.divided = true
 		end
 	end
 end
 
 -------------------------------------------------------------------------------
-function Allocator.GraphMatch(sourceList, targetList, originCost)
+function Allocator.GraphMatch(sourceList, targetList, originCost, type)
+	local originCost = DeepCopy(originCost)
+	for i = 1, #sourceList do
+		for j = 1, #targetList do
+			if sourceList[i].index.robotTypeS ~= type then
+				originCost[i][j] = originCost[i][j] + 1000000
+			end
+		end
+	end
+
 	-- create a enhanced cost matrix
 	-- and orderlist, to sort everything in originCost
 	local orderList = {}
@@ -477,7 +466,7 @@ function Allocator.GraphMatch(sourceList, targetList, originCost)
 	-- calculate sum for sourceList
 	local sourceSum = 0
 	for i = 1, #sourceList do
-		sourceSum = sourceSum + sourceList[i].number
+		sourceSum = sourceSum + (sourceList[i].number[type] or 0)
 	end
 	-- create a reverse index
 	local reverseIndex = {}
@@ -503,11 +492,19 @@ function Allocator.GraphMatch(sourceList, targetList, originCost)
 	-- 2 to #sourceList+1  source
 	-- #sourceList+2 to #sourceList + #targetList + 1  target
 	-- #sourceList + #target + 2   end
+	local sumSource = 0
 	for i = 1, #sourceList do
-		C[1][1 + i] = sourceList[i].number
+		C[1][1 + i] = sourceList[i].number[type] or 0
+		sumSource = sumSource + C[1][1 + i]
+		if C[1][1 + i] == 0 then C[1][1 + i] = nil end
 	end
+	if sumSource == 0 then
+		return
+	end
+
 	for i = 1, #targetList do
-		C[#sourceList+1 + i][n] = targetList[i].number
+		C[#sourceList+1 + i][n] = targetList[i].number[type]
+		if C[#sourceList+1 + i][n] == 0 then C[#sourceList+1 + i][n] = nil end
 	end
 	for i = 1, #sourceList do
 		for j = 1, #targetList do
@@ -531,28 +528,66 @@ function Allocator.GraphMatch(sourceList, targetList, originCost)
 		end
 	end
 
+	--[[
+	for i, v in pairs(C[2]) do
+		logger("C2", i, v)
+	end
+	--]]
+
 	local F = MinCostFlowNetwork(C, W)
 
 	for i = 1, #sourceList do
-		sourceList[i].to = {}
+		if sourceList[i].to == nil then
+			sourceList[i].to = {}
+		end
 	end
 	for j = 1, #targetList do
-		targetList[j].from = {}
+		if targetList[j].from == nil then
+			targetList[j].from = {}
+		end
 	end
 	for i = 1, #sourceList do
 		for j = 1, #targetList do
 			if F[1 + i][#sourceList+1 + j] ~= nil and
 			   F[1 + i][#sourceList+1 + j] ~= 0 then
-				sourceList[i].to[#(sourceList[i].to) + 1] = 
-					{
-						number = F[1 + i][#sourceList+1 + j],
-						target = j,
-					}
-				targetList[j].from[#(targetList[j].from) + 1] = 
-					{
-						number = F[1 + i][#sourceList+1 + j],
-						source = i,
-					}
+				-- set sourceTo
+				local exist = false
+				-- see whether this target has already exist
+				for k, sourceTo in ipairs(sourceList[i].to) do
+					if sourceTo.target == j then
+						sourceTo.number[type] = F[1 + i][#sourceList+1 + j]
+						exist = true
+						break
+					end
+				end
+				if exist == false then
+					local newNumber = vns.ScaleManager.Scale:new()
+					newNumber[type] = F[1 + i][#sourceList+1 + j]
+					sourceList[i].to[#(sourceList[i].to) + 1] = 
+						{
+							number = newNumber,
+							target = j,
+						}
+				end
+				-- set targetFrom
+				exist = false
+				-- see whether this source has already exist
+				for k, targetFrom in ipairs(targetList[j].from) do
+					if targetFrom.source == i then
+						targetFrom.number[type] = F[1 + i][#sourceList+1 + j]
+						exist = true
+						break
+					end
+				end
+				if exist == false then
+					local newNumber = vns.ScaleManager.Scale:new()
+					newNumber[type] = F[1 + i][#sourceList+1 + j]
+					targetList[j].from[#(targetList[j].from) + 1] = 
+						{
+							number = newNumber,
+							source = i,
+						}
+				end
 			end
 		end
 	end
