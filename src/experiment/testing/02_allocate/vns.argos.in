@@ -25,7 +25,7 @@
       <sensors>
         <pipuck_differential_drive implementation="default" />
         <pipuck_system implementation="default" />
-        <pipuck_rangefinders implementation="default" show_rays="true" />
+        <pipuck_rangefinders implementation="default" show_rays="false" />
         <wifi implementation="default" show_rays="false" />
       </sensors>
       <params script="@CMAKE_BINARY_DIR@/experiment/testing/02_allocate/pipuck.lua" />
@@ -88,6 +88,7 @@
       <controller config="drone"/>
     </drone>
 
+<!--
     <drone id="drone7">
       <body position="-3,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
@@ -107,6 +108,7 @@
       <body position="-4,0.5,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
+    -->
 
     <!-- add pi-puck robots -->
     <distribute>
