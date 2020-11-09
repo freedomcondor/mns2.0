@@ -3,6 +3,7 @@
 --local Arrangement = require("Arrangement")
 local MinCostFlowNetwork = require("MinCostFlowNetwork")
 local DeepCopy = require("DeepCopy")
+local BaseNumber = require("BaseNumber")
 
 local Allocator = {}
 
@@ -59,6 +60,10 @@ function Allocator.preStep(vns)
 end
 
 function Allocator.step(vns)
+	-- check if I just assigned children to my parent
+	if vns.parentR ~= nil and vns.parentR.scale_assign_offset:totalNumber() ~= 0 then
+		return
+	end
 	-- receive branch
 	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "branch")) do
 		if msgM.dataT.branch.idN > 0 then
@@ -204,9 +209,9 @@ function Allocator.multi_branch_allocate(vns, branches)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
 			relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
-			---[[
+			--[[
 			if sourceList[i].index.robotTypeS ~= targetList[j].index.robotTypeS then
-				originCost[i][j] = originCost[i][j] + 100000
+				originCost[i][j] = originCost[i][j] + 00000
 			end
 			--]]
 		end
@@ -216,6 +221,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
 	--[[
+if robot.id == "pipuck1" or robot.id == "pipuck2" then
 	logger("multi-sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -232,6 +238,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 	end
 	logger("cost")
 	logger(originCost)
+end
 	--]]
 
 	-- mark children
@@ -325,9 +332,9 @@ function Allocator.allocate(vns)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
 			relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
-			---[[
+			--[[
 			if sourceList[i].index.robotTypeS ~= targetList[j].index.robotTypeS then
-				originCost[i][j] = originCost[i][j] + 100000
+				originCost[i][j] = originCost[i][j] + 00000
 			end
 			--]]
 		end
@@ -337,6 +344,7 @@ function Allocator.allocate(vns)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
 	--[[
+if robot.id == "pipuck1" or robot.id == "pipuck2" then
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -351,6 +359,7 @@ function Allocator.allocate(vns)
 		logger("\tid = ", target.index.idS or target.index.idN)
 		logger("\tposition = ", target.index.positionV3)
 	end
+end
 	--]]
 
 	-- multiple (including one) sources to one target
@@ -432,15 +441,6 @@ end
 
 -------------------------------------------------------------------------------
 function Allocator.GraphMatch(sourceList, targetList, originCost, type)
-	local originCost = DeepCopy(originCost)
-	for i = 1, #sourceList do
-		for j = 1, #targetList do
-			if sourceList[i].index.robotTypeS ~= type then
-				originCost[i][j] = originCost[i][j] + 1000000
-			end
-		end
-	end
-
 	-- create a enhanced cost matrix
 	-- and orderlist, to sort everything in originCost
 	local orderList = {}
@@ -476,13 +476,24 @@ function Allocator.GraphMatch(sourceList, targetList, originCost, type)
 	for i = 1, #sourceList do
 		cost[i] = {}
 		for j = 1, #targetList do
-			--cost[i][j] = (#orderList) ^ reverseIndex[originCost[i][j]]
-			cost[i][j] = (sourceSum + 1) ^ reverseIndex[originCost[i][j]]
+			--cost[i][j] = (sourceSum + 1) ^ reverseIndex[originCost[i][j]]
+			if (sourceSum + 1) ^ (#orderList + 1) > 2 ^ 31 then
+				cost[i][j] = BaseNumber:createWithInc(sourceSum + 1, reverseIndex[originCost[i][j]])
+			else
+				cost[i][j] = (sourceSum + 1) ^ reverseIndex[originCost[i][j]]
+			end
+			---[[
+			if sourceList[i].index.robotTypeS ~= targetList[j].index.robotTypeS or
+			   sourceList[i].index.robotTypeS ~= type then
+				if (sourceSum + 1) ^ (#orderList + 1) > 2 ^ 31 then
+					cost[i][j] = cost[i][j] + BaseNumber:createWithInc(sourceSum + 1, #orderList + 1)
+				else
+					cost[i][j] = cost[i][j] + (sourceSum + 1) ^ (#orderList + 1)
+				end
+			end
+			--]]
 		end
 	end
-
-	--DMSG("cost")
-	--DMSG(cost)
 
 	-- create a flow network
 	local C = {}
@@ -528,13 +539,19 @@ function Allocator.GraphMatch(sourceList, targetList, originCost, type)
 		end
 	end
 
-	--[[
-	for i, v in pairs(C[2]) do
-		logger("C2", i, v)
-	end
-	--]]
 
 	local F = MinCostFlowNetwork(C, W)
+
+--[[
+if robot.id == "pipuck2" then
+	logger("C")
+	logger(C)
+	logger("W")
+	logger(W)
+	logger("F")
+	logger(F)
+end
+]]
 
 	for i = 1, #sourceList do
 		if sourceList[i].to == nil then

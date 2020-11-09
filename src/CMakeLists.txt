@@ -83,3 +83,70 @@ configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology_5_c
                ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology_5_children.lua
                COPYONLY)
 
+# data 01_displace_mns
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/01_displace_mns/vns.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/data/01_displace_mns/vns.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/01_displace_mns/drone.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/01_displace_mns/drone.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/01_displace_mns/pipuck.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/01_displace_mns/pipuck.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/01_displace_mns/PipuckOnlyConnector.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/01_displace_mns/PipuckOnlyConnector.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/01_displace_mns/DroneObserver.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/01_displace_mns/DroneObserver.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/01_displace_mns/morphology.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/01_displace_mns/morphology.lua)
+
+# data 02_displace_mns_drone
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/02_displace_mns_drone/vns.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/data/02_displace_mns_drone/vns.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/02_displace_mns_drone/drone.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/02_displace_mns_drone/drone.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/02_displace_mns_drone/pipuck.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/02_displace_mns_drone/pipuck.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/02_displace_mns_drone/PipuckMarker.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/02_displace_mns_drone/PipuckMarker.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/02_displace_mns_drone/DroneOnlyConnector.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/02_displace_mns_drone/DroneOnlyConnector.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/02_displace_mns_drone/morphology.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/02_displace_mns_drone/morphology.lua)
+
+# data 03_cross_displace
+# Compile loop functions
+
+add_library(vns_loop_functions_03_cross_displace MODULE
+   experiment/data/03_cross_displace/vns_loop_functions.h
+   experiment/data/03_cross_displace/vns_loop_functions.cpp)
+target_link_libraries(vns_loop_functions_03_cross_displace
+   ${SROCS_ENTITIES_LIBRARY})
+
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/03_cross_displace/vns.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/data/03_cross_displace/vns.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/03_cross_displace/vns_template.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/data/03_cross_displace/vns_template.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/03_cross_displace/drone.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/03_cross_displace/drone.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/03_cross_displace/pipuck.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/03_cross_displace/pipuck.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/03_cross_displace/morphology.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/03_cross_displace/morphology.lua)
+
+# data 04_cross_displace_drone
+# Compile loop functions
+
+add_library(vns_loop_functions_04_cross_displace_drone MODULE
+   experiment/data/04_cross_displace_drone/vns_loop_functions.h
+   experiment/data/04_cross_displace_drone/vns_loop_functions.cpp)
+target_link_libraries(vns_loop_functions_04_cross_displace_drone
+   ${SROCS_ENTITIES_LIBRARY})
+
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/04_cross_displace_drone/vns.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/data/04_cross_displace_drone/vns.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/04_cross_displace_drone/vns_template.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/data/04_cross_displace_drone/vns_template.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/04_cross_displace_drone/drone.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/04_cross_displace_drone/drone.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/04_cross_displace_drone/pipuck.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/04_cross_displace_drone/pipuck.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/data/04_cross_displace_drone/morphology.lua
+               ${CMAKE_BINARY_DIR}/experiment/data/04_cross_displace_drone/morphology.lua)

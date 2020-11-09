@@ -3,7 +3,7 @@ VNS.__index = VNS
 
 VNS.Msg = require("Message")
 
-VNS.Connector = require("Connector")
+VNS.Connector = require("Connector_backup")
 VNS.DroneConnector = require("DroneConnector")
 VNS.PipuckConnector = require("PipuckConnector")
 

@@ -1,0 +1,324 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="340.0" ticks_per_second="5" random_seed="58" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+     <!-- Pi-Puck Controller -->
+    <lua_controller id="pipuck">
+      <actuators>
+        <debug implementation="default">
+          <interface id="draw" />
+          <interface id="loop_functions" />
+        </debug>
+        <pipuck_differential_drive implementation="default" />
+        <wifi implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_system implementation="default" />
+        <pipuck_rangefinders implementation="default" show_rays="false" />
+        <wifi implementation="default" show_rays="false" />
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/03_cross_displace/pipuck.lua" />
+    </lua_controller>
+
+     <!-- Drone Controller -->
+    <lua_controller id="drone">
+      <actuators>
+        <debug implementation="default">
+          <interface id="draw" />
+          <interface id="loop_functions" />
+        </debug>
+        <drone_flight_system implementation="default" />
+        <wifi implementation="default" />
+      </actuators>
+      <sensors>
+        <drone_system implementation="default" />
+        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="false" />
+        <drone_flight_system implementation="default" />
+        <wifi implementation="default" />
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/03_cross_displace/drone.lua" />
+    </lua_controller>
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="10, 10, 2.5" center="0, 0, 1">
+    <floor id="floor" source="loop_functions" pixels_per_meter="1" />
+
+    <!-- add drones -->
+    <drone id="drone1">
+      <body position="0,0,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <drone id="drone2">
+      <body position="-1,-0,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+<!--
+-->
+    <drone id="drone3">
+      <body position="-1.5,-0.5,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <drone id="drone4">
+      <body position="-1.5,0.5,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <drone id="drone5">
+      <body position="-2,0,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+    <drone id="drone6">
+      <body position="-3,0,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+<!--
+    <drone id="drone7">
+      <body position="-3,0,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <drone id="drone8">
+      <body position="-4,0,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <drone id="drone9">
+      <body position="-3,0.5,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <drone id="drone10">
+      <body position="-4,0.5,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+    -->
+
+<!--
+-->
+    <pipuck id="pipuck1"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0.5,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck2"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0.5,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck3"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0,0.25,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck4"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0,-0.25,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck5"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-1.0,0.25,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck6"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-1.0,-0.25,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck7"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck8"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.5,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck9"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck10"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.5,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck11"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-1.5,0.25,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck12"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-1.5,-0.25,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck13"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-2.0,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck14"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-2.0,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+<!--
+    <pipuck id="pipuck1"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0.5,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck2"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0.5,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck3"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.5,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck4"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.5,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck5"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-1.5,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck6"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-1.5,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck7"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.5,-1.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck8"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-1.5,-1.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck9"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.5,1.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck10"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-1.5,1.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck11"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-2.5,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck12"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-2.5,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck13"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-3.5,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck14"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-3.5,-0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+-->
+
+    <!-- add pi-puck robots -->
+    <!--
+    <distribute>
+      <position method="uniform" min="-2.5,-0.5,0" max="0.5,0.5,0" />
+      <orientation method="uniform" min="0,0,0" max="360,0,0" />
+      <entity quantity="14" base_num="1" max_trials="100">
+        <pipuck id="pipuck"  wifi_medium="wifi" tag_medium="tags">
+          <controller config="pipuck"/>
+        </pipuck>
+      </entity>
+    </distribute>
+    -->
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <pointmass3d id="pm3d" iterations="10" />
+    <dynamics3d id="dyn3d" iterations="25" default_friction="0.3">
+      <gravity g="9.8" />
+      <floor friction="10.0" />
+      <virtual_magnetism />
+    </dynamics3d>
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <directional_led id="directional_leds" index="grid" grid_size="20,20,20"/>
+    <tag id="tags" index="grid" grid_size="20,20,20" />
+    <radio id="nfc" index="grid" grid_size="20,20,20" />
+    <radio id="wifi" index="grid" grid_size="20,20,20" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="/Users/harry/Desktop/mns2.0/build/libvns_loop_functions_03_cross_displace"
+                  label="vns_loop_functions_03_cross_displace"/>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <!--visualization>
+    <qt-opengl lua_editor="true" show_boundary="false">
+		  <user_functions library="/Users/harry/Desktop/mns2.0/build/libbuilderbot_qtopengl_user_functions"
+                      label="builderbot_qtopengl_user_functions" >
+      </user_functions>
+      <camera>
+        <placement idx="0" position="  0,  0, 20"  look_at="0,0,10"   lens_focal_length="50" up="1,0,0"/>
+        <placement idx="1" position="  0,-15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+        <placement idx="2" position=" 15,-15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+        <placement idx="3" position=" 15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+        <placement idx="4" position=" 15, 15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+        <placement idx="5" position="  0, 15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+        <placement idx="6" position="-15, 15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+        <placement idx="7" position="-15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+        <placement idx="8" position="-15,-15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+      </camera>
+    </qt-opengl>
+  </visualization-->
+
+
+</argos-configuration>

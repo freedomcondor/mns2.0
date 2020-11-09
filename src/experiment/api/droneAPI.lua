@@ -168,6 +168,7 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 		for i, item in ipairs(robotTypeIndex) do
 			if tag.id <= item.index then robotTypeS = item.typeS break end
 		end
+		if robotTypeS == nil then robotTypeS = "marker" end
 
 		if robotTypeS ~= nil then
 			local idS = robotTypeS .. math.floor(tag.id)

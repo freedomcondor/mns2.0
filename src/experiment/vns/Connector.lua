@@ -43,15 +43,20 @@ function Connector.recruit(vns, robotR)
 end
 
 function Connector.newVnsID(vns)
-	vns.idS = vns.Msg.myIDS()
-	vns.idN = robot.random.uniform()
+	local _idS = vns.Msg.myIDS()
+	local _idN = robot.random.uniform()
+	Connector.updateVnsID(vns, _idS, _idN)
+end
+
+function Connector.updateVnsID(vns, _idS, _idN)
+	vns.idS = _idS
+	vns.idN = _idN
 	local childrenScale = vns.ScaleManager.Scale:new()
 	for idS, childR in pairs(vns.childrenRT) do
 		childrenScale = childrenScale + childR.scale
-		vns.Msg.send(idS, "dismiss", {changing_id = true})
-		vns.deleteChild(vns, idS)
+		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN})
 	end
-	vns.connector.locker_count = childrenScale:totalNumber() + 1
+	vns.connector.locker_count = childrenScale:totalNumber() + 2
 end
 
 function Connector.addChild(vns, robotR)
@@ -158,6 +163,13 @@ function Connector.step(vns)
 			vns.deleteChild(vns, msgM.fromS)
 		end
 	end
+
+	-- check updateVnsID
+	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "updateVnsID")) do
+		if vns.parentR ~= nil and msgM.fromS == vns.parentR.idS then
+			Connector.updateVnsID(vns, msgM.dataT.idS, msgM.dataT.idN)
+		end
+	end
 end
 
 function Connector.recruitAll(vns)
@@ -177,6 +189,7 @@ function Connector.ackAll(vns)
 	local MinMsg = nil
 	for _, msgM in pairs(vns.Msg.getAM("ALLMSG", "recruit")) do
 		-- see if this is a changeing id recruit
+		--[[
 		local changing_id = false
 		for _, jmsgM in pairs(vns.Msg.getAM(msgM.fromS, "dismiss")) do
 			if jmsgM.dataT ~= nil and jmsgM.dataT.changing_id == true then
@@ -184,6 +197,7 @@ function Connector.ackAll(vns)
 				break
 			end
 		end
+		--]]
 		-- check
 		-- if id == my vns id then pass unconditionally
 		-- else, if it is from changing id, then ack
@@ -225,6 +239,7 @@ function Connector.ackAll(vns)
 				),
 			robotTypeS = msgM.dataT.fromTypeS,
 		}
+		--[[
 		-- delete all parent and children (recruit again with the new idS)
 		if vns.parentR ~= nil then
 			vns.Msg.send(vns.parentR.idS, "dismiss")
@@ -234,10 +249,12 @@ function Connector.ackAll(vns)
 			vns.Msg.send(idS, "dismiss")
 			vns.deleteChild(vns, idS)
 		end
+		--]]
 
 		-- update vns id
-		vns.idS = msgM.dataT.idS
-		vns.idN = msgM.dataT.idN
+		--vns.idS = msgM.dataT.idS
+		--vns.idN = msgM.dataT.idN
+		Connector.updateVnsID(vns, msgM.dataT.idS, msgM.dataT.idN)
 		vns.addParent(vns, robotR)
 	end
 end

@@ -8,6 +8,7 @@ function Avoider.create(vns)
 end
 
 function Avoider.step(vns, surpress_or_not)
+	local drone_distance = 0.50
 	-- for each children avoid
 	for idS, childR in pairs(vns.childrenRT) do
 		local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
@@ -19,14 +20,14 @@ function Avoider.step(vns, surpress_or_not)
 				avoid_speed.positionV3 =
 					Avoider.add(childR.positionV3, vns.parentR.positionV3,
 				            	avoid_speed.positionV3,
-				            	0.70)
+				            	drone_distance)
 			end
 
 			-- avoid my self
 			avoid_speed.positionV3 =
 				Avoider.add(childR.positionV3, vector3(),
 				            avoid_speed.positionV3,
-				            0.70)
+				            drone_distance)
 
 			-- avoid children
 			for jidS, jchildR in pairs(vns.childrenRT) do
@@ -36,7 +37,7 @@ function Avoider.step(vns, surpress_or_not)
 				avoid_speed.positionV3 =
 					Avoider.add(childR.positionV3, jchildR.positionV3,
 				            	avoid_speed.positionV3,
-				            	0.70)
+				            	drone_distance)
 			end end end
 		end
 
@@ -85,8 +86,8 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold)
 	local ans = accumulatorV3
 	if d < threshold then
 		dV3:normalize()
-		local transV3 = 0.015 / d * dV3
-		ans = ans + transV3
+		local transV3 = - 0.3 * math.log(d/threshold) * dV3:normalize()
+		ans = ans + transV3--:rotate(quaternion(math.pi/3, vector3(0,0,1)))
 	end
 	return ans
 end

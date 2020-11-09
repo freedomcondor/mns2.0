@@ -27,15 +27,7 @@ local Dijkstra = function(w)
 		for j, _ in pairs(D) do
 			-- from all unknown nodes
 			for k, _ in pairs(T) do
-				if type(w[j][k]) == "table" then
-					for l, _ in pairs(w[j][k]) do
-						if type(w[j][k][l]) == "number" and D[j] + w[j][k][l] < dis then
-							dis = D[j] + w[j][k][l]
-							from = j
-							to = k
-						end
-					end
-				elseif type(w[j][k]) == "number" and D[j] + w[j][k] < dis then
+				if w[j][k] ~= nil and D[j] + w[j][k] < dis then
 					dis = D[j] + w[j][k]
 					from = j
 					to = k
