@@ -56,6 +56,10 @@ function Connector.updateVnsID(vns, _idS, _idN)
 		childrenScale = childrenScale + childR.scale
 		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN})
 	end
+	for idS, childR in pairs(vns.connector.waitingRobots) do
+		childrenScale = childrenScale + childR.scale
+		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN})
+	end
 	vns.connector.locker_count = childrenScale:totalNumber() + 2
 end
 
@@ -188,25 +192,13 @@ function Connector.ackAll(vns)
 	local MinDis = math.huge
 	local MinMsg = nil
 	for _, msgM in pairs(vns.Msg.getAM("ALLMSG", "recruit")) do
-		-- see if this is a changeing id recruit
-		--[[
-		local changing_id = false
-		for _, jmsgM in pairs(vns.Msg.getAM(msgM.fromS, "dismiss")) do
-			if jmsgM.dataT ~= nil and jmsgM.dataT.changing_id == true then
-				changing_id = true
-				break
-			end
-		end
-		--]]
 		-- check
 		-- if id == my vns id then pass unconditionally
 		-- else, if it is from changing id, then ack
 		-- if not, then check if idN > my idN and my locker
 		if msgM.dataT.idS ~= vns.idS and
-		   ((changing_id == true) or
-		    ((msgM.dataT.idN > vns.idN) and
-		     (vns.connector.locker_count == 0)
-		    )
+		   ((msgM.dataT.idN > vns.idN) and
+		    (vns.connector.locker_count == 0)
 		   ) then
 			local disVec = 
 					vns.api.virtualFrame.V3_RtoV(
@@ -239,17 +231,11 @@ function Connector.ackAll(vns)
 				),
 			robotTypeS = msgM.dataT.fromTypeS,
 		}
-		--[[
-		-- delete all parent and children (recruit again with the new idS)
-		if vns.parentR ~= nil then
+		-- goodbye to old parent
+		if vns.parentR ~= nil and vns.parentR ~= msgM.fromS then
 			vns.Msg.send(vns.parentR.idS, "dismiss")
 			vns.deleteParent(vns)
 		end
-		for idS, childR in pairs(vns.childrenRT) do
-			vns.Msg.send(idS, "dismiss")
-			vns.deleteChild(vns, idS)
-		end
-		--]]
 
 		-- update vns id
 		--vns.idS = msgM.dataT.idS
