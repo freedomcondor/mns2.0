@@ -165,6 +165,7 @@ function Allocator.step(vns)
 			robotR.goal.orientationQ = robotR.match.orientationQ
 		end
 	end
+
 end
 
 function Allocator.multi_branch_allocate(vns, branches)
@@ -538,7 +539,6 @@ function Allocator.GraphMatch(sourceList, targetList, originCost, type)
 			W[1 + i][#sourceList+1 + j] = cost[i][j]
 		end
 	end
-
 
 	local F = MinCostFlowNetwork(C, W)
 

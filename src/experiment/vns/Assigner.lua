@@ -77,9 +77,19 @@ function Assigner.step(vns)
 	-- listen to recruit from assigner.targetS
 	for _, msgM in ipairs(vns.Msg.getAM(vns.assigner.targetS, "recruit")) do
 		vns.Msg.send(msgM.fromS, "ack")
-		vns.Msg.send(msgM.fromS, "assign_ack", {oldParent = vns.parentR.idS})
+
+		-- sum up child scale
+		local sumScale = vns.ScaleManager.Scale:new()
+		-- add myself
+		sumScale:inc(vns.robotTypeS)
+		-- add children
+		for idS, robotR in pairs(vns.childrenRT) do 
+			sumScale = sumScale + robotR.scale
+		end
+
+		vns.Msg.send(msgM.fromS, "assign_ack", {oldParent = vns.parentR.idS, scale = sumScale})
 		if vns.parentR ~= nil and vns.parentR.idS ~= vns.assigner.targetS then
-			vns.Msg.send(vns.parentR.idS, "assign_dismiss", {newParent = msgM.fromS})
+			vns.Msg.send(vns.parentR.idS, "assign_dismiss", {newParent = msgM.fromS, scale = sumScale})
 			vns.deleteParent(vns)
 			local robotR = {
 				idS = msgM.fromS,
@@ -113,9 +123,13 @@ function Assigner.step(vns)
 			local assignTargetS = vns.childrenRT[msgM.fromS].assignTargetS
 			local assignTargetS = msgM.dataT.newParent
 			if vns.childrenRT[assignTargetS] ~= nil then
-				vns.childrenRT[assignTargetS].scale_assign_offset:inc(vns.childrenRT[msgM.fromS].robotTypeS)
+				--vns.childrenRT[assignTargetS].scale_assign_offset:inc(vns.childrenRT[msgM.fromS].robotTypeS)
+				vns.childrenRT[assignTargetS].scale_assign_offset = 
+					vns.childrenRT[assignTargetS].scale_assign_offset + msgM.dataT.scale
 			elseif vns.parentR ~= nil and vns.parentR.idS == assignTargetS then
-				vns.parentR.scale_assign_offset:inc(vns.childrenRT[msgM.fromS].robotTypeS)
+				--vns.parentR.scale_assign_offset:inc(vns.childrenRT[msgM.fromS].robotTypeS)
+				vns.parentR.scale_assign_offset = 
+					vns.parentR.scale_assign_offset + msgM.dataT.scale
 			end
 			vns.deleteChild(vns, msgM.fromS)
 		end
@@ -126,9 +140,13 @@ function Assigner.step(vns)
 		if vns.childrenRT[msgM.fromS] ~= nil then
 			local assignFrom = msgM.dataT.oldParent
 			if vns.childrenRT[assignFrom] ~= nil then
-				vns.childrenRT[assignFrom].scale_assign_offset:dec(vns.childrenRT[msgM.fromS].robotTypeS)
+				--vns.childrenRT[assignFrom].scale_assign_offset:dec(vns.childrenRT[msgM.fromS].robotTypeS)
+				vns.childrenRT[assignFrom].scale_assign_offset = 
+					vns.childrenRT[assignFrom].scale_assign_offset - msgM.dataT.scale
 			elseif vns.parentR ~= nil and vns.parentR.idS == assignFrom then
-				vns.parentR.scale_assign_offset:dec(vns.childrenRT[msgM.fromS].robotTypeS)
+				--vns.parentR.scale_assign_offset:dec(vns.childrenRT[msgM.fromS].robotTypeS)
+				vns.parentR.scale_assign_offset = 
+					vns.parentR.scale_assign_offset - msgM.dataT.scale
 			end
 		end
 	end

@@ -118,7 +118,7 @@ if (DISPLACE == 1) {
                   if ((-1.7 < x_number) && (x_number < -0.3))
                      y_number = m_pcRNG->Uniform(CRange<Real>(-1.7, 1.7));
                   distance = (s_drone.Entity->GetEmbodiedEntity().GetOriginAnchor().Position - 
-                                  CVector3(x_number,y_number,0)).Length();
+                                  CVector3(x_number,y_number,z_number)).Length();
                   flag = MoveEntity(s_drone.Entity->GetEmbodiedEntity(), 
                                     CVector3(x_number,y_number,z_number), 
                                     //CVector3(1,0,0.01), 
@@ -126,6 +126,7 @@ if (DISPLACE == 1) {
                                     false);
                }
                DistanceFile << distance << std::endl;
+               break;
             }
          }
       }

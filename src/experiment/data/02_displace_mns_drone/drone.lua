@@ -3,6 +3,7 @@ package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/utils/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/vns/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/data/01_displace_mns/?.lua"
 
+--pairs = require("AlphaPairs")
 pairs = require("RandomPairs")
 
 -- includes -------------
@@ -30,7 +31,7 @@ end
 --- reset
 function reset()
 	vns.reset(vns)
-	if vns.idS == "drone5" then vns.idN = 1 
+	if vns.idS == "drone6" then vns.idN = 1 
 	else vns.idN = 0.5 end
 
 	vns.setGene(vns, structure)
@@ -39,6 +40,12 @@ end
 
 --- step
 function step()
+	if vns.allocator.target == nil then
+		robot.debug.loop_functions("-1")
+	else
+		robot.debug.loop_functions(tostring(vns.allocator.target.idN))
+	end
+
 	-- prestep
 	--logger(robot.id, "-----------------------")
 	api.preStep()

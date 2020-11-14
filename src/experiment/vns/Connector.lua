@@ -17,6 +17,7 @@ function Connector.reset(vns)
 	vns.connector.waitingRobots = {}
 	vns.connector.seenRobots = {}
 	vns.connector.locker_count = 3
+	vns.connector.lastid_count = 0
 end
 
 function Connector.prestep(vns)
@@ -49,6 +50,8 @@ function Connector.newVnsID(vns)
 end
 
 function Connector.updateVnsID(vns, _idS, _idN)
+	vns.connector.lastidS = vns.idS
+	vns.connector.lastid_count = vns.scale:totalNumber() + 2
 	vns.idS = _idS
 	vns.idN = _idN
 	local childrenScale = vns.ScaleManager.Scale:new()
@@ -133,6 +136,13 @@ function Connector.update(vns)
 	if vns.connector.locker_count > 0 then
 		vns.connector.locker_count = vns.connector.locker_count - 1
 	end
+
+	-- check last id
+	if vns.connector.lastid_count > 0 then
+		vns.connector.lastid_count = vns.connector.lastid_count - 1
+	elseif vns.connector.lastid_count == 0 then
+		vns.connector.lastidS = nil
+	end
 end
 
 function Connector.waitingCount(vns)
@@ -197,8 +207,11 @@ function Connector.ackAll(vns)
 		-- else, if it is from changing id, then ack
 		-- if not, then check if idN > my idN and my locker
 		if msgM.dataT.idS ~= vns.idS and
-		   ((msgM.dataT.idN > vns.idN) and
-		    (vns.connector.locker_count == 0)
+		   msgM.dataT.idN > vns.idN and
+		   vns.connector.locker_count == 0 and
+		   (vns.parentR == nil or
+			vns.connector.lastidS == nil or 
+			vns.connector.lastidS ~= msgM.dataT.idS
 		   ) then
 			local disVec = 
 					vns.api.virtualFrame.V3_RtoV(

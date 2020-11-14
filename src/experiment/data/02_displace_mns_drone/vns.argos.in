@@ -6,7 +6,7 @@
   <!-- ************************* -->
   <framework>
     <system threads="0" />
-    <experiment length="0" ticks_per_second="5" random_seed="12345" />
+    <experiment length="0" ticks_per_second="5" random_seed="2" />
   </framework>
   
   <!-- *************** -->
@@ -36,6 +36,7 @@
       <actuators>
         <debug implementation="default">
           <interface id="draw" />
+          <interface id="loop_functions" />
         </debug>
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
@@ -69,7 +70,7 @@
                 layout="5,3,1" />
       <orientation method="grid" center="0,0,0" distances="0,0,0"
                    layout="5,3,1" />
-      <entity quantity="15" max_trials="20">
+      <entity quantity="15" base_num="1" max_trials="20">
         <drone id="drone">
           <!--body position="0,0,0" orientation="0,0,0"/-->
           <controller config="drone"/>
@@ -118,8 +119,8 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="@CMAKE_BINARY_DIR@/libvns_loop_functions"
-                  label="vns_loop_functions"/>
+  <loop_functions library="@CMAKE_BINARY_DIR@/libvns_loop_functions_02_displace_drone"
+                  label="vns_loop_functions_02_displace_drone"/>
 
   <!-- ****************** -->
   <!-- * Visualization * -->
