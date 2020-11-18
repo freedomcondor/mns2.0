@@ -144,6 +144,14 @@ function VNS.setGene(vns, morph)
 	end
 end
 
+function VNS.resetMorphology(vns)
+	for i, module in ipairs(VNS.Modules) do
+		if type(module.resetMorphology) == "function" then
+			module.resetMorphology(vns)
+		end
+	end
+end
+
 ---- Behavior Tree Node ------------------------------------------
 function VNS.create_preconnector_node(vns)
 	local pre_connector_node

@@ -83,9 +83,9 @@ if (DISPLACE == 1) {
                   m_originPosition = s_drone.Entity->GetEmbodiedEntity().GetOriginAnchor().Position;
                   std::cout << "position" << m_originPosition << std::endl;
                   //if ((m_originPosition.GetY() > 0.5) || (m_originPosition.GetY() < -0.5)) { // leaf
-                  if ((m_originPosition.GetY() < 0.5) && (m_originPosition.GetY() > -0.5) &&
-                      (robot_index != 6)) { // inner node
-                  //if (robot_index != 6) { // not root
+                  //if ((m_originPosition.GetY() < 0.5) && (m_originPosition.GetY() > -0.5) &&
+                  //    (robot_index != 6)) { // inner node
+                  if (robot_index != 6) { // not root
                      std::cout << "hit leaf" << std::endl;
                      MoveEntity(s_drone.Entity->GetEmbodiedEntity(), 
                                 CVector3(0.0, 4.0, m_originPosition.GetZ()), 

@@ -31,7 +31,7 @@ function PipuckConnector.step(vns)
 				if idS ~= vns.Msg.myIDS() and 
 				   vns.connector.seenRobots[idS] == nil and 
 				   R.robotTypeS ~= "drone" and
-				   positionV3:length() < 0.7 then -- TODO average
+				   positionV3:length() < 0.9 then -- TODO average
 					vns.connector.seenRobots[idS] = {
 						idS = idS,
 						positionV3 = positionV3,

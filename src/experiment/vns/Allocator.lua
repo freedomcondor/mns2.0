@@ -31,7 +31,7 @@ function Allocator.addParent(vns)
 end
 
 function Allocator.deleteParent(vns)
-	vns.Allocator.setMorphology(vns, vns.allocator.gene)
+	--vns.Allocator.setMorphology(vns, vns.allocator.gene)
 end
 
 function Allocator.setGene(vns, morph)
@@ -45,6 +45,10 @@ end
 function Allocator.setMorphology(vns, morph)
 	if morph ~= nil and morph.robotTypeS ~= vns.robotTypeS then morph = nil end
 	vns.allocator.target = morph
+end
+
+function Allocator.resetMorphology(vns)
+	vns.Allocator.setMorphology(vns, vns.allocator.gene)
 end
 
 function Allocator.preStep(vns)
@@ -155,6 +159,35 @@ function Allocator.step(vns)
 	for idS, robotR in pairs(vns.childrenRT) do
 		if robotR.match ~= nil and robotR.allocated_in_multi_branch ~= true then
 			local assignToidS = robotR.match.match
+
+			-- check child cross
+			--[[
+			local cross_flag = false
+			if vns.parentR ~= nil and vns.goal.positionV3 ~= nil and robotR.robotTypeS == vns.robotTypeS then
+				local distance_now = (robotR.match.positionV3 - robotR.positionV3):length()
+				if vns.goal.positionV3:length() > distance_now then 
+					distance_now = vns.goal.positionV3:length()
+				end
+				local distance_reverse = (vns.goal.positionV3 - robotR.positionV3):length()
+				if robotR.match.positionV3:length() > distance_reverse then
+					 distance_reverse = robotR.match.positionV3:length()
+				end
+				local parent_to_target_normalize = 
+					((vns.goal.positionV3 or vector3()) - vns.parentR.positionV3):normalize()
+				local parent_to_me = - vns.parentR.positionV3
+				local parent_to_child = robotR.positionV3 - vns.parentR.positionV3
+				if distance_now > distance_reverse then
+					robotR.goal.positionV3 = vns.parentR.positionV3
+					robotR.goal.orientationQ = vns.parentR.orientationQ
+					cross_flag = true
+					if parent_to_me:dot(parent_to_target_normalize) > 
+					   parent_to_child:dot(parent_to_target_normalize) then
+						assignToidS = vns.parentR.idS
+					end
+				end
+			end
+			--]]
+
 			if assignToidS ~= idS and 
 			   ((vns.parentR ~= nil and vns.parentR.idS == assignToidS) or
 			    (vns.childrenRT[assignToidS] ~= nil)
@@ -222,7 +255,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
 	--[[
-if robot.id == "pipuck1" or robot.id == "pipuck2" then
+if robot.id == "drone24" or robot.id == "pipuck2" then
 	logger("multi-sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -345,7 +378,7 @@ function Allocator.allocate(vns)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
 	--[[
-if robot.id == "pipuck1" or robot.id == "pipuck2" then
+if robot.id == "drone24" or robot.id == "pipuck2" then
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)

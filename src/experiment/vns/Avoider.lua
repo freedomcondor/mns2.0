@@ -15,6 +15,23 @@ function Avoider.step(vns, surpress_or_not)
 		--childVns.avoiderSpeed.locV3 = Vec3:create()
 
 		if childR.robotTypeS == "drone" then
+			-- avoid seen drones 
+			for jidS, robotR in pairs(vns.connector.seenRobots) do
+				if robotR.robotTypeS == "drone" and jidS ~= idS then
+					avoid_speed.positionV3 =
+						Avoider.add(childR.positionV3, robotR.positionV3,
+									avoid_speed.positionV3,
+						            drone_distance)
+				end
+			end
+
+			-- avoid my self
+			avoid_speed.positionV3 =
+				Avoider.add(childR.positionV3, vector3(),
+				            avoid_speed.positionV3,
+				            drone_distance)
+
+			--[[
 			-- avoid my parent
 			if vns.parentR ~= nil then
 				avoid_speed.positionV3 =
@@ -39,6 +56,7 @@ function Avoider.step(vns, surpress_or_not)
 				            	avoid_speed.positionV3,
 				            	drone_distance)
 			end end end
+			--]]
 		end
 
 		if childR.robotTypeS == "pipuck" then
@@ -87,7 +105,7 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold)
 	if d < threshold then
 		dV3:normalize()
 		local transV3 = - 0.3 * math.log(d/threshold) * dV3:normalize()
-		ans = ans + transV3--:rotate(quaternion(math.pi/3, vector3(0,0,1)))
+		ans = ans + transV3:rotate(quaternion(math.pi/4, vector3(0,0,1)))
 	end
 	return ans
 end

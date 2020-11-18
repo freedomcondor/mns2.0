@@ -66,17 +66,44 @@
     -->
 
     <distribute>
-      <position method="grid" center="0,0,0" distances="1.0,0.5,0"
-                layout="15,3,1" />
+      <position method="grid" center="-0.10,1,0" distances="1.0,0.5,0"
+                layout="15,1,1" />
       <orientation method="grid" center="0,0,0" distances="0,0,0"
-                   layout="15,3,1" />
-      <entity quantity="45" base_num="1" max_trials="20">
+                   layout="15,1,1" />
+      <entity quantity="15" base_num="1" max_trials="20">
         <drone id="drone">
           <!--body position="0,0,0" orientation="0,0,0"/-->
           <controller config="drone"/>
         </drone>
       </entity>
     </distribute>
+
+    <distribute>
+      <position method="grid" center="0,0,0" distances="1.0,0.5,0"
+                layout="15,1,1" />
+      <orientation method="grid" center="0,0,0" distances="0,0,0"
+                   layout="15,1,1" />
+      <entity quantity="15" base_num="16" max_trials="20">
+        <drone id="drone">
+          <!--body position="0,0,0" orientation="0,0,0"/-->
+          <controller config="drone"/>
+        </drone>
+      </entity>
+    </distribute>
+
+    <distribute>
+      <position method="grid" center="-0.10,-1,0" distances="1.0,0.5,0"
+                layout="15,1,1" />
+      <orientation method="grid" center="0,0,0" distances="0,0,0"
+                   layout="15,1,1" />
+      <entity quantity="15" base_num="31" max_trials="20">
+        <drone id="drone">
+          <!--body position="0,0,0" orientation="0,0,0"/-->
+          <controller config="drone"/>
+        </drone>
+      </entity>
+    </distribute>
+
 
     <!-- add pi-puck robots -->
     <distribute>
@@ -131,8 +158,8 @@
                       label="builderbot_qtopengl_user_functions" >
       </user_functions>
       <camera>
+        <placement index="1" position="12.8128,-11.7442,15.4046" look_at="12.2747,-11.1973,14.7633" up="-0.449811,0.45714,0.767263" lens_focal_length="65" />
         <placement idx="0" position="  0,  0, 20"  look_at="0,0,10"   lens_focal_length="50" up="1,0,0"/>
-        <placement idx="1" position="  0,-15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
         <placement idx="2" position=" 15,-15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
         <placement idx="3" position=" 15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
         <placement idx="4" position=" 15, 15, 10"  look_at="0,0,0.25" lens_focal_length="90" />

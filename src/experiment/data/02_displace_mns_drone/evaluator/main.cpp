@@ -39,28 +39,28 @@ double height= 1.5;
 Vector3 goal_locs[N_ROBOTS] = {
 	//1
 	Vector3(),
-	Vector3(-dis/2, -dis, 0),
-	Vector3(-dis/2, dis, 0),
+	Vector3(-dis/3, -dis, 0),
+	Vector3(-dis/3, dis, 0),
 
 	//2
 	Vector3(-dis, 0, 0),
-	Vector3(-dis*3/2, -dis, 0),
-	Vector3(-dis*3/2, dis, 0),
+	Vector3(-dis -dis/3, -dis, 0),
+	Vector3(-dis -dis/3, dis, 0),
 
 	//3
 	Vector3(-dis*2, 0, 0),
-	Vector3(-dis*5/2, -dis, 0),
-	Vector3(-dis*5/2, dis, 0),
+	Vector3(-dis*2 -dis/3, -dis, 0),
+	Vector3(-dis*2 -dis/3, dis, 0),
 
 	//4
 	Vector3(-dis*3, 0, 0),
-	Vector3(-dis*7/2, -dis, 0),
-	Vector3(-dis*7/2, dis, 0),
+	Vector3(-dis*3 -dis/3, -dis, 0),
+	Vector3(-dis*3 -dis/3, dis, 0),
 
 	//5
 	Vector3(-dis*4, 0, 0),
-	Vector3(-dis*9/2, -dis, 0),
-	Vector3(-dis*9/2, dis, 0),
+	Vector3(-dis*4 -dis*2/3, -dis/2, 0),
+	Vector3(-dis*4 -dis*2/3, dis/2, 0),
 };
 
 Vector3 locs[N_ROBOTS][N_STEPS];

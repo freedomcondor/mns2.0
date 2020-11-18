@@ -42,7 +42,7 @@ function DroneConnector.step(vns)
 	-- for sight report, generate quadcopters
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "reportSight")) do
 		local drone = DroneConnector.calcQuadR(msgM.fromS, seenMarker, msgM.dataT.mySight)
-		if drone ~= nil and drone.positionV3:length() < 2.0 then
+		if drone ~= nil and drone.positionV3:length() < 1.9 then
 			vns.connector.seenRobots[msgM.fromS] = drone
 		end
 	end

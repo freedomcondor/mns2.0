@@ -18,10 +18,16 @@ end
 
 function Assigner.addParent(vns, robotR)
 	robotR.scale_assign_offset = vns.ScaleManager.Scale:new()
+	if vns.assigner.targetS == robotR.idS then
+		vns.assigner.targetS = nil
+	end
 end
 
 function Assigner.addChild(vns, robotR)
 	robotR.scale_assign_offset = vns.ScaleManager.Scale:new()
+	if vns.assigner.targetS == robotR.idS then
+		vns.assigner.targetS = nil
+	end
 end
 
 function Assigner.deleteParent(vns)
@@ -126,10 +132,12 @@ function Assigner.step(vns)
 				--vns.childrenRT[assignTargetS].scale_assign_offset:inc(vns.childrenRT[msgM.fromS].robotTypeS)
 				vns.childrenRT[assignTargetS].scale_assign_offset = 
 					vns.childrenRT[assignTargetS].scale_assign_offset + msgM.dataT.scale
+				vns.childrenRT[assignTargetS].lastSendScale = nil
 			elseif vns.parentR ~= nil and vns.parentR.idS == assignTargetS then
 				--vns.parentR.scale_assign_offset:inc(vns.childrenRT[msgM.fromS].robotTypeS)
 				vns.parentR.scale_assign_offset = 
 					vns.parentR.scale_assign_offset + msgM.dataT.scale
+				vns.parentR.lastSendScale = nil
 			end
 			vns.deleteChild(vns, msgM.fromS)
 		end
@@ -143,10 +151,12 @@ function Assigner.step(vns)
 				--vns.childrenRT[assignFrom].scale_assign_offset:dec(vns.childrenRT[msgM.fromS].robotTypeS)
 				vns.childrenRT[assignFrom].scale_assign_offset = 
 					vns.childrenRT[assignFrom].scale_assign_offset - msgM.dataT.scale
+				vns.childrenRT[assignFrom].lastSendScale = nil
 			elseif vns.parentR ~= nil and vns.parentR.idS == assignFrom then
 				--vns.parentR.scale_assign_offset:dec(vns.childrenRT[msgM.fromS].robotTypeS)
 				vns.parentR.scale_assign_offset = 
 					vns.parentR.scale_assign_offset - msgM.dataT.scale
+				vns.parentR.lastSendScale = nil
 			end
 		end
 	end

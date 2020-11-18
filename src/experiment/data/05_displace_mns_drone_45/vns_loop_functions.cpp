@@ -67,8 +67,8 @@ if (RECORD == 1) {
 }
 
 if (DISPLACE == 1) {
-      UInt32 unRemoveStep = 450;
-      UInt32 unAddinStep = 520;
+      UInt32 unRemoveStep = 330;
+      UInt32 unAddinStep = 400;
 
       if (m_unStepCount == unRemoveStep) {
          int robot_index = 6;

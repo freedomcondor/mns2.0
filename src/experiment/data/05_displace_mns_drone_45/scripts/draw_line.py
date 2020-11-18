@@ -1,22 +1,32 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
+import os
 
-testfolder_build = 'experiment/data/05_displace_mns_drone_45' 
-testfolder_src = '../src/' + testfolder_build
-data_set = 'random'
+mnsfolder = '/Users/harry/Desktop/mns2.0/'
+casefolder = 'experiment/data/05_displace_mns_drone_45'
+testfolder_build = mnsfolder + 'build/' + casefolder
+testfolder_src = mnsfolder + 'src/' + casefolder
 
-test_number = int(sys.argv[1])
+data_set = sys.argv[1]
 
-jump_timestep = 450
-total_timestep = 1500
+jump_timestep = 330
+total_timestep = 1000
 
 data = []
 for i in range(total_timestep):
 	data.append([])
 
-for i in range(1,test_number + 1):
-	file = open(testfolder_src + "/" + data_set + "/run" + str(i) + "/result2.txt","r")
+i = 0
+for folder in os.walk(testfolder_src + "/" + data_set + "/") :
+	#jump over the first one
+	if folder[1] != [] : 
+		continue
+
+	i = i + 1
+	
+	#file = open(testfolder_src + "/" + data_set + "/run" + str(i) + "/result2.txt","r")
+	file = open(folder[0] + "/result2.txt","r")
 	j = 0
 	for line in file:
 		data[j].append(float(line))
@@ -26,7 +36,7 @@ for i in range(1,test_number + 1):
 			print(i)
 	file.close()
 
-	file = open(testfolder_src + "/" + data_set + "/run" + str(i) + "/result1.txt","r")
+	file = open(folder[0] + "/result1.txt","r")
 
 	j = 0
 	for line in file:
@@ -40,7 +50,7 @@ for i in range(1,test_number + 1):
 divide = 30
 showdata = []
 showindex = []
-for i in range(int(divide * (jump_timestep - 300) / total_timestep) , divide + 1):
+for i in range(int(divide * (jump_timestep - 270) / total_timestep) , divide + 1):
 	showindex.append(int(i * total_timestep / divide))
 	showdata.append(data[int(total_timestep / divide * i) - 1])
 

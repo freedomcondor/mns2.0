@@ -17,7 +17,7 @@ function Connector.reset(vns)
 	vns.connector.waitingRobots = {}
 	vns.connector.seenRobots = {}
 	vns.connector.locker_count = 3
-	vns.connector.lastid_count = 0
+	vns.connector.lastid = {}
 end
 
 function Connector.prestep(vns)
@@ -50,8 +50,7 @@ function Connector.newVnsID(vns)
 end
 
 function Connector.updateVnsID(vns, _idS, _idN)
-	vns.connector.lastidS = vns.idS
-	vns.connector.lastid_count = vns.scale:totalNumber() + 2
+	vns.connector.lastid[vns.idS] = vns.scale:totalNumber() + 2
 	vns.idS = _idS
 	vns.idN = _idN
 	local childrenScale = vns.ScaleManager.Scale:new()
@@ -130,6 +129,7 @@ function Connector.update(vns)
 		vns.Msg.send(vns.parentR.idS, "dismiss")
 		Connector.newVnsID(vns)
 		vns.deleteParent(vns)
+		vns.resetMorphology(vns)
 	end
 
 	-- check locker
@@ -138,10 +138,12 @@ function Connector.update(vns)
 	end
 
 	-- check last id
-	if vns.connector.lastid_count > 0 then
-		vns.connector.lastid_count = vns.connector.lastid_count - 1
-	elseif vns.connector.lastid_count == 0 then
-		vns.connector.lastidS = nil
+	for idS, lastid in pairs(vns.connector.lastid) do
+		if vns.connector.lastid[idS] > 0 then
+			vns.connector.lastid[idS] = vns.connector.lastid[idS] - 1
+		elseif vns.connector.lastid[idS] == 0 then
+			vns.connector.lastid[idS] = nil
+		end
 	end
 end
 
@@ -172,6 +174,7 @@ function Connector.step(vns)
 		if vns.parentR ~= nil and msgM.fromS == vns.parentR.idS then
 			Connector.newVnsID(vns)
 			vns.deleteParent(vns)
+			vns.resetMorphology(vns)
 		end
 		if vns.childrenRT[msgM.fromS] ~= nil then
 			vns.deleteChild(vns, msgM.fromS)
@@ -210,8 +213,7 @@ function Connector.ackAll(vns)
 		   msgM.dataT.idN > vns.idN and
 		   vns.connector.locker_count == 0 and
 		   (vns.parentR == nil or
-			vns.connector.lastidS == nil or 
-			vns.connector.lastidS ~= msgM.dataT.idS
+			vns.connector.lastid[msgM.dataT.idS] == nil
 		   ) then
 			local disVec = 
 					vns.api.virtualFrame.V3_RtoV(

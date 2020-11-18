@@ -3,8 +3,8 @@ package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/utils/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/vns/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/data/01_displace_mns/?.lua"
 
---pairs = require("AlphaPairs")
-pairs = require("RandomPairs")
+pairs = require("AlphaPairs")
+--pairs = require("RandomPairs")
 
 -- includes -------------
 logger = require("Logger")

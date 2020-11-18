@@ -139,8 +139,8 @@ Vector3 goal_locs[N_ROBOTS] = {
 
 	//3-5 
 	Vector3(-dis*14, 0, 0),
-	Vector3(-dis*14 - dis/3, -dis, 0),
-	Vector3(-dis*14 - dis/3, dis, 0),
+	Vector3(-dis*14 - dis*2/3, -dis/2, 0),
+	Vector3(-dis*14 - dis*2/3, dis/2, 0),
 };
 
 Vector3 locs[N_ROBOTS][N_STEPS];
