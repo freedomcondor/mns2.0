@@ -5,99 +5,74 @@ local Avoider = {}
 function Avoider.create(vns)
 	vns.avoider = {}
 	vns.avoider.obstacles = {}
+	Avoider.reset(vns)
 end
 
-function Avoider.step(vns, surpress_or_not)
+function Avoider.reset(vns)
+	vns.avoider = {}
+end
+
+function Avoider.preStep(vns)
+	vns.avoider.obstacles = {}
+end
+
+
+function Avoider.step(vns)
 	local drone_distance = 0.50
-	-- for each children avoid
-	for idS, childR in pairs(vns.childrenRT) do
-		local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
-		--childVns.avoiderSpeed.locV3 = Vec3:create()
+	local pipuck_distance = 0.30
+	local block_distance = 0.30
+	local predator_distance = 0.50
 
-		if childR.robotTypeS == "drone" then
-			-- avoid seen drones 
-			for jidS, robotR in pairs(vns.connector.seenRobots) do
-				if robotR.robotTypeS == "drone" and jidS ~= idS then
-					avoid_speed.positionV3 =
-						Avoider.add(childR.positionV3, robotR.positionV3,
-									avoid_speed.positionV3,
-						            drone_distance)
-				end
-			end
-
-			-- avoid my self
+	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
+	-- avoid seen robots
+	for idS, robotR in pairs(vns.connector.seenRobots) do
+		-- avoid drone
+		if robotR.robotTypeS == vns.robotTypeS and
+		   robotR.robotTypeS == "drone" then
 			avoid_speed.positionV3 =
-				Avoider.add(childR.positionV3, vector3(),
+				Avoider.add(vector3(), robotR.positionV3,
 				            avoid_speed.positionV3,
-				            drone_distance)
-
-			--[[
-			-- avoid my parent
-			if vns.parentR ~= nil then
-				avoid_speed.positionV3 =
-					Avoider.add(childR.positionV3, vns.parentR.positionV3,
-				            	avoid_speed.positionV3,
-				            	drone_distance)
-			end
-
-			-- avoid my self
+							drone_distance,
+				            true)
+		end
+		-- avoid pipuck
+		if robotR.robotTypeS == vns.robotTypeS and
+		   robotR.robotTypeS == "pipuck" then
 			avoid_speed.positionV3 =
-				Avoider.add(childR.positionV3, vector3(),
+				Avoider.add(vector3(), robotR.positionV3,
 				            avoid_speed.positionV3,
-				            drone_distance)
-
-			-- avoid children
-			for jidS, jchildR in pairs(vns.childrenRT) do
-				if jchildR.robotTypeS == childR.robotTypeS then -- else continue
-				if idS ~= jidS then -- else continue
-	
-				avoid_speed.positionV3 =
-					Avoider.add(childR.positionV3, jchildR.positionV3,
-				            	avoid_speed.positionV3,
-				            	drone_distance)
-			end end end
-			--]]
-		end
-
-		if childR.robotTypeS == "pipuck" then
-			-- avoid seen pipucks
-			for jidS, robotR in pairs(vns.connector.seenRobots) do
-				if robotR.robotTypeS == "pipuck" and jidS ~= idS then
-					avoid_speed.positionV3 =
-						Avoider.add(childR.positionV3, robotR.positionV3,
-									avoid_speed.positionV3,
-						            0.15)
-				end
-			end
-
-			-- avoid obstacles
-			for j, obstacle in ipairs(vns.avoider.obstacles) do
-				avoid_speed.positionV3 = 
-					Avoider.add(childR.positionV3, obstacle.positionV3,
-								avoid_speed.positionV3,
-					            0.30)
-			end
-		end
-
-		if surpress_or_not == true then
-			childR.goal.transV3 = avoid_speed.positionV3
-		else
-			childR.goal.transV3 = 
-				childR.goal.transV3 + avoid_speed.positionV3
+				            pipuck_distance,
+				            true)
 		end
 	end
-	
-	-- avoid predator
-	--[[
-	for j, obstacle in ipairs(vns.avoider.obstacles) do
-		if obstacle.robotTypeS == "block" and obstacle.type == 2 then
-			vns.Spreader.emergency(vns, vector3(0.1, 0, 0), vector3()) -- TODO: run away from predator
+	-- avoid obstacles
+	if vns.robotTypeS ~= "drone" then
+		for i, obstacle in ipairs(vns.avoider.obstacles) do
+			avoid_speed.positionV3 = 
+				Avoider.add(vector3(), obstacle.positionV3,
+				            avoid_speed.positionV3,
+				            block_distance)
 		end
 	end
-	--]]
+
+	-- avoid predators
+	for i, obstacle in ipairs(vns.avoider.obstacles) do
+		if obstacle.type == 3 and vns.robotTypeS == "drone" then
+			local runawayV3 = vector3()
+			--runawayV3 = Avoider.add(vector3(), obstacle.positionV3, runawayV3, predator_distance)
+			runawayV3 = vector3() - obstacle.positionV3
+			runawayV3.z = 0
+			runawayV3:normalize()
+			runawayV3 = runawayV3 * 0.03
+			vns.Spreader.emergency(vns, runawayV3, vector3(), "green") -- TODO: run away from predator
+		end
+	end
+
+	vns.goal.transV3 = avoid_speed.positionV3
+	vns.goal.rotateV3 = avoid_speed.orientationV3
 end
 
-function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold)
+function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	local dV3 = myLocV3 - obLocV3
 	local d = dV3:length()
 	if d == 0 then return accumulatorV3 end
@@ -105,11 +80,14 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold)
 	if d < threshold then
 		dV3:normalize()
 		local transV3 = - 0.3 * math.log(d/threshold) * dV3:normalize()
-		ans = ans + transV3:rotate(quaternion(math.pi/4, vector3(0,0,1)))
+		if vortex == true then
+			ans = ans + transV3:rotate(quaternion(math.pi/4, vector3(0,0,1)))
+		else
+			ans = ans + transV3
+		end
 	end
 	return ans
 end
-
 
 function Avoider.create_avoider_node(vns)
 	return function()

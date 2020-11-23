@@ -13,9 +13,8 @@ VNS.Assigner = require("Assigner")
 VNS.Allocator = require("Allocator")
 --VNS.Allocator = require("Allocator_old")
 VNS.Avoider = require("Avoider")
---[[
 VNS.Spreader = require("Spreader")
---]]
+
 VNS.Driver= require("Driver")
 
 VNS.Modules = {
@@ -28,9 +27,8 @@ VNS.Modules = {
 
 	VNS.Allocator,
 	VNS.Avoider,
---[[
 	VNS.Spreader,
---]]
+
 	VNS.Driver,
 }
 
@@ -173,9 +171,7 @@ function VNS.create_vns_node_without_driver(vns)
 		vns.ScaleManager.create_scalemanager_node(vns),
 		vns.Allocator.create_allocator_node(vns),
 		vns.Avoider.create_avoider_node(vns),
-		--[[
 		vns.Spreader.create_spreader_node(vns),
-		]]
 		--vns.Driver.create_driver_node(vns),
 	}}
 end

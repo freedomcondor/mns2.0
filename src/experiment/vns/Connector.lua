@@ -20,7 +20,7 @@ function Connector.reset(vns)
 	vns.connector.lastid = {}
 end
 
-function Connector.prestep(vns)
+function Connector.preStep(vns)
 	vns.connector.seenRobots = {}
 end
 

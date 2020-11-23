@@ -23,7 +23,7 @@ end
 
 function api.debug.showVirtualFrame()
 	api.debug.drawArrow(
-		"red", 
+		"green", 
 		vector3(0,0,0.1), 
 		vector3(0.2,0,0.1):rotate(api.virtualFrame.orientationQ)
 	)
@@ -33,6 +33,14 @@ function api.debug.showChildren(vns)
 	-- draw children location
 	for i, robot in pairs(vns.childrenRT) do
 		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robot.positionV3)))
+	end
+end
+
+function api.debug.showObstacles(vns)
+	for i, obstacle in ipairs(vns.avoider.obstacles) do
+		api.debug.drawArrow("red", vector3(), 
+		api.virtualFrame.V3_VtoR(vector3(obstacle.positionV3)))
+		--obstacle.positionV3)
 	end
 end
 

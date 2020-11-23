@@ -16,6 +16,11 @@ function DroneConnector.step(vns)
 		vns.connector.seenRobots
 	)
 
+	vns.api.droneAddObstacles(
+		vns.api.droneDetectTags(),
+		vns.avoider.obstacles
+	)
+
 	-- report my sight to all seen pipucks, and drones in parent and children
 	--[[
 	if vns.parentR ~= nil and vns.parentR.robotTypeS == "drone" then
@@ -35,7 +40,7 @@ function DroneConnector.step(vns)
 
 	---[[
 	-- broadcast my sight so other drones would see me
-	vns.Msg.send("ALLMSG", "reportSight", {mySight = vns.connector.seenRobots})
+	vns.Msg.send("ALLMSG", "reportSight", {mySight = vns.connector.seenRobots, myObstacles = vns.avoider.obstacles})
 	--]]
 
 	-- for sight report, generate quadcopters
@@ -52,6 +57,19 @@ function DroneConnector.step(vns)
 			robotTypeS = robotR.robotTypeS,
 			positionV3 = vns.api.virtualFrame.V3_RtoV(robotR.positionV3),
 			orientationQ = vns.api.virtualFrame.Q_RtoV(robotR.orientationQ),
+		}
+	end
+
+	-- convert vns.avoider.obstacles from real frame into virtual frame
+	local obstaclesinR = vns.avoider.obstacles
+	vns.avoider.obstacles = {}
+	for i, v in ipairs(obstaclesinR) do
+		vns.avoider.obstacles[i] = {
+			idN = i,
+			type = v.type,
+			robotTypeS = v.robotTypeS,
+			positionV3 = vns.api.virtualFrame.V3_RtoV(v.positionV3),
+			orientationQ = vns.api.virtualFrame.Q_RtoV(v.orientationQ),
 		}
 	end
 end

@@ -43,6 +43,35 @@ function PipuckConnector.step(vns)
 					}
 				end
 			end
+
+			-- add obstacles
+			if msgM.dataT.myObstacles ~= nil then
+				for i, obstacle in ipairs(msgM.dataT.myObstacles) do
+					local positionV3 = quad.positionV3 + 
+									   vector3(obstacle.positionV3):rotate(quad.orientationQ) +
+									   vector3(0,0,0.08)
+					local orientationQ = obstacle.orientationQ * quad.orientationQ
+
+					-- check positionV3 in existing obstacles
+					local flag = true
+					for j, existing_ob in ipairs(vns.avoider.obstacles) do
+						if (existing_ob.positionV3 - positionV3):length() < 0.02 then
+							flag = false
+							break
+						end
+					end
+
+					if flag == true then
+						vns.avoider.obstacles[#vns.avoider.obstacles + 1] = {
+							idN = #vns.avoider.obstacles + 1,
+							type = obstacle.type,
+							robotTypeS = "block",
+							positionV3 = positionV3,
+							orientationQ = orientationQ,
+						}
+					end
+				end
+			end
 		end
 	end
 
@@ -55,6 +84,19 @@ function PipuckConnector.step(vns)
 			robotTypeS = robotR.robotTypeS,
 			positionV3 = vns.api.virtualFrame.V3_RtoV(robotR.positionV3),
 			orientationQ = vns.api.virtualFrame.Q_RtoV(robotR.orientationQ),
+		}
+	end
+
+	-- convert vns.avoider.obstacles from real frame into virtual frame
+	local obstaclesinR = vns.avoider.obstacles
+	vns.avoider.obstacles = {}
+	for i, v in ipairs(obstaclesinR) do
+		vns.avoider.obstacles[i] = {
+			idN = i,
+			type = v.type,
+			robotTypeS = v.robotTypeS,
+			positionV3 = vns.api.virtualFrame.V3_RtoV(v.positionV3),
+			orientationQ = vns.api.virtualFrame.Q_RtoV(v.orientationQ),
 		}
 	end
 end

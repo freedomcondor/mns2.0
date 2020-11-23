@@ -378,7 +378,7 @@ function Allocator.allocate(vns)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
 	--[[
-if robot.id == "drone24" or robot.id == "pipuck2" then
+if robot.id == "drone2" then
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)

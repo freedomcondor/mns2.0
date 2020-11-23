@@ -19,6 +19,14 @@ end
 ---- Step Function ---------------------
 --function api.preStep() api.preStep() end
 
+api.commonPreStep = api.preStep
+function api.preStep()
+	if robot.directional_leds ~= nil then
+		robot.directional_leds.set_all_colors('black')
+	end
+	api.commonPreStep()
+end
+
 api.commonPostStep = api.postStep
 function api.postStep()
 	robot.differential_drive.set_target_velocity(
@@ -57,5 +65,43 @@ end
 
 api.setSpeed = api.pipuckSetSpeed
 --api.move is implemented in commonAPI
+
+---- Debugs --------------------
+api.debug.commonShowChildren = api.debug.showChildren
+function api.debug.showChildren(vns)
+	api.debug.commonShowChildren(vns)
+	-- draw children location
+	if vns.parentR ~= nil then
+		api.pipuckShowLED(api.virtualFrame.V3_VtoR(vector3(vns.parentR.positionV3)))
+	else
+		if robot.directional_leds ~= nil then
+			robot.directional_leds.set_all_colors('white')
+		end
+	end
+end
+
+---- LEDs --------------------
+-- everything in robot hardware's coordinate frame
+function api.pipuckShowLED(vec)
+	-- direction is a vector3, x front, y left
+	-- th = 0 front, clockwise, -180 to 180
+	local th
+	if vec.x == 0 and vec.y > 0 then th = -90
+	elseif vec.x == 0 and vec.y < 0 then th = 90
+	elseif vec.x == 0 and vec.y == 0 then th = 0
+	elseif vec.x > 0 then th = math.atan(-vec.y / vec.x) * 180 / math.pi
+	elseif vec.x < 0 then th = math.atan(-vec.y / vec.x) * 180 / math.pi
+		if vec.y > 0 then th = th - 180
+		else th = th + 180
+		end
+	end
+
+	local count = math.floor((th + 22.5) / 45)
+	count = count % 8 + 1
+
+	if robot.directional_leds ~= nil then
+		robot.directional_leds.set_single_color(count, 'white')
+	end
+end
 
 return api

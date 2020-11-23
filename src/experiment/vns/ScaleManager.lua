@@ -47,15 +47,28 @@ function ScaleManager.step(vns)
 	end
 
 	-- add assign_offset
+	-- and check assign_offset minus
 	for idS, robotR in pairs(vns.childrenRT) do 
 		if robotR.scale_assign_offset ~= nil then
 			robotR.scale = robotR.scale + robotR.scale_assign_offset
-			--robotR.scale_assign_offset = nil
+		end
+		for typeS, number in pairs(robotR.scale) do
+			if number < 0 then robotR.scale[typeS] = 0 end
+		end
+		if robotR.scale[robotR.robotTypeS] == nil or 
+		   robotR.scale[robotR.robotTypeS] < 1 then
+			robotR.scale[robotR.robotTypeS] = 1
 		end
 	end
 	if vns.parentR ~= nil and vns.parentR.scale_assign_offset ~= nil then
 		vns.parentR.scale = vns.parentR.scale + vns.parentR.scale_assign_offset
-		--vns.parentR.scale_assign_offset = nil
+		for typeS, number in pairs(vns.parentR.scale) do
+			if number < 0 then vns.parentR.scale[typeS] = 0 end
+		end
+		if vns.parentR.scale[vns.parentR.robotTypeS] == nil or
+		   vns.parentR.scale[vns.parentR.robotTypeS] < 1 then
+			vns.parentR.scale[vns.parentR.robotTypeS] = 1
+		end
 	end
 
 	-- sum up scale

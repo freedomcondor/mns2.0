@@ -158,9 +158,9 @@ end
 function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 	-- this function adds robots (in real frame) from seen tags (in real robot frames)
 	local robotTypeIndex = {
-		{index = 0, typeS = "block"},
-		{index = 40, typeS = "pipuck"},
-		{index = 60, typeS = "builderbot"},
+		{index = 0, typeS = "block"}, -- 0 as block
+		{index = 40, typeS = "pipuck"}, -- 1 to 40 as pipuck
+		{index = 60, typeS = "builderbot"},  -- 41 to 60 as builderbot
 	}
 
 	for i, tag in ipairs(tags) do
@@ -170,7 +170,7 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 		end
 		if robotTypeS == nil then robotTypeS = "marker" end
 
-		if robotTypeS ~= nil then
+		if robotTypeS ~= nil and robotTypeS ~= "block" then
 			local idS = robotTypeS .. math.floor(tag.id)
 			--[[
 			seenRobots[idS] = {
@@ -191,18 +191,18 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 	end
 end
 
---[[
-function drone_add_obstacles(obstacles, tags) -- tags is an array of R
-
-	for i, v in pairs(obstacles) do
-		obstacles[i] = nil
-	end
+function api.droneAddObstacles(tags, obstaclesInRealFrame) -- tags is an array of R
 	for i, tag in ipairs(tags) do
-		if tag.robotTypeS == "block" then
-			obstacles[#obstacles + 1] = tag
+		if tag.id == 0 then
+			obstaclesInRealFrame[#obstaclesInRealFrame + 1] = {
+				idN = #obstaclesInRealFrame + 1,
+				type = tag.type,
+				robotTypeS = "block",
+				positionV3 = tag.positionV3,
+				orientationQ = tag.orientationQ,
+			}
 		end
 	end
 end
---]]
 
 return api

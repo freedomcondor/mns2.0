@@ -83,6 +83,19 @@ configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/02_allocate/morphology_5_c
                ${CMAKE_BINARY_DIR}/experiment/testing/02_allocate/morphology_5_children.lua
                COPYONLY)
 
+# 03_avoide
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/03_avoid/vns.argos.in
+               ${CMAKE_BINARY_DIR}/experiment/testing/03_avoid/vns.argos)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/03_avoid/drone.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/03_avoid/drone.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/03_avoid/pipuck.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/03_avoid/pipuck.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/03_avoid/block.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/03_avoid/block.lua)
+configure_file(${CMAKE_SOURCE_DIR}/experiment/testing/03_avoid/morphology.lua
+               ${CMAKE_BINARY_DIR}/experiment/testing/03_avoid/morphology.lua
+               COPYONLY)
+
 # data 01_displace_mns
 configure_file(${CMAKE_SOURCE_DIR}/experiment/data/01_displace_mns/vns.argos.in
                ${CMAKE_BINARY_DIR}/experiment/data/01_displace_mns/vns.argos)
