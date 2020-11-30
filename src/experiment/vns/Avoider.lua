@@ -18,9 +18,9 @@ end
 
 
 function Avoider.step(vns)
-	local drone_distance = 0.50
-	local pipuck_distance = 0.30
-	local block_distance = 0.30
+	local drone_distance = 1.00
+	local pipuck_distance = 0.20
+	local block_distance = 0.20
 	local predator_distance = 0.50
 
 	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
@@ -68,12 +68,15 @@ function Avoider.step(vns)
 		end
 	end
 
-	vns.goal.transV3 = avoid_speed.positionV3
-	vns.goal.rotateV3 = avoid_speed.orientationV3
+	if vns.parentR ~= nil then -- the brain can't be influended
+		vns.goal.transV3 = avoid_speed.positionV3
+		vns.goal.rotateV3 = avoid_speed.orientationV3
+	end
 end
 
 function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	local dV3 = myLocV3 - obLocV3
+	dV3.z = 0
 	local d = dV3:length()
 	if d == 0 then return accumulatorV3 end
 	local ans = accumulatorV3

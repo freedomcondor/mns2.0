@@ -1,7 +1,7 @@
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/api/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/utils/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/vns/?.lua"
-package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/data/01_displace_mns/?.lua"
+package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 
 pairs = require("RandomPairs")
 

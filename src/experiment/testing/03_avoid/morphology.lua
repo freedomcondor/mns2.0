@@ -74,6 +74,7 @@ return
 				positionV3 = vector3(-dis, dis, 0),
 				orientationQ = quaternion(0, vector3(0,0,1)),
 			},
+			--[[
 			{	robotTypeS = "drone",
 				positionV3 = vector3(-dis, -dis*2, 0),
 				orientationQ = quaternion(0, vector3(0,0,1)),
@@ -82,6 +83,7 @@ return
 				positionV3 = vector3(-dis, dis*2, 0),
 				orientationQ = quaternion(0, vector3(0,0,1)),
 			},
+			--]]
 		---[[
 			-- tail tip
 			{	robotTypeS = "drone",

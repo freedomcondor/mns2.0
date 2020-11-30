@@ -28,7 +28,7 @@
         <pipuck_rangefinders implementation="default" show_rays="false" />
         <!--wifi implementation="default" show_rays="false" /-->
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/data/05_displace_mns_drone_45/pipuck.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua" />
     </lua_controller>
 
      <!-- Drone Controller -->
@@ -47,7 +47,7 @@
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/data/05_displace_mns_drone_45/drone.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" />
     </lua_controller>
   </controllers>
 
@@ -146,7 +146,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="@CMAKE_BINARY_DIR@/libvns_loop_functions_05_displace_drone_45"
+  <loop_functions library="@CMAKE_CURRENT_BINARY_DIR@/libvns_loop_functions_05_displace_drone_45"
                   label="vns_loop_functions_05_displace_drone_45"/>
 
   <!-- ****************** -->

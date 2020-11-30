@@ -1,0 +1,6 @@
+add_subdirectory(00_environment_setup)
+add_subdirectory(01_recruit_assign_drive)
+add_subdirectory(02_allocate)
+add_subdirectory(03_avoid)
+add_subdirectory(04_scenario)
+add_subdirectory(05_scenario2)

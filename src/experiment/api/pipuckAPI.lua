@@ -41,15 +41,18 @@ end
 function api.pipuckSetWheelSpeed(x, y)
 	-- x, y in m/s
 	-- the scalar is to make x,y match m/s
-	local scalar = 1
-	api.actuator.setNewWheelSpeed(x * scalar, y * scalar)
+	local limit = 0.05
+	if x > limit then x = limit end
+	if x < -limit then x = -limit end
+	if y > limit then y = limit end
+	if y < -limit then y = -limit end
+	api.actuator.setNewWheelSpeed(x, y)
 end
 
 function api.pipuckSetRotationSpeed(x, th)
 	-- x, in m/s, x front,
 	-- th in rad/s, counter-clockwise positive
-	--local scalar = 0.23
-	local scalar = 0.50
+	local scalar = 0.01
 	local aug = scalar * th
 	api.pipuckSetWheelSpeed(x - aug, x + aug)
 end
@@ -57,9 +60,9 @@ end
 function api.pipuckSetSpeed(x, y)
 	local th = math.atan(y/x)
 	if x == 0 and y == 0 then th = 0 end
-	local limit = math.pi / 45
-	if th > limit then th = limit; x = x/2
-	elseif th < -limit then th = -limit; x = x/2 end
+	--local limit = math.pi / 3 * 2
+	--if th > limit then th = limit
+	--elseif th < -limit then th = -limit end
 	api.pipuckSetRotationSpeed(x, th)
 end
 

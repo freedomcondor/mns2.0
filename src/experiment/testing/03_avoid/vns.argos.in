@@ -28,7 +28,7 @@
         <pipuck_rangefinders implementation="default" show_rays="false" />
         <wifi implementation="default" show_rays="false" />
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/testing/03_avoid/pipuck.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua" />
     </lua_controller>
 
      <!-- Drone Controller -->
@@ -46,7 +46,7 @@
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/testing/03_avoid/drone.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" />
     </lua_controller>
 
     	<!-- Block Controller -->
@@ -58,7 +58,7 @@
       <sensors>
         <radios implementation="default" show_rays="true"/>
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/testing/03_avoid/block.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/block.lua" />
     </lua_controller>
   </controllers>
 
@@ -99,6 +99,7 @@
       <controller config="drone"/>
     </drone>
     
+    <!--
     <drone id="drone7">
       <body position="-3.4,1.0,0" orientation="0,0,0"/>
       <controller config="drone"/>
@@ -108,6 +109,7 @@
       <body position="-3.4,-1.0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
+    -->
 
     <pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags">
        <body position="-0.6,-0.4,0" orientation="0,0,0"/>

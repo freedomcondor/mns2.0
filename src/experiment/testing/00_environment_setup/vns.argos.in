@@ -29,7 +29,7 @@
         <pipuck_rangefinders implementation="default" show_rays="true" />
         <wifi implementation="default" show_rays="false" />
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/testing/00_environment_setup/pipuck.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua" />
     </lua_controller>
 
      <!-- Drone Controller -->
@@ -47,7 +47,7 @@
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/testing/00_environment_setup/drone.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" />
     </lua_controller>
 
     <!-- Builderbot Controller -->
@@ -73,7 +73,7 @@
         <builderbot_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="@CMAKE_BINARY_DIR@/experiment/testing/00_environment_setup/builderbot.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/builderbot.lua" />
     </lua_controller>
   </controllers>
 

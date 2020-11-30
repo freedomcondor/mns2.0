@@ -1,0 +1,5 @@
+add_subdirectory(01_displace_mns)
+add_subdirectory(02_displace_mns_drone)
+add_subdirectory(03_cross_displace)
+add_subdirectory(04_cross_displace_drone)
+add_subdirectory(05_displace_mns_drone_45)

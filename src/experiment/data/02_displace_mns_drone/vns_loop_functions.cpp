@@ -141,6 +141,6 @@ if (DISPLACE == 1) {
    /****************************************/
    /****************************************/
 
-   REGISTER_LOOP_FUNCTIONS(CVNSLoopFunctions, "vns_loop_functions_02_displace_drone");
+   REGISTER_LOOP_FUNCTIONS(CVNSLoopFunctions, "vns_loop_functions_02_displace_mns_drone");
 
 }
