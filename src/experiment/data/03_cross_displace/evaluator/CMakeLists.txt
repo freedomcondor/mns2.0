@@ -8,7 +8,7 @@ add_definitions(
 	${simu_definitions}
 )
 
-add_executable(main 
+add_executable(main_03_cross_displace
 	${simu_cpps}
 	main.cpp
 )
@@ -17,6 +17,6 @@ include_directories(
 	${simu_include_dirs}
 )
 
-target_link_libraries(main 	
+target_link_libraries(main_03_cross_displace 	
 	${simu_link_libraries}
 )
