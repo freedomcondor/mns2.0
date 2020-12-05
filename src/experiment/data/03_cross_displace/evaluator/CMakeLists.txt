@@ -20,3 +20,6 @@ include_directories(
 target_link_libraries(main_03_cross_displace 	
 	${simu_link_libraries}
 )
+
+set_target_properties(main_03_cross_displace
+        PROPERTIES OUTPUT_NAME main)

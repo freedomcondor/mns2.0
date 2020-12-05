@@ -14,9 +14,23 @@ logger.enable()
 -- datas ----------------
 local bt
 --local vns
-local structure = require("morphology")
+local structure1 = require("morphology1")
 local structure2 = require("morphology2")
 local structure3 = require("morphology3")
+local gene = {
+	robotTypeS = "drone",
+	positionV3 = vector3(),
+	orientationQ = quaternion(),
+	children = {
+		structure1, 
+		structure2, 
+		structure3,
+	}
+}
+
+function VNS.Allocator.resetMorphology(vns)
+	vns.Allocator.setMorphology(vns, structure1)
+end
 
 -- argos functions ------
 --- init
@@ -31,7 +45,9 @@ end
 function reset()
 	vns.reset(vns)
 	if vns.idS == "drone1" then vns.idN = 1 end
-	vns.setGene(vns, structure)
+	vns.setGene(vns, gene)
+
+	vns.setMorphology(vns, structure1)
 	bt = BT.create(VNS.create_vns_node(vns))
 end
 
@@ -46,11 +62,11 @@ function step()
 	bt()
 
 	for i, obstacle in ipairs(vns.avoider.obstacles) do
-		if obstacle.type == 4 then
-			vns.setGene(vns, structure2)
+		if obstacle.type == 4 then -- blue
+			vns.setMorphology(vns, structure2)
 		end
-		if obstacle.type == 1 then
-			vns.setGene(vns, structure3)
+		if obstacle.type == 0 then -- black
+			vns.setMorphology(vns, structure3)
 		end
 	end
 

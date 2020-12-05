@@ -30,7 +30,8 @@ function step()
 	logger(robot.id, "-----------------------")
 	api.preStep()
 
-	api.move(vector3(0.01, 0, 0), vector3(0,0,math.pi/100))
+	--api.move(vector3(0.01, 0, 0), vector3(0,0,math.pi/100))
+	api.move(vector3(0.01, 0, 0), vector3(0,0,0))
 
 	robot.directional_leds.set_all_colors('black')
 	robot.directional_leds.set_single_color(2, 'white')

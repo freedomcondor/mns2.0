@@ -20,3 +20,6 @@ include_directories(
 target_link_libraries(main_05_displace_mns_drone_45 	
 	${simu_link_libraries}
 )
+
+set_target_properties(main_05_displace_mns_drone_45
+        PROPERTIES OUTPUT_NAME main)

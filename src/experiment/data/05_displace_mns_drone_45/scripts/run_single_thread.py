@@ -37,9 +37,9 @@ for i in range(test_start, test_end + 1):
 
 	os.system("mkdir " + testfolder_src + "/random/run" + str(i))
 
-	os.system(testfolder_build + "/evaluator/main_05_displace_mns_drone_45 " + str(jump) + " ./")
+	os.system(testfolder_build + "/evaluator/main " + str(jump) + " ./")
 	os.system("mv result.txt " + testfolder_src + "/random/run" + str(i) + "/result1.txt")
-	os.system(testfolder_build + "/evaluator/main_05_displace_mns_drone_45 " + str(total_length) + " ./")
+	os.system(testfolder_build + "/evaluator/main " + str(total_length) + " ./")
 	os.system("mv result.txt " + testfolder_src + "/random/run" + str(i) + "/result2.txt")
 
 	os.system("mv *.csv " + testfolder_src + "/random/run" + str(i))

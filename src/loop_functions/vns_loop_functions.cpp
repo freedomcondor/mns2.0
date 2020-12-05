@@ -1,6 +1,6 @@
 #include "vns_loop_functions.h"
 
-#define RECORD 0
+#define RECORD 1
 
 namespace argos {
 

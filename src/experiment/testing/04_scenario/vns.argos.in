@@ -154,15 +154,17 @@
       <controller config="drone"/>
     </drone>
 
+<!--
     <distribute>
       <position method="uniform" min="-4.5,-2.5,0" max="-3.5,2.5,0" />
       <orientation method="uniform" min="0,0,0" max="0,0,0" />
-      <entity quantity="2" base_num="2" max_trials="100">
+      <entity quantity="1" base_num="2" max_trials="100">
         <drone id="drone1">
           <controller config="drone"/>
         </drone>
       </entity>
     </distribute>
+-->
 
     <!-- pipucks -->
     <pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags">
@@ -171,9 +173,9 @@
     </pipuck>
 
     <distribute>
-      <position method="uniform" min="-4.5,-2.5,0" max="-3.5,2.5,0" />
+      <position method="uniform" min="-4.5,-1.0,0" max="-3.5,1.0,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="7" base_num="2" max_trials="100">
+      <entity quantity="2" base_num="2" max_trials="100">
         <pipuck id="pipuck"  wifi_medium="wifi" tag_medium="tags">
           <controller config="pipuck"/>
         </pipuck>
@@ -209,7 +211,7 @@
       <position method="uniform" min="-3,-1,0" max="-1,1,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
       <entity quantity="5" base_num="11" max_trials="100">
-  	    <block id="block" init_led_color="black"> <!--magenta, orange, green, blue-->
+  	    <block id="block" init_led_color="magenta"> <!--magenta, orange, green, blue-->
           <controller config="block"/>
   	    </block>
       </entity>
@@ -222,17 +224,19 @@
   	</block>
 
     <!-- target -->
-    <prototype id="target" movable="true">
+    <prototype id="target" movable="true" friction="2">
       <body position="3.5,0,0" orientation="0,0,0" />
       <links ref="base">
-        <link id="base" geometry="cylinder" radius="0.3" height="0.1" mass="0.1"
+        <link id="base" geometry="cylinder" radius="0.3" height="0.1" mass="0.01"
           position="0,0,0" orientation="0,0,0" />
       </links>
+      <devices>
+        <tags medium="tags">
+          <tag anchor="base" observable_angle="75" side_length="0.02"
+               position="0.000,0.000,0.11" orientation="0,0,0" />
+        </tags>
+      </devices>
     </prototype>
-  	<block id="block16" init_led_color="magenta"> <!--magenta, orange, green, blue-->
-     	<body position="3.5,0,0.11" orientation="0,0,0"/>
-      <controller config="block"/>
-  	</block>
 
   </arena>
 

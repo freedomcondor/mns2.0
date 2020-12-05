@@ -28,9 +28,9 @@ for i in range(1, test_number + 1):
 
 	os.system("mkdir " + testfolder_src + "/random/run" + str(i))
 
-	os.system(testfolder_build + "/evaluator/main_04_cross_displace_drone " + str(jump) + " ./")
+	os.system(testfolder_build + "/evaluator/main " + str(jump) + " ./")
 	os.system("mv result.txt " + testfolder_src + "/random/run" + str(i) + "/result1.txt")
-	os.system(testfolder_build + "/evaluator/main_04_cross_displace_drone " + str(total_length) + " ./")
+	os.system(testfolder_build + "/evaluator/main " + str(total_length) + " ./")
 	os.system("mv result.txt " + testfolder_src + "/random/run" + str(i) + "/result2.txt")
 
 	os.system("mv *.csv " + testfolder_src + "/random/run" + str(i))

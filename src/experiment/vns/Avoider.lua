@@ -19,8 +19,8 @@ end
 
 function Avoider.step(vns)
 	local drone_distance = 1.00
-	local pipuck_distance = 0.20
-	local block_distance = 0.20
+	local pipuck_distance = 0.15
+	local block_distance = 0.15
 	local predator_distance = 0.50
 
 	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
@@ -48,10 +48,15 @@ function Avoider.step(vns)
 	-- avoid obstacles
 	if vns.robotTypeS ~= "drone" then
 		for i, obstacle in ipairs(vns.avoider.obstacles) do
+			local vortex = false
+			--if obstacle.type == 1 then
+			--	vortex = true
+			--end
 			avoid_speed.positionV3 = 
 				Avoider.add(vector3(), obstacle.positionV3,
 				            avoid_speed.positionV3,
-				            block_distance)
+							block_distance,
+						    vortex)
 		end
 	end
 

@@ -142,6 +142,14 @@ function VNS.setGene(vns, morph)
 	end
 end
 
+function VNS.setMorphology(vns, morph)
+	for i, module in ipairs(VNS.Modules) do
+		if type(module.setMorphology) == "function" then
+			module.setMorphology(vns, morph)
+		end
+	end
+end
+
 function VNS.resetMorphology(vns)
 	for i, module in ipairs(VNS.Modules) do
 		if type(module.resetMorphology) == "function" then
@@ -162,10 +170,10 @@ function VNS.create_preconnector_node(vns)
 	end
 end
 
-function VNS.create_vns_node_without_driver(vns)
+function VNS.create_vns_core_node(vns)
 	return 
 	{type = "sequence", children = {
-		vns.create_preconnector_node(vns),
+		--vns.create_preconnector_node(vns),
 		vns.Connector.create_connector_node(vns),
 		vns.Assigner.create_assigner_node(vns),
 		vns.ScaleManager.create_scalemanager_node(vns),
@@ -179,7 +187,8 @@ end
 function VNS.create_vns_node(vns)
 	return { 
 		type = "sequence", children = {
-		vns.create_vns_node_without_driver(vns),
+		vns.create_preconnector_node(vns),
+		vns.create_vns_core_node(vns),
 		vns.Driver.create_driver_node(vns),
 	}}
 end

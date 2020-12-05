@@ -3,3 +3,7 @@ add_subdirectory(02_displace_mns_drone)
 add_subdirectory(03_cross_displace)
 add_subdirectory(04_cross_displace_drone)
 add_subdirectory(05_displace_mns_drone_45)
+
+add_subdirectory(06_full_scenario1)
+add_subdirectory(07_full_scenario2)
+add_subdirectory(08_full_scenario3)

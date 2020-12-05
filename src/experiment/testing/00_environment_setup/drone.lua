@@ -39,7 +39,8 @@ function step()
 	logger(robot.id, "-----------------------")
 	api.preStep()
 
-	api.move(vector3(0.01, 0, 0), vector3(0,0,math.pi/100))
+	--api.move(vector3(0.01, 0, 0), vector3(0,0,math.pi/100))
+	api.move(vector3(0.01, 0, 0), vector3(0,0,0))
 
 	bt()
 	api.debug.drawArrow("blue", vector3(), vector3(1,0,0))
