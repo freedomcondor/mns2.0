@@ -3,7 +3,7 @@ package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/utils/?.lua"
 package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/vns/?.lua"
 package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 
-pairs = require("RandomPairs")
+pairs = require("AlphaPairs")
 -- includes -------------
 logger = require("Logger")
 local api = require("pipuckAPI")
@@ -14,9 +14,6 @@ logger.enable()
 -- datas ----------------
 local bt
 --local vns
---local structure = require("morphology_classic_variation")
-local structure = require("morphology_classic")
---local structure = require("morphology_5_children")
 
 -- argos functions ------
 --- init
@@ -30,8 +27,28 @@ end
 --- reset
 function reset()
 	vns.reset(vns)
-	vns.setGene(vns, structure)
-	bt = BT.create(VNS.create_vns_node(vns))
+	bt = BT.create(
+	{ type = "sequence", children = {
+		VNS.create_preconnector_node(vns),
+		function()
+			-- find the nearest drone
+			local nearest_length = math.huge
+			local nearest_drone = nil
+			for idS, robotR in pairs(vns.connector.seenRobots) do
+				if robotR.robotTypeS == "drone" and robotR.positionV3:length() < nearest_length then
+					nearest_length = robotR.positionV3:length() 
+					nearest_drone = robotR
+				end
+			end
+			if nearest_drone ~= nil then
+				api.move(vector3(nearest_drone.positionV3):normalize() * 0.010, vector3())
+			else
+				api.move(vector3(0.010, 0, 0), vector3())
+			end
+			return false, true
+		end,
+	}}
+	)
 end
 
 --- step
@@ -44,13 +61,16 @@ function step()
 	-- step
 	bt()
 
+	-- loop function message
+	robot.debug.loop_functions("-1")
+
 	-- poststep
 	vns.postStep(vns)
 	api.postStep()
 
 	-- debug
 	api.debug.showChildren(vns)
-	--api.debug.showParent(vns)
+	--api.debug.showObstacles(vns)
 end
 
 --- destroy

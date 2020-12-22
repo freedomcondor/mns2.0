@@ -53,6 +53,7 @@ function step()
 
 	-- debug
 	api.debug.showChildren(vns)
+	--api.debug.showParent(vns)
 end
 
 --- destroy
