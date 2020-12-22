@@ -29,10 +29,43 @@ function api.debug.showVirtualFrame()
 	)
 end
 
+--[[ probabaly won't use
+function api.debug.showEstimateLocation()
+	api.debug.drawArrow(
+		"red", 
+			-vector3(api.estimateLocation.positionV3):rotate(
+			quaternion(api.estimateLocation.orientationQ):inverse()
+		), 
+		vector3(0,0,0.1)
+	)
+end
+--]]
+
+function api.debug.showParent(vns)
+	if vns.parentR ~= nil then
+		local robotR = vns.parentR
+		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)))
+		api.debug.drawArrow("blue", 
+			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1),
+			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1) +
+			vector3(0.1, 0, 0):rotate(
+				api.virtualFrame.Q_VtoR(quaternion(robotR.orientationQ))
+			)
+		)
+	end
+end
+
 function api.debug.showChildren(vns)
 	-- draw children location
-	for i, robot in pairs(vns.childrenRT) do
-		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robot.positionV3)))
+	for i, robotR in pairs(vns.childrenRT) do
+		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)))
+		api.debug.drawArrow("blue", 
+			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1),
+			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1) +
+			vector3(0.1, 0, 0):rotate(
+				api.virtualFrame.Q_VtoR(quaternion(robotR.orientationQ))
+			)
+		)
 	end
 end
 
@@ -46,6 +79,16 @@ end
 
 ---- Step Function ----------------------------
 function api.init()
+	api.reset()
+end
+
+function api.reset()
+	--[[
+	api.estimateLocation = {
+		positionV3 = vector3(),
+		orientationQ = quaternion(),
+	}
+	--]]
 end
 
 function api.preStep()
@@ -57,9 +100,17 @@ function api.postStep()
 	api.debug.showVirtualFrame()
 end
 
+--[[ probably won't use
+---- Location Estimate ------------------------
+api.estimateLocation = {
+	positionV3 = vector3(),
+	orientationQ = quaternion(),
+}
+--]]
+
 ---- Virtual Coordinate Frame -----------------
 -- instead of turn the real robot, we turn the virtual coordinate frame, 
--- so that a pipuck can keep moving on track while "turn its heading"
+-- so that a pipuck can be "omni directional"
 api.virtualFrame = {}
 api.virtualFrame.orientationQ = quaternion()
 function api.virtualFrame.rotateInSpeed(speedV3)
@@ -94,7 +145,18 @@ function api.move(transV3, rotateV3)
 	local transRealV3 = api.virtualFrame.V3_VtoR(transV3)
 	local rotateRealV3 = api.virtualFrame.V3_VtoR(rotateV3)
 	api.setSpeed(transRealV3.x, transRealV3.y, transRealV3.z, 0)
+	-- rotate virtual frame
 	api.virtualFrame.rotateInSpeed(rotateRealV3)
+	--[[ probably won't use
+	-- accumulate estimate location
+	api.estimateLocation.positionV3 = 
+		api.estimateLocation.positionV3 + transRealV3 * api.time.period
+	local axis = vector3(rotateRealV3):normalize()
+	if rotateRealV3:length() == 0 then axis = vector3(0,0,1) end
+	api.estimateLocation.orientationQ = 
+		quaternion(rotateRealV3:length() * api.time.period, axis) *
+		api.estimateLocation.orientationQ
+	--]]
 end
 
 ------------------------------------------------------
