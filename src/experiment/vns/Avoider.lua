@@ -10,6 +10,10 @@ end
 
 function Avoider.reset(vns)
 	vns.avoider = {}
+	vns.avoider.drone_distance = tonumber(robot.params.drone_distance or 1.00)
+	vns.avoider.pipuck_distance = tonumber(robot.params.pipuck_distance or 0.15)
+	vns.avoider.block_distance = tonumber(robot.params.block_distance or 0.15)
+	vns.avoider.predator_distance = tonumber(robot.params.predator_distance or 0.50)
 end
 
 function Avoider.preStep(vns)
@@ -18,11 +22,6 @@ end
 
 
 function Avoider.step(vns)
-	local drone_distance = 1.00
-	local pipuck_distance = 0.15
-	local block_distance = 0.15
-	local predator_distance = 0.50
-
 	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
 	-- avoid seen robots
 	for idS, robotR in pairs(vns.connector.seenRobots) do
@@ -32,8 +31,8 @@ function Avoider.step(vns)
 			avoid_speed.positionV3 =
 				Avoider.add(vector3(), robotR.positionV3,
 				            avoid_speed.positionV3,
-							drone_distance,
-				            true)
+							vns.avoider.drone_distance,
+				            vns.goal.positionV3)
 		end
 		-- avoid pipuck
 		if robotR.robotTypeS == vns.robotTypeS and
@@ -41,8 +40,8 @@ function Avoider.step(vns)
 			avoid_speed.positionV3 =
 				Avoider.add(vector3(), robotR.positionV3,
 				            avoid_speed.positionV3,
-				            pipuck_distance,
-				            true)
+				            vns.avoider.pipuck_distance,
+				            vns.goal.positionV3)
 		end
 	end
 	-- avoid obstacles
@@ -55,8 +54,8 @@ function Avoider.step(vns)
 			avoid_speed.positionV3 = 
 				Avoider.add(vector3(), obstacle.positionV3,
 				            avoid_speed.positionV3,
-							block_distance,
-						    vortex)
+							vns.avoider.block_distance,
+						    vns.goal.positionV3)
 		end
 	end
 
@@ -64,7 +63,7 @@ function Avoider.step(vns)
 	for i, obstacle in ipairs(vns.avoider.obstacles) do
 		if obstacle.type == 3 and vns.robotTypeS == "drone" then
 			local runawayV3 = vector3()
-			--runawayV3 = Avoider.add(vector3(), obstacle.positionV3, runawayV3, predator_distance)
+			--runawayV3 = Avoider.add(vector3(), obstacle.positionV3, runawayV3, vns.avoider.predator_distance)
 			runawayV3 = vector3() - obstacle.positionV3
 			runawayV3.z = 0
 			runawayV3:normalize()
@@ -73,9 +72,11 @@ function Avoider.step(vns)
 		end
 	end
 
-	if vns.parentR ~= nil then -- the brain can't be influended
-		vns.goal.transV3 = avoid_speed.positionV3
-		vns.goal.rotateV3 = avoid_speed.orientationV3
+	-- TODO: maybe add surpress or not
+	-- add the speed to goal -- the brain can't be influended
+	if vns.parentR ~= nil then 
+		vns.goal.transV3 = vns.goal.transV3 + avoid_speed.positionV3
+		vns.goal.rotateV3 = vns.goal.rotateV3 + avoid_speed.orientationV3
 	end
 end
 
@@ -88,8 +89,22 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	if d < threshold then
 		dV3:normalize()
 		local transV3 = - 0.3 * math.log(d/threshold) * dV3:normalize()
-		if vortex == true then
+		if type(vortex) == "bool" and vortex == true then
 			ans = ans + transV3:rotate(quaternion(math.pi/4, vector3(0,0,1)))
+		elseif type(vortex) == "userdata" and getmetatable(vortex) == getmetatable(vector3()) then
+			local goalV3 = vortex - myLocV3
+			local cos = goalV3:dot(-dV3) / (goalV3:length() * dV3:length())
+			if cos > math.cos(60*math.pi/180) then
+				local product = (-dV3):cross(goalV3)
+				if product.z > 0 then
+					ans = ans + transV3:rotate(quaternion(-math.pi/4, vector3(0,0,1)))
+				else
+					ans = ans + transV3:rotate(quaternion(math.pi/4, vector3(0,0,1)))
+				end
+			else
+				ans = ans + transV3
+			end
+			--]]
 		else
 			ans = ans + transV3
 		end
