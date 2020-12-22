@@ -43,9 +43,9 @@ function Connector.recruit(vns, robotR)
 	vns.connector.waitingRobots[robotR.idS].waiting_count = 3
 end
 
-function Connector.newVnsID(vns)
+function Connector.newVnsID(vns, idN)
 	local _idS = vns.Msg.myIDS()
-	local _idN = robot.random.uniform()
+	local _idN = idN or robot.random.uniform()
 	Connector.updateVnsID(vns, _idS, _idN)
 end
 
