@@ -37,8 +37,7 @@ function PipuckConnector.step(vns)
 						idS = idS,
 						positionV3 = quad.positionV3 + 
 						             vector3(R.positionV3):rotate(quad.orientationQ),
-						--orientationQ = quad.orientationQ * R.orientationQ,
-						orientationQ = R.orientationQ * quad.orientationQ,
+						orientationQ = quad.orientationQ * R.orientationQ,
 						robotTypeS = R.robotTypeS,
 					}
 				end
@@ -50,7 +49,7 @@ function PipuckConnector.step(vns)
 					local positionV3 = quad.positionV3 + 
 									   vector3(obstacle.positionV3):rotate(quad.orientationQ) +
 									   vector3(0,0,0.08)
-					local orientationQ = obstacle.orientationQ * quad.orientationQ
+					local orientationQ = quad.orientationQ * obstacle.orientationQ 
 
 					-- check positionV3 in existing obstacles
 					local flag = true

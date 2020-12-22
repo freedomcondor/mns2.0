@@ -84,9 +84,11 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 				idS = idS,
 				positionV3 = myRobotR.positionV3 +
 				             vector3(-robotR.positionV3):rotate(
-							 	robotR.orientationQ:inverse() * myRobotR.orientationQ
+							 	--robotR.orientationQ:inverse() * myRobotR.orientationQ
+							 	myRobotR.orientationQ * robotR.orientationQ:inverse() 
 							 ),
-				orientationQ = robotR.orientationQ:inverse() * myRobotR.orientationQ,
+				--orientationQ = robotR.orientationQ:inverse() * myRobotR.orientationQ,
+				orientationQ = myRobotR.orientationQ * robotR.orientationQ:inverse(),
 				robotTypeS = "drone",
 			}
 			break

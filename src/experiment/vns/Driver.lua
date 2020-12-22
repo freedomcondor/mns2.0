@@ -49,27 +49,11 @@ function Driver.step(vns)
 	-- receive goal from parent
 	if vns.parentR ~= nil then
 		for _, msgM in pairs(vns.Msg.getAM(vns.parentR.idS, "drive")) do
-			local receivedPositionV3 = vns.api.virtualFrame.V3_RtoV(
-				vector3(msgM.dataT.positionV3):rotate(
-					vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
-				) + 
-				vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3)
-			)
-			local receivedOrientationQ = vns.api.virtualFrame.Q_RtoV(
-				msgM.dataT.orientationQ * vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
-			)
-
-			local receivedTransV3 = vns.api.virtualFrame.V3_RtoV(
-				vector3(msgM.dataT.transV3):rotate(
-					vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
-				)
-			)
-
-			local receivedRotateV3 = vns.api.virtualFrame.V3_RtoV(
-				vector3(msgM.dataT.rotateV3):rotate(
-					vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
-				)
-			)
+			local receivedPositionV3 = vns.parentR.positionV3 +
+				vector3(msgM.dataT.positionV3):rotate(vns.parentR.orientationQ)
+			local receivedOrientationQ = vns.parentR.orientationQ * msgM.dataT.orientationQ
+			local receivedTransV3 = vector3(msgM.dataT.transV3):rotate(vns.parentR.orientationQ)
+			local receivedRotateV3 = vector3(msgM.dataT.rotateV3):rotate(vns.parentR.orientationQ)
 
 			if vns.goal.positionV3 ~= nil then receivedPositionV3 = vns.goal.positionV3 end
 			if vns.goal.orientationQ ~= nil then receivedOrientationQ = vns.goal.orientationQ end

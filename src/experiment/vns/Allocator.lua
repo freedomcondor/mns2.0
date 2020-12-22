@@ -74,15 +74,11 @@ function Allocator.step(vns)
 			msgM.dataT.branch.children = DeepCopy(vns.allocator.gene_index[msgM.dataT.branch.idN].children)
 		end
 		Allocator.setMorphology(vns, msgM.dataT.branch)
-		local targetPositionV3 = vns.api.virtualFrame.V3_RtoV(
-			vector3(msgM.dataT.branch.positionV3):rotate(
-				vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
-			) + 
-			vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3)
-		)
-		local targetOrientationQ = vns.api.virtualFrame.Q_RtoV(
-			msgM.dataT.branch.orientationQ * vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
-		)
+
+		local targetPositionV3 = vns.parentR.positionV3 +
+			vector3(msgM.dataT.branch.positionV3):rotate(vns.parentR.orientationQ)
+		local targetOrientationQ = vns.parentR.orientationQ * msgM.dataT.branch.orientationQ 
+	
 		vns.goal.positionV3 = targetPositionV3
 		vns.goal.orientationQ = targetOrientationQ
 
@@ -91,7 +87,7 @@ function Allocator.step(vns)
 				branchR.positionV3_backup = vector3(branchR.positionV3)
 				branchR.orientationQ_backup = quaternion(branchR.orientationQ)
 				branchR.positionV3 = vector3(branchR.positionV3):rotate(vns.goal.orientationQ) + vns.goal.positionV3
-				branchR.orientationQ = branchR.orientationQ * vns.goal.orientationQ
+				branchR.orientationQ = vns.goal.orientationQ * branchR.orientationQ 
 			end
 		end
 	end end
@@ -104,15 +100,10 @@ function Allocator.step(vns)
 				branch.children = DeepCopy(vns.allocator.gene_index[branch.idN].children)
 			end
 
-			local targetPositionV3 = vns.api.virtualFrame.V3_RtoV(
-				vector3(branch.positionV3):rotate(
-					vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
-				) + 
-				vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3)
-			)
-			local targetOrientationQ = vns.api.virtualFrame.Q_RtoV(
-				branch.orientationQ * vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
-			)
+			local targetPositionV3 = vns.parentR.positionV3 +
+				vector3(branch.positionV3):rotate(vns.parentR.orientationQ)
+			local targetOrientationQ = vns.parentR.orientationQ * branch.orientationQ
+
 			branch.positionV3 = targetPositionV3
 			branch.orientationQ = targetOrientationQ
 
@@ -121,7 +112,7 @@ function Allocator.step(vns)
 					branch_childR.positionV3_backup = vector3(branch_childR.positionV3)
 					branch_childR.orientationQ_backup = quaternion(branch_childR.orientationQ)
 					branch_childR.positionV3 = vector3(branch_childR.positionV3):rotate(branch.orientationQ) + branch.positionV3
-					branch_childR.orientationQ = branch_childR.orientationQ * branch.orientationQ
+					branch_childR.orientationQ = branch.orientationQ * branch_childR.orientationQ 
 				end
 			end
 		end
