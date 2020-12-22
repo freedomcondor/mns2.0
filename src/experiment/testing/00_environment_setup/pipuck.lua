@@ -40,6 +40,9 @@ function step()
 	api.debug.drawArrow("blue", vector3(), vector3(1,0,0))
 
 	api.postStep()
+
+	-- debug
+	--api.debug.showEstimateLocation()
 end
 
 function reset()
