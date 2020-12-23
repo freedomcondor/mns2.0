@@ -49,8 +49,8 @@ function step()
 	api.postStep()
 
 	-- debug
-	api.debug.showChildren(vns)
-	--api.debug.showParent(vns)
+	--api.debug.showChildren(vns)
+	api.debug.showParent(vns)
 end
 
 --- destroy

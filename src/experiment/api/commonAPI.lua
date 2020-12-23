@@ -114,14 +114,13 @@ api.estimateLocation = {
 api.virtualFrame = {}
 api.virtualFrame.orientationQ = quaternion()
 function api.virtualFrame.rotateInSpeed(speedV3)
-	-- speed V3 in virtual frame
+	-- speedV3 in real frame
 	local axis = vector3(speedV3):normalize()
 	if speedV3:length() == 0 then axis = vector3(1,0,0) end
 	api.virtualFrame.orientationQ = 
-		api.virtualFrame.orientationQ *
 		quaternion(speedV3:length() * api.time.period,
 				   axis
-		)
+		) * api.virtualFrame.orientationQ
 end
 
 function api.virtualFrame.V3_RtoV(vec)
