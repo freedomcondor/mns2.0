@@ -74,10 +74,10 @@ function Avoider.step(vns)
 
 	-- TODO: maybe add surpress or not
 	-- add the speed to goal -- the brain can't be influended
-	if vns.parentR ~= nil then 
+	--if vns.parentR ~= nil then 
 		vns.goal.transV3 = vns.goal.transV3 + avoid_speed.positionV3
 		vns.goal.rotateV3 = vns.goal.rotateV3 + avoid_speed.orientationV3
-	end
+	--end
 end
 
 function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
