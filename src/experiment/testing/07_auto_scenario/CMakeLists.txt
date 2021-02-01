@@ -11,3 +11,5 @@ configure_file( morphology3.lua  morphology3.lua  COPYONLY)
 
 configure_file( fill_wall_location.in.py
                 fill_wall_location.py)
+
+add_subdirectory(evaluator)

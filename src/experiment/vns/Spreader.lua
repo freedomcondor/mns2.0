@@ -17,11 +17,18 @@ function Spreader.preStep(vns)
 	vns.spreader.spreading_speed.flag = nil
 end
 
-function Spreader.emergency(vns, transV3, rotateV3, flag)
+function Spreader.emergency(vns, transV3, rotateV3, flag, after_core)
 	vns.spreader.spreading_speed.positionV3 = vns.spreader.spreading_speed.positionV3 + transV3
 	vns.spreader.spreading_speed.orientationV3 = vns.spreader.spreading_speed.orientationV3 + rotateV3
 	flag = flag or vns.spreader.spreading_speed.flag
 	vns.spreader.spreading_speed.flag = flag
+
+	if after_core == true then
+		vns.goal.transV3 = 
+			vns.goal.transV3 + transV3
+		vns.goal.rotateV3 = 
+			vns.goal.rotateV3 + rotateV3
+	end
 
 	-- message from children, send to parent
 	if vns.parentR ~= nil then
@@ -93,8 +100,8 @@ function Spreader.step(vns, surpress_or_not)
 	else
 		vns.goal.transV3 = 
 			vns.goal.transV3 + vns.spreader.spreading_speed.positionV3
-		vns.goal.transV3 = 
-			vns.goal.transV3 + vns.spreader.spreading_speed.orientationV3
+		vns.goal.rotateV3 = 
+			vns.goal.rotateV3 + vns.spreader.spreading_speed.orientationV3
 	end
 end
 

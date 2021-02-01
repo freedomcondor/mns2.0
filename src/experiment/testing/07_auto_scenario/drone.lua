@@ -39,31 +39,80 @@ local stepCount
 local tranformStepCSV
 
 function create_head_navigate_node(vns)
+local state = "before_wall"
 return function()
+	local speed = 0.02
+	local structure2_changed = false
 	if vns.parentR == nil then
-		local ob = nil
-		local maxDistance = 0
-		for i, obstacle in ipairs(vns.avoider.obstacles) do
-			if obstacle.positionV3.x > 0 and
-			   obstacle.distance ~= nil and
-			   obstacle.distance > maxDistance then
-				maxDistance = obstacle.distance
-				ob = obstacle
+		if state == "before_wall" then
+			-- command forward
+			vns.Spreader.emergency(vns, vector3(speed,0,0), vector3(), nil, true)
+			-- check gate is near enough
+			for i, obstacle in ipairs(vns.avoider.obstacles) do
+				if obstacle.distance ~= nil and
+				   obstacle.positionV3.x < 0.7 then
+					logger("reach wall")
+					state = "at_wall"
+					-- change to structure2
+					--vns.setMorphology(vns, structure2)
+				end
 			end
-		end
+		elseif state == "at_wall" then
+			-- find the largest gate
+			local ob = nil
+			local maxDistance = 0
+			for i, obstacle in ipairs(vns.avoider.obstacles) do
+				if obstacle.distance ~= nil and
+				   obstacle.distance > maxDistance then
+					maxDistance = obstacle.distance
+					ob = obstacle
+				end
+			end
+			-- ob is the largest gate, move in front of it
+			local reach_goal = false
+			if ob ~= nil then
+				local goal = ob.positionV3 + ob.direction:normalize()*(ob.distance/2) - vector3(0.5,0,0)
+				goal.z = 0
+				if goal:length() < 0.05 then reach_goal = true end
+				if goal:length() < 1.00 and structure2_changed == false then 
+					-- change to structure2
+					vns.setMorphology(vns, structure2)
+					structure2_changed = true
+				end
+				goal = goal:normalize()
+				vns.Spreader.emergency(vns, goal * speed, vector3(), nil, true)
+			else
+				logger("I didn't find a gate")
+			end
 
-		if ob ~= nil then
-			local goal = ob.positionV3 + ob.direction:normalize()*(ob.distance/2)
-			goal = (goal - vector3(0.0, 0, 0)):normalize()
-			vns.Spreader.emergency(vns, goal * 0.02, vector3())
-		else
-			vns.Spreader.emergency(vns, vector3(0.02,0,0), vector3())
+			if reach_goal == true then
+				state = "after_wall"
+				logger("after_wall")
+			end
+		elseif state == "after_wall" then
+			vns.Spreader.emergency(vns, vector3(speed,0,0), vector3(), nil, true)
+			for i, obstacle in ipairs(vns.avoider.obstacles) do
+				if obstacle.type == 0 then
+					vns.setMorphology(vns, structure3)
+					state = "reach_target"
+				end
+			end
+		elseif state == "reach_target" then
+			vns.Spreader.emergency(vns, vector3(speed,0,0), vector3(), nil, true)
 		end
 	end
+	return false, true
 end end
 
 function create_gap_detection_node(vns) 
 return function()
+	if vns.parentR ~= nil then return false, true end
+
+	-- append collective sensor to obstacles
+	for i, v in ipairs(vns.collectivesensor.receiveList) do
+		table.insert(vns.avoider.obstacles, v)
+	end
+
 	-- find gap end direction
 	for i, orange_ob in ipairs(vns.avoider.obstacles) do
 		if orange_ob.type == 2 then -- orange
@@ -127,8 +176,25 @@ return function()
 			end
 		end
 	end
+	return false, true
 end end
 
+function create_reaction_node(vns, file)
+return function()
+	-- detect predator
+	for idS, robotR in pairs(vns.connector.seenRobots) do
+		if idS == "pipuck40" then
+			local runawayV3 = vector3()
+			--runawayV3 = Avoider.add(vector3(), obstacle.positionV3, runawayV3, predator_distance)
+			runawayV3 = vector3() - robotR.positionV3
+			runawayV3.z = 0
+			runawayV3:normalize()
+			runawayV3 = runawayV3 * 0.03
+			vns.Spreader.emergency(vns, runawayV3, vector3(), nil, true)
+		end
+	end
+end end
+--[[
 function create_reaction_node(vns, file)
 return function()
 	-- detect obstacle/predator and send emergency flag
@@ -141,6 +207,7 @@ return function()
 			--vns.setMorphology(vns, structure3)
 		end
 	end
+	-- detect predator
 	for idS, robotR in pairs(vns.connector.seenRobots) do
 		if idS == "pipuck40" then
 			local runawayV3 = vector3()
@@ -163,7 +230,7 @@ return function()
 				vns.deleteParent(vns)
 			end
 			vns.Connector.newVnsID(vns, 1 + obstacle.distance)
-			vns.setMorphology(vns, structure2)
+		vns.setMorphology(vns, structure2)
 		end
 	end
 
@@ -185,6 +252,7 @@ return function()
 		end
 	end
 end end
+--]]
 
 -- argos functions ------
 --- init
@@ -211,10 +279,10 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
+		vns.create_vns_core_node(vns),
 		create_gap_detection_node(vns),
 		create_reaction_node(vns, tranformStepCSV),
 		create_head_navigate_node(vns),
-		vns.create_vns_core_node(vns),
 		vns.Driver.create_driver_node(vns),
 	}}
 
@@ -246,7 +314,9 @@ function step()
 
 	-- debug
 	api.debug.showChildren(vns)
-	--api.debug.showObstacles(vns)
+	-- show gates
+	if vns.parentR == nil then
+	api.debug.showObstacles(vns)
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		if ob.direction ~= nil and ob.distance ~= nil then
 			api.debug.drawArrow("red", 
@@ -256,6 +326,7 @@ function step()
 				vector3(0,0,0.1)
 			)
 		end
+	end
 	end
 end
 

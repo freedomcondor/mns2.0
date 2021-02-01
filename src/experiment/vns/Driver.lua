@@ -98,6 +98,23 @@ function Driver.step(vns)
 		Driver.move(transV3, rotateV3)
 	end
 
+	-- prohibit move if a children is out of safezone
+	---[[
+	local safezone_half = 1.0
+	if vns.robotTypeS == "drone" then
+		for idS, robotR in pairs(vns.childrenRT) do
+			if robotR.robotTypeS == "pipuck" and
+			   (robotR.positionV3.x < -safezone_half or
+			    robotR.positionV3.x > safezone_half or
+			    robotR.positionV3.y < -safezone_half or
+			    robotR.positionV3.y > safezone_half
+			   ) then
+				Driver.move(vector3(), vector3())
+			end
+		end
+	end
+	--]]
+
 	-- send drive to children
 	for _, robotR in pairs(vns.childrenRT) do
 		if robotR.trajectory ~= nil then

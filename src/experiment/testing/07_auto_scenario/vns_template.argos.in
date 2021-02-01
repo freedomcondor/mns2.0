@@ -176,9 +176,19 @@
     </drone>
 
     <distribute>
-      <position method="uniform" min="-4,-1.5,0" max="-2.5,1.5,0" />
+      <position method="uniform" min="-4,-1.5,0" max="-2.5,-0.5,0" />
       <orientation method="uniform" min="0,0,0" max="0,0,0" />
-      <entity quantity="2" base_num="2" max_trials="100">
+      <entity quantity="1" base_num="2" max_trials="100">
+        <drone id="drone">
+          <controller config="drone"/>
+        </drone>
+      </entity>
+    </distribute>
+
+    <distribute>
+      <position method="uniform" min="-4,0.5,0" max="-2.5,1.5,0" />
+      <orientation method="uniform" min="0,0,0" max="0,0,0" />
+      <entity quantity="1" base_num="3" max_trials="100">
         <drone id="drone">
           <controller config="drone"/>
         </drone>
@@ -257,15 +267,37 @@
   	</block>
 
     <!-- random obstacles-->
+    <!--
     <distribute>
       <position method="uniform" min="-2.5,-1,0" max="-0.5,1,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
       <entity quantity="5" base_num="15" max_trials="100">
-  	    <block id="block" init_led_color="magenta"> <!--magenta, orange, green, blue-->
+  	    <block id="block" init_led_color="magenta">
           <controller config="block"/>
   	    </block>
       </entity>
     </distribute>
+    -->
+  	<block id="block15" init_led_color="magenta"> <!--magenta, orange, green, blue-->
+      <body position="OBSTACLE15_X, OBSTACLE15_Y, 0" orientation="0,0,0" />
+      <controller config="block"/>
+  	</block>
+  	<block id="block16" init_led_color="magenta"> <!--magenta, orange, green, blue-->
+      <body position="OBSTACLE16_X, OBSTACLE16_Y, 0" orientation="0,0,0" />
+      <controller config="block"/>
+  	</block>
+  	<block id="block17" init_led_color="magenta"> <!--magenta, orange, green, blue-->
+      <body position="OBSTACLE17_X, OBSTACLE17_Y, 0" orientation="0,0,0" />
+      <controller config="block"/>
+  	</block>
+  	<block id="block18" init_led_color="magenta"> <!--magenta, orange, green, blue-->
+      <body position="OBSTACLE18_X, OBSTACLE18_Y, 0" orientation="0,0,0" />
+      <controller config="block"/>
+  	</block>
+  	<block id="block19" init_led_color="magenta"> <!--magenta, orange, green, blue-->
+      <body position="OBSTACLE19_X, OBSTACLE19_Y, 0" orientation="0,0,0" />
+      <controller config="block"/>
+  	</block>
 
     <!-- predator -->
     <pipuck id="pipuck40" wifi_medium="wifi" tag_medium="tags">
@@ -275,7 +307,7 @@
 
     <!-- target -->
     <prototype id="target" movable="true" friction="2">
-      <body position="3.5,0,0" orientation="0,0,0" />
+      <body position="3.5,TARGET_LOCATION_Y,0" orientation="0,0,0" />
       <links ref="base">
         <link id="base" geometry="cylinder" radius="0.3" height="0.1" mass="0.01"
           position="0,0,0" orientation="0,0,0" />

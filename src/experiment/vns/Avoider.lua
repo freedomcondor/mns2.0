@@ -44,6 +44,7 @@ function Avoider.step(vns)
 				            vns.goal.positionV3)
 		end
 	end
+
 	-- avoid obstacles
 	if vns.robotTypeS ~= "drone" then
 		for i, obstacle in ipairs(vns.avoider.obstacles) do
@@ -53,9 +54,9 @@ function Avoider.step(vns)
 			--end
 			avoid_speed.positionV3 = 
 				Avoider.add(vector3(), obstacle.positionV3,
-				            avoid_speed.positionV3,
+			            	avoid_speed.positionV3,
 							vns.avoider.block_distance,
-						    vns.goal.positionV3)
+							vns.goal.positionV3)
 		end
 	end
 
