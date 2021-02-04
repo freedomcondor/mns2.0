@@ -43,24 +43,24 @@ function Connector.recruit(vns, robotR)
 	vns.connector.waitingRobots[robotR.idS].waiting_count = 3
 end
 
-function Connector.newVnsID(vns, idN)
+function Connector.newVnsID(vns, idN, lastidPeriod)
 	local _idS = vns.Msg.myIDS()
 	local _idN = idN or robot.random.uniform()
-	Connector.updateVnsID(vns, _idS, _idN)
+	Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
 end
 
-function Connector.updateVnsID(vns, _idS, _idN)
-	vns.connector.lastid[vns.idS] = vns.scale:totalNumber() + 2
+function Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
+	vns.connector.lastid[vns.idS] = lastidPeriod or (vns.scale:totalNumber() + 2)
 	vns.idS = _idS
 	vns.idN = _idN
 	local childrenScale = vns.ScaleManager.Scale:new()
 	for idS, childR in pairs(vns.childrenRT) do
 		childrenScale = childrenScale + childR.scale
-		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN})
+		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN, lastidPeriod = lastidPeriod})
 	end
 	for idS, childR in pairs(vns.connector.waitingRobots) do
 		childrenScale = childrenScale + childR.scale
-		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN})
+		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN, lastidPeriod = lastidPeriod})
 	end
 	vns.connector.locker_count = childrenScale:totalNumber() + 2
 end
@@ -169,6 +169,16 @@ function Connector.step(vns)
 		end
 	end
 
+	-- check split
+	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "split")) do
+		logger("I get split from", msgM.fromS)
+		if vns.parentR ~= nil and msgM.fromS == vns.parentR.idS then
+			Connector.newVnsID(vns, nil, 100)
+			vns.deleteParent(vns)
+			vns.setGene(vns, msgM.dataT.morphology)
+		end
+	end
+
 	-- check dismiss
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "dismiss")) do
 		if vns.parentR ~= nil and msgM.fromS == vns.parentR.idS then
@@ -184,7 +194,7 @@ function Connector.step(vns)
 	-- check updateVnsID
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "updateVnsID")) do
 		if vns.parentR ~= nil and msgM.fromS == vns.parentR.idS then
-			Connector.updateVnsID(vns, msgM.dataT.idS, msgM.dataT.idN)
+			Connector.updateVnsID(vns, msgM.dataT.idS, msgM.dataT.idN, msgM.dataT.lastidPeriod)
 		end
 	end
 end
@@ -212,9 +222,11 @@ function Connector.ackAll(vns)
 		if msgM.dataT.idS ~= vns.idS and
 		   msgM.dataT.idN > vns.idN and
 		   vns.connector.locker_count == 0 and
-		   (vns.parentR == nil or
-			vns.connector.lastid[msgM.dataT.idS] == nil
-		   ) then
+		   vns.connector.lastid[msgM.dataT.idS] == nil
+		   --(vns.parentR == nil or
+			--vns.connector.lastid[msgM.dataT.idS] == nil
+		   --) 
+		   then
 			local disVec = 
 					vns.api.virtualFrame.V3_RtoV(
 						vector3(-msgM.dataT.positionV3):rotate(msgM.dataT.orientationQ:inverse())

@@ -17,6 +17,10 @@ function Spreader.preStep(vns)
 	vns.spreader.spreading_speed.flag = nil
 end
 
+function Spreader.emergency_after_core(vns, transV3, rotateV3, flag)
+	Spreader.emergency(vns, transV3, rotateV3, flag, true)
+end
+
 function Spreader.emergency(vns, transV3, rotateV3, flag, after_core)
 	vns.spreader.spreading_speed.positionV3 = vns.spreader.spreading_speed.positionV3 + transV3
 	vns.spreader.spreading_speed.orientationV3 = vns.spreader.spreading_speed.orientationV3 + rotateV3

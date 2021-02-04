@@ -45,7 +45,7 @@ function Driver.deleteParent(vns)
 	}
 end
 
-function Driver.step(vns)
+function Driver.step(vns, waiting)
 	-- receive goal from parent
 	if vns.parentR ~= nil then
 		for _, msgM in pairs(vns.Msg.getAM(vns.parentR.idS, "drive")) do
@@ -100,6 +100,7 @@ function Driver.step(vns)
 
 	-- prohibit move if a children is out of safezone
 	---[[
+if waiting == true then
 	local safezone_half = 1.0
 	if vns.robotTypeS == "drone" then
 		for idS, robotR in pairs(vns.childrenRT) do
@@ -113,6 +114,7 @@ function Driver.step(vns)
 			end
 		end
 	end
+end
 	--]]
 
 	-- send drive to children
@@ -143,6 +145,13 @@ end
 function Driver.create_driver_node(vns)
 	return function()
 		Driver.step(vns)
+		return false, true
+	end
+end
+
+function Driver.create_driver_node_wait(vns)
+	return function()
+		Driver.step(vns, true)
 		return false, true
 	end
 end
