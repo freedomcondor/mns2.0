@@ -4,11 +4,13 @@ import sys
 import os
 
 mnsfolder = '/Users/harry/Desktop/mns2.0/'
-casefolder = 'experiment/data/09_auto_scenario'
+casefolder = 'experiment/data/16_switch_fast'
 testfolder_build = mnsfolder + 'build/' + casefolder
 testfolder_src = mnsfolder + 'src/' + casefolder
 
-data_set = sys.argv[1]
+data_set = 'random'
+if len(sys.argv) >= 2 :
+	data_set = sys.argv[1]
 
 total_timestep = 2500
 

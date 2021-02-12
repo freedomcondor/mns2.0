@@ -1,0 +1,654 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="500.0" ticks_per_second="5" random_seed="5" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+     <!-- Pi-Puck Controller -->
+    <lua_controller id="pipuck">
+      <actuators>
+        <debug implementation="default">
+          <interface id="draw" />
+          <interface id="loop_functions" />
+        </debug>
+        <pipuck_differential_drive implementation="default" />
+        <wifi implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_system implementation="default" />
+        <pipuck_rangefinders implementation="default" show_rays="false" />
+        <wifi implementation="default" show_rays="false" />
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/12_obstacle_avoidance_small/pipuck.lua" />
+    </lua_controller>
+
+    <!-- Predator Controller -->
+    <lua_controller id="predator">
+      <actuators>
+        <debug implementation="default">
+          <interface id="draw" />
+          <interface id="loop_functions" />
+        </debug>
+        <pipuck_differential_drive implementation="default" />
+        <wifi implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_system implementation="default" />
+        <pipuck_rangefinders implementation="default" show_rays="false" />
+        <wifi implementation="default" show_rays="false" />
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/12_obstacle_avoidance_small/predator.lua" />
+    </lua_controller>
+
+     <!-- Drone Controller -->
+    <lua_controller id="drone">
+      <actuators>
+        <debug implementation="default">
+          <interface id="draw" />
+          <interface id="loop_functions" />
+        </debug>
+        <drone_flight_system implementation="default" />
+        <wifi implementation="default" />
+      </actuators>
+      <sensors>
+        <drone_system implementation="default" />
+        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="false" />
+        <drone_flight_system implementation="default" />
+        <wifi implementation="default" />
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/12_obstacle_avoidance_small/drone.lua" />
+    </lua_controller>
+
+    	<!-- Block Controller -->
+    <lua_controller id="block">
+      <actuators>
+        <directional_leds implementation="default" />
+        <radios implementation="default"/>
+      </actuators>
+      <sensors>
+        <radios implementation="default" show_rays="true"/>
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/12_obstacle_avoidance_small/block.lua" />
+    </lua_controller>
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="15, 12, 2.5" center="0, 0, 1">
+    <floor id="floor" source="loop_functions" pixels_per_meter="1" />
+
+    <!-- room -->
+    <!--
+    <box id="north_room" size="0.02,14,3.00" movable="false" mass="10">
+      <body position="7.1,0,0"  orientation="0,0,0" />
+    </box>
+    <box id="south_room" size="0.02,14,3.00" movable="false" mass="10">
+      <body position="-7.1,0,0"  orientation="0,0,0" />
+    </box>
+    -->
+
+    <!-- furnitures -->
+    <box id="furniture1" size="3.20,1.0,2.00" movable="false" mass="10">
+      <body position="4, 4.90,0"  orientation="0,0,0" />
+    </box>
+    <box id="furniture2" size="3.20,1.0,2.00" movable="false" mass="10">
+      <body position="4,-4.90,0"  orientation="0,0,0" />
+    </box>
+    <box id="furniture3" size="3.20,1.0,2.00" movable="false" mass="10">
+      <body position="-1, 4.90,0"  orientation="0,0,0" />
+    </box>
+    <box id="furniture4" size="3.20,1.0,2.00" movable="false" mass="10">
+      <body position="-1,-4.90,0"  orientation="0,0,0" />
+    </box>
+    <box id="furniture5" size="3.20,1.0,2.00" movable="false" mass="10">
+      <body position="-6, 4.90,0"  orientation="0,0,0" />
+    </box>
+    <box id="furniture6" size="3.20,1.0,2.00" movable="false" mass="10">
+      <body position="-6,-4.90,0"  orientation="0,0,0" />
+    </box>
+
+    <!-- truss -->
+    <box id="south_truss" size="0.02,9.50,0.20" movable="false" mass="10">
+      <body position="-6.26,0,2.5"  orientation="0,0,0" />
+    </box>
+    <box id="north_truss" size="0.02,9.50,0.20" movable="false" mass="10">
+      <body position="6.26,0,2.5"  orientation="0,0,0" />
+    </box>
+    <box id="west_truss" size="12.5,0.02,0.20" movable="false" mass="10">
+      <body position="0, 4.76, 2.5"  orientation="0,0,0" />
+    </box>
+    <box id="east_truss" size="12.5,0.02,0.20" movable="false" mass="10">
+      <body position="0, -4.76, 2.5"  orientation="0,0,0" />
+    </box>
+
+    <!-- man -->
+    <cylinder id="head" radius="0.1" height="0.2" movable="false" mass="10">
+      <body position="-6, 3.5, 1.55"  orientation="0,0,0" />
+    </cylinder>
+    <box id="body" size="0.3, 0.5, 0.60" movable="false" mass="10">
+      <body position="-6, 3.5, 0.95"  orientation="0,0,0" />
+    </box>
+    <cylinder id="leg1" radius="0.1" height="0.95" movable="false" mass="10">
+      <body position="-6, 3.35, 0"  orientation="0,0,0" />
+    </cylinder>
+    <cylinder id="leg2" radius="0.1" height="0.95" movable="false" mass="10">
+      <body position="-6, 3.65, 0"  orientation="0,0,0" />
+    </cylinder>
+    <cylinder id="arm1" radius="0.05" height="0.90" movable="false" mass="10">
+      <body position="-6, 3.80, 0.65"  orientation="0,0,0" />
+    </cylinder>
+    <cylinder id="arm2" radius="0.05" height="0.90" movable="false" mass="10">
+      <body position="-6, 3.2, 0.65"  orientation="0,0,0" />
+    </cylinder>
+
+    <!-- arena -->
+    <box id="south_arena" size="0.02,6.04,0.10" movable="false" mass="10">
+      <body position="-5.01,0,0"  orientation="0,0,0" />
+    </box>
+    <box id="north_arena" size="0.02,6.04,0.10" movable="false" mass="10">
+      <body position="5.01,0,0"  orientation="0,0,0" />
+    </box>
+    <box id="west_arena" size="10.00,0.02,0.10" movable="false" mass="10">
+      <body position="0, -3.01,0"  orientation="0,0,0" />
+    </box>
+    <box id="east_arena" size="10.00,0.02,0.10" movable="false" mass="10">
+      <body position="-, 3.01,0"  orientation="0,0,0" />
+    </box>
+
+    <!-- ************************************************ -->
+
+    <!-- drones -->
+    <drone id="drone1">
+      <body position="-4,0,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <drone id="drone2">
+      <body position="-4,-1,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <!-- pipucks -->
+    <distribute>
+      <position method="grid" center="-4,-0.5,0" distances="1.0, 1.0, 0" layout="2,3,1"/>
+      <orientation method="grid" center="0,0,0" distances="0, 0, 0" layout="2,3,1"/>
+      <entity quantity="6" base_num="1" max_trials="100">
+        <pipuck id="pipuck"  wifi_medium="wifi" tag_medium="tags">
+          <controller config="pipuck"/>
+        </pipuck>
+      </entity>
+    </distribute>
+
+    <!-- obstacles -->
+<block id="obstacle1" init_led_color="magenta">
+  <body position="-1.03187993254239,1.1220945695389033, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle2" init_led_color="magenta">
+  <body position="0.1210679855107486,1.950378618295625, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle3" init_led_color="magenta">
+  <body position="-3.0659804749210227,-1.098099148021499, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle4" init_led_color="magenta">
+  <body position="2.8599119427720874,1.162155586195719, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle5" init_led_color="magenta">
+  <body position="0.9555402643687838,-1.586413360811188, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle6" init_led_color="magenta">
+  <body position="2.3648647000558567,0.31233121792572316, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle7" init_led_color="magenta">
+  <body position="3.1823244208021384,0.20355510567010837, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle8" init_led_color="magenta">
+  <body position="2.66985792022742,-1.1516842017512143, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle9" init_led_color="magenta">
+  <body position="3.3868902073309766,-1.402376931024973, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle10" init_led_color="magenta">
+  <body position="-2.6304504911282907,1.1278620341687535, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle11" init_led_color="magenta">
+  <body position="1.1145847408355367,0.6945076497034228, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle12" init_led_color="magenta">
+  <body position="1.5302834286117477,1.1395971818216557, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle13" init_led_color="magenta">
+  <body position="-0.4638042026574203,0.8398990878633548, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle14" init_led_color="magenta">
+  <body position="0.50470457880947,-1.09918724293304, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle15" init_led_color="magenta">
+  <body position="-2.8149153042986006,1.3826149548469613, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle16" init_led_color="magenta">
+  <body position="0.37183928123012633,1.4330734661383202, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle17" init_led_color="magenta">
+  <body position="0.9917826869284871,-1.2865544936340116, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle18" init_led_color="magenta">
+  <body position="-0.5010142587144135,-1.4692380552974829, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle19" init_led_color="magenta">
+  <body position="0.6309204834243198,-0.27633890978538966, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle20" init_led_color="magenta">
+  <body position="-0.9365983984456676,-0.8195974195298779, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle21" init_led_color="magenta">
+  <body position="2.3672424879145204,-1.7644823139717376, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle22" init_led_color="magenta">
+  <body position="0.3920181469035162,0.2883023085875367, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle23" init_led_color="magenta">
+  <body position="-2.8861642875269484,-0.2723086812295108, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle24" init_led_color="magenta">
+  <body position="-2.4831855083796888,-1.9443906033297251, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle25" init_led_color="magenta">
+  <body position="3.1831806000706067,1.735262646238438, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle26" init_led_color="magenta">
+  <body position="-2.291259258417467,1.3106803645715526, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle27" init_led_color="magenta">
+  <body position="1.5823044818806746,0.7480889800450443, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle28" init_led_color="magenta">
+  <body position="1.6188416649000255,1.8087289275214933, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle29" init_led_color="magenta">
+  <body position="-0.6738412146956247,-1.9803656474720377, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle30" init_led_color="magenta">
+  <body position="-0.2651067741525215,-1.270658010741656, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle31" init_led_color="magenta">
+  <body position="1.5631315055226498,-1.3328298103548808, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle32" init_led_color="magenta">
+  <body position="-1.7546152498441745,0.13658264266405595, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle33" init_led_color="magenta">
+  <body position="-1.3616586217557236,-1.2865090355096136, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle34" init_led_color="magenta">
+  <body position="1.8334528636895326,-1.8080159004422356, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle35" init_led_color="magenta">
+  <body position="-2.163150079639837,-1.8527188902017073, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle36" init_led_color="magenta">
+  <body position="-0.5996568218868075,0.14639702902929752, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle37" init_led_color="magenta">
+  <body position="-1.8898845139208809,1.7839192729864286, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle38" init_led_color="magenta">
+  <body position="-2.5976758303012613,0.2621292926708292, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle39" init_led_color="magenta">
+  <body position="-3.137765622405623,-0.5213235710454289, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle40" init_led_color="magenta">
+  <body position="-2.9081129908864076,0.034579221929893045, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle41" init_led_color="magenta">
+  <body position="-3.333668174739644,-0.016589334914582476, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle42" init_led_color="magenta">
+  <body position="0.2625159535812518,1.1333271194285346, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle43" init_led_color="magenta">
+  <body position="-1.675140850065719,-0.7282606404870728, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle44" init_led_color="magenta">
+  <body position="-2.374643371099781,0.8016717026941769, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle45" init_led_color="magenta">
+  <body position="-0.48283789507971386,1.251743578251852, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle46" init_led_color="magenta">
+  <body position="-2.560902103154146,1.896223274271557, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle47" init_led_color="magenta">
+  <body position="-2.9611475917463235,0.5992030707338274, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle48" init_led_color="magenta">
+  <body position="-2.4944194940771913,1.5716829089668836, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle49" init_led_color="magenta">
+  <body position="-0.8040223647583171,-0.3624242819284986, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle50" init_led_color="magenta">
+  <body position="-0.30792800244919993,0.3588075219502267, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle51" init_led_color="magenta">
+  <body position="0.1637978282379149,-0.4213486696652988, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle52" init_led_color="magenta">
+  <body position="1.3419802636477698,-0.29773538812543965, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle53" init_led_color="magenta">
+  <body position="-2.0272648169306193,-0.658494119187572, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle54" init_led_color="magenta">
+  <body position="-2.4015229820751873,-1.1021644937666224, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle55" init_led_color="magenta">
+  <body position="0.4632915084834974,1.8662255694859513, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle56" init_led_color="magenta">
+  <body position="-2.561713861785397,-1.4104351984678694, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle57" init_led_color="magenta">
+  <body position="-1.3496367528001647,1.4035418383703426, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle58" init_led_color="magenta">
+  <body position="0.11926624882441494,1.6261306897943006, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle59" init_led_color="magenta">
+  <body position="1.8091308588807387,1.3523641149001855, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle60" init_led_color="magenta">
+  <body position="-2.6206466906264274,-0.11589559787543013, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle61" init_led_color="magenta">
+  <body position="-0.21849458348452266,-1.802185884135386, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle62" init_led_color="magenta">
+  <body position="1.6327492258379221,0.28753746812256153, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle63" init_led_color="magenta">
+  <body position="-3.070843569719248,1.0614668550159174, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle64" init_led_color="magenta">
+  <body position="-1.5779030538358345,0.45181336493980684, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle65" init_led_color="magenta">
+  <body position="0.04394655580711815,-1.0053422967104662, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle66" init_led_color="magenta">
+  <body position="2.127743696171658,0.12789327807300888, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle67" init_led_color="magenta">
+  <body position="-0.14481158150123496,0.9814778387679661, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle68" init_led_color="magenta">
+  <body position="-1.7852109474380642,-1.062654440433744, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle69" init_led_color="magenta">
+  <body position="-1.0885929016322606,0.5761087645621781, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle70" init_led_color="magenta">
+  <body position="2.510436086085755,0.0406416318017806, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle71" init_led_color="magenta">
+  <body position="-1.8590922473924703,1.1257758687333022, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle72" init_led_color="magenta">
+  <body position="2.3471295042417752,0.8833336490530499, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle73" init_led_color="magenta">
+  <body position="1.0153986638121184,1.4955614565736957, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle74" init_led_color="magenta">
+  <body position="-2.1748918579511045,-0.12573131272377935, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle75" init_led_color="magenta">
+  <body position="-1.878344531444454,0.4495344674088573, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle76" init_led_color="magenta">
+  <body position="0.6857802978711263,-0.7064821145436713, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle77" init_led_color="magenta">
+  <body position="-0.27081936294784636,-0.29051037908863053, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle78" init_led_color="magenta">
+  <body position="-0.6969231678632024,1.5384263679922534, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle79" init_led_color="magenta">
+  <body position="-0.48744370976536144,1.9420144714773615, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle80" init_led_color="magenta">
+  <body position="1.0461981190200866,-0.618435758192208, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle81" init_led_color="magenta">
+  <body position="1.6353920218392126,-0.892327567002904, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle82" init_led_color="magenta">
+  <body position="0.5007626095652871,-1.6852727411056874, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle83" init_led_color="magenta">
+  <body position="-1.8027289271173788,-1.6950279576929623, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle84" init_led_color="magenta">
+  <body position="2.3326640089673507,-0.8489271120595925, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle85" init_led_color="magenta">
+  <body position="3.019155174813049,-1.9278120004495873, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle86" init_led_color="magenta">
+  <body position="3.0708917079724314,0.6847174749260505, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle87" init_led_color="magenta">
+  <body position="0.7992528367731166,0.23039607653152805, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle88" init_led_color="magenta">
+  <body position="-3.4819488802968213,1.015578178166563, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle89" init_led_color="magenta">
+  <body position="2.7671477469908385,1.854977850301045, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle90" init_led_color="magenta">
+  <body position="-0.8160992308969797,-1.098269437767923, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle91" init_led_color="magenta">
+  <body position="0.5994954883670562,-1.9933949963916096, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle92" init_led_color="magenta">
+  <body position="2.769398936700215,-1.5899071461178163, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle93" init_led_color="magenta">
+  <body position="0.6735362961215223,1.3262987855158328, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle94" init_led_color="magenta">
+  <body position="0.06269432852809631,0.6319549051212281, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle95" init_led_color="magenta">
+  <body position="2.7420054381932797,0.8240371116172271, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle96" init_led_color="magenta">
+  <body position="-1.299795145185986,-1.6124138238977497, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle97" init_led_color="magenta">
+  <body position="-2.0659888807007505,0.7270814119136677, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle98" init_led_color="magenta">
+  <body position="-1.312862685015208,1.863936008931487, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle99" init_led_color="magenta">
+  <body position="-3.432785254686989,-0.6993963745267293, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+<block id="obstacle100" init_led_color="magenta">
+  <body position="-3.2210973364404225,0.40181029585221895, 0" orientation="0,0,0" />
+  <controller config="block"/>
+</block>
+
+
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <pointmass3d id="pm3d" iterations="10" />
+    <dynamics3d id="dyn3d" iterations="25" default_friction="0.3">
+      <gravity g="9.8" />
+      <floor friction="10.0" />
+      <virtual_magnetism />
+    </dynamics3d>
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <directional_led id="directional_leds" index="grid" grid_size="20,20,20"/>
+    <tag id="tags" index="grid" grid_size="20,20,20" />
+    <radio id="nfc" index="grid" grid_size="20,20,20" />
+    <radio id="wifi" index="grid" grid_size="20,20,20" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="/Users/harry/Desktop/mns2.0/build/libvns_loop_functions"
+                  label="vns_loop_functions"/>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <!--
+  <visualization>
+    <qt-opengl lua_editor="true" show_boundary="false">
+		  <user_functions library="/Users/harry/Desktop/mns2.0/build/libbuilderbot_qtopengl_user_functions"
+                      label="builderbot_qtopengl_user_functions" >
+      </user_functions>
+      <camera>
+        <placements>
+          <placement index="0" position="-6.01698,3.45411,1.68985" look_at="-5.13495,3.03202,1.48039" up="0.188941,-0.0904165,0.977817" lens_focal_length="30" />
+          <placement index="1" position="6.24865,-4.76935,2.71261" look_at="5.52826,-4.16628,2.37006" up="-0.262661,0.219888,0.939499" lens_focal_length="30" />
+          <placement index="2" position="-6.25183,-4.76287,2.69551" look_at="-5.59804,-4.13326,2.27582" up="0.302308,0.291125,0.907665" lens_focal_length="30" />
+          <placement index="3" position="-6.2675,4.75161,2.71277" look_at="-5.59966,4.11924,2.32022" up="0.285045,-0.269901,0.91973" lens_focal_length="30" />
+          <placement index="0" position="0.0122872,0.0534732,25.7009" look_at="0.0122872,0.0534732,24.7009" up="-0.00187965,0.999998,0" lens_focal_length="90" />
+          <placement index="5" position="  0, 15, 15" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="6" position="-15, 15, 15"  look_at="0,0,0.25" lens_focal_length="90" />
+          <placement index="7" position="-15,  0, 15" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="8" position="-15,-15, 15"  look_at="0,0,0.25" lens_focal_length="90" />
+        </placements>
+      </camera>
+    </qt-opengl>
+  </visualization>
+  -->
+
+
+</argos-configuration>

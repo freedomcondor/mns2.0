@@ -101,7 +101,7 @@ function Driver.step(vns, waiting)
 	-- prohibit move if a children is out of safezone
 	---[[
 if waiting == true then
-	local safezone_half = 1.0
+	local safezone_half = 0.9
 	if vns.robotTypeS == "drone" then
 		for idS, robotR in pairs(vns.childrenRT) do
 			if robotR.robotTypeS == "pipuck" and

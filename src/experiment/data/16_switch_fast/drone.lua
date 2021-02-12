@@ -75,7 +75,7 @@ return function()
 	end
 
 	-- move
-	local speed = 0.03
+	local speed = 0.02
 	vns.Spreader.emergency_after_core(vns, vector3(speed,0,0), vector3())
 	return false, true
 end end

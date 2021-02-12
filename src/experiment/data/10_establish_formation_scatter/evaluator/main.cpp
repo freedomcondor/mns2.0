@@ -5,8 +5,8 @@
 #include "Vector3.h"
 #include "Quaternion.h"
 
-#define N_ROBOTS 11
-#define N_STEPS 5500
+#define N_ROBOTS 14
+#define N_STEPS 1000
 
 #define PI 3.1415926
 
@@ -20,6 +20,7 @@ char str_robots[N_ROBOTS][100] = {
 	"drone1.csv",
 	"drone2.csv",
 	"drone3.csv",
+	"drone4.csv",
 	"pipuck1.csv",
 	"pipuck2.csv",
 	"pipuck3.csv",
@@ -28,24 +29,28 @@ char str_robots[N_ROBOTS][100] = {
 	"pipuck6.csv",
 	"pipuck7.csv",
 	"pipuck8.csv",
+	"pipuck9.csv",
+	"pipuck10.csv",
 };
 
-double dis = 1.0;
-double height= 1.5;
 Vector3 goal_locs[N_ROBOTS] = 
 {
 	Vector3(0.0, 0.0, 1.5),
-	Vector3(-0.5, -0.5, 0.0),
-	Vector3(-0.5, 0.5, 0.0),
-	Vector3(0.5, 0.5, 0.0),
-	Vector3(0.5, -0.5, 0.0),
-	Vector3(-1.3, 0.0, 1.5),
-	Vector3(-1.8, -0.5, 0.0),
-	Vector3(-1.8, 0.5, 0.0),
-	Vector3(1.3, 0.0, 1.5),
-	Vector3(1.8, 0.5, 0.0),
-	Vector3(1.8, -0.5, 0.0),
+	Vector3(-0.6, -0.6, 0.0),
+	Vector3(-0.6, 0.6, 0.0),
+	Vector3(0.6, 0.6, 0.0),
+	Vector3(0.6, -0.6, 0.0),
+	Vector3(-1.2, 0.0, 1.5),
+	Vector3(-1.8, -0.6, 0.0),
+	Vector3(-1.8, 0.6, 0.0),
+	Vector3(1.2, 0.0, 1.5),
+	Vector3(1.8, 0.6, 0.0),
+	Vector3(1.8, -0.6, 0.0),
+	Vector3(2.4, 0.0, 1.5),
+	Vector3(3.0, 0.6, 0.0),
+	Vector3(3.0, -0.6, 0.0),
 };
+
 
 Vector3 locs[N_ROBOTS][N_STEPS];
 Quaternion dirs[N_ROBOTS][N_STEPS];

@@ -1,7 +1,7 @@
 import os
 
 mnsfolder = '/Users/harry/Desktop/mns2.0/'
-casefolder = 'experiment/data/09_auto_scenario'
+casefolder = 'experiment/data/11_establish_formation_matrix'
 testfolder_build = mnsfolder + 'build/' + casefolder
 testfolder_src = mnsfolder + 'src/' + casefolder
 

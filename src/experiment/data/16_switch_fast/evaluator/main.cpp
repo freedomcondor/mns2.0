@@ -6,7 +6,7 @@
 #include "Quaternion.h"
 
 #define N_ROBOTS 11
-#define N_STEPS 5500
+#define N_STEPS 2500
 
 #define PI 3.1415926
 
@@ -32,19 +32,42 @@ char str_robots[N_ROBOTS][100] = {
 
 double dis = 1.0;
 double height= 1.5;
-Vector3 goal_locs[N_ROBOTS] = 
+Vector3 goal_locs[N_ROBOTS * 3 + 1] = 
 {
+	Vector3(0.0, 0.0, 1.5),
+	Vector3(0.0, 0.0, 1.5),
+	Vector3(-0.5, -0.5, 0.0),
+	Vector3(-0.5, 0.5, 0.0),
+	Vector3(0.5, 0.5, 0.0),
+	Vector3(0.5, -0.5, 0.0),
+	Vector3(0.0, -1.3, 1.5),
+	Vector3(0.5, -1.8, 0.0),
+	Vector3(-0.5, -1.8, 0.0),
+	Vector3(0.0, 1.3, 1.5),
+	Vector3(0.5, 1.8, 0.0),
+	Vector3(-0.5, 1.8, 0.0),
+	Vector3(0.0, 0.0, 1.5),
+	Vector3(-0.5, -0.5, 0.0),
+	Vector3(-0.5, 0.5, 0.0),
+	Vector3(0.5, 0.5, 0.0),
+	Vector3(0.5, -0.5, 0.0),
+	Vector3(-0.91923881554251, -0.91923881554251, 1.5),
+	Vector3(-1.4192388155425, -1.1692388155425, 0.0),
+	Vector3(-0.41923881554251, -1.1692388155425, 0.0),
+	Vector3(-0.91923881554251, 0.91923881554251, 1.5),
+	Vector3(-0.41923881554251, 1.1692388155425, 0.0),
+	Vector3(-1.4192388155425, 1.1692388155425, 0.0),
 	Vector3(0.0, 0.0, 1.5),
 	Vector3(-0.5, -0.5, 0.0),
 	Vector3(-0.5, 0.5, 0.0),
 	Vector3(0.5, 0.5, 0.0),
 	Vector3(0.5, -0.5, 0.0),
 	Vector3(-1.3, 0.0, 1.5),
-	Vector3(-1.8, -0.5, 0.0),
 	Vector3(-1.8, 0.5, 0.0),
-	Vector3(1.3, 0.0, 1.5),
-	Vector3(1.8, 0.5, 0.0),
-	Vector3(1.8, -0.5, 0.0),
+	Vector3(-1.8, -0.5, 0.0),
+	Vector3(-2.6, 0.0, 1.5),
+	Vector3(-3.1, 0.5, 0.0),
+	Vector3(-3.1, -0.5, 0.0),
 };
 
 Vector3 locs[N_ROBOTS][N_STEPS];
@@ -124,8 +147,14 @@ int calc_data()
 		int head_goal_index;
 		for (int i = 0; i < N_ROBOTS; i++)
 		{
-			if (ids[i] == 1) head_index = i;
-			if (ids[i] == 1) head_goal_index = 0;
+			if ((stepids[i][time] == 2) || 
+		    	(stepids[i][time] == 2 + N_ROBOTS * 1) || 
+		    	(stepids[i][time] == 2 + N_ROBOTS * 2)
+		   	   )
+				head_index = i;
+			if (stepids[i][time] == 2) head_goal_index = 1;
+			if (stepids[i][time] == 2 + N_ROBOTS * 1) head_goal_index = 1 + N_ROBOTS * 1;
+			if (stepids[i][time] == 2 + N_ROBOTS * 2) head_goal_index = 1 + N_ROBOTS * 2;
 		}
 
 		double sum = 0;

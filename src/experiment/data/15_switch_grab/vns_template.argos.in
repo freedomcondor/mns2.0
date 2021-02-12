@@ -198,7 +198,7 @@
 
     <!-- target -->
     <prototype id="target" movable="true" friction="2">
-      <body position="0, 0, 0" orientation="0,0,0" />
+      <body position="-2, 0.3, 0" orientation="0,0,0" />
       <links ref="base">
         <link id="base" geometry="cylinder" radius="0.3" height="0.1" mass="0.01"
           position="0,0,0" orientation="0,0,0" />

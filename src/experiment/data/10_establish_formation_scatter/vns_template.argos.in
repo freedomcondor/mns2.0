@@ -176,7 +176,7 @@
     </drone>
 
     <distribute>
-      <position method="uniform" min="-2.0, -1.0, 0" max="2.5, 1.0, 0" />
+      <position method="uniform" min="-2.5, -1.0, 0" max="2.5, 1.0, 0" />
       <orientation method="uniform" min="0,0,0" max="0,0,0" />
       <entity quantity="3" base_num="2" max_trials="100">
         <drone id="drone">
@@ -188,7 +188,7 @@
     <!-- pipucks -->
 
     <distribute>
-      <position method="uniform" min="-1.5, -1.5, 0" max="1.5, 1.5, 0" />
+      <position method="uniform" min="-1.5, -1.0, 0" max="1.5, 1.0, 0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
       <entity quantity="10" base_num="1" max_trials="100">
         <pipuck id="pipuck"  wifi_medium="wifi" tag_medium="tags">

@@ -32,19 +32,53 @@ char str_robots[N_ROBOTS][100] = {
 
 double dis = 1.0;
 double height= 1.5;
-Vector3 goal_locs[N_ROBOTS] = 
+Vector3 goal_locs[N_ROBOTS * 4 + 1] = 
 {
+	Vector3(0.0, 0.0, 1.5),
 	Vector3(0.0, 0.0, 1.5),
 	Vector3(-0.5, -0.5, 0.0),
 	Vector3(-0.5, 0.5, 0.0),
 	Vector3(0.5, 0.5, 0.0),
 	Vector3(0.5, -0.5, 0.0),
-	Vector3(-1.3, 0.0, 1.5),
-	Vector3(-1.8, -0.5, 0.0),
-	Vector3(-1.8, 0.5, 0.0),
-	Vector3(1.3, 0.0, 1.5),
-	Vector3(1.8, 0.5, 0.0),
-	Vector3(1.8, -0.5, 0.0),
+	Vector3(0.0, -1.3, 1.5),
+	Vector3(0.5, -1.8, 0.0),
+	Vector3(-0.5, -1.8, 0.0),
+	Vector3(0.0, 1.3, 1.5),
+	Vector3(0.5, 1.8, 0.0),
+	Vector3(-0.5, 1.8, 0.0),
+	Vector3(0.0, 0.0, 1.5),
+	Vector3(0.5, 0.5, 0.0),
+	Vector3(1.0, 0.5, 0.0),
+	Vector3(1.25, 0.5, 0.0),
+	Vector3(0.5, -0.5, 0.0),
+	Vector3(1.0, -0.5, 0.0),
+	Vector3(1.25, -0.5, 0.0),
+	Vector3(-0.5, 0.5, 0.0),
+	Vector3(-0.5, -0.5, 0.0),
+	Vector3(0.91923881554251, -0.91923881554251, 1.5),
+	Vector3(0.91923881554251, 0.91923881554251, 1.5),
+	Vector3(0.0, 0.0, 1.5),
+	Vector3(0.5, 0.5, 0.0),
+	Vector3(1.0, 0.25, 0.0),
+	Vector3(1.0833333333333, 0.083333333333333, 0.0),
+	Vector3(0.5, -0.5, 0.0),
+	Vector3(1.0, -0.25, 0.0),
+	Vector3(1.0833333333333, -0.083333333333333, 0.0),
+	Vector3(-0.5, 0.5, 0.0),
+	Vector3(-0.5, -0.5, 0.0),
+	Vector3(0.91923881554251, -0.91923881554251, 1.5),
+	Vector3(0.91923881554251, 0.91923881554251, 1.5),
+	Vector3(0.0, 0.0, 1.5),
+	Vector3(0.0, 0.5, 0.0),
+	Vector3(0.25, 0.25, 0.0),
+	Vector3(0.33333333333333, 0.083333333333333, 0.0),
+	Vector3(0.0, -0.5, 0.0),
+	Vector3(0.25, -0.25, 0.0),
+	Vector3(0.33333333333333, -0.083333333333333, 0.0),
+	Vector3(-0.5, 0.5, 0.0),
+	Vector3(-0.5, -0.5, 0.0),
+	Vector3(0.0, -1.3, 1.5),
+	Vector3(0.0, 1.3, 1.5),
 };
 
 Vector3 locs[N_ROBOTS][N_STEPS];
@@ -124,8 +158,16 @@ int calc_data()
 		int head_goal_index;
 		for (int i = 0; i < N_ROBOTS; i++)
 		{
-			if (ids[i] == 1) head_index = i;
-			if (ids[i] == 1) head_goal_index = 0;
+			if ((stepids[i][time] == 2) || 
+		    	(stepids[i][time] == 2 + N_ROBOTS * 1) || 
+		    	(stepids[i][time] == 2 + N_ROBOTS * 2) ||
+		    	(stepids[i][time] == 2 + N_ROBOTS * 3)
+		   	   )
+				head_index = i;
+			if (stepids[i][time] == 2) head_goal_index = 1;
+			if (stepids[i][time] == 2 + N_ROBOTS * 1) head_goal_index = 1 + N_ROBOTS * 1;
+			if (stepids[i][time] == 2 + N_ROBOTS * 2) head_goal_index = 1 + N_ROBOTS * 2;
+			if (stepids[i][time] == 2 + N_ROBOTS * 3) head_goal_index = 1 + N_ROBOTS * 3;
 		}
 
 		double sum = 0;
