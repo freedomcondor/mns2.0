@@ -171,11 +171,15 @@ function Connector.step(vns)
 
 	-- check split
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "split")) do
-		logger("I get split from", msgM.fromS)
 		if vns.parentR ~= nil and msgM.fromS == vns.parentR.idS then
-			Connector.newVnsID(vns, nil, 100)
+			Connector.newVnsID(vns, msgM.dataT.newID, msgM.dataT.waitTick or 100)
 			vns.deleteParent(vns)
-			vns.setGene(vns, msgM.dataT.morphology)
+			if type(msgM.dataT.morphology) == "number" then
+				vns.setMorphology(vns, vns.allocator.gene_index[msgM.dataT.morphology])
+			elseif type(msgM.dataT.morphology) == "table" then
+				vns.setGene(vns, msgM.dataT.morphology)
+				-- TODO: its children don't know this gene
+			end
 		end
 	end
 
