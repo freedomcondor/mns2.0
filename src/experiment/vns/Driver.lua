@@ -47,6 +47,8 @@ end
 
 function Driver.step(vns, waiting)
 	-- receive goal from parent
+	local transV3 = vector3()
+	local rotateV3 = vector3()
 	if vns.parentR ~= nil then
 		for _, msgM in pairs(vns.Msg.getAM(vns.parentR.idS, "drive")) do
 			local receivedPositionV3 = vns.parentR.positionV3 +
@@ -83,15 +85,12 @@ function Driver.step(vns, waiting)
 			if angle > math.pi then angle = angle - math.pi * 2 end
 			local goalPointRotateV3 = axis * angle
 
-			local transV3 = goalPointTransV3 + receivedTransV3 + vns.goal.transV3
-			local rotateV3 = goalPointRotateV3 + receivedRotateV3 + vns.goal.rotateV3
+			transV3 = goalPointTransV3 + receivedTransV3 + vns.goal.transV3
+			rotateV3 = goalPointRotateV3 + receivedRotateV3 + vns.goal.rotateV3
 
 			Driver.move(transV3, rotateV3)
 		end
 	else
-		local transV3 = vector3()
-		local rotateV3 = vector3()
-
 		transV3 = transV3 + vns.goal.transV3
 		rotateV3 = rotateV3 + vns.goal.rotateV3
 
@@ -101,10 +100,17 @@ function Driver.step(vns, waiting)
 	-- prohibit move if a children is out of safezone
 	---[[
 if waiting == true then
-	local safezone_half = 0.9
+	local safezone_half_pipuck = 0.9
+	local safezone_half_drone = 1.35
+	local safezone_half
 	if vns.robotTypeS == "drone" then
 		for idS, robotR in pairs(vns.childrenRT) do
-			if robotR.robotTypeS == "pipuck" and
+			if robotR.robotTypeS == "pipuck" then 
+				safezone_half = safezone_half_pipuck
+			elseif 
+				robotR.robotTypeS == "drone" then safezone_half = safezone_half_drone 
+			end
+			if transV3:dot(robotR.positionV3) < 0 and
 			   (robotR.positionV3.x < -safezone_half or
 			    robotR.positionV3.x > safezone_half or
 			    robotR.positionV3.y < -safezone_half or

@@ -1,4 +1,4 @@
-local pipuckDis = 0.5
+local pipuckDis = 0.6
 local droneDis = 1.3
 return 
 {	robotTypeS = "drone",

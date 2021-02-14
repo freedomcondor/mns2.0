@@ -5,7 +5,7 @@
 #include "Vector3.h"
 #include "Quaternion.h"
 
-#define N_ROBOTS 11
+#define N_ROBOTS 14
 #define N_STEPS 5500
 
 #define PI 3.1415926
@@ -20,6 +20,7 @@ char str_robots[N_ROBOTS][100] = {
 	"drone1.csv",
 	"drone2.csv",
 	"drone3.csv",
+	"drone4.csv",
 	"pipuck1.csv",
 	"pipuck2.csv",
 	"pipuck3.csv",
@@ -28,24 +29,42 @@ char str_robots[N_ROBOTS][100] = {
 	"pipuck6.csv",
 	"pipuck7.csv",
 	"pipuck8.csv",
+	"pipuck9.csv",
+	"pipuck10.csv",
 };
 
 double dis = 1.0;
 double height= 1.5;
-Vector3 goal_locs[N_ROBOTS] = 
+Vector3 goal_locs[26] = 
 {
+	Vector3(0.0, 0.0, 1.5),
 	Vector3(0.0, 0.0, 1.5),
 	Vector3(-0.5, -0.5, 0.0),
 	Vector3(-0.5, 0.5, 0.0),
 	Vector3(0.5, 0.5, 0.0),
 	Vector3(0.5, -0.5, 0.0),
-	Vector3(-1.3, 0.0, 1.5),
-	Vector3(-1.8, -0.5, 0.0),
-	Vector3(-1.8, 0.5, 0.0),
+	Vector3(0.0, -1.3, 1.5),
+	Vector3(0.5, -1.8, 0.0),
+	Vector3(-0.5, -1.8, 0.0),
+	Vector3(0.0, 0.0, 1.5),
+	Vector3(-0.5, -0.5, 0.0),
+	Vector3(-0.5, 0.5, 0.0),
+	Vector3(0.5, 0.5, 0.0),
+	Vector3(0.5, -0.5, 0.0),
 	Vector3(1.3, 0.0, 1.5),
-	Vector3(1.8, 0.5, 0.0),
 	Vector3(1.8, -0.5, 0.0),
+	Vector3(1.8, 0.5, 0.0),
+	Vector3(0.0, -1.3, 1.5),
+	Vector3(-0.5, -1.8, 0.0),
+	Vector3(0.5, -1.8, 0.0),
+	Vector3(-1.3, 0.0, 1.5),
+	Vector3(-1.8, 0.5, 0.0),
+	Vector3(-1.8, -0.5, 0.0),
+	Vector3(0.0, 0.0, 1.5),
+	Vector3(-0.5, -0.5, 0.0),
+	Vector3(-0.5, 0.5, 0.0),
 };
+
 
 Vector3 locs[N_ROBOTS][N_STEPS];
 Quaternion dirs[N_ROBOTS][N_STEPS];
@@ -120,17 +139,30 @@ int calc_data()
 
 	for (int time = 0; time < n_steps; time++)
 	{
-		int head_index;
-		int head_goal_index;
-		for (int i = 0; i < N_ROBOTS; i++)
-		{
-			if (ids[i] == 1) head_index = i;
-			if (ids[i] == 1) head_goal_index = 0;
-		}
-
 		double sum = 0;
 		for (int i = 0; i < N_ROBOTS; i++)
 		{
+			int head_id;
+			int head_index;
+			int head_goal_index;
+			// find the nearest head id
+			if (stepids[i][time] >= 2) head_id = 2;
+			if (stepids[i][time] >= 10) head_id = 10;
+			if (stepids[i][time] >= 24) head_id = 24;
+			// find the nearest head robot
+			double distance = 99999999;
+			for (int j = 0; j < N_ROBOTS; j++)
+				if ((stepids[j][time] == head_id) &&
+				    ((locs[i][time] - locs[j][time]).len() < distance)) 
+				{
+					distance = (locs[i][time] - locs[j][time]).len();
+					head_index = j;
+					head_goal_index = head_id - 1;
+				}
+
+			// hack for logical direction
+			if ((head_id == 24) && (head_index == 2)) dirs[head_index][time] = Quaternion(Vector3(0,0,1), PI);
+			if ((head_id == 24) && (head_index == 3)) dirs[head_index][time] = Quaternion(Vector3(0,0,1), PI/2);
 			Vector3 relative_loc = 
 				dirs[head_index][time].inv().toRotate(
 						locs[i][time] - locs[head_index][time])
@@ -140,6 +172,18 @@ int calc_data()
 			Vector3 error = relative_loc - (goal_locs[stepids[i][time]-1] - goal_locs[head_goal_index]);
 			sum += error.len();
 			
+			if (time == 603)
+			{
+				printf("stepids[i][time] = %d\n", stepids[i][time]);
+				printf("head_id = %d\n", head_id);
+				printf("head_index = %d\n", head_index);
+				printf("head_goal_index = %d\n", head_goal_index);
+				printf("head_name = %s\n", str_robots[head_index]);
+				printf("relative_loc = %s\n", relative_loc.toStr());
+				printf("goal_loc = %s\n", (goal_locs[stepids[i][time]-1] - goal_locs[head_goal_index]).toStr());
+				printf("error = %s\n", error.toStr());
+			}
+
 			if (time == n_steps - 1)
 				printf("%s %lf\n", str_robots[i], error.len());
 		}

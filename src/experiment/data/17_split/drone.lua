@@ -68,10 +68,10 @@ return function()
 			-- cut front and back id 15 and 21
 			local idS = vns.allocator.gene_index[15].match
 			vns.deleteChild(vns, idS)
-			vns.Msg.send(idS, "split", {morphology = 15, newID = 0.9, waitTick = 150})
+			vns.Msg.send(idS, "split", {morphology = 24, newID = 0.9, waitTick = 150})
 			local idS = vns.allocator.gene_index[21].match
 			vns.deleteChild(vns, idS)
-			vns.Msg.send(idS, "split", {morphology = 15, newID = 0.9, waitTick = 150})
+			vns.Msg.send(idS, "split", {morphology = 24, newID = 0.9, waitTick = 150})
 
 			count = 0
 		end
@@ -85,13 +85,13 @@ return function()
 			-- cut front, right and back id 15, 18 and 21
 			local idS = vns.allocator.gene_index[15].match
 			vns.deleteChild(vns, idS)
-			vns.Msg.send(idS, "split", {morphology = 15, newID = 0.9, waitTick = 150})
+			vns.Msg.send(idS, "split", {morphology = 24, newID = 0.9, waitTick = 150})
 			local idS = vns.allocator.gene_index[18].match
 			vns.deleteChild(vns, idS)
-			vns.Msg.send(idS, "split", {morphology = 15, newID = 0.9, waitTick = 150})
+			vns.Msg.send(idS, "split", {morphology = 24, newID = 0.9, waitTick = 150})
 			local idS = vns.allocator.gene_index[21].match
 			vns.deleteChild(vns, idS)
-			vns.Msg.send(idS, "split", {morphology = 15, newID = 0.9, waitTick = 150})
+			vns.Msg.send(idS, "split", {morphology = 24, newID = 0.9, waitTick = 150})
 		end
 	elseif state == "split" then
 		count = count + 1
