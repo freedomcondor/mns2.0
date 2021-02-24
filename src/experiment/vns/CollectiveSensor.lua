@@ -98,11 +98,20 @@ function CollectiveSensor.reportAll(vns)
 end
 
 ------ behaviour tree ---------------------------------------
-function CollectiveSensor.create_collectivesensor_node(vns)
+function CollectiveSensor.create_collectivesensor_node_reportAll(vns)
 	return function()
 		if vns.robotTypeS == "drone" then
 		CollectiveSensor.step(vns)
 		CollectiveSensor.reportAll(vns)
+		end
+		return false, true
+	end
+end
+
+function CollectiveSensor.create_collectivesensor_node(vns)
+	return function()
+		if vns.robotTypeS == "drone" then
+			CollectiveSensor.step(vns)
 		end
 		return false, true
 	end

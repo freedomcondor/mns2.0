@@ -182,7 +182,7 @@ function VNS.create_vns_core_node(vns)
 		vns.Allocator.create_allocator_node(vns),
 		vns.Avoider.create_avoider_node(vns),
 		vns.Spreader.create_spreader_node(vns),
-		vns.CollectiveSensor.create_collectivesensor_node(vns),
+		--vns.CollectiveSensor.create_collectivesensor_node(vns),
 		--vns.Driver.create_driver_node(vns),
 	}}
 end

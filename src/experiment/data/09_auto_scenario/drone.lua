@@ -194,65 +194,6 @@ return function()
 		end
 	end
 end end
---[[
-function create_reaction_node(vns, file)
-return function()
-	-- detect obstacle/predator and send emergency flag
-	for i, obstacle in ipairs(vns.avoider.obstacles) do
-		if obstacle.type == 4 then -- blue
-			vns.Spreader.emergency(vns, vector3(), vector3(), "wall")
-		end
-		if obstacle.type == 0 and obstacle.positionV3.x > 0 then -- black
-			vns.Spreader.emergency(vns, vector3(), vector3(), "target")
-			--vns.setMorphology(vns, structure3)
-		end
-	end
-	-- detect predator
-	for idS, robotR in pairs(vns.connector.seenRobots) do
-		if idS == "pipuck40" then
-			local runawayV3 = vector3()
-			--runawayV3 = Avoider.add(vector3(), obstacle.positionV3, runawayV3, predator_distance)
-			runawayV3 = vector3() - robotR.positionV3
-			runawayV3.z = 0
-			runawayV3:normalize()
-			runawayV3 = runawayV3 * 0.03
-			vns.Spreader.emergency(vns, runawayV3, vector3())
-		end
-	end
-
-	-- detect gaps
-	for i, obstacle in ipairs(vns.avoider.obstacles) do
-		if obstacle.distance ~= nil and
-		   obstacle.positionV3.x > 0 and
-		   vns.idN < 1 + obstacle.distance then -- orange
-			if vns.parentR ~= nil then 
-				vns.Msg.send(vns.parentR.idS, "dismiss")
-				vns.deleteParent(vns)
-			end
-			vns.Connector.newVnsID(vns, 1 + obstacle.distance)
-		vns.setMorphology(vns, structure2)
-		end
-	end
-
-	-- the brain change structures accordingly
-	if vns.parentR == nil then
-		if vns.spreader.spreading_speed.flag == "wall" then
-			if vns.allocator.target ~= structure2 then
-				logger("transform to structure2 : ", stepCount)
-				file:write(tostring(stepCount) .. "\n")
-			end
-			vns.setMorphology(vns, structure2)
-		elseif vns.spreader.spreading_speed.flag == "target" then
-			if vns.allocator.target ~= structure3 then
-				logger("transform to structure3 : ", stepCount)
-				file:write(tostring(stepCount) .. "\n")
-				file:close()
-			end
-			vns.setMorphology(vns, structure3)
-		end
-	end
-end end
---]]
 
 -- argos functions ------
 --- init
@@ -284,6 +225,7 @@ function reset()
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
 		vns.create_vns_core_node(vns),
+		vns.CollectiveSensor.create_collectivesensor_node_reportAll(vns),
 		create_gap_detection_node(vns),
 		create_reaction_node(vns, tranformStepCSV),
 		create_head_navigate_node(vns),

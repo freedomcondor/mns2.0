@@ -24,6 +24,7 @@ end
 function Avoider.step(vns)
 	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
 	-- avoid seen robots
+if vns.parentR ~= nil then
 	for idS, robotR in pairs(vns.connector.seenRobots) do
 		-- avoid drone
 		if robotR.robotTypeS == vns.robotTypeS and
@@ -44,6 +45,7 @@ function Avoider.step(vns)
 				            vns.goal.positionV3)
 		end
 	end
+end
 
 	-- avoid obstacles
 	if vns.robotTypeS ~= "drone" then
