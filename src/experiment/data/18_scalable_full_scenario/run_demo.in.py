@@ -75,7 +75,17 @@ def generate_link_children_text(text, i):
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(-pipuckDis, pipuckDis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
-	},\n'''
+	},
+
+	---[[
+	{	robotTypeS = "pipuck",
+		positionV3 = vector3(pipuckDis/2, -pipuckDis, 0),
+		orientationQ = quaternion(0, vector3(0,0,1)),
+	},
+	{	robotTypeS = "pipuck",
+		positionV3 = vector3(pipuckDis/2, pipuckDis, 0),
+		orientationQ = quaternion(0, vector3(0,0,1)),
+	},\n--]]\n'''
 	text = generate_link_children_text(text, i-1)
 	text = text + "}},\n"
 	return text
@@ -108,7 +118,17 @@ def generate_curve_link_text(text, i, th):
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(-pipuckDis, pipuckDis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
-	},\n'''
+	},
+
+	---[[
+	{	robotTypeS = "pipuck",
+		positionV3 = vector3(pipuckDis/2, -pipuckDis, 0),
+		orientationQ = quaternion(0, vector3(0,0,1)),
+	},
+	{	robotTypeS = "pipuck",
+		positionV3 = vector3(pipuckDis/2, pipuckDis, 0),
+		orientationQ = quaternion(0, vector3(0,0,1)),
+	},\n--]]\n'''
 	text = generate_curve_link_text(text, i-1, th)
 	text = text + "}},\n"
 	return text
@@ -227,7 +247,7 @@ def generate_argos_file(TotalLength, RandomSeed, obstacle_xml):
 #------------------------------------------------------------------------
 TotalLength = 2500 / 5
 if Visual :
-	TotalLength = 0 
+	TotalLength = 20000 / 5
 RandomSeed = Inputseed or 2
 
 random.seed(RandomSeed)
@@ -240,9 +260,9 @@ obstacle_xml = generate_obstacle(5,        # number of gates
 
 generate_argos_file(TotalLength, RandomSeed, obstacle_xml)
 
-generate_structure("morphology1", 3, "line", 0)
-generate_structure("morphology2", 8, "line", 0)
-generate_structure("morphology3", 3, "curve", math.pi/6)
+generate_structure("morphology1", 1, "line", 0)
+generate_structure("morphology2", 3, "line", 0)
+generate_structure("morphology3", 1, "curve", math.pi/6)
 
 os.system("argos3 -c vns.argos")
 

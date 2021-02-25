@@ -245,8 +245,8 @@ function Allocator.multi_branch_allocate(vns, branches)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	--[[
-if robot.id == "drone24" or robot.id == "pipuck2" then
+	---[[
+--if robot.id == "drone24" or robot.id == "pipuck2" then
 	logger("multi-sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -263,7 +263,7 @@ if robot.id == "drone24" or robot.id == "pipuck2" then
 	end
 	logger("cost")
 	logger(originCost)
-end
+--end
 	--]]
 
 	-- mark children
@@ -368,8 +368,8 @@ function Allocator.allocate(vns)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	--[[
-if robot.id == "drone2" then
+	---[[
+--if robot.id == "drone2" then
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -384,7 +384,7 @@ if robot.id == "drone2" then
 		logger("\tid = ", target.index.idS or target.index.idN)
 		logger("\tposition = ", target.index.positionV3)
 	end
-end
+--end
 	--]]
 
 	-- multiple (including one) sources to one target

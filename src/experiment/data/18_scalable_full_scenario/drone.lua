@@ -174,7 +174,7 @@ return function()
 				- vector3(0.6,0,0)
 			goal.z = 0
 			if goal:length() < 0.05 then reach_goal = true end
-			if goal:length() < 0.50 and vns.allocator.target ~= structure2 then 
+			if goal:length() < 0.30 and vns.allocator.target ~= structure2 then 
 				-- change to structure2
 				vns.setMorphology(vns, structure2)
 			end
@@ -238,14 +238,14 @@ function reset()
 		vns.CollectiveSensor.create_collectivesensor_node(vns),
 		create_gap_detection_node(vns),
 		create_head_navigate_node(vns),
-		vns.Driver.create_driver_node(vns),
+		vns.Driver.create_driver_node_wait(vns),
 	}}
 end
 
 --- step
 function step()
 	-- prestep
-	--logger(robot.id, "-----------------------")
+	logger(robot.id, api.stepCount + 1, "-----------------------")
 	api.preStep()
 	vns.preStep(vns)
 
