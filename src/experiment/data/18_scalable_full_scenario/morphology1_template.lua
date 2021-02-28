@@ -34,7 +34,7 @@ return
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 
-		---[[
+		--[[
 		{	robotTypeS = "pipuck",
 			positionV3 = vector3(pipuckDis/2, -pipuckDis, 0),
 			orientationQ = quaternion(0, vector3(0,0,1)),
@@ -59,7 +59,7 @@ DRONE_CHILDREN
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 
-		---[[
+		--[[
 		{	robotTypeS = "pipuck",
 			positionV3 = vector3(pipuckDis/2, -pipuckDis, 0),
 			orientationQ = quaternion(0, vector3(0,0,1)),

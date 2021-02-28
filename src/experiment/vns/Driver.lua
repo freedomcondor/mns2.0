@@ -8,7 +8,7 @@ function Driver.create(vns)
 		orientationQ = nil,
 		transV3 = vector3(),
 		rotateV3 = vector3(),
-		wait = vector3(),
+		--wait = vector3(),
 	}
 end
 
@@ -20,7 +20,7 @@ function Driver.addChild(vns, robotR)
 		orientationQ = robotR.orientationQ,
 		transV3 = vector3(),
 		rotateV3 = vector3(),
-		wait = vector3(),
+		--wait = vector3(),
 	}
 end
 
@@ -35,7 +35,7 @@ function Driver.preStep(vns)
 		childR.goal.orientationQ = childR.orientationQ
 		childR.goal.transV3 = vector3()
 		childR.goal.rotateV3 = vector3()
-		childR.goal.wait = vector3()
+		--childR.goal.wait = vector3()
 	end
 end
 
@@ -59,7 +59,7 @@ function Driver.step(vns, waiting)
 			local receivedOrientationQ = vns.parentR.orientationQ * msgM.dataT.orientationQ
 			local receivedTransV3 = vector3(msgM.dataT.transV3):rotate(vns.parentR.orientationQ)
 			local receivedRotateV3 = vector3(msgM.dataT.rotateV3):rotate(vns.parentR.orientationQ)
-			local command_wait = vector3(msgM.dataT.wait):rotate(vns.parentR.orientationQ)
+			--local command_wait = vector3(msgM.dataT.wait):rotate(vns.parentR.orientationQ)
 
 			if vns.goal.positionV3 ~= nil then receivedPositionV3 = vns.goal.positionV3 end
 			if vns.goal.orientationQ ~= nil then receivedOrientationQ = vns.goal.orientationQ end
@@ -71,7 +71,7 @@ function Driver.step(vns, waiting)
 			local speed = 0.03
 			local threshold = 0.35
 			local reach_threshold = 0.01
-			local dV3 = receivedPositionV3
+			local dV3 = vector3(receivedPositionV3)
 			dV3.z = 0
 			local d = dV3:length()
 			if d > threshold then 
@@ -79,6 +79,7 @@ function Driver.step(vns, waiting)
 			elseif d < reach_threshold then
 				goalPointTransV3 = vector3()
 			else
+				--goalPointTransV3 = dV3:normalize() * speed * math.sqrt(d / threshold)
 				goalPointTransV3 = dV3:normalize() * speed * (d / threshold)
 			end
 
@@ -92,9 +93,11 @@ function Driver.step(vns, waiting)
 			transV3 = goalPointTransV3 + receivedTransV3 + vns.goal.transV3
 			rotateV3 = goalPointRotateV3 + receivedRotateV3 + vns.goal.rotateV3
 
-			if command_wait ~= nil then 
+			--[[
+			if waiting == true and command_wait ~= nil then 
 				transV3 = transV3 + vector3(command_wait):dot(transV3) * command_wait
 			end
+			--]]
 
 			Driver.move(transV3, rotateV3)
 		end
@@ -106,7 +109,7 @@ function Driver.step(vns, waiting)
 	end
 
 	-- prohibit move if a children is out of safezone
-	---[[
+	--[[
 	if waiting == true then
 		local safezone_half_pipuck = 0.9
 		local safezone_half_drone = 1.35
@@ -119,20 +122,22 @@ function Driver.step(vns, waiting)
 				elseif 
 					robotR.robotTypeS == "drone" then safezone_half = safezone_half_drone 
 				end
-				if transV3:dot(robotR.positionV3) < 0 and
-				   (robotR.positionV3.x < -safezone_half or
-				    robotR.positionV3.x > safezone_half or
-				    robotR.positionV3.y < -safezone_half or
-				    robotR.positionV3.y > safezone_half
-				   ) then
-					Driver.move(vector3(), vector3())
-				elseif transV3:dot(robotR.positionV3) > 0 then
-					if robotR.positionV3.x < -safezone_half then robotR.goal.wait = vector3(1,0,0) end
-					if robotR.positionV3.x > safezone_half then robotR.goal.wait = vector3(-1,0,0) end 
-					if robotR.positionV3.y < -safezone_half then robotR.goal.wait = vector3(0,1,0) end 
-					if robotR.positionV3.y > safezone_half then robotR.goal.wait = vector3(0,-1,0) end 
+				if robotR.positionV3.x < -safezone_half and transV3.x > 0 then transV3.x = 0 end
+				if robotR.positionV3.x > safezone_half and transV3.x < 0 then transV3.x = 0 end
+				if robotR.positionV3.y < -safezone_half and transV3.y > 0 then transV3.y = 0 end
+				if robotR.positionV3.y > safezone_half and transV3.y < 0 then transV3.y = 0 end
+				robotR.goal.wait = vector3()
+				if robotR.positionV3.x < -safezone_half and transV3.x < 0 then 
+					robotR.goal.wait = robotR.goal.wait + vector3(1,0,0) end
+				if robotR.positionV3.x > safezone_half and transV3.x > 0 then 
+					robotR.goal.wait = robotR.goal.wait + vector3(-1,0,0) end
+				if robotR.positionV3.y < -safezone_half and transV3.y < 0 then 
+					robotR.goal.wait = robotR.goal.wait + vector3(0,1,0) end
+				if robotR.positionV3.y > safezone_half and transV3.y > 0 then 
+					robotR.goal.wait = robotR.goal.wait + vector3(0,-1,0) 
 				end
 			end
+			Driver.move(transV3, rotateV3)
 		end
 	end
 	--]]
@@ -158,7 +163,7 @@ function Driver.step(vns, waiting)
 			rotateV3 = vns.api.virtualFrame.V3_VtoR(child_rotateV3),
 			positionV3 = vns.api.virtualFrame.V3_VtoR(child_positionV3),
 			orientationQ = vns.api.virtualFrame.Q_VtoR(child_orientationQ),
-			wait = vns.api.virtualFrame.V3_VtoR(robotR.goal.wait),
+			--wait = vns.api.virtualFrame.V3_VtoR(robotR.goal.wait),
 		})
 	end
 end

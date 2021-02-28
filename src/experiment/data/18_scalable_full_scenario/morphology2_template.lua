@@ -1,5 +1,5 @@
 local pipuckDis = 0.5
-local droneDis = 0.9
+local droneDis = 1.0
 return 
 {	robotTypeS = "drone",
 	positionV3 = vector3(),
@@ -23,7 +23,7 @@ return
 	},
 ---[[
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-droneDis, -droneDis/6, 0),
+		positionV3 = vector3(-droneDis, -0.1, 0),
 		orientationQ = quaternion(),
 		children = {
 		{	robotTypeS = "pipuck",

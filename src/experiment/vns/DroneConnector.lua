@@ -80,18 +80,30 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 		if myVehiclesTR[robotR.idS] ~= nil and
 		   myVehiclesTR[robotR.idS].robotTypeS ~= "drone" then
 			local myRobotR = myVehiclesTR[robotR.idS]
-			quadR = {
-				idS = idS,
-				positionV3 = myRobotR.positionV3 +
+			local positionV3 = 
+							myRobotR.positionV3 +
 				             vector3(-robotR.positionV3):rotate(
 							 	--robotR.orientationQ:inverse() * myRobotR.orientationQ
 							 	myRobotR.orientationQ * robotR.orientationQ:inverse() 
-							 ),
-				--orientationQ = robotR.orientationQ:inverse() * myRobotR.orientationQ,
-				orientationQ = myRobotR.orientationQ * robotR.orientationQ:inverse(),
-				robotTypeS = "drone",
-			}
-			break
+							 )
+
+			if positionV3:length() < 1.5 then
+				quadR = {
+					idS = idS,
+					positionV3 = positionV3,
+					--[[
+					positionV3 = myRobotR.positionV3 +
+					             vector3(-robotR.positionV3):rotate(
+								 	--robotR.orientationQ:inverse() * myRobotR.orientationQ
+								 	myRobotR.orientationQ * robotR.orientationQ:inverse() 
+								 ),
+					--]]
+					--orientationQ = robotR.orientationQ:inverse() * myRobotR.orientationQ,
+					orientationQ = myRobotR.orientationQ * robotR.orientationQ:inverse(),
+					robotTypeS = "drone",
+				}
+				break
+			end
 		end
 	end
 	return quadR

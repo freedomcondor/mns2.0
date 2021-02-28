@@ -238,7 +238,7 @@ function reset()
 		vns.CollectiveSensor.create_collectivesensor_node(vns),
 		create_gap_detection_node(vns),
 		create_head_navigate_node(vns),
-		vns.Driver.create_driver_node_wait(vns),
+		vns.Driver.create_driver_node(vns),
 	}}
 end
 

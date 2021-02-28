@@ -60,12 +60,12 @@ def generate_cross_knot_children_text(text, i):
 	text = text + "}},\n"
 	return text
 
-def generate_link_children_text(text, i):
+def generate_link_children_text(text, i, drift):
 	if i == 0:
 		return text
 
 	text = text + '''{ 	robotTypeS = "drone",
-	positionV3 = vector3(-droneDis, 0, 0),
+	positionV3 = vector3(-droneDis, ''' + str(drift) + '''0, 0),
 	orientationQ = quaternion(),
 	children = {
 	{	robotTypeS = "pipuck",
@@ -77,7 +77,7 @@ def generate_link_children_text(text, i):
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 
-	---[[
+	--[[
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(pipuckDis/2, -pipuckDis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
@@ -86,7 +86,7 @@ def generate_link_children_text(text, i):
 		positionV3 = vector3(pipuckDis/2, pipuckDis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},\n--]]\n'''
-	text = generate_link_children_text(text, i-1)
+	text = generate_link_children_text(text, i-1, -drift)
 	text = text + "}},\n"
 	return text
 
@@ -120,7 +120,7 @@ def generate_curve_link_text(text, i, th):
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 
-	---[[
+	--[[
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(pipuckDis/2, -pipuckDis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
@@ -138,7 +138,7 @@ def generate_structure(structure_id, n, structure_type, th):
 		filedata = file.read()
 
 	if structure_type == "line" :
-		filedata = filedata.replace('DRONE_CHILDREN', generate_link_children_text("", n))
+		filedata = filedata.replace('DRONE_CHILDREN', generate_link_children_text("", n, th))
 	if structure_type == "cross" :
 		filedata = filedata.replace('DRONE_CHILDREN', generate_cross_knot_children_text("", n))
 	if structure_type == "curve" :
@@ -260,9 +260,9 @@ obstacle_xml = generate_obstacle(5,        # number of gates
 
 generate_argos_file(TotalLength, RandomSeed, obstacle_xml)
 
-generate_structure("morphology1", 1, "line", 0)
-generate_structure("morphology2", 3, "line", 0)
-generate_structure("morphology3", 1, "curve", math.pi/6)
+generate_structure("morphology1", 3, "line", 0)
+generate_structure("morphology2", 7, "line", 0.2)
+generate_structure("morphology3", 3, "curve", math.pi/6)
 
 os.system("argos3 -c vns.argos")
 

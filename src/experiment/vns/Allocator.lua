@@ -64,6 +64,7 @@ function Allocator.preStep(vns)
 end
 
 function Allocator.step(vns)
+	--local safezone = false 
 	-- check if I just assigned children to my parent
 	if vns.parentR ~= nil and vns.parentR.scale_assign_offset:totalNumber() ~= 0 then
 		return
@@ -74,6 +75,28 @@ function Allocator.step(vns)
 			msgM.dataT.branch.children = DeepCopy(vns.allocator.gene_index[msgM.dataT.branch.idN].children)
 		end
 		Allocator.setMorphology(vns, msgM.dataT.branch)
+
+		-- don't go too faraway from the parent
+		--[[
+		if safezone == true then
+			local safezone_half_pipuck = 0.9
+			local safezone_half_drone = 1.35
+			local safezone_half = safezone_half_pipuck
+			if vns.robotTypeS == "drone" and vns.parentR.robotTypes == "drone" then
+				local safezone_half = safezone_half_drone
+			end
+			if msgM.dataT.branch.positionV3.x < -safezone_half then
+				msgM.dataT.branch.positionV3.x = -safezone_half
+			elseif msgM.dataT.branch.positionV3.x > safezone_half then
+				msgM.dataT.branch.positionV3.x = safezone_half
+			end
+			if msgM.dataT.branch.positionV3.y < -safezone_half then
+				msgM.dataT.branch.positionV3.y = -safezone_half
+			elseif msgM.dataT.branch.positionV3.y > safezone_half then
+				msgM.dataT.branch.positionV3.y = safezone_half
+			end
+		end
+		--]]
 
 		local targetPositionV3 = vns.parentR.positionV3 +
 			vector3(msgM.dataT.branch.positionV3):rotate(vns.parentR.orientationQ)
@@ -99,6 +122,28 @@ function Allocator.step(vns)
 			if branch.idN > 0 then
 				branch.children = DeepCopy(vns.allocator.gene_index[branch.idN].children)
 			end
+
+			-- don't go too faraway from the parent
+			--[[
+			if safezone == true then
+				local safezone_half_pipuck = 0.9
+				local safezone_half_drone = 1.35
+				local safezone_half = safezone_half_pipuck
+				if vns.robotTypeS == "drone" and vns.parentR.robotTypes == "drone" then
+					local safezone_half = safezone_half_drone
+				end
+				if branch.positionV3.x < -safezone_half then
+					branch.positionV3.x = -safezone_half
+				elseif branch.positionV3.x > safezone_half then
+					branch.positionV3.x = safezone_half
+				end
+				if branch.positionV3.y < -safezone_half then
+					branch.positionV3.y = -safezone_half
+				elseif branch.positionV3.y > safezone_half then
+					branch.positionV3.y = safezone_half
+				end
+			end
+			--]]
 
 			local targetPositionV3 = vns.parentR.positionV3 +
 				vector3(branch.positionV3):rotate(vns.parentR.orientationQ)
@@ -189,7 +234,6 @@ function Allocator.step(vns)
 			robotR.goal.orientationQ = robotR.match.orientationQ
 		end
 	end
-
 end
 
 function Allocator.multi_branch_allocate(vns, branches)
@@ -245,7 +289,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	---[[
+	--[[
 --if robot.id == "drone24" or robot.id == "pipuck2" then
 	logger("multi-sourceList")
 	for i, source in ipairs(sourceList) do
@@ -368,7 +412,7 @@ function Allocator.allocate(vns)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	---[[
+	--[[
 --if robot.id == "drone2" then
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
