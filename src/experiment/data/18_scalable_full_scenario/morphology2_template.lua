@@ -23,7 +23,7 @@ return
 	},
 ---[[
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-droneDis, -0.1, 0),
+		positionV3 = vector3(-droneDis, 0, 0),
 		orientationQ = quaternion(),
 		children = {
 		{	robotTypeS = "pipuck",

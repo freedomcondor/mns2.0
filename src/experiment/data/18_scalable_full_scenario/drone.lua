@@ -185,6 +185,20 @@ return function()
 		end
 
 		if reach_goal == true then
+			state = "wait_structure2"
+			logger("wait_structure2")
+		end
+	elseif state == "wait_structure2" then
+		-- count how many child
+		local total = 0
+		local the_child = nil
+		for idS, childR in pairs(vns.childrenRT) do
+			if childR.robotTypeS == "drone" then
+				total = total + 1
+				the_child = childR
+			end
+		end
+		if total == 1 and (the_child.positionV3 - vector3(-1,0,0)):length() < 0.1 then
 			state = "after_wall"
 			logger("after_wall")
 		end
@@ -238,7 +252,7 @@ function reset()
 		vns.CollectiveSensor.create_collectivesensor_node(vns),
 		create_gap_detection_node(vns),
 		create_head_navigate_node(vns),
-		vns.Driver.create_driver_node(vns),
+		vns.Driver.create_driver_node_wait(vns),
 	}}
 end
 
@@ -270,6 +284,7 @@ function step()
 	--	api.debug.showObstacles(vns)
 	--end
 
+	--[[
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		if ob.type == 2 then -- orange
 			api.debug.drawArrow("red", 
@@ -278,6 +293,7 @@ function step()
 			)
 		end
 	end
+	--]]
 	if vns.parentR == nil and vns.max_gate ~= nil then
 		ob = vns.max_gate
 		api.debug.drawArrow("red", 

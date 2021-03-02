@@ -159,8 +159,8 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 	-- this function adds robots (in real frame) from seen tags (in real robot frames)
 	local robotTypeIndex = {
 		{index = 0, typeS = "block"}, -- 0 as block
-		{index = 40, typeS = "pipuck"}, -- 1 to 40 as pipuck
-		{index = 60, typeS = "builderbot"},  -- 41 to 60 as builderbot
+		{index = 200, typeS = "pipuck"}, -- 1 to 200 as pipuck
+		{index = 300, typeS = "builderbot"},  -- 201 to 300 as builderbot
 	}
 
 	for i, tag in ipairs(tags) do

@@ -64,7 +64,7 @@ function Allocator.preStep(vns)
 end
 
 function Allocator.step(vns)
-	--local safezone = false 
+	--local safezone = false
 	-- check if I just assigned children to my parent
 	if vns.parentR ~= nil and vns.parentR.scale_assign_offset:totalNumber() ~= 0 then
 		return
@@ -111,6 +111,28 @@ function Allocator.step(vns)
 				branchR.orientationQ_backup = quaternion(branchR.orientationQ)
 				branchR.positionV3 = vector3(branchR.positionV3):rotate(vns.goal.orientationQ) + vns.goal.positionV3
 				branchR.orientationQ = vns.goal.orientationQ * branchR.orientationQ 
+			end
+		end
+
+		-- check hand up children
+		-- if a children is in a better position than me, hand it up.
+		local n_vector = targetPositionV3 - vns.parentR.positionV3
+		n_vector.z = 0
+		for idS, childR in pairs(vns.childrenRT) do
+			if childR.robotTypeS == vns.robotTypeS and
+			   (childR.positionV3 - vns.parentR.positionV3):dot(n_vector) <
+			   (vector3() - vns.parentR.positionV3):dot(n_vector) then
+				childR.match = {idN = -3}
+				vns.Msg.send(idS, "branch", 
+					{branch = {
+						positionV3 = vns.api.virtualFrame.V3_VtoR(targetPositionV3),
+						orientationQ = vns.api.virtualFrame.Q_VtoR(targetOrientationQ),
+						--children = targetList[j].index.children,
+						scale = msgM.dataT.branch.scale, 
+						idN = msgM.dataT.branch.idN,
+						robotTypeS = msgM.dataT.branch.robotTypeS,
+					}}	
+				)	
 			end
 		end
 	end end
@@ -464,6 +486,16 @@ function Allocator.allocate(vns)
 					farthestDis = dis
 					farthestI = fromTable.source
 				end
+				vns.Msg.send(sourceList[fromTable.source].index.idS, "branch", 
+					{branch = {
+						positionV3 = vns.api.virtualFrame.V3_VtoR(targetList[j].index.positionV3),
+						orientationQ = vns.api.virtualFrame.Q_VtoR(targetList[j].index.orientationQ),
+						--children = targetList[j].index.children,
+						scale = targetList[j].index.scale, 
+						idN = targetList[j].index.idN,
+						robotTypeS = targetList[j].index.robotTypeS,
+					}}	
+				)
 			end
 		end
 		-- if I find one
@@ -472,6 +504,7 @@ function Allocator.allocate(vns)
 			targetList[j].index.match = sourceList[farthestI].index.idS
 			-- send branch to the farthest source
 			vns.Assigner.assign(vns, sourceList[farthestI].index.idS, nil)
+			--[[
 			vns.Msg.send(sourceList[farthestI].index.idS, "branch", 
 				{branch = {
 					positionV3 = vns.api.virtualFrame.V3_VtoR(targetList[j].index.positionV3),
@@ -482,6 +515,7 @@ function Allocator.allocate(vns)
 					robotTypeS = targetList[j].index.robotTypeS,
 				}}	
 			)
+			--]]
 		end
 	end
 

@@ -1,4 +1,5 @@
 local dis = 1.0
+local wing_x_offset = -dis/3
 return 
 -- 1
 {	robotTypeS = "drone",
@@ -6,11 +7,11 @@ return
 	orientationQ = quaternion(),
 	children = {
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-dis/3, -dis, 0),
+		positionV3 = vector3(wing_x_offset, -dis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-dis/3, dis, 0),
+		positionV3 = vector3(wing_x_offset, dis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 -- 2
@@ -19,11 +20,11 @@ return
 	orientationQ = quaternion(),
 	children = {
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-dis/3, -dis, 0),
+		positionV3 = vector3(wing_x_offset, -dis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-dis/3, dis, 0),
+		positionV3 = vector3(wing_x_offset, dis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 -- 3
@@ -32,11 +33,11 @@ return
 	orientationQ = quaternion(),
 	children = {
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-dis/3, -dis, 0),
+		positionV3 = vector3(wing_x_offset, -dis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-dis/3, dis, 0),
+		positionV3 = vector3(wing_x_offset, dis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 -- 4
@@ -45,11 +46,11 @@ return
 	orientationQ = quaternion(),
 	children = {
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-dis/3, -dis, 0),
+		positionV3 = vector3(wing_x_offset, -dis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-dis/3, dis, 0),
+		positionV3 = vector3(wing_x_offset, dis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 -- 5

@@ -64,11 +64,28 @@ function Driver.step(vns, waiting)
 			if vns.goal.positionV3 ~= nil then receivedPositionV3 = vns.goal.positionV3 end
 			if vns.goal.orientationQ ~= nil then receivedOrientationQ = vns.goal.orientationQ end
 
+			-- adjust goal point according to prevent move too faraway to parent
+			if waiting == true and vns.parentR ~= nil then
+				local safezone_half_pipuck = 0.9
+				local safezone_half_drone = 1.35
+				local safezone_half = safezone_half_pipuck
+				if vns.robotTypeS == "drone" and vns.parentR.robotTypeS == "drone" then
+					safezone_half = safezone_half_drone
+				end
+				local dis_parent_goal = (receivedPositionV3 - vns.parentR.positionV3):length()
+				if dis_parent_goal > safezone_half then
+					receivedPositionV3 = vns.parentR.positionV3 + 
+					                     (receivedPositionV3 - vns.parentR.positionV3) * 
+										 (safezone_half / dis_parent_goal)
+				end
+			end
+
 			-- calc speed
 			-- the speed to go to goal point (received position)
 			local goalPointTransV3, goalPointRotateV3
 
 			local speed = 0.03
+			local rotate_speed_scalar = 0.3
 			local threshold = 0.35
 			local reach_threshold = 0.01
 			local dV3 = vector3(receivedPositionV3)
@@ -88,7 +105,7 @@ function Driver.step(vns, waiting)
 			if angle ~= angle then angle = 0 end -- sometimes toangleaxis returns nan
 
 			if angle > math.pi then angle = angle - math.pi * 2 end
-			local goalPointRotateV3 = axis * angle
+			local goalPointRotateV3 = axis * angle * rotate_speed_scalar
 
 			transV3 = goalPointTransV3 + receivedTransV3 + vns.goal.transV3
 			rotateV3 = goalPointRotateV3 + receivedRotateV3 + vns.goal.rotateV3
