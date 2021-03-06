@@ -77,7 +77,7 @@ def generate_link_children_text(text, i, drift):
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 
-	--[[
+	---[[
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(pipuckDis/2, -pipuckDis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
@@ -120,7 +120,7 @@ def generate_curve_link_text(text, i, th):
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 
-	--[[
+	---[[
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(pipuckDis/2, -pipuckDis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
@@ -300,6 +300,25 @@ def generate_pipuck_locations(n, drone_locations,
 				a.append([loc_x, loc_y])
 	return a
 
+def generate_drone_line_locations(n, origin_x, origin_y) :
+	a = []
+	a.append([origin_x, origin_y])   # a[0] origin
+	for i in range(1, int((n-1)/2) + 1) :
+		a.append([origin_x, origin_y + i*1])
+	for i in range(1, n-1 - int((n-1)/2) + 1) :
+		a.append([origin_x, origin_y - i*1])
+	return a
+
+def generate_pipuck_line_locations(n, origin_x, origin_y) :
+	a = []
+	for i in range(0, int(n/4)) :
+		a.append([origin_x - 0.5, origin_y + (i+1)*0.5])
+		a.append([origin_x + 0.5, origin_y + (i+1)*0.5])
+	for i in range(0, int(n/4)) :
+		a.append([origin_x - 0.5, origin_y - (i+1)*0.5])
+		a.append([origin_x + 0.5, origin_y - (i+1)*0.5])
+	return a
+
 def add_drone_xml(tagstr, i, x, y) :
 	tag =       "<drone id=\"drone" + str(i) + "\">"
 	tag = tag + "<body position=\"" + str(x) + "," + str(y) + ",0\" orientation=\"0,0,0\"/>"
@@ -321,20 +340,26 @@ def generate_drone_pipuck_xml(drone_n, pipuck_n,
                               drone_near_limit, drone_far_limit,
                               pipuck_near_limit, pipuck_far_limit) :
 	tagstr = ""
+	#'''
 	drone_locations = generate_drone_locations(drone_n, 
 	                                           origin_x,    origin_y, 
 	                                           x_min_limit, x_max_limit,
 	                                           y_min_limit, y_max_limit, 
 	                                           drone_near_limit, drone_far_limit) 
+	#'''
+	#drone_locations = generate_drone_line_locations(drone_n, origin_x, origin_y)
 	i = 0
 	for loc in drone_locations :
 		i = i + 1
 		tagstr = add_drone_xml(tagstr, i, loc[0], loc[1])
 
+	#'''
 	pipuck_locations = generate_pipuck_locations(pipuck_n, drone_locations,
                                                  x_min_limit, x_max_limit,
                                                  y_min_limit, y_max_limit, 
                                                  pipuck_near_limit, pipuck_far_limit) 
+	#'''
+	#pipuck_locations = generate_pipuck_line_locations(pipuck_n, origin_x, origin_y)
 
 	i = 0
 	for loc in pipuck_locations :
@@ -383,7 +408,7 @@ def generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml,
 #------------------------------------------------------------------------
 TotalLength = 2500 / 5
 if Visual :
-	TotalLength = 20000 / 5
+	TotalLength = 15000 / 5
 RandomSeed = Inputseed or 2
 
 random.seed(RandomSeed)
@@ -395,14 +420,15 @@ obstacle_xml, largest_loc = generate_obstacle(int(Scale / 2) + 1,               
                                               0,                # x location of the wall
                                               -(Scale)*1, 
                                               (Scale)*1,    
-                                                                # y range of the wall
+                                                                # y range of the gate
                                               0.5, 1.5,         # size range of the wall
                                               0.3)              # block distance to fill the wall
 
-drone_pipuck_xml = generate_drone_pipuck_xml(N, N*2+2,          # number of drone and pipuck 
+drone_pipuck_xml = generate_drone_pipuck_xml(N, N*4, #N*2+2,          # number of drone and pipuck 
                                              -Scale-2,0,        # location of drone1
-                                             -Scale*2-2,-2,     # x range
-                                             -Scale,Scale,      # y range
+                                             #-2,0,        # location of drone1
+                                             -Scale*2 - 2,-1,     # x range
+                                             -Scale*2,Scale*2,      # y range
                                              1.0, 1.2,          # drone near and far limit
                                              0.2, 1.0)          # pipuck near limit and pipuck-drone far limit
 

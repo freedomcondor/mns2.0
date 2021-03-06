@@ -78,6 +78,10 @@ function Driver.step(vns, waiting)
 					                     (receivedPositionV3 - vns.parentR.positionV3) * 
 										 (safezone_half / dis_parent_goal)
 				end
+				logger("in driver safezone check, my parent is =", dis_parent_goal)
+				logger("safezone_half = ", safezone_half)
+				logger("receivedPositionV3 = ", receivedPositionV3)
+				logger("receivedPositionV3 length = ", receivedPositionV3:length())
 			end
 
 			-- calc speed

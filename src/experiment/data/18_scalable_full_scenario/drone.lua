@@ -76,7 +76,8 @@ return function()
 	for i, side1 in ipairs(vns.avoider.obstacles) do
 		if side1.type == 2 and side1.direction ~= nil and side1.distance == nil then -- orange
 			-- find the nearest side2 along side1's direction
-			local distance = math.huge
+			--local distance = math.huge
+			local distance = 2.0 		-- a gate should be smaller than 2m
 			local index = nil
 			for j, side2 in ipairs(vns.avoider.obstacles) do
 				if side2.type == 2 and side2.direction ~= nil and
@@ -136,10 +137,12 @@ return function()
 
 	-- report the largest gate
 	if max_distance_index1 ~= nil then
+		--[[
 		vns.CollectiveSensor.addToSendList(vns, vns.avoider.obstacles[max_distance_index1])
 		vns.CollectiveSensor.addToSendList(vns, vns.avoider.obstacles[max_distance_index1].partner)
 		vns.CollectiveSensor.addToSendList(vns, vns.avoider.obstacles[max_distance_index2])
 		vns.CollectiveSensor.addToSendList(vns, vns.avoider.obstacles[max_distance_index2].partner)
+		--]]
 		vns.max_gate = vns.avoider.obstacles[max_distance_index1]
 	else
 		vns.max_gate = nil
@@ -149,47 +152,134 @@ end end
 
 function create_head_navigate_node(vns)
 local count = 0
-local state = "before_wall"
+local state = "start"
 return function()
 	-- only run for brain
-	if vns.parentR ~= nil then return false, true end
+	--if vns.parentR ~= nil then return false, true end
 
 	local speed = 0.02
-	if state == "before_wall" then
-		-- move forward
-		vns.Spreader.emergency(vns, vector3(speed,0,0), vector3(), nil, true)
-
-		-- check gate
-		if vns.max_gate ~= nil and vns.max_gate.positionV3.x < 0.7 then
-			logger("reach_wall")
-			state = "at_wall"
-			--vns.setMorphology(vns, structure2)
+	if state == "start" then
+		count = count + 1
+		if count >= 0 then
+			state = "before_wall"
 		end
-	elseif state == "at_wall" then
+	elseif state == "before_wall" then
+		-- move forward
+		if vns.parentR == nil then
+			vns.Spreader.emergency(vns, vector3(speed,0,0), vector3(), nil, true)
+		end
+
+		-- check wall distance, look at the nearest wall obstacle
+		local obstacle = nil
+		local nearest = math.huge
+		for i, ob in ipairs(vns.avoider.obstacles) do
+			local dis
+			if vns.parentR == nil then dis = ob.positionV3.x
+			                      else dis = math.abs(ob.positionV3.y) end
+			if dis < nearest then
+				nearest = dis
+				obstacle = ob
+			end
+		end
+		if obstacle ~= nil then
+			if nearest < 0.7 then
+				logger("reach_wall")
+				state = "choose_leader"
+			end
+		end
+	elseif state == "choose_leader" then
+		if vns.max_gate ~= nil then
+			local IwasBrain = true 
+			if vns.parentR ~= nil then
+				IwasBrain = false
+				vns.Msg.send(vns.parentR.idS, "dismiss")
+				vns.deleteParent(vns)
+			end
+			vns.Connector.newVnsID(vns, 1 + vns.max_gate.distance, 1)
+			vns.setMorphology(vns, structure1)
+			-- TODO: turn direction
+			if IwasBrain == false and vns.max_gate.positionV3.y > 0 then
+				-- turn left 90
+				vns.api.virtualFrame.orientationQ = 
+					vns.api.virtualFrame.orientationQ *
+					quaternion(math.pi/2, vector3(0,0,1))
+			elseif IwasBrain == false and vns.max_gate.positionV3.y < 0 then
+				vns.api.virtualFrame.orientationQ = 
+					vns.api.virtualFrame.orientationQ *
+					quaternion(-math.pi/2, vector3(0,0,1))
+				-- turn right 90
+			end
+		end
+		count = vns.scale["drone"] * 2 
+		state = "wait_leader"
+	--[[ move towards gate
+	elseif state == "reach_gate" then
+		if vns.max_gate ~= nil then
+			local gate_position = vns.max_gate.positionV3
+			                      + vns.max_gate.direction:normalize()*(vns.max_gate.distance/2)  
+			if math.abs(gate_position.y) > 1.0 then
+				local y_speed = gate_position.y
+				y_speed = y_speed / math.abs(y_speed)
+				logger("run speed")
+				vns.Spreader.emergency(vns, vector3(0, y_speed, 0) * speed, vector3(), nil, true)
+			else
+				logger("reach_gate")
+				state = "at_wall"
+			end
+		end
+	--]]
+	elseif state == "wait_leader" then
+		count = count - 1
+		if count <= 0 then
+			count = 0
+			state = "at_wall"
+		end
+	elseif state == "at_wall" and vns.parentR == nil then
 		-- ob is the largest gate, move in front of it
 		local reach_goal = false
 		if vns.max_gate ~= nil then
+			-- calculate current gate
 			local goal = vns.max_gate.positionV3
 				+ vns.max_gate.direction:normalize()*(vns.max_gate.distance/2) 
-				- vector3(0.6,0,0)
+				- vector3(0.5,0,0)
 			goal.z = 0
+			-- check last gate, to see if it is the same one
+			---[[
+			logger("goal =", goal)
+			--]]
+			if vns.last_max_gate ~= nil then
+				if (vector3(goal):normalize() - vns.last_max_gate.goal):length() > 0.3 then
+					vns.max_gate = vns.last_max_gate
+				end
+			end
+
 			if goal:length() < 0.05 then reach_goal = true end
+			---[[
 			if goal:length() < 0.30 and vns.allocator.target ~= structure2 then 
 				-- change to structure2
 				vns.setMorphology(vns, structure2)
 			end
+			--]]
 			goal = goal:normalize()
+			vns.last_max_gate = vns.max_gate
+			vns.last_max_gate.goal = goal
 			vns.Spreader.emergency(vns, goal * speed, vector3(), nil, true)
 		else
-			logger("I didn't find a gate")
+			if vns.last_max_gate ~= nil then
+				vns.Spreader.emergency(vns, vns.last_max_gate.goal * speed, vector3(), nil, true)
+			else
+				logger("I didn't find a gate")
+			end
 		end
 
 		if reach_goal == true then
+			count = 0
 			state = "wait_structure2"
 			logger("wait_structure2")
 		end
 	elseif state == "wait_structure2" then
 		-- count how many child
+		--[[
 		local total = 0
 		local the_child = nil
 		for idS, childR in pairs(vns.childrenRT) do
@@ -198,10 +288,16 @@ return function()
 				the_child = childR
 			end
 		end
-		if total == 1 and (the_child.positionV3 - vector3(-1,0,0)):length() < 0.1 then
-			state = "after_wall"
-			logger("after_wall")
-		end
+		--]]
+		--if total == 1 and (the_child.positionV3 - vector3(-1,0,0)):length() < 0.1 then
+		logger("count = ", count)
+		logger("reach = ", (vns.scale["drone"]-2) * 1.0 / 0.03 * 5)
+		count = count + 1
+			if count >= (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 then
+				state = "after_wall"
+				logger("after_wall")
+			end
+		--end
 	elseif state == "after_wall" then
 		vns.Spreader.emergency(vns, vector3(speed,0,0), vector3(), nil, true)
 		for i, obstacle in ipairs(vns.avoider.obstacles) do
@@ -213,6 +309,8 @@ return function()
 	elseif state == "reach_target" then
 		--vns.Spreader.emergency(vns, vector3(speed,0,0), vector3(), nil, true)
 	end
+	vns.state = state
+	vns.state_count = count
 	return false, true
 end end
 
@@ -294,7 +392,8 @@ function step()
 		end
 	end
 	--]]
-	if vns.parentR == nil and vns.max_gate ~= nil then
+	--if vns.parentR == nil and vns.max_gate ~= nil then
+	if vns.max_gate ~= nil then
 		ob = vns.max_gate
 		api.debug.drawArrow("red", 
 		                    api.virtualFrame.V3_VtoR(ob.positionV3+vector3(0,0,0.1)), 
@@ -303,6 +402,40 @@ function step()
 		                                             vector3(0,0,0.1)
 												    )
 	                       )
+	end
+
+	logger("Connector.lastid:")
+	logger(vns.connector.lastid)
+	logger("Connector.locker_count:")
+	logger(vns.connector.locker_count)
+	logger("target id:")
+	if vns.allocator.target ~= nil then
+		logger(vns.allocator.target.idN)
+	end
+	logger("vns.scale")
+	logger(vns.scale)
+	logger("parent")
+	if vns.parentR ~= nil then
+		logger("id = ", vns.parentR.idS)
+		logger("scale = ")
+		logger(vns.parentR.scale)
+		logger("unseen_count = ", vns.parentR.unseen_count)
+		logger("position = ", vns.parentR.positionV3)
+		logger("position:length = ", vns.parentR.positionV3:length())
+	end
+	logger("children")
+	for idS, childR in pairs(vns.childrenRT) do
+		logger("id = ", idS)
+		logger("scale = ")
+		logger(childR.scale)
+		logger("unseen_count = ", childR.unseen_count)
+		logger("assign = ", childR.assignTargetS)
+		logger("position = ", childR.positionV3)
+		logger("position:length = ", childR.positionV3:length())
+		logger("match")
+		if childR.match ~= nil then
+			logger(childR.match.idN)
+		end
 	end
 end
 

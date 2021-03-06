@@ -46,6 +46,14 @@ function step()
 	-- step
 	bt()
 
+	-- rebellion
+	if robot.id == "drone5" and api.stepCount == 300 then
+		vns.Msg.send(vns.parentR.idS, "dismiss")
+		vns.deleteParent(vns)
+		vns.Connector.newVnsID(vns, 2)
+		vns.setMorphology(vns, structure)
+	end
+
 	-- poststep
 	vns.postStep(vns)
 	api.droneMaintainHeight(1.5)

@@ -18,6 +18,7 @@ end
 
 function Assigner.addParent(vns, robotR)
 	robotR.scale_assign_offset = vns.ScaleManager.Scale:new()
+	vns.assigner.targetS = nil
 	if vns.assigner.targetS == robotR.idS then
 		vns.assigner.targetS = nil
 	end
@@ -80,6 +81,14 @@ function Assigner.assign(vns, childIdS, assignToIdS)
 end
 
 function Assigner.step(vns)
+	-- listen to assign
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "assign")) do
+		if vns.childrenRT[msgM.dataT.assignToS] == nil and
+		   vns.parentR.idS ~= msgM.dataT.assignToS then
+			vns.assigner.targetS = msgM.dataT.assignToS
+		end
+	end end
+
 	-- listen to recruit from assigner.targetS
 	for _, msgM in ipairs(vns.Msg.getAM(vns.assigner.targetS, "recruit")) do
 		vns.Msg.send(msgM.fromS, "ack")
@@ -114,14 +123,6 @@ function Assigner.step(vns)
 		end
 		break
 	end
-
-	-- listen to assign
-	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "assign")) do
-		if vns.childrenRT[msgM.dataT.assignToS] == nil and
-		   vns.parentR.idS ~= msgM.dataT.assignToS then
-			vns.assigner.targetS = msgM.dataT.assignToS
-		end
-	end end
 
 	-- listen to assign_dismiss
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "assign_dismiss")) do

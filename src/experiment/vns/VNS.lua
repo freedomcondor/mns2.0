@@ -187,6 +187,21 @@ function VNS.create_vns_core_node(vns)
 	}}
 end
 
+function VNS.create_vns_core_node_no_recruit(vns)
+	return 
+	{type = "sequence", children = {
+		--vns.create_preconnector_node(vns),
+		vns.Connector.create_connector_node_no_recruit(vns),
+		vns.Assigner.create_assigner_node(vns),
+		vns.ScaleManager.create_scalemanager_node(vns),
+		vns.Allocator.create_allocator_node(vns),
+		vns.Avoider.create_avoider_node(vns),
+		vns.Spreader.create_spreader_node(vns),
+		--vns.CollectiveSensor.create_collectivesensor_node(vns),
+		--vns.Driver.create_driver_node(vns),
+	}}
+end
+
 function VNS.create_vns_node(vns)
 	return { 
 		type = "sequence", children = {

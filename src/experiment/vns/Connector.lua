@@ -286,4 +286,13 @@ function Connector.create_connector_node(vns)
 	end
 end
 
+function Connector.create_connector_node_no_recruit(vns)
+	return function()
+		Connector.step(vns)
+		Connector.ackAll(vns)
+		--Connector.recruitAll(vns)
+		return false, true
+	end
+end
+
 return Connector

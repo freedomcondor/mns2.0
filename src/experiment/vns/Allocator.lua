@@ -111,6 +111,13 @@ function Allocator.step(vns)
 				branchR.orientationQ_backup = quaternion(branchR.orientationQ)
 				branchR.positionV3 = vector3(branchR.positionV3):rotate(vns.goal.orientationQ) + vns.goal.positionV3
 				branchR.orientationQ = vns.goal.orientationQ * branchR.orientationQ 
+				---[[
+				if vns.robotTypeS == "drone" and branchR.robotTypeS == "pipuck" and 
+				   branchR.positionV3:length() > 1.0 then
+					branchR.positionV3 = branchR.positionV3_backup
+					branchR.orientationQ = branchR.orientationQ_backup
+				end
+				--]]
 			end
 		end
 
@@ -180,6 +187,14 @@ function Allocator.step(vns)
 					branch_childR.orientationQ_backup = quaternion(branch_childR.orientationQ)
 					branch_childR.positionV3 = vector3(branch_childR.positionV3):rotate(branch.orientationQ) + branch.positionV3
 					branch_childR.orientationQ = branch.orientationQ * branch_childR.orientationQ 
+
+					---[[
+					if vns.robotTypeS == "drone" and branch_childR.robotTypeS == "pipuck" and 
+					branch_childR.positionV3:length() > 1.0 then
+						branch_childR.positionV3 = branch_childR.positionV3_backup
+						branch_childR.orientationQ = branch_childR.orientationQ_backup
+					end
+					--]]
 				end
 			end
 		end

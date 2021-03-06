@@ -52,7 +52,7 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
-		vns.create_vns_core_node(vns),
+		vns.create_vns_core_node_no_recruit(vns),
 		vns.Driver.create_driver_node_wait(vns),
 	}}
 end
@@ -80,6 +80,36 @@ function step()
 	-- debug
 	api.debug.showChildren(vns)
 	--api.debug.showObstacles(vns)
+
+	logger("Connector.lastid:")
+	logger(vns.connector.lastid)
+	logger("Connector.locker_count:")
+	logger(vns.connector.locker_count)
+	logger("target id:")
+	if vns.allocator.target ~= nil then
+		logger(vns.allocator.target.idN)
+	end
+	logger("vns.scale")
+	logger(vns.scale)
+	logger("parent")
+	if vns.parentR ~= nil then
+		logger("id = ", vns.parentR.idS)
+		logger("scale = ")
+		logger(vns.parentR.scale)
+		logger("unseen_count = ", vns.parentR.unseen_count)
+		logger("position = ", vns.parentR.positionV3)
+		logger("position:length = ", vns.parentR.positionV3:length())
+	end
+	logger("children")
+	for idS, childR in pairs(vns.childrenRT) do
+		logger("id = ", idS)
+		logger("scale = ")
+		logger(childR.scale)
+		logger("unseen_count = ", childR.unseen_count)
+		logger("assign = ", childR.assignTargetS)
+		logger("position = ", childR.positionV3)
+		logger("position:length = ", childR.positionV3:length())
+	end
 end
 
 --- destroy
