@@ -160,7 +160,7 @@ return function()
 	local speed = 0.02
 	if state == "start" then
 		count = count + 1
-		if count >= 0 then
+		if count >= 1500 then
 			state = "before_wall"
 		end
 	elseif state == "before_wall" then
@@ -291,9 +291,9 @@ return function()
 		--]]
 		--if total == 1 and (the_child.positionV3 - vector3(-1,0,0)):length() < 0.1 then
 		logger("count = ", count)
-		logger("reach = ", (vns.scale["drone"]-2) * 1.0 / 0.03 * 5)
+		logger("reach = ", (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 3)
 		count = count + 1
-			if count >= (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 then
+			if count >= (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 3 then
 				state = "after_wall"
 				logger("after_wall")
 			end
@@ -323,7 +323,7 @@ function init()
 	reset()
 
 	-- generate C code for formation
-	if robot.id == "drone1" then Cgenerator(gene, "Ccode.cpp") end
+	if robot.id == "drone1" then Cgenerator(gene, "Ccode.cpp", "N_ROBOTS*3+1") end
 end
 
 --- reset

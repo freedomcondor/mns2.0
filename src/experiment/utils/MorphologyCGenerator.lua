@@ -25,14 +25,26 @@ function write(branch, baseV3, baseQ)
     end
 end
 
-function generate(morphology, file_name)
+function write_level(morphology)
+    file:write(tostring(morphology.level) .. ", ")
+    if morphology.children ~= nil then
+        for i, child in ipairs(morphology.children) do
+            write_level(child)
+        end
+    end
+end
+
+function generate(morphology, file_name, totalNumber)
     file = io.open(file_name, "w")
 
-    file:write("{\n")
-
+    totalNumber = totalNumber or "N_ROBOTS"
+    file:write("Vector3 goal_locs[" .. totalNumber .. "] = {\n")
     count = 0;
     write(morphology)
+    file:write("};\n")
 
+    file:write("int goal_level[" .. totalNumber .. "] = {\n")
+    write_level(morphology)
     file:write("};\n")
 
     file:close()

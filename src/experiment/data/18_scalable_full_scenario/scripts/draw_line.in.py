@@ -10,12 +10,8 @@ data_set = 'random'
 if len(sys.argv) >= 2 :
 	data_set = sys.argv[1]
 
-total_timestep = 1700
-
 data = []
-for i in range(total_timestep):
-	data.append([])
-
+data_lowerbound = []
 i = 0
 for folder in os.walk(testfolder_src + "/" + data_set + "/") :
 	#jump over the first one
@@ -26,12 +22,28 @@ for folder in os.walk(testfolder_src + "/" + data_set + "/") :
 	
 	file = open(folder[0] + "/result.txt","r")
 	j = 0
+
 	for line in file:
+		if i == 1 :
+			data.append([])
+			total_timestep = j + 1
 		data[j].append(float(line))
 		j = j + 1
+		'''
 		if j == total_timestep and float(line) > 0.1 :
 			print("error case")
 			print(folder[0])
+		'''
+	file.close()
+
+	file = open(folder[0] + "/result_lowerbound.txt","r")
+	j = 0
+
+	for line in file:
+		if i == 1 :
+			data_lowerbound.append([])
+		data_lowerbound[j].append(float(line))
+		j = j + 1
 	file.close()
 
 '''
@@ -45,5 +57,6 @@ flierprops = dict(marker='.', markersize=2,
 			                  linestyle='none')
 plt.boxplot(showdata, flierprops = flierprops)
 '''
-plt.plot(data)
+plt.plot(data, color = 'blue')
+plt.plot(data_lowerbound, color='red')
 plt.show()

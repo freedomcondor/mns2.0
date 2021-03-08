@@ -733,15 +733,17 @@ function Allocator.calcMorphScale(vns, morph)
 	Allocator.calcMorphParentScale(vns, morph)
 end
 
-function Allocator.calcMorphChildrenScale(vns, morph)
+function Allocator.calcMorphChildrenScale(vns, morph, level)
 	vns.allocator.morphIdCount = vns.allocator.morphIdCount + 1
 	morph.idN = vns.allocator.morphIdCount 
+	level = level or 1
+	morph.level = level
 	vns.allocator.gene_index[morph.idN] = morph
 
 	local sum = vns.ScaleManager.Scale:new()
 	if morph.children ~= nil then
 		for i, branch in ipairs(morph.children) do
-			sum = sum + Allocator.calcMorphChildrenScale(vns, branch, number)
+			sum = sum + Allocator.calcMorphChildrenScale(vns, branch, level + 1)
 		end
 	end
 	if sum[morph.robotTypeS] == nil then
