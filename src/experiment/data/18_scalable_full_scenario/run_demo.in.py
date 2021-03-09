@@ -408,12 +408,12 @@ def generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml,
 #------------------------------------------------------------------------
 TotalLength = 2500 / 5
 if Visual :
-	TotalLength = 15000 / 5
+	TotalLength = 30000 / 5
 RandomSeed = Inputseed or 2
 
 random.seed(RandomSeed)
 
-Scale = 10
+Scale = 1
 N = Scale * 2 + 1
 
 obstacle_xml, largest_loc = generate_obstacle(int(Scale / 2) + 1,                # number of gates
@@ -433,7 +433,7 @@ drone_pipuck_xml = generate_drone_pipuck_xml(N, N*4, #N*2+2,          # number o
                                              0.2, 1.0)          # pipuck near limit and pipuck-drone far limit
 
 target_xml = generate_target_xml((N)/math.pi/2,               # radius
-                                 Scale +2 + (N)/math.pi/2, largest_loc,            
+                                 Scale * 2 + 2 + (N)/math.pi/2, largest_loc,            
                                                                 # x, y location
                                  0.3)                           # distance from edge to tag
 

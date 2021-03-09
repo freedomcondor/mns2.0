@@ -7,10 +7,10 @@
 #include "Vector3.h"
 #include "Quaternion.h"
 
-#define N_DRONES 21
-#define N_PIPUCKS 84
+#define N_DRONES 4
+#define N_PIPUCKS 4
 #define N_ROBOTS (N_DRONES+N_PIPUCKS)
-#define N_STEPS 15001
+#define N_STEPS 1000
 
 #define PI 3.1415926
 
@@ -28,7 +28,6 @@ Vector3 locs[N_ROBOTS][N_STEPS];
 Quaternion dirs[N_ROBOTS][N_STEPS];
 int stepids[N_ROBOTS][N_STEPS];
 int ids[N_ROBOTS];
-int phases[4] = {N_STEPS, N_STEPS, N_STEPS, N_STEPS};
 
 int generate_csv_file_name()
 {
@@ -97,12 +96,6 @@ int read_data()
 			               Quaternion(0,0,1, rz * PI / 180)
 			              );
 			stepids[i][j] = info;
-			if ((info == N_ROBOTS*0 + 2) && (j < phases[0])) phases[0] = j-1;
-			if (((info == N_ROBOTS*1 + 2) && (j < phases[1]))||
-			    ((i != 0) && (i < 21) && (info == 2) && (j > 500) && (j < phases[1]))
-			   ) 
-				phases[1] = j-1;
-			if ((info == N_ROBOTS*2 + 2) && (j < phases[2])) phases[2] = j-1;
 		}
 		ids[i] = info;
 
@@ -118,8 +111,6 @@ int read_data()
 		printf("robot: %s : %d\n", str_robots[i], ids[i]);
 	}
 
-	printf("phases = %d %d %d %d\n", phases[0], phases[1], phases[2], phases[3]);
-
 	return 0;
 }
 
@@ -132,12 +123,6 @@ int calc_data()
 
 	for (int time = 0; time < n_steps; time++)
 	{
-		// check phases
-		int phase_final_step = 0;
-		for (int i = 1; i < 4; i++)
-			if ((phases[i-1] <= time) && (time < phases[i]))
-				phase_final_step = phases[i];
-
 		// check each robot
 		double sum = 0;
 		double sum_lowerbound = 0;
@@ -147,56 +132,47 @@ int calc_data()
 			int head_index;
 			int head_goal_index;
 			// find the nearest head id
-			if (stepids[i][phase_final_step] >= N_ROBOTS*0 + 2) head_id = N_ROBOTS*0 + 2;
-			if (stepids[i][phase_final_step] >= N_ROBOTS*1 + 2) head_id = N_ROBOTS*1 + 2;
-			if (stepids[i][phase_final_step] >= N_ROBOTS*2 + 2) head_id = N_ROBOTS*2 + 2;
+			if (stepids[i][n_steps-1] >= 1) head_id = 1;
 
-			// find the nearest head robot
-			/*
-			double distance = 99999999;
-			for (int j = 0; j < N_ROBOTS; j++)
-				if ((stepids[j][time] == head_id) &&
-				    ((locs[i][time] - locs[j][time]).len() < distance)) 
-				{
-					distance = (locs[i][time] - locs[j][time]).len();
-					head_index = j;
-					head_goal_index = head_id - 1;
-				}
-			*/
 			// find head from the final step of the phase
 			for (int j = 0; j < N_DRONES; j++)
-				if (stepids[j][phase_final_step] == head_id)
+				if (stepids[j][n_steps-1] == head_id)
 				{
 					head_index = j;
 					head_goal_index = head_id - 1;
 				}
 
-			printf("time = %d, phase_final_step = %d, head_id = %d, head_index = %s\n", 
-			time, phase_final_step, head_id, str_robots[head_index]);
-
 			int level_difference = 
-				goal_level[stepids[i][phase_final_step]] - 2;
+				goal_level[stepids[i][n_steps-1]-1] - 1;
+
 			Vector3 relative_loc = 
 				dirs[head_index][time].inv().toRotate(
-						locs[i][time]-locs[head_index][time])
+						locs[i][time]-locs[head_index][time]
+				)
 				;
 
 			Vector3 relative_loc_lowerbound = 
 				dirs[head_index][time-level_difference].inv().toRotate(
-						locs[i][time]-locs[head_index][time-level_difference])
+						locs[i][time]-locs[head_index][time-level_difference]
+				)
 				;
+
+			printf("time = %d, robot = %s,\n\trelative_loc = %s,\n\t relative_loc_lowerbound = %s\n",
+			               time+1, str_robots[i], relative_loc.toStr(), relative_loc_lowerbound.toStr());
+			printf("\ttarget = %s\n", (goal_locs[stepids[i][n_steps-1]-1] - goal_locs[head_goal_index]).toStr());
+			printf("\tlevel_difference = %d\n", level_difference);
 
 			//Vector3 error = relative_loc - (goal_locs[ids[i]-1] - goal_locs[head_goal_index]);
 			Vector3 error = relative_loc - 
-			                (goal_locs[stepids[i][phase_final_step]-1] - goal_locs[head_goal_index]);
+			                (goal_locs[stepids[i][n_steps-1]-1] - goal_locs[head_goal_index]);
 			Vector3 error_lowerbound = relative_loc_lowerbound - 
-			                (goal_locs[stepids[i][phase_final_step]-1] - goal_locs[head_goal_index]);
+			                (goal_locs[stepids[i][n_steps-1]-1] - goal_locs[head_goal_index]);
 			sum += error.len();
 			sum_lowerbound += error_lowerbound.len();
 			
-			if (time == n_steps - 1)
-				printf("real       %s %lf\n", str_robots[i], error.len());
-				printf("lowerbound %s %lf\n", str_robots[i], error_lowerbound.len());
+			//if (time == n_steps - 1)
+			printf("real       %s %lf\n", str_robots[i], error.len());
+			printf("lowerbound %s %lf\n", str_robots[i], error_lowerbound.len());
 		}
 		sum /= N_ROBOTS;
 		sum_lowerbound /= N_ROBOTS;
@@ -214,7 +190,6 @@ int calc_data()
 int main(int argc, char *argv[])
 {
 	n_steps = atoi(argv[1]);
-	phases[3] = n_steps-1;
 	printf("len = %d\n", n_steps);
 	strcpy(dir_base, argv[2]);
 	printf("csv_dir = %s\n", dir_base);

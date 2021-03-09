@@ -160,7 +160,7 @@ return function()
 	local speed = 0.02
 	if state == "start" then
 		count = count + 1
-		if count >= 1500 then
+		if count >= 0 then
 			state = "before_wall"
 		end
 	elseif state == "before_wall" then
@@ -332,7 +332,7 @@ function reset()
 
 	-- initialize vns.id to specify the order
 	if vns.idS == "drone1" then vns.idN = 1 
-	elseif vns.idS == "drone3" then vns.idN = 0.9 
+	--elseif vns.idS == "drone3" then vns.idN = 0.9 
 	else vns.idN = 0.5 
 	end
 

@@ -19,3 +19,5 @@ add_subdirectory(16_switch_fast)
 add_subdirectory(17_split)
 
 add_subdirectory(18_scalable_full_scenario)
+
+add_subdirectory(19_evaluator_test)
