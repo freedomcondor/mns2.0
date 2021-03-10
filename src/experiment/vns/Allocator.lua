@@ -76,28 +76,6 @@ function Allocator.step(vns)
 		end
 		Allocator.setMorphology(vns, msgM.dataT.branch)
 
-		-- don't go too faraway from the parent
-		--[[
-		if safezone == true then
-			local safezone_half_pipuck = 0.9
-			local safezone_half_drone = 1.35
-			local safezone_half = safezone_half_pipuck
-			if vns.robotTypeS == "drone" and vns.parentR.robotTypes == "drone" then
-				local safezone_half = safezone_half_drone
-			end
-			if msgM.dataT.branch.positionV3.x < -safezone_half then
-				msgM.dataT.branch.positionV3.x = -safezone_half
-			elseif msgM.dataT.branch.positionV3.x > safezone_half then
-				msgM.dataT.branch.positionV3.x = safezone_half
-			end
-			if msgM.dataT.branch.positionV3.y < -safezone_half then
-				msgM.dataT.branch.positionV3.y = -safezone_half
-			elseif msgM.dataT.branch.positionV3.y > safezone_half then
-				msgM.dataT.branch.positionV3.y = safezone_half
-			end
-		end
-		--]]
-
 		local targetPositionV3 = vns.parentR.positionV3 +
 			vector3(msgM.dataT.branch.positionV3):rotate(vns.parentR.orientationQ)
 		local targetOrientationQ = vns.parentR.orientationQ * msgM.dataT.branch.orientationQ 
@@ -112,8 +90,9 @@ function Allocator.step(vns)
 				branchR.positionV3 = vector3(branchR.positionV3):rotate(vns.goal.orientationQ) + vns.goal.positionV3
 				branchR.orientationQ = vns.goal.orientationQ * branchR.orientationQ 
 				---[[
-				if vns.robotTypeS == "drone" and branchR.robotTypeS == "pipuck" and 
-				   branchR.positionV3:length() > 1.0 then
+				if (vns.robotTypeS == "drone" and branchR.robotTypeS == "pipuck" and 
+				   branchR.positionV3:length() > 1.0) or 
+				   vns.allocator.self_align == true then
 					branchR.positionV3 = branchR.positionV3_backup
 					branchR.orientationQ = branchR.orientationQ_backup
 				end
@@ -152,28 +131,6 @@ function Allocator.step(vns)
 				branch.children = DeepCopy(vns.allocator.gene_index[branch.idN].children)
 			end
 
-			-- don't go too faraway from the parent
-			--[[
-			if safezone == true then
-				local safezone_half_pipuck = 0.9
-				local safezone_half_drone = 1.35
-				local safezone_half = safezone_half_pipuck
-				if vns.robotTypeS == "drone" and vns.parentR.robotTypes == "drone" then
-					local safezone_half = safezone_half_drone
-				end
-				if branch.positionV3.x < -safezone_half then
-					branch.positionV3.x = -safezone_half
-				elseif branch.positionV3.x > safezone_half then
-					branch.positionV3.x = safezone_half
-				end
-				if branch.positionV3.y < -safezone_half then
-					branch.positionV3.y = -safezone_half
-				elseif branch.positionV3.y > safezone_half then
-					branch.positionV3.y = safezone_half
-				end
-			end
-			--]]
-
 			local targetPositionV3 = vns.parentR.positionV3 +
 				vector3(branch.positionV3):rotate(vns.parentR.orientationQ)
 			local targetOrientationQ = vns.parentR.orientationQ * branch.orientationQ
@@ -189,8 +146,9 @@ function Allocator.step(vns)
 					branch_childR.orientationQ = branch.orientationQ * branch_childR.orientationQ 
 
 					---[[
-					if vns.robotTypeS == "drone" and branch_childR.robotTypeS == "pipuck" and 
-					branch_childR.positionV3:length() > 1.0 then
+					if (vns.robotTypeS == "drone" and branch_childR.robotTypeS == "pipuck" and 
+					   branch_childR.positionV3:length() > 1.0) or
+					   vns.allocator.self_align == true then
 						branch_childR.positionV3 = branch_childR.positionV3_backup
 						branch_childR.orientationQ = branch_childR.orientationQ_backup
 					end

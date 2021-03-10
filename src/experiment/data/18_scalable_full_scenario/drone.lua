@@ -189,50 +189,48 @@ return function()
 		end
 	elseif state == "choose_leader" then
 		if vns.max_gate ~= nil then
-			local IwasBrain = true 
 			if vns.parentR ~= nil then
-				IwasBrain = false
 				vns.Msg.send(vns.parentR.idS, "dismiss")
 				vns.deleteParent(vns)
 			end
 			vns.Connector.newVnsID(vns, 1 + vns.max_gate.distance, 1)
 			vns.setMorphology(vns, structure1)
 			-- TODO: turn direction
-			if IwasBrain == false and vns.max_gate.positionV3.y > 0 then
+			local gate_direction_dotproduct = math.abs(
+				vector3(vns.max_gate.direction):normalize():dot(vector3(1,0,0))
+			)
+			logger("vns.max_gate.direction", vns.max_gate.direction)
+			logger("gate_direction_dotproduct", gate_direction_dotproduct)
+			if gate_direction_dotproduct > 0.5 and vns.max_gate.positionV3.y > 0 then
 				-- turn left 90
 				vns.api.virtualFrame.orientationQ = 
 					vns.api.virtualFrame.orientationQ *
 					quaternion(math.pi/2, vector3(0,0,1))
-			elseif IwasBrain == false and vns.max_gate.positionV3.y < 0 then
+			elseif gate_direction_dotproduct > 0.5 and vns.max_gate.positionV3.y < 0 then
+				-- turn right 90
 				vns.api.virtualFrame.orientationQ = 
 					vns.api.virtualFrame.orientationQ *
 					quaternion(-math.pi/2, vector3(0,0,1))
-				-- turn right 90
 			end
 		end
 		count = vns.scale["drone"] * 2 
 		state = "wait_leader"
-	--[[ move towards gate
-	elseif state == "reach_gate" then
-		if vns.max_gate ~= nil then
-			local gate_position = vns.max_gate.positionV3
-			                      + vns.max_gate.direction:normalize()*(vns.max_gate.distance/2)  
-			if math.abs(gate_position.y) > 1.0 then
-				local y_speed = gate_position.y
-				y_speed = y_speed / math.abs(y_speed)
-				logger("run speed")
-				vns.Spreader.emergency(vns, vector3(0, y_speed, 0) * speed, vector3(), nil, true)
-			else
-				logger("reach_gate")
-				state = "at_wall"
-			end
-		end
-	--]]
 	elseif state == "wait_leader" then
 		count = count - 1
 		if count <= 0 then
 			count = 0
 			state = "at_wall"
+		end
+	elseif state == "at_wall" and vns.parentR ~= nil then
+		if vns.max_gate ~= nil and vns.parentR.positionV3.x > 0.8 then
+			local middle =   vns.max_gate.positionV3
+			               + vns.max_gate.direction:normalize()*(vns.max_gate.distance/2) 
+			if vns.goal.positionV3 ~= nil then
+				vns.goal.positionV3.y = middle.y
+			end
+			vns.allocator.self_align = true
+		else
+			vns.allocator.self_align = nil
 		end
 	elseif state == "at_wall" and vns.parentR == nil then
 		-- ob is the largest gate, move in front of it
@@ -278,18 +276,6 @@ return function()
 			logger("wait_structure2")
 		end
 	elseif state == "wait_structure2" then
-		-- count how many child
-		--[[
-		local total = 0
-		local the_child = nil
-		for idS, childR in pairs(vns.childrenRT) do
-			if childR.robotTypeS == "drone" then
-				total = total + 1
-				the_child = childR
-			end
-		end
-		--]]
-		--if total == 1 and (the_child.positionV3 - vector3(-1,0,0)):length() < 0.1 then
 		logger("count = ", count)
 		logger("reach = ", (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 3)
 		count = count + 1

@@ -106,6 +106,7 @@ function Driver.step(vns, waiting)
 
 		-- predict next point
 		local predict_location = vns.api.time.period * transV3
+		logger("predict location", predict_location)
 
 		-- check parent
 		if vns.parentR ~= nil then
@@ -122,7 +123,15 @@ function Driver.step(vns, waiting)
 			real_distanceV3.z = 0
 			local real_distance = real_distanceV3:length()
 			if predict_distance > safezone_half and predict_distance > real_distance then
-				transV3 = vector3()
+				logger("parent stop ", vns.parentR.idS)
+				logger("safezone_half", safezone_half)
+				logger("predict_distance ", predict_distance)
+				logger("real_distance", real_distance)
+				local new_predict_distanceV3 = predict_distanceV3 * (real_distance / predict_distance)
+				local new_predict_location = vns.parentR.positionV3 + new_predict_distanceV3
+				new_predict_location.z = 0
+				transV3 = new_predict_location * (1/vns.api.time.period)
+				logger("new_transV3", transV3)
 			end
 		end
 
@@ -141,6 +150,10 @@ function Driver.step(vns, waiting)
 			real_distanceV3.z = 0
 			local real_distance = real_distanceV3:length()
 			if predict_distance > safezone_half and predict_distance > real_distance then
+				logger("child stop ", idS)
+				logger("safezone_half", safezone_half)
+				logger("predict_distance ", predict_distance)
+				logger("real_distance", real_distance)
 				transV3 = vector3()
 			end
 		end
