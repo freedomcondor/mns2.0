@@ -100,6 +100,7 @@
       <controller config="drone"/>
     </drone>
 
+    <!--
     <drone id="drone3">
       <body position="-1.9,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
@@ -109,12 +110,15 @@
       <body position="-2.9,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
+    -->
 
     <pipuck id="pipuck1"  wifi_medium="wifi" tag_medium="tags">
       <body position="-0.4,0,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck>
 
+
+    <!--
     <pipuck id="pipuck2"  wifi_medium="wifi" tag_medium="tags">
       <body position="-1.4,0,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
@@ -129,6 +133,7 @@
       <body position="-3.4,0,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck>
+    -->
   </arena>
 
   <!-- ******************* -->

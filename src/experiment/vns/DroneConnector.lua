@@ -92,16 +92,15 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 							 	--robotR.orientationQ:inverse() * myRobotR.orientationQ
 							 	myRobotR.orientationQ * robotR.orientationQ:inverse() 
 							 )
+			local orientationQ = myRobotR.orientationQ * robotR.orientationQ:inverse()
 
-			if positionV3:length() < 1.5 then
-				local orientationQ = myRobotR.orientationQ * robotR.orientationQ:inverse()
-				totalPositionV3 = totalPositionV3 + positionV3
-				totalOrientationQ_x = totalOrientationQ_x + orientationQ.x
-				totalOrientationQ_y = totalOrientationQ_y + orientationQ.y
-				totalOrientationQ_z = totalOrientationQ_z + orientationQ.z
-				totalOrientationQ_w = totalOrientationQ_w + orientationQ.w
-				n = n + 1
-			end
+			totalPositionV3 = totalPositionV3 + positionV3
+			totalOrientationQ_x = totalOrientationQ_x + orientationQ.x
+			totalOrientationQ_y = totalOrientationQ_y + orientationQ.y
+			totalOrientationQ_z = totalOrientationQ_z + orientationQ.z
+			totalOrientationQ_w = totalOrientationQ_w + orientationQ.w
+
+			n = n + 1
 		end
 	end
 	if n >= 1 then

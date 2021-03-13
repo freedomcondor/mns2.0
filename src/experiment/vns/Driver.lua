@@ -49,10 +49,8 @@ function Driver.step(vns, waiting)
 	-- receive goal from parent
 	local transV3 = vector3()
 	local rotateV3 = vector3()
-	local receive_drive_flag = false
 	if vns.parentR ~= nil then
 		for _, msgM in pairs(vns.Msg.getAM(vns.parentR.idS, "drive")) do
-			receive_drive_flag = true
 			local receivedPositionV3 = vns.parentR.positionV3 +
 				vector3(msgM.dataT.positionV3):rotate(vns.parentR.orientationQ)
 			local receivedOrientationQ = vns.parentR.orientationQ * msgM.dataT.orientationQ
@@ -89,14 +87,14 @@ function Driver.step(vns, waiting)
 			if angle > math.pi then angle = angle - math.pi * 2 end
 			local goalPointRotateV3 = axis * angle * rotate_speed_scalar
 
-			transV3 = goalPointTransV3 + receivedTransV3 + vns.goal.transV3
-			rotateV3 = goalPointRotateV3 + receivedRotateV3 + vns.goal.rotateV3
+			logger("goalPointTransV3 = ", goalPointTransV3)
+			logger("receivedTransV3 = ", receivedTransV3)
+			logger("vns.goal.transV3 = ", vns.goal.transV3)
+			transV3 = goalPointTransV3 + receivedTransV3 
+			--+ vns.goal.transV3
+			rotateV3 = goalPointRotateV3 + receivedRotateV3 
+			--+ vns.goal.rotateV3
 		end
-	end
-	-- if no drive command received, respond only to goal.transV3 from avoider and spreader
-	if receive_drive_flag == false then
-		transV3 = transV3 + vns.goal.transV3
-		rotateV3 = rotateV3 + vns.goal.rotateV3
 	end
 
 	if waiting == true then
@@ -159,6 +157,11 @@ function Driver.step(vns, waiting)
 		end
 	end
 
+	-- respond to goal.transV3 from avoider and spreader
+	transV3 = transV3 + vns.goal.transV3
+	rotateV3 = rotateV3 + vns.goal.rotateV3
+
+	logger("transV3 = ", transV3)
 	Driver.move(transV3, rotateV3)
 
 	-- send drive to children

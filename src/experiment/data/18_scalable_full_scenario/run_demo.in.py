@@ -413,7 +413,7 @@ RandomSeed = Inputseed or 2
 
 random.seed(RandomSeed)
 
-Scale = 2
+Scale = 10
 N = Scale * 2 + 1
 
 obstacle_xml, largest_loc = generate_obstacle(int(Scale / 2) + 1,                # number of gates
@@ -430,7 +430,7 @@ drone_pipuck_xml = generate_drone_pipuck_xml(N, N*4, #N*2+2,          # number o
                                              -Scale*2 - 2,-1,     # x range
                                              -Scale*2,Scale*2,      # y range
                                              1.0, 1.2,          # drone near and far limit
-                                             0.2, 1.0)          # pipuck near limit and pipuck-drone far limit
+                                             0.2, 0.90)          # pipuck near limit and pipuck-drone far limit
 
 target_xml = generate_target_xml((N)/math.pi/2,               # radius
                                  Scale * 2 + 2 + (N)/math.pi/2, largest_loc,            

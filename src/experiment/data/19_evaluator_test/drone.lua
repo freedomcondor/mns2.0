@@ -27,7 +27,7 @@ return function()
 	local speed = 0.02
 	if state == "start" then
 		count = count + 1
-		if count >= 200 then
+		if count >= 300 then
 			state = "before_wall"
 		end
 	elseif state == "before_wall" then

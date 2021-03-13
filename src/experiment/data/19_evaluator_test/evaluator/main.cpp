@@ -10,7 +10,7 @@
 #define N_DRONES 4
 #define N_PIPUCKS 4
 #define N_ROBOTS (N_DRONES+N_PIPUCKS)
-#define N_STEPS 1000
+#define N_STEPS 1500
 
 #define PI 3.1415926
 
@@ -22,7 +22,7 @@ int n_steps;
 char dir_base[200] = "";
 char str_robots[N_ROBOTS][100];
 
-#include "Ccode.cpp"
+#include "Ccode_4d4p.cpp"
 
 Vector3 locs[N_ROBOTS][N_STEPS];
 Quaternion dirs[N_ROBOTS][N_STEPS];
@@ -126,7 +126,9 @@ int calc_data()
 		// check each robot
 		double sum = 0;
 		double sum_lowerbound = 0;
-		for (int i = 0; i < N_ROBOTS; i++)
+		//for (int i = 0; i < N_ROBOTS; i++)
+		//for (int i = 0; i < N_DRONES; i++)
+		for (int i = N_DRONES; i < N_ROBOTS; i++)
 		{
 			int head_id;
 			int head_index;
@@ -165,8 +167,10 @@ int calc_data()
 			//Vector3 error = relative_loc - (goal_locs[ids[i]-1] - goal_locs[head_goal_index]);
 			Vector3 error = relative_loc - 
 			                (goal_locs[stepids[i][n_steps-1]-1] - goal_locs[head_goal_index]);
+			error.z = 0;
 			Vector3 error_lowerbound = relative_loc_lowerbound - 
 			                (goal_locs[stepids[i][n_steps-1]-1] - goal_locs[head_goal_index]);
+			error_lowerbound.z = 0;
 			sum += error.len();
 			sum_lowerbound += error_lowerbound.len();
 			
@@ -174,8 +178,12 @@ int calc_data()
 			printf("real       %s %lf\n", str_robots[i], error.len());
 			printf("lowerbound %s %lf\n", str_robots[i], error_lowerbound.len());
 		}
-		sum /= N_ROBOTS;
-		sum_lowerbound /= N_ROBOTS;
+		//sum /= N_ROBOTS;
+		//sum_lowerbound /= N_ROBOTS;
+		//sum /= N_DRONES;
+		//sum_lowerbound /= N_DRONES;
+		sum /= N_PIPUCKS;
+		sum_lowerbound /= N_PIPUCKS;
 		fprintf(out, "%lf\n", sum);
 		fprintf(out_lowerbound, "%lf\n", sum_lowerbound);
 	}
