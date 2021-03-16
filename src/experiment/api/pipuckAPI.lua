@@ -55,6 +55,8 @@ function api.pipuckSetRotationSpeed(x, th)
 	local scalar = 0.01
 	local aug = scalar * th
 	api.pipuckSetWheelSpeed(x - aug, x + aug)
+	local virtual_frame_scalar = 0.25
+	api.virtualFrame.rotateInSpeed(vector3(0,0,1) * (-th * virtual_frame_scalar))
 end
 
 function api.pipuckSetSpeed(x, y)

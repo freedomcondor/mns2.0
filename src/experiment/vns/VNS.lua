@@ -14,6 +14,7 @@ VNS.Assigner = require("Assigner")
 VNS.Allocator = require("Allocator")
 VNS.Avoider = require("Avoider")
 VNS.Spreader = require("Spreader")
+VNS.BrainKeeper = require("BrainKeeper")
 VNS.CollectiveSensor = require("CollectiveSensor")
 
 VNS.Driver= require("Driver")
@@ -30,6 +31,7 @@ VNS.Modules = {
 	VNS.Avoider,
 	VNS.Spreader,
 	VNS.CollectiveSensor,
+	VNS.BrainKeeper,
 
 	VNS.Driver,
 }
@@ -182,6 +184,7 @@ function VNS.create_vns_core_node(vns)
 		vns.Allocator.create_allocator_node(vns),
 		vns.Avoider.create_avoider_node(vns),
 		vns.Spreader.create_spreader_node(vns),
+		vns.BrainKeeper.create_brainkeeper_node(vns),
 		--vns.CollectiveSensor.create_collectivesensor_node(vns),
 		--vns.Driver.create_driver_node(vns),
 	}}
@@ -197,6 +200,7 @@ function VNS.create_vns_core_node_no_recruit(vns)
 		vns.Allocator.create_allocator_node(vns),
 		vns.Avoider.create_avoider_node(vns),
 		vns.Spreader.create_spreader_node(vns),
+		vns.BrainKeeper.create_brainkeeper_node(vns),
 		--vns.CollectiveSensor.create_collectivesensor_node(vns),
 		--vns.Driver.create_driver_node(vns),
 	}}

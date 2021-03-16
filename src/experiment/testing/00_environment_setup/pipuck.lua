@@ -31,7 +31,11 @@ function step()
 	api.preStep()
 
 	--api.move(vector3(0.01, 0, 0), vector3(0,0,math.pi/100))
-	api.move(vector3(0.01, 0, 0), vector3(0,0,0))
+	if api.stepCount < 100 then
+		api.move(vector3(0.01, 0.01, 0), vector3(0,0,0))
+	else
+		api.move(vector3(0.01, -0.01, 0), vector3(0,0,0))
+	end
 
 	robot.directional_leds.set_all_colors('black')
 	robot.directional_leds.set_single_color(2, 'white')

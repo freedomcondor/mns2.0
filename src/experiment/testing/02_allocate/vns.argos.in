@@ -46,7 +46,7 @@
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" drone_distance="0.7"/>
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" dangerzone_drone="0.7"/>
     </lua_controller>
   </controllers>
 

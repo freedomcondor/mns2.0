@@ -47,12 +47,14 @@ function step()
 	bt()
 
 	-- rebellion
+	---[[
 	if robot.id == "drone5" and api.stepCount == 300 then
 		vns.Msg.send(vns.parentR.idS, "dismiss")
 		vns.deleteParent(vns)
 		vns.Connector.newVnsID(vns, 2)
 		vns.setMorphology(vns, structure)
 	end
+	--]]
 
 	-- poststep
 	vns.postStep(vns)
@@ -62,6 +64,18 @@ function step()
 	-- debug
 	--api.debug.showChildren(vns)
 	api.debug.showParent(vns)
+
+	if vns.brainkeeper.brain ~= nil then
+		local robotR = vns.brainkeeper.brain
+		api.debug.drawArrow("red", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)))
+		api.debug.drawArrow("red", 
+			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1),
+			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1) +
+			vector3(0.1, 0, 0):rotate(
+				api.virtualFrame.Q_VtoR(quaternion(robotR.orientationQ))
+			)
+		)
+	end
 end
 
 --- destroy
