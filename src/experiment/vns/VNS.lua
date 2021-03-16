@@ -2,6 +2,7 @@ local VNS = {VNSCLASS = true}
 VNS.__index = VNS
 
 VNS.Msg = require("Message")
+VNS.Parameters = require("Parameters")
 
 --VNS.Connector = require("Connector_backup")
 VNS.Connector = require("Connector")
@@ -11,7 +12,6 @@ VNS.PipuckConnector = require("PipuckConnector")
 VNS.ScaleManager = require("ScaleManager")
 VNS.Assigner = require("Assigner")
 VNS.Allocator = require("Allocator")
---VNS.Allocator = require("Allocator_old")
 VNS.Avoider = require("Avoider")
 VNS.Spreader = require("Spreader")
 VNS.CollectiveSensor = require("CollectiveSensor")
@@ -37,7 +37,7 @@ VNS.Modules = {
 --[[
 --	vns = {
 --		idS
---		brainS
+--		idN
 --		robotTypeS
 --		scale
 --		

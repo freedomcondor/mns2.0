@@ -209,9 +209,15 @@ function Connector.recruitAll(vns)
 		if vns.childrenRT[idS] == nil and 
 		   vns.connector.waitingRobots[idS] == nil and 
 		   (vns.parentR == nil or vns.parentR.idS ~= idS) then
-			local safezone = 1.0
+			local safezone
 			if vns.robotTypeS == "drone" and robotR.robotTypeS == "drone" then
-				safezone = 1.5
+				safezone = vns.Parameters.safezone_drone_drone
+			elseif vns.robotTypeS == "drone" and robotR.robotTypeS == "pipuck" then
+				safezone = vns.Parameters.safezone_drone_pipuck
+			elseif vns.robotTypeS == "pipuck" and robotR.robotTypeS == "drone" then
+				safezone = vns.Parameters.safezone_drone_pipuck
+			elseif vns.robotTypeS == "pipuck" and robotR.robotTypeS == "pipuck" then
+				safezone = vns.Parameters.safezone_pipuck_pipuck
 			end
 			local position2D = vector3(robotR.positionV3)
 			position2D.z = 0

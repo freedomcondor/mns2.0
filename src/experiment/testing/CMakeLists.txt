@@ -8,3 +8,5 @@ add_subdirectory(06_scenario3)
 add_subdirectory(07_auto_scenario)
 add_subdirectory(08_collectivesensing)
 add_subdirectory(09_split)
+
+add_subdirectory(10_centralize)

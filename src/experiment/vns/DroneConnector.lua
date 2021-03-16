@@ -78,10 +78,7 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 	local quadR = nil
 	local n = 0
 	local totalPositionV3 = vector3()
-	local totalOrientationQ_x = 0
-	local totalOrientationQ_y = 0
-	local totalOrientationQ_z = 0
-	local totalOrientationQ_w = 0
+	local totalOrientationQ = quaternion() 
 	for _, robotR in pairs(yourVehiclesTR) do
 		if myVehiclesTR[robotR.idS] ~= nil and
 		   myVehiclesTR[robotR.idS].robotTypeS ~= "drone" then
@@ -95,20 +92,13 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 			local orientationQ = myRobotR.orientationQ * robotR.orientationQ:inverse()
 
 			totalPositionV3 = totalPositionV3 + positionV3
-			totalOrientationQ_x = totalOrientationQ_x + orientationQ.x
-			totalOrientationQ_y = totalOrientationQ_y + orientationQ.y
-			totalOrientationQ_z = totalOrientationQ_z + orientationQ.z
-			totalOrientationQ_w = totalOrientationQ_w + orientationQ.w
+			totalOrientationQ = orientationQ -- TODO: find a better way to average quaternion
 
 			n = n + 1
 		end
 	end
 	if n >= 1 then
-		local AverageOrientationQ = quaternion()
-		AverageOrientationQ.x = totalOrientationQ_x * (1.0/n)
-		AverageOrientationQ.y = totalOrientationQ_y * (1.0/n)
-		AverageOrientationQ.z = totalOrientationQ_z * (1.0/n)
-		AverageOrientationQ.w = totalOrientationQ_w * (1.0/n)
+		local AverageOrientationQ = totalOrientationQ
 		quadR = {
 			idS = idS,
 			positionV3 = totalPositionV3 * (1.0/n),
@@ -116,7 +106,6 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 			robotTypeS = "drone",
 		}
 	end
-
 	return quadR
 end
 

@@ -24,28 +24,29 @@ end
 function Avoider.step(vns)
 	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
 	-- avoid seen robots
-if vns.parentR ~= nil then
-	for idS, robotR in pairs(vns.connector.seenRobots) do
-		-- avoid drone
-		if robotR.robotTypeS == vns.robotTypeS and
-		   robotR.robotTypeS == "drone" then
-			avoid_speed.positionV3 =
-				Avoider.add(vector3(), robotR.positionV3,
-				            avoid_speed.positionV3,
-							vns.avoider.drone_distance,
-				            vns.goal.positionV3)
-		end
-		-- avoid pipuck
-		if robotR.robotTypeS == vns.robotTypeS and
-		   robotR.robotTypeS == "pipuck" then
-			avoid_speed.positionV3 =
-				Avoider.add(vector3(), robotR.positionV3,
-				            avoid_speed.positionV3,
-				            vns.avoider.pipuck_distance,
-				            vns.goal.positionV3)
+	-- the brain is not influenced by other robots
+	if vns.parentR ~= nil then
+		for idS, robotR in pairs(vns.connector.seenRobots) do
+			-- avoid drone
+			if robotR.robotTypeS == vns.robotTypeS and
+			   robotR.robotTypeS == "drone" then
+				avoid_speed.positionV3 =
+					Avoider.add(vector3(), robotR.positionV3,
+					            avoid_speed.positionV3,
+					            vns.Parameters.dangerzone_drone,
+					            vns.goal.positionV3)
+			end
+			-- avoid pipuck
+			if robotR.robotTypeS == vns.robotTypeS and
+			   robotR.robotTypeS == "pipuck" then
+				avoid_speed.positionV3 =
+					Avoider.add(vector3(), robotR.positionV3,
+					            avoid_speed.positionV3,
+					            vns.Parameters.dangerzone_pipuck,
+					            vns.goal.positionV3)
+			end
 		end
 	end
-end
 
 	-- avoid obstacles
 	if vns.robotTypeS ~= "drone" then
@@ -57,7 +58,7 @@ end
 			avoid_speed.positionV3 = 
 				Avoider.add(vector3(), obstacle.positionV3,
 			            	avoid_speed.positionV3,
-							vns.avoider.block_distance,
+					        vns.Parameters.dangerzone_block,
 							vns.goal.positionV3)
 		end
 	end
@@ -70,20 +71,46 @@ end
 			runawayV3 = vector3() - obstacle.positionV3
 			runawayV3.z = 0
 			runawayV3:normalize()
-			runawayV3 = runawayV3 * 0.03
+			runawayV3 = runawayV3 * vns.Parameters.driver_default_speed
 			vns.Spreader.emergency(vns, runawayV3, vector3(), "green") -- TODO: run away from predator
 		end
 	end
 
 	-- TODO: maybe add surpress or not
 	-- add the speed to goal -- the brain can't be influended
-	--if vns.parentR ~= nil then 
-		vns.goal.transV3 = vns.goal.transV3 + avoid_speed.positionV3
-		vns.goal.rotateV3 = vns.goal.rotateV3 + avoid_speed.orientationV3
-	--end
+	vns.goal.transV3 = vns.goal.transV3 + avoid_speed.positionV3
+	vns.goal.rotateV3 = vns.goal.rotateV3 + avoid_speed.orientationV3
 end
 
 function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
+	-- calculate the avoid speed from obLoc to myLoc,
+	-- add the result into accumulator
+	--[[
+	        |   |
+	        |   |
+	speed   |    |  -log(d/dangerzone) * scalar
+	        |     |
+	        |      \  
+	        |       -\
+	        |         --\ 
+	        |------------+------------------------
+	                     |
+	                 threshold
+	--]]
+	-- if vortex is true, rotate the speed to create a vortex
+	--[[
+	       (up)|     /
+	           R   \ Ob \
+	                  /
+	--]]
+	-- if vortex is vector3, it means the goal of the robot is at the vortex, 
+	--         add left or right speed accordingly
+	--[[
+	                 /    
+	           R   \ Ob -
+	      (down)\    \      * goal(vortex)
+	--]]
+
 	local dV3 = myLocV3 - obLocV3
 	dV3.z = 0
 	local d = dV3:length()
@@ -91,7 +118,9 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	local ans = accumulatorV3
 	if d < threshold then
 		dV3:normalize()
-		local transV3 = - 0.3 * math.log(d/threshold) * dV3:normalize()
+		local transV3 = - vns.Parameters.avoid_speed_scalar 
+		                * math.log(d/threshold) 
+						* dV3:normalize()
 		if type(vortex) == "bool" and vortex == true then
 			ans = ans + transV3:rotate(quaternion(math.pi/4, vector3(0,0,1)))
 		elseif type(vortex) == "userdata" and getmetatable(vortex) == getmetatable(vector3()) then
@@ -107,7 +136,6 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 			else
 				ans = ans + transV3
 			end
-			--]]
 		else
 			ans = ans + transV3
 		end
