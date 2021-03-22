@@ -8,8 +8,8 @@
 #include "Quaternion.h"
 
 // robot number, step number
-#define N_DRONES 21
-#define N_PIPUCKS 84
+#define N_DRONES 9
+#define N_PIPUCKS 36
 #define N_ROBOTS (N_DRONES+N_PIPUCKS)
 #define N_STEPS 30000
 #define N_PHASES 3
@@ -29,7 +29,9 @@ char str_robots[N_ROBOTS][100];
 //	Vector3 goal_level[N_ROBOTS*3+1] 
 //#include "Ccode.cpp"
 //#include "Ccode_5drones.cpp"
-#include "Ccode_21drones.cpp"
+//#include "Ccode_21drones.cpp"
+//#include "Ccode_11drones.cpp"
+#include "Ccode_9drones.cpp"
 
 // robot location and orientation and id for each step
 int n_steps;
@@ -150,6 +152,8 @@ int calc_phase_data(int start, int end, int phase_i)
 		double sum_lowerbound = 0;
 		for (int i = 0; i < N_ROBOTS; i++)
 		{
+			if (stepids[i][time] == -2) continue;
+
 			int myid = stepids[i][end-1];
 
 			// real location to the brain

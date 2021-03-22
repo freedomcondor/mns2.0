@@ -29,7 +29,7 @@ function BrainKeeper.step(vns)
 			             vector3(msgM.dataT.positionV3):rotate(vns.parentR.orientationQ),
 			orientationQ = vns.parentR.orientationQ * msgM.dataT.orientationQ,
 		}
-		vns.brainkeeper.countdown = 50
+		vns.brainkeeper.countdown = vns.Parameters.brainkeeper_time
 	end end
 
 	local positionV3 = vector3()

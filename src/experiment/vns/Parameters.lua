@@ -41,4 +41,6 @@ return {
 	driver_slowdown_zone = tonumber(robot.params.driver_slowdown_zone or 0.35),
 	driver_stop_zone = tonumber(robot.params.driver_stop_zone or 0.01),
 	driver_default_rotate_scalar = tonumber(robot.params.driver_default_rotate_scalar or 0.3),
+
+	brainkeeper_time = tonumber(robot.params.brainkeeper_time or 100), 
 }

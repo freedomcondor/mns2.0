@@ -21,6 +21,13 @@ function api.debug.drawArrow(color, begin, finish)
 	)
 end
 
+function api.debug.drawRing(color, middle, radius)
+	robot.debug.draw("ring(" .. color .. ")(" .. 
+		tostring(middle) .. ")(" ..
+		tostring(radius) .. ")"
+	)
+end
+
 function api.debug.showVirtualFrame()
 	api.debug.drawArrow(
 		"green", 

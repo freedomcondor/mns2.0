@@ -33,6 +33,40 @@ function VNS.Allocator.resetMorphology(vns)
 	vns.Allocator.setMorphology(vns, structure1)
 end
 
+-- function node ---------
+local failed = false
+function create_failure_node(vns)
+failed = false
+return function()
+	if vns.parentR == nil then return false, true end
+
+	if api.stepCount == 500 then
+		local random_number = robot.random.uniform()
+		if random_number < 0.5 then
+			failed = true
+			--vns.reset(vns)
+			api.move(vector3(),vector3())
+		end
+	end
+
+	if failed == false then
+		return false, true
+	else
+		api.debug.drawRing("red", vector3(), 0.06)
+		return false, false
+	end
+end end
+
+function create_brain_chase_node(vns)
+return function()
+	if vns.parentR == nil and vns.brainkeeper.brain ~= nil then
+		logger(vns.brainkeeper.brain.positionV3)
+		local speed = vector3(vns.brainkeeper.brain.positionV3):normalize() * 0.04
+		vns.Spreader.emergency_after_core(vns, speed, vector3(), nil)
+	end
+	return false, true
+end end
+
 -- argos functions ------
 --- init
 function init()
@@ -51,8 +85,10 @@ function reset()
 	vns.setMorphology(vns, structure1)
 	bt = BT.create
 	{ type = "sequence", children = {
+		create_failure_node(vns),
 		vns.create_preconnector_node(vns),
 		vns.create_vns_core_node_no_recruit(vns),
+		create_brain_chase_node(vns),
 		vns.Driver.create_driver_node_wait(vns),
 	}}
 end
@@ -67,7 +103,9 @@ function step()
 	-- step
 	bt()
 	-- loop function message
-	if vns.allocator.target == nil then
+	if failed == true then
+		robot.debug.loop_functions("-2")
+	elseif vns.allocator.target == nil then
 		robot.debug.loop_functions("-1")
 	else
 		robot.debug.loop_functions(tostring(vns.allocator.target.idN))

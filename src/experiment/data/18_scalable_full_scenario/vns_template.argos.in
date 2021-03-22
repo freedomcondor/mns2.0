@@ -29,7 +29,8 @@
         <pipuck_rangefinders implementation="default" show_rays="false" />
         <wifi implementation="default" show_rays="false" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua" 
+              brainkeeper_time="500"/>
     </lua_controller>
 
     <!-- Predator Controller -->
@@ -67,7 +68,8 @@
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua"
+              brainkeeper_time="500"/>
     </lua_controller>
 
     	<!-- Block Controller -->

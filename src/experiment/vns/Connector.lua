@@ -68,11 +68,13 @@ end
 function Connector.addChild(vns, robotR)
 	vns.childrenRT[robotR.idS] = robotR
 	vns.childrenRT[robotR.idS].unseen_count = 3
+	vns.childrenRT[robotR.idS].heartbeat_count = 3
 end
 
 function Connector.addParent(vns, robotR)
 	vns.parentR = robotR
 	vns.parentR.unseen_count = 3
+	vns.parentR.heartbeat_count = 5
 end
 
 function Connector.deleteChild(vns, idS)
@@ -89,9 +91,11 @@ function Connector.update(vns)
 	-- updated count
 	for idS, robotR in pairs(vns.childrenRT) do
 		robotR.unseen_count = robotR.unseen_count - 1
+		robotR.heartbeat_count = robotR.heartbeat_count - 1
 	end
 	if vns.parentR ~= nil then
 		vns.parentR.unseen_count = vns.parentR.unseen_count - 1
+		vns.parentR.heartbeat_count = vns.parentR.heartbeat_count - 1
 	end
 	
 	-- update waiting list
@@ -118,14 +122,26 @@ function Connector.update(vns)
 		vns.parentR.unseen_count = 3
 	end
 
+	-- check heartbeat
+	for idS, robotR in pairs(vns.childrenRT) do
+		for _, msgM in ipairs(vns.Msg.getAM(idS, "heartbeat")) do
+			robotR.heartbeat_count = 3
+		end
+	end
+	if vns.parentR ~= nil then
+		for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "heartbeat")) do
+			vns.parentR.heartbeat_count = 3
+		end
+	end
+
 	-- check updated
 	for idS, robotR in pairs(vns.childrenRT) do
-		if robotR.unseen_count == 0 then
+		if robotR.unseen_count == 0 or robotR.heartbeat_count == 0 then
 			vns.Msg.send(idS, "dismiss")
 			vns.deleteChild(vns, idS)
 		end
 	end
-	if vns.parentR ~= nil and vns.parentR.unseen_count == 0 then
+	if vns.parentR ~= nil and (vns.parentR.unseen_count == 0 or vns.parentR.heartbeat_count == 0) then
 		vns.Msg.send(vns.parentR.idS, "dismiss")
 		Connector.newVnsID(vns)
 		vns.deleteParent(vns)
@@ -200,6 +216,14 @@ function Connector.step(vns)
 		if vns.parentR ~= nil and msgM.fromS == vns.parentR.idS then
 			Connector.updateVnsID(vns, msgM.dataT.idS, msgM.dataT.idN, msgM.dataT.lastidPeriod)
 		end
+	end
+
+	-- send heartbeat
+	for idS, robotR in pairs(vns.childrenRT) do
+		vns.Msg.send(idS, "heartbeat")
+	end
+	if vns.parentR ~= nil then
+		vns.Msg.send(vns.parentR.idS, "heartbeat")
 	end
 end
 
