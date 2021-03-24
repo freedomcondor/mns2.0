@@ -116,12 +116,13 @@ end
 --- step
 function step()
 	-- prestep
-	--logger(robot.id, api.stepCount + 1, "-----------------------")
+	logger(robot.id, api.stepCount + 1, "-----------------------")
 	api.preStep()
 	vns.preStep(vns)
 
 	-- step
 	bt()
+	vns.allocator.mode_switch = "allocate"
 
 	-- loop function message
 	if vns.allocator.target == nil then

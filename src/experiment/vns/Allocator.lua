@@ -9,16 +9,39 @@ local Allocator = {}
 
 --[[
 --	related data
---	vns.allocator.target
+--	vns.allocator.target = {positionV3, orientationQ, robotTypeS, children}
 --	vns.allocator.gene
+--	vns.allocator.gene_index
 --]]
 
 function Allocator.create(vns)
-	vns.allocator = {}
+	vns.allocator = {
+		target = {
+			positionV3 = vector3(),
+			orientationQ = quaternion(),
+			robotTypeS = vns.robotTypeS,
+		},
+		parentGoal = {
+			positionV3 = vector3(),
+			orientationQ = quaternion(),
+		},
+		mode_switch = "allocate",
+	}
 end
 
 function Allocator.reset(vns)
-	vns.allocator = {}
+	vns.allocator = {
+		target = {
+			positionV3 = vector3(),
+			orientationQ = quaternion(),
+			robotTypeS = vns.robotTypeS,
+		},
+		parentGoal = {
+			positionV3 = vector3(),
+			orientationQ = quaternion(),
+		},
+		mode_switch = "allocate",
+	}
 end
 
 function Allocator.addChild(vns)
@@ -28,22 +51,48 @@ function Allocator.deleteChild(vns)
 end
 
 function Allocator.addParent(vns)
+	vns.mode_switch = "allocate"
 end
 
 function Allocator.deleteParent(vns)
+	vns.allocator.parentGoal = {
+		positionV3 = vector3(),
+		orientationQ = quaternion(),
+	}
 	--vns.Allocator.setMorphology(vns, vns.allocator.gene)
 end
 
 function Allocator.setGene(vns, morph)
 	vns.allocator.morphIdCount = 0
 	vns.allocator.gene_index = {}
+	vns.allocator.gene_index[-1] = {
+		positionV3 = vector3(),
+		orientationQ = quaternion(),
+		idN = -1,
+		robotTypeS = vns.robotTypeS,
+	}
 	Allocator.calcMorphScale(vns, morph)
 	vns.allocator.gene = morph
 	vns.Allocator.setMorphology(vns, morph)
 end
 
 function Allocator.setMorphology(vns, morph)
-	if morph ~= nil and morph.robotTypeS ~= vns.robotTypeS then morph = nil end
+	-- issue a temporary morph if the morph is not valid
+	if morph == nil then
+		morph = {
+			idN = -1,
+			positionV3 = vector3(),
+			orientationQ = quaternion(),
+			robotTypeS = vns.robotTypeS,
+		} 
+	elseif morph.robotTypeS ~= vns.robotTypeS then 
+		morph = {
+			idN = -1,
+			positionV3 = morph.positionV3,
+			orientationQ = morph.orientationQ,
+			robotTypeS = vns.robotTypeS,
+		} 
+	end
 	vns.allocator.target = morph
 end
 
@@ -53,181 +102,170 @@ end
 
 function Allocator.preStep(vns)
 	for idS, childR in pairs(vns.childrenRT) do
-		childR.allocated_in_multi_branch = nil
 		childR.match = nil
 	end
-	if vns.allocator.target ~= nil and vns.allocator.target.children ~= nil then
-		for _, branch in pairs(vns.allocator.target.children) do
-			branch.match = nil
-		end
+end
+
+function Allocator.sendStationary(vns)
+	for idS, robotR in pairs(vns.childrenRT) do
+		vns.Msg.send(idS, "allocator_stationary")
+	end
+end
+
+function Allocator.sendKeep(vns)
+	for idS, robotR in pairs(vns.childrenRT) do
+		vns.Msg.send(idS, "allocator_keep")
+		vns.Msg.send(idS, "parentGoal", {
+			positionV3 = vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3 or vector3()),
+			orientationQ = vns.api.virtualFrame.Q_VtoR(vns.goal.orientationQ or quaternion()),
+		})
 	end
 end
 
 function Allocator.step(vns)
-	--local safezone = false
-	-- check if I just assigned children to my parent
+	-- update parentGoal
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "parentGoal")) do
+		vns.allocator.parentGoal.positionV3 = vns.parentR.positionV3 +
+			vector3(msgM.dataT.positionV3):rotate(vns.parentR.orientationQ)
+		vns.allocator.parentGoal.orientationQ = vns.parentR.orientationQ * msgM.dataT.orientationQ 
+	end end
+
+	-- stationary mode
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "stationary")) do
+		vns.goal.positionV3 = vector3()
+		vns.goal.orientationQ = orientationQ()
+		Allocator.sendStationary(vns)
+		return 
+	end end
+	if vns.allocator.mode_switch == "stationary" then
+		-- vns.goal.positionV3 and orientationQ remain nil
+		vns.goal.positionV3 = vector3()
+		vns.goal.orientationQ = quaternion()
+		Allocator.sendStationary(vns)
+		return 
+	end
+
+	-- keep mode
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "keep")) do
+		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3 +
+			vector3(vns.allocator.target.positionV3):rotate(vns.allocator.parentGoal.orientationQ)
+		vns.goal.orientationQ = vns.allocator.parentGoal.orientationQ * vns.allocator.target.orientationQ
+		Allocator.sendKeep(vns)
+		return 
+	end end
+	if vns.allocator.mode_switch == "keep" then
+		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3 +
+			vector3(vns.allocator.target.positionV3):rotate(vns.allocator.parentGoal.orientationQ)
+		vns.goal.orientationQ = vns.allocator.parentGoal.orientationQ * vns.allocator.target.orientationQ
+		Allocator.sendKeep(vns)
+		return 
+	end
+
+	-- if I just handovered a child to parent, then I will receive an outdated allocate command, ignore this cmd
+	--[[
 	if vns.parentR ~= nil and vns.parentR.scale_assign_offset:totalNumber() ~= 0 then
+		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3 +
+			vector3(vns.allocator.target.positionV3):rotate(vns.allocator.parentGoal.orientationQ)
+		vns.goal.orientationQ = vns.allocator.parentGoal.orientationQ * vns.allocator.target.orientationQ
+		logger("handover ignore")
 		return
 	end
-	-- receive branch
-	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "branch")) do
-		if msgM.dataT.branch.idN > 0 then
-			msgM.dataT.branch.children = DeepCopy(vns.allocator.gene_index[msgM.dataT.branch.idN].children)
-		end
-		Allocator.setMorphology(vns, msgM.dataT.branch)
+	--]]
 
-		local targetPositionV3 = vns.parentR.positionV3 +
-			vector3(msgM.dataT.branch.positionV3):rotate(vns.parentR.orientationQ)
-		local targetOrientationQ = vns.parentR.orientationQ * msgM.dataT.branch.orientationQ 
-	
-		vns.goal.positionV3 = targetPositionV3
-		vns.goal.orientationQ = targetOrientationQ
+	-- allocate mode
+		-- update my target based on parent's cmd
+	local flag
+	local second_level
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "branches")) do
+		flag = true
+		second_level = msgM.dataT.branches.second_level
 
-		if vns.allocator.target.children ~= nil then
-			for _, branchR in ipairs(vns.allocator.target.children) do
-				branchR.positionV3_backup = vector3(branchR.positionV3)
-				branchR.orientationQ_backup = quaternion(branchR.orientationQ)
-				branchR.positionV3 = vector3(branchR.positionV3):rotate(vns.goal.orientationQ) + vns.goal.positionV3
-				branchR.orientationQ = vns.goal.orientationQ * branchR.orientationQ 
-				---[[
-				if (vns.robotTypeS == "drone" and branchR.robotTypeS == "pipuck" and 
-				   branchR.positionV3:length() > 1.0) or 
-				   vns.allocator.self_align == true then
-					branchR.positionV3 = branchR.positionV3_backup
-					branchR.orientationQ = branchR.orientationQ_backup
-				end
-				--]]
-			end
+		logger("receive branches")
+		logger(msgM.dataT.branches)
+		for i, received_branch in ipairs(msgM.dataT.branches) do
+			-- branches = 
+			--	{  1 = {
+			--              idN, may be -1
+			--              number(the scale)
+			--              positionV3 and orientationV3
+			--         }
+			--     2 = {...}
+			--     second_level = nil or true
+			--	}
+			received_branch.positionV3 = vns.parentR.positionV3 +
+				vector3(received_branch.positionV3):rotate(vns.parentR.orientationQ)
+			received_branch.orientationQ = vns.parentR.orientationQ * received_branch.orientationQ
+			received_branch.robotTypeS = vns.allocator.gene_index[received_branch.idN].robotTypeS -- TODO: consider
 		end
-
-		-- check hand up children
-		-- if a children is in a better position than me, hand it up.
-		local n_vector = targetPositionV3 - vns.parentR.positionV3
-		n_vector.z = 0
-		for idS, childR in pairs(vns.childrenRT) do
-			if childR.robotTypeS == vns.robotTypeS and
-			   (childR.positionV3 - vns.parentR.positionV3):dot(n_vector) <
-			   (vector3() - vns.parentR.positionV3):dot(n_vector) then
-				childR.match = {idN = -3}
-				vns.Msg.send(idS, "branch", 
-					{branch = {
-						positionV3 = vns.api.virtualFrame.V3_VtoR(targetPositionV3),
-						orientationQ = vns.api.virtualFrame.Q_VtoR(targetOrientationQ),
-						--children = targetList[j].index.children,
-						scale = msgM.dataT.branch.scale, 
-						idN = msgM.dataT.branch.idN,
-						robotTypeS = msgM.dataT.branch.robotTypeS,
-					}}	
-				)	
-			end
-		end
+		Allocator.multi_branch_allocate(vns, msgM.dataT.branches)
 	end end
-
-	-- receive branches
-	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "multiple-branch")) do
-		local branches = msgM.dataT.branches
-		for i, branch in ipairs(branches) do
-			if branch.idN > 0 then
-				branch.children = DeepCopy(vns.allocator.gene_index[branch.idN].children)
-			end
-
-			local targetPositionV3 = vns.parentR.positionV3 +
-				vector3(branch.positionV3):rotate(vns.parentR.orientationQ)
-			local targetOrientationQ = vns.parentR.orientationQ * branch.orientationQ
-
-			branch.positionV3 = targetPositionV3
-			branch.orientationQ = targetOrientationQ
-
-			if branch.children ~= nil then
-				for _, branch_childR in ipairs(branch.children) do
-					branch_childR.positionV3_backup = vector3(branch_childR.positionV3)
-					branch_childR.orientationQ_backup = quaternion(branch_childR.orientationQ)
-					branch_childR.positionV3 = vector3(branch_childR.positionV3):rotate(branch.orientationQ) + branch.positionV3
-					branch_childR.orientationQ = branch.orientationQ * branch_childR.orientationQ 
-
-					---[[
-					if (vns.robotTypeS == "drone" and branch_childR.robotTypeS == "pipuck" and 
-					   branch_childR.positionV3:length() > 1.0) or
-					   vns.allocator.self_align == true then
-						branch_childR.positionV3 = branch_childR.positionV3_backup
-						branch_childR.orientationQ = branch_childR.orientationQ_backup
-					end
-					--]]
-				end
-			end
-		end
-		Allocator.multi_branch_allocate(vns, branches)
-	end end
-
-	-- by now, I should have received a branch (or multi-branch decided I should be reporting up), either from branch or chosen from multiple-branch
-	-- from multiple branches, 
-	-- if I get my branch from multiple branches, all of my children should have a match
-	--    if match.idN = -1 then this child should be hand up to my parent
-	--    if match.idN doesn't matches my branch then this child should be hand up to my parent
-	--    if match.idN matches my branch then keep it for later allocation
-	-- all handed up children is marked with allocated_in_multi_branch
-	local mybranchidN = nil
-	if vns.allocator.target ~= nil then
-		mybranchidN = vns.allocator.target.idN
+	if flag ~= true then
+		-- if I don't receive branches cmd, update my goal according to parentGoal
+		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3 + 
+			vector3(vns.allocator.target.positionV3):rotate(vns.allocator.parentGoal.orientationQ)
+		vns.goal.orientationQ = vns.allocator.parentGoal.orientationQ * vns.allocator.target.orientationQ
 	end
-	for idS, robotR in pairs(vns.childrenRT) do
-		if robotR.match ~= nil and robotR.match.idN ~= mybranchidN then
-			-- this is a hand up child
-			robotR.allocated_in_multi_branch = true
-			vns.Assigner.assign(vns, idS, vns.parentR.idS)	
-			--robotR.goal.positionV3 = robotR.match.positionV3
-			--robotR.goal.orientationQ = robotR.match.orientationQ
-			robotR.goal.positionV3 = vns.parentR.positionV3
-			robotR.goal.orientationQ = vns.parentR.orientationQ
+
+	-- I should have a target (either updated or not), 
+	-- a goal for this step
+	-- a group of children with match = nil
+
+	-- assign better child
+	if vns.parentR ~= nil then
+		local myValue = Allocator.calcBaseValue(vns.allocator.parentGoal.positionV3, vector3(), vns.goal.positionV3)
+		--local myValue = Allocator.calcBaseValue(vns.parentR.positionV3, vector3(), vns.goal.positionV3)
+		logger("myValue", myValue)
+		for idS, robotR in pairs(vns.childrenRT) do
+			if robotR.match == nil then
+				local value = Allocator.calcBaseValue(vns.allocator.parentGoal.positionV3, robotR.positionV3, vns.goal.positionV3)
+				--local value = Allocator.calcBaseValue(vns.parentR.positionV3, robotR.positionV3, vns.goal.positionV3)
+				if robotR.robotTypeS == vns.robotTypeS and value < myValue then
+					local send_branch = {
+						idN = vns.allocator.target.idN,
+						number = vns.allocator.target.scale,
+						positionV3 = vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
+						orientationQ = vns.api.virtualFrame.Q_VtoR(vns.goal.orientationQ),
+					}
+					vns.Msg.send(idS, "branches", {branches = {send_branch}})
+					if second_level ~= true then
+						vns.Assigner.assign(vns, idS, vns.parentR.idS)	
+					end
+					logger("better one idS", idS, value)
+					robotR.match = true
+				end
+			end
 		end
 	end
 
-	-- allocate the rest children
-	Allocator.allocate(vns)
-
-	-- everyone expect for allocated_in_multi_branch (handing up) should have a match
-	-- check inter types assign
-	for idS, robotR in pairs(vns.childrenRT) do
-		if robotR.match ~= nil and robotR.allocated_in_multi_branch ~= true then
-			local assignToidS = robotR.match.match
-
-			-- check child cross
-			--[[
-			local cross_flag = false
-			if vns.parentR ~= nil and vns.goal.positionV3 ~= nil and robotR.robotTypeS == vns.robotTypeS then
-				local distance_now = (robotR.match.positionV3 - robotR.positionV3):length()
-				if vns.goal.positionV3:length() > distance_now then 
-					distance_now = vns.goal.positionV3:length()
-				end
-				local distance_reverse = (vns.goal.positionV3 - robotR.positionV3):length()
-				if robotR.match.positionV3:length() > distance_reverse then
-					 distance_reverse = robotR.match.positionV3:length()
-				end
-				local parent_to_target_normalize = 
-					((vns.goal.positionV3 or vector3()) - vns.parentR.positionV3):normalize()
-				local parent_to_me = - vns.parentR.positionV3
-				local parent_to_child = robotR.positionV3 - vns.parentR.positionV3
-				if distance_now > distance_reverse then
-					robotR.goal.positionV3 = vns.parentR.positionV3
-					robotR.goal.orientationQ = vns.parentR.orientationQ
-					cross_flag = true
-					if parent_to_me:dot(parent_to_target_normalize) > 
-					   parent_to_child:dot(parent_to_target_normalize) then
-						assignToidS = vns.parentR.idS
-					end
-				end
+	-- create branches from target children, with goal drifted position
+	local branches = {second_level = second_level}
+	if vns.allocator.target.children ~= nil then
+		for _, branch in ipairs(vns.allocator.target.children) do
+			branches[#branches + 1] = {
+				idN = branch.idN,
+				number = branch.scale,
+				positionV3 = vns.goal.positionV3 +
+					vector3(branch.positionV3):rotate(vns.goal.orientationQ),
+				orientationQ = vns.goal.orientationQ * branch.orientationQ, 
+				robotTypeS = branch.robotTypeS,
+			}
+			-- do not drift if self align switch is on
+			if vns.allocator.self_align == true and
+			   vns.robotTypeS == "drone" and
+			   branch.robotTypeS == "pipuck" then
+				branches[#branches].positionV3 = branch.positionV3
+				branches[#branches].orientationQ = branch.orientationQ
 			end
-			--]]
-
-			if assignToidS ~= idS and 
-			   ((vns.parentR ~= nil and vns.parentR.idS == assignToidS) or
-			    (vns.childrenRT[assignToidS] ~= nil)
-			   ) then
-				vns.Assigner.assign(vns, idS, assignToidS)	
-			end
-			robotR.goal.positionV3 = robotR.match.positionV3
-			robotR.goal.orientationQ = robotR.match.orientationQ
 		end
+	end
+	Allocator.allocate(vns, branches)
+
+	-- send my new goal to children
+	for idS, robotR in pairs(vns.childrenRT) do
+		vns.Msg.send(idS, "parentGoal", {
+			positionV3 = vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3 or vector3()),
+			orientationQ = vns.api.virtualFrame.Q_VtoR(vns.goal.orientationQ or quaternion()),
+		})
 	end
 end
 
@@ -247,7 +285,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 	-- create sources from children
 	for idS, robotR in pairs(vns.childrenRT) do
 		sourceList[#sourceList + 1] = {
-			number = robotR.scale,
+			number = vns.ScaleManager.Scale:new(robotR.scale),
 			index = robotR,
 		}
 	end
@@ -258,7 +296,6 @@ function Allocator.multi_branch_allocate(vns, branches)
 	local targetList = {}
 	for _, branchR in ipairs(branches) do
 		targetList[#targetList + 1] = {
-			--number = branchR.scale[allocating_type],
 			number = vns.ScaleManager.Scale:new(branchR.number),
 			index = branchR
 		}
@@ -273,70 +310,154 @@ function Allocator.multi_branch_allocate(vns, branches)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
 			relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
-			--[[
-			if sourceList[i].index.robotTypeS ~= targetList[j].index.robotTypeS then
-				originCost[i][j] = originCost[i][j] + 00000
-			end
-			--]]
 		end
 	end
 
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	--[[
---if robot.id == "drone24" or robot.id == "pipuck2" then
-	logger("multi-sourceList")
+	---[[
+	logger("multi-branch sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
-		logger(source, 1, "index")
+		logger(source, 1)
 		logger("\tid = ", source.index.idS or source.index.idN)
 		logger("\tposition = ", source.index.positionV3)
 	end
-	logger("multi-targetList")
+	logger("multi-branch targetList")
 	for i, target in ipairs(targetList) do
 		logger(i)
-		logger(target, 1, "index")
+		logger(target, 1) 
 		logger("\tid = ", target.index.idS or target.index.idN)
 		logger("\tposition = ", target.index.positionV3)
 	end
-	logger("cost")
-	logger(originCost)
---end
-	--]]
+	--
 
-	-- mark children
-	for i = 1, #sourceList do
-		-- zero target case, I keep this child, don't mark it
-		-- one target case 
-		if #(sourceList[i].to) == 1 then
-			sourceList[i].index.match = targetList[sourceList[i].to[1].target].index
-		-- more target case
-		elseif  #(sourceList[i].to) > 1 then
-			sourceList[i].index.match = {
-				idN = -1,
-				positionV3 = vns.parentR.positionV3,
-				orientationQ = vns.parentR.orientationQ,
-			}
+	-- set myself
+	local myTarget = nil
+	if #(sourceList[1].to) == 1 then
+		myTarget = targetList[sourceList[1].to[1].target]
+		local branchID = myTarget.index.idN
+		Allocator.setMorphology(vns, vns.allocator.gene_index[branchID])
+		vns.goal.positionV3 = myTarget.index.positionV3
+		vns.goal.orientationQ = myTarget.index.orientationQ
+	elseif #(sourceList[1].to) == 0 then
+		Allocator.setMorphology(vns, vns.allocator.gene_index[-1])
+		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3
+		vns.goal.orientationQ = vns.allocator.parentGoal.orientationQ
+	elseif #(sourceList[1].to) > 1 then
+		logger("Impossible! Myself is split in multi_branch_allocation")
+	end
+
+	-- handle split children
+	-- this means I've already got a multi-branch cmd, I send a second_level multi-branch cmd
+	-- if my cmd is first level multi-branch, I handover this child to my parent
+	for i = 2, #sourceList do
+		if #(sourceList[i].to) > 1 then
+			local sourceChild = sourceList[i].index
+			local send_branches = {}
+			for _, targetItem in ipairs(sourceList[i].to) do
+				local target_branch = targetList[targetItem.target]
+				send_branches[#send_branches+1] = {
+					idN = target_branch.index.idN,
+					number = targetItem.number,
+					--positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.index.positionV3),
+					positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
+					orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.index.orientationQ),
+				}
+			end
+			send_branches.second_level = true
+
+			vns.Msg.send(sourceChild.idS, "branches", {branches = send_branches})
+			logger("second_level", branches.second_level)
+			if branches.second_level ~= true then
+				logger("assign to parent ", source_child_id)
+				vns.Assigner.assign(vns, sourceChild.idS, vns.parentR.idS)	
+			else
+				vns.Assigner.assign(vns, sourceChild.idS, nil)	
+			end
+			sourceChild.match = true
 		end
 	end
 
-	-- set myself branch if I'm the right type
-	if sourceList[1].to[1] ~= nil then
-		Allocator.setMorphology(vns, targetList[sourceList[1].to[1].target].index)
-		vns.goal.positionV3 = targetList[sourceList[1].to[1].target].index.positionV3
-		vns.goal.orientationQ = targetList[sourceList[1].to[1].target].index.orientationQ
-	end
+	-- handle not my children
+	-- for each target that is not my assignment
+	for j = 1, #targetList do if targetList[j] ~= myTarget then
+		local farthest_id = nil
+		local farthest_value = math.huge
+		-- for each child that is assigned to the current target
+		for i = 2, #sourceList do if #(sourceList[i].to) == 1 and sourceList[i].to[1].target == j then
+			-- create send branch
+			local source_child = sourceList[i].index
+			local target_branch = targetList[j].index
+			local send_branches = {}
+			send_branches[1] = {
+				idN = target_branch.idN,
+				number = sourceList[i].to[1].number,
+				--positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.positionV3),
+				positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
+				orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.orientationQ),
+			}
+			if source_child.robotTypeS ~= target_branch.robotTypeS then
+				send_branches[1].positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3)
+			--	send_branches[1].orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
+			end
+			--send_branches.second_level = branches.second_level
+			send_branches.second_level = true
+			vns.Msg.send(source_child.idS, "branches", {branches = send_branches})
+
+			-- calculate farthest value
+			local value = Allocator.calcBaseValue(vns.allocator.parentGoal.positionV3, source_child.positionV3, target_branch.positionV3)
+			--local value = Allocator.calcBaseValue(vns.parentR.positionV3, source_child.positionV3, target_branch.positionV3)
+			if source_child.robotTypeS == vns.allocator.gene_index[target_branch.idN].robotTypeS and 
+			   value < farthest_value then
+				farthest_id = i
+				farthest_value = value
+			end
+
+			-- mark
+			source_child.match = true
+		end end
+
+		-- assign
+		-- for each child that is assigned to the current target
+		for i = 2, #sourceList do if #(sourceList[i].to) == 1 and sourceList[i].to[1].target == j then
+			local source_child_id = sourceList[i].index.idS
+			if i == farthest_id then
+				logger("second_level = ", branches.second_level)
+				if branches.second_level ~= true then
+					logger("assign to parent ", source_child_id)
+					vns.Assigner.assign(vns, source_child_id, vns.parentR.idS)	
+				else
+					vns.Assigner.assign(vns, source_child_id, nil)	
+				end
+			elseif farthest_id ~= nil then
+				if branches.second_level ~= true then
+					vns.Assigner.assign(vns, source_child_id, sourceList[farthest_id].index.idS)	
+					--vns.Assigner.assign(vns, source_child_id, vns.parentR.idS)	
+				else
+					vns.Assigner.assign(vns, source_child_id, nil)	
+				end
+			elseif farthest_id == nil then -- all different type
+				if branches.second_level ~= true then
+					logger("assign to parent ", source_child_id)
+					vns.Assigner.assign(vns, source_child_id, vns.parentR.idS)	
+				else
+					vns.Assigner.assign(vns, source_child_id, nil)	
+				end
+			end
+		end end
+	end end
 end
 
-function Allocator.allocate(vns)
+function Allocator.allocate(vns, branches)
 	-- create sources from children
 	local sourceList = {}
 	local sourceSum = vns.ScaleManager.Scale:new()
 	for idS, robotR in pairs(vns.childrenRT) do
-		if robotR.allocated_in_multi_branch == nil then
+		if robotR.match == nil then
 			sourceList[#sourceList + 1] = {
-				number = robotR.scale,
+				number = vns.ScaleManager.Scale:new(robotR.scale),
 				index = robotR,
 			}
 			sourceSum = sourceSum + robotR.scale
@@ -345,17 +466,15 @@ function Allocator.allocate(vns)
 
 	if #sourceList == 0 then return end
 
-	-- create targets from branch
+	-- create targets from branches
 	local targetList = {}
 	local targetSum = vns.ScaleManager.Scale:new()
-	if vns.allocator.target ~= nil and vns.allocator.target.children ~= nil then
-		for _, branchR in ipairs(vns.allocator.target.children) do
-			targetList[#targetList + 1] = {
-				number = branchR.scale,
-				index = branchR,
-			}
-			targetSum = targetSum + branchR.scale
-		end
+	for _, branchR in ipairs(branches) do
+		targetList[#targetList + 1] = {
+			number = vns.ScaleManager.Scale:new(branchR.number),
+			index = branchR
+		}
+		targetSum = targetSum + branchR.number
 	end
 
 	-- add parent as a target
@@ -372,17 +491,15 @@ function Allocator.allocate(vns)
 				idN = -1,
 				positionV3 = vns.parentR.positionV3,
 				orientationQ = vns.parentR.orientationQ,
-				scale = parentScale,
 			}
 		}
 	elseif diffSum:totalNumber() > 0 and vns.parentR == nil then
 		targetList[#targetList + 1] = {
 			number = diffSum,
 			index = {
-				idN = -2,
+				idN = -1,
 				positionV3 = vector3(),
 				orientationQ = quaternion(),
-				scale = parentScale,
 			}
 		}
 	end
@@ -396,123 +513,127 @@ function Allocator.allocate(vns)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
 			relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
-			--[[
-			if sourceList[i].index.robotTypeS ~= targetList[j].index.robotTypeS then
-				originCost[i][j] = originCost[i][j] + 00000
-			end
-			--]]
 		end
 	end
 
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	--[[
---if robot.id == "drone2" then
+	---[[
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
-		logger(source, 1, "index")
+		logger(source, 1)
 		logger("\tid = ", source.index.idS or source.index.idN)
 		logger("\tposition = ", source.index.positionV3)
 	end
 	logger("targetList")
 	for i, target in ipairs(targetList) do
 		logger(i)
-		logger(target, 1, "index")
+		logger(target, 1)
 		logger("\tid = ", target.index.idS or target.index.idN)
 		logger("\tposition = ", target.index.positionV3)
 	end
---end
 	--]]
 
-	-- multiple (including one) sources to one target
-	for j = 1, #targetList do
-		-- mark match all single target child with the branch (match = branch)
-		for _, fromTable in ipairs(targetList[j].from) do
-			if #(sourceList[fromTable.source].to) == 1 then
-				sourceList[fromTable.source].index.match = targetList[j].index
-			end
-		end
-
-		-- mark match all target with the source (or a virtual parent/self robot)
-		if targetList[j].index.idN == -1 then targetList[j].index.match = vns.parentR.idS end
-		if targetList[j].index.idN == -2 then targetList[j].index.match = {
-			idS = vns.idS,
-			positionV3 = vector3(),
-			orientationQ = quaternion(),
-		} end
-		-- find the farthest same type source to target j
-		local farthestDis = -math.huge
-		local farthestI = nil
-		for _, fromTable in ipairs(targetList[j].from) do
-			if #(sourceList[fromTable.source].to) == 1 and
-			   sourceList[fromTable.source].index.robotTypeS == targetList[j].index.robotTypeS then
-				local me_to_robot = vector3(sourceList[fromTable.source].index.positionV3)
-				local me_to_target = vector3(targetList[j].index.positionV3)
-				me_to_robot.z = 0
-				me_to_target.z = 0
-				local dis = -me_to_robot:dot(me_to_target:normalize())
-				--local dis = (sourceList[fromTable.source].index.positionV3 - 
-				--			 targetList[j].index.positionV3):length()
-				if dis > farthestDis then
-					farthestDis = dis
-					farthestI = fromTable.source
-				end
-				vns.Msg.send(sourceList[fromTable.source].index.idS, "branch", 
-					{branch = {
-						positionV3 = vns.api.virtualFrame.V3_VtoR(targetList[j].index.positionV3),
-						orientationQ = vns.api.virtualFrame.Q_VtoR(targetList[j].index.orientationQ),
-						--children = targetList[j].index.children,
-						scale = targetList[j].index.scale, 
-						idN = targetList[j].index.idN,
-						robotTypeS = targetList[j].index.robotTypeS,
-					}}	
-				)
-			end
-		end
-		-- if I find one
-		if farthestI ~= nil then
-			-- mark the farthest match from source to target
-			targetList[j].index.match = sourceList[farthestI].index.idS
-			-- send branch to the farthest source
-			vns.Assigner.assign(vns, sourceList[farthestI].index.idS, nil)
-			--[[
-			vns.Msg.send(sourceList[farthestI].index.idS, "branch", 
-				{branch = {
-					positionV3 = vns.api.virtualFrame.V3_VtoR(targetList[j].index.positionV3),
-					orientationQ = vns.api.virtualFrame.Q_VtoR(targetList[j].index.orientationQ),
-					--children = targetList[j].index.children,
-					scale = targetList[j].index.scale, 
-					idN = targetList[j].index.idN,
-					robotTypeS = targetList[j].index.robotTypeS,
-				}}	
-			)
-			--]]
-		end
-	end
-
-	-- one source to multiple targets case
+	-- handle split children
 	for i = 1, #sourceList do
 		if #(sourceList[i].to) > 1 then
-		   --sourceList[i].index.robotTypeS == allocating_type then
-			local branches = {}
-			for j = 1, #(sourceList[i].to) do
-				local branch = targetList[sourceList[i].to[j].target].index
-				branches[#branches + 1] = {
-					positionV3 = vns.api.virtualFrame.V3_VtoR(branch.positionV3),
-					orientationQ = vns.api.virtualFrame.Q_VtoR(branch.orientationQ),
-					--children = branch.children,
-					scale = branch.scale,
-					idN = branch.idN,
-					number = sourceList[i].to[j].number,
-					robotTypeS = branch.robotTypeS,
+			local sourceChild = sourceList[i].index
+			local send_branches = {}
+			for _, targetItem in ipairs(sourceList[i].to) do
+				local target_branch = targetList[targetItem.target]
+				send_branches[#send_branches+1] = {
+					idN = target_branch.index.idN,
+					number = targetItem.number,
+					positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.index.positionV3),
+					orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.index.orientationQ),
 				}
 			end
-			vns.Assigner.assign(vns, sourceList[i].index.idS, nil)
-			vns.Msg.send(sourceList[i].index.idS, "multiple-branch", {branches = branches, robotTypeS = allocating_type})
+			send_branches.second_level = branches.second_level
+
+			logger("allocate split")
+			vns.Msg.send(sourceChild.idS, "branches", {branches = send_branches})
+			vns.Assigner.assign(vns, sourceChild.idS, nil)	
+			sourceChild.match = true
 		end
 	end
+
+	-- handle rest of the children
+	-- for each target that is not the parent
+	for j = 1, #targetList do if targetList[j].index.idN ~= -1 then
+		local farthest_id = nil
+		local farthest_value = math.huge
+		-- for each child that is assigned to the current target
+		for i = 1, #sourceList do if #(sourceList[i].to) == 1 and sourceList[i].to[1].target == j then
+			-- create send branch
+			local source_child = sourceList[i].index
+			local target_branch = targetList[j].index
+			local send_branches = {}
+			send_branches[1] = {
+				idN = target_branch.idN,
+				number = sourceList[i].to[1].number,
+				positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.positionV3),
+				orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.orientationQ),
+			}
+			send_branches.second_level = branches.second_level
+			vns.Msg.send(source_child.idS, "branches", {branches = send_branches})
+
+			-- calculate farthest value
+			local value = Allocator.calcBaseValue(vns.goal.positionV3, source_child.positionV3, target_branch.positionV3)
+			--local value = Allocator.calcBaseValue(vector3(), source_child.positionV3, target_branch.positionV3)
+
+			if source_child.robotTypeS == vns.allocator.gene_index[target_branch.idN].robotTypeS and 
+			   value < farthest_value then
+				farthest_id = i
+				farthest_value = value
+			end
+
+			-- mark
+			source_child.match = true
+		end end
+
+		-- assign
+		-- for each child that is assigned to the current target
+		for i = 1, #sourceList do if #(sourceList[i].to) == 1 and sourceList[i].to[1].target == j then
+			local source_child_id = sourceList[i].index.idS
+			if i == farthest_id then
+				vns.Assigner.assign(vns, source_child_id, nil)	
+			elseif farthest_id ~= nil then
+				if branches.second_level ~= true then
+					vns.Assigner.assign(vns, source_child_id, sourceList[farthest_id].index.idS)	
+				else
+					vns.Assigner.assign(vns, source_child_id, nil)	
+				end
+			end
+		end end
+	end end
+
+	-- handle extra children
+	-- for each target that is the parent
+	for j = 1, #targetList do if targetList[j].index.idN == -1 then
+		for i = 1, #sourceList do if #(sourceList[i].to) == 1 and sourceList[i].to[1].target == j then
+			local source_child = sourceList[i].index
+			local target_branch = targetList[j].index
+			local send_branches = {}
+			send_branches[1] = {
+				idN = vns.allocator.target.idN,
+				number = sourceList[i].to[1].number,
+				positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.positionV3),
+				orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.orientationQ),
+			}
+			send_branches.second_level = branches.second_level
+
+			vns.Msg.send(source_child.idS, "branches", {branches = send_branches})
+			if vns.parentR ~= nil then
+				if branches.second_level ~= true then
+					vns.Assigner.assign(vns, source_child.idS, vns.parentR.idS)	
+				end
+			else
+				vns.Assigner.assign(vns, source_child.idS, nil)	
+			end
+		end end
+	end end
 end
 
 -------------------------------------------------------------------------------
@@ -683,6 +804,15 @@ end
 			end
 		end
 	end
+end
+
+-------------------------------------------------------------------------------
+function Allocator.calcBaseValue(base, current, target)
+	local base_target_V3 = target - base
+	local base_current_V3 = current - base
+	base_target_V3.z = 0
+	base_current_V3.z = 0
+	return base_current_V3:dot(base_target_V3:normalize())
 end
 
 -------------------------------------------------------------------------------

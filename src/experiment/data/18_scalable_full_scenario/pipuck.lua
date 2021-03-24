@@ -83,9 +83,10 @@ function reset()
 	vns.setGene(vns, gene)
 	-- set Morphology to structure1
 	vns.setMorphology(vns, structure1)
+	vns.allocator.self_align = true
 	bt = BT.create
 	{ type = "sequence", children = {
-		create_failure_node(vns),
+		--create_failure_node(vns),
 		vns.create_preconnector_node(vns),
 		vns.create_vns_core_node_no_recruit(vns),
 		create_brain_chase_node(vns),

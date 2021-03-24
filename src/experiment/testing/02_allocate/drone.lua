@@ -65,6 +65,7 @@ function step()
 	--api.debug.showChildren(vns)
 	api.debug.showParent(vns)
 
+	--[[
 	if vns.brainkeeper.brain ~= nil then
 		local robotR = vns.brainkeeper.brain
 		api.debug.drawArrow("red", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)))
@@ -76,6 +77,7 @@ function step()
 			)
 		)
 	end
+	--]]
 end
 
 --- destroy

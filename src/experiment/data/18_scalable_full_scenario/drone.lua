@@ -228,7 +228,8 @@ return function()
 			end
 			vns.Connector.newVnsID(vns, 1 + vns.max_gate.distance, 1)
 			vns.BrainKeeper.reset(vns)
-			vns.setMorphology(vns, structure1)
+			--vns.setMorphology(vns, structure1)
+			vns.allocator.mode_switch = "stationary"
 			-- TODO: turn direction
 			local gate_direction_dotproduct = math.abs(
 				vector3(vns.max_gate.direction):normalize():dot(vector3(1,0,0))
@@ -256,17 +257,16 @@ return function()
 			state = "at_wall"
 		end
 	elseif state == "at_wall" and vns.parentR ~= nil then
+		vns.allocator.mode_switch = "allocate"
 		if vns.max_gate ~= nil and vns.parentR.positionV3.x > 0.8 then
 			local middle =   vns.max_gate.positionV3
 			               + vns.max_gate.direction:normalize()*(vns.max_gate.distance/2) 
 			if vns.goal.positionV3 ~= nil then
 				vns.goal.positionV3.y = middle.y
 			end
-			vns.allocator.self_align = true
-		else
-			vns.allocator.self_align = nil
 		end
 	elseif state == "at_wall" and vns.parentR == nil then
+		vns.allocator.mode_switch = "allocate"
 		-- ob is the largest gate, move in front of it
 		local reach_goal = false
 		if vns.max_gate ~= nil then
@@ -289,6 +289,7 @@ return function()
 			---[[
 			if goal:length() < 0.30 and vns.allocator.target ~= structure2 then 
 				-- change to structure2
+				vns.allocator.mode_switch = "allocate"
 				vns.setMorphology(vns, structure2)
 			end
 			--]]
@@ -362,10 +363,12 @@ function reset()
 	if robot.id == "drone1" then Cgenerator(gene, "Ccode.cpp") end
 	-- set Morphology to structure1
 	vns.setMorphology(vns, structure1)
+
+	vns.allocator.self_align = true
 	-- set BT 
 	bt = BT.create
 	{ type = "sequence", children = {
-		create_failure_node(vns),
+		--create_failure_node(vns),
 		vns.create_preconnector_node(vns),
 		vns.create_vns_core_node(vns),
 		vns.CollectiveSensor.create_collectivesensor_node(vns),
@@ -459,10 +462,6 @@ function step()
 		logger("assign = ", childR.assignTargetS)
 		logger("position = ", childR.positionV3)
 		logger("position:length = ", childR.positionV3:length())
-		logger("match")
-		if childR.match ~= nil then
-			logger(childR.match.idN)
-		end
 	end
 end
 
