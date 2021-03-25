@@ -312,9 +312,9 @@ return function()
 		end
 	elseif state == "wait_structure2" then
 		logger("count = ", count)
-		logger("reach = ", (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 3)
+		logger("reach = ", (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5)
 		count = count + 1
-			if count >= (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 3 then
+			if count >= (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5 then
 				state = "after_wall"
 				logger("after_wall")
 			end
