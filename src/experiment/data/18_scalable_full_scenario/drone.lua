@@ -258,6 +258,15 @@ return function()
 		end
 	elseif state == "at_wall" and vns.parentR ~= nil then
 		vns.allocator.mode_switch = "allocate"
+		count = 0
+		state = "wait_structure2"
+	elseif state == "wait_structure2" and vns.parentR ~= nil then
+		count = count + 1
+		if count >= (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5 then
+			state = "move_forward_after_structure2"
+			logger("move_forward_after_structure2")
+		end
+	elseif state == "move_forward_after_structure2" and vns.parentR ~= nil then
 		if vns.max_gate ~= nil and vns.parentR.positionV3.x > 0.8 then
 			local middle =   vns.max_gate.positionV3
 			               + vns.max_gate.direction:normalize()*(vns.max_gate.distance/2) 

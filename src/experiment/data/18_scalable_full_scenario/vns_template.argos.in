@@ -5,7 +5,7 @@
   <!-- * General configuration * -->
   <!-- ************************* -->
   <framework>
-    <system threads="0" />
+    <system threads="0"/>
     <experiment length="TOTALLENGTH" ticks_per_second="5" random_seed="RANDOMSEED" />
   </framework>
   
@@ -162,11 +162,18 @@ TARGET
   <!-- ********* -->
   <!-- * Media * -->
   <!-- ********* -->
+  <!--media>
+    <directional_led id="directional_leds" index="grid" grid_size="20,20,5"/>
+    <tag id="tags" index="grid" grid_size="20,20,5" />
+    <radio id="nfc" index="grid" grid_size="20,20,5" />
+    <radio id="wifi" index="grid" grid_size="20,20,5" />
+  </media-->
+
   <media>
-    <directional_led id="directional_leds" index="grid" grid_size="20,20,20"/>
-    <tag id="tags" index="grid" grid_size="20,20,20" />
-    <radio id="nfc" index="grid" grid_size="20,20,20" />
-    <radio id="wifi" index="grid" grid_size="20,20,20" />
+    <directional_led id="directional_leds" index="grid" grid_size="2,2,2"/>
+    <radio id="nfc" index="grid" grid_size="2,2,2" />
+    <tag id="tags" index="grid" grid_size="50,50,5" />
+    <radio id="wifi" index="grid" grid_size="50,50,5" />
   </media>
 
   <!-- ****************** -->
