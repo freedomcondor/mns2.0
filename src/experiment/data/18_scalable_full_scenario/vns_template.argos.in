@@ -88,7 +88,7 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="80, 80, 2.5" center="0, 0, 1">
+  <arena size="ARENA_SIZE, ARENA_SIZE, 2.5" center="0, 0, 1">
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- ************************************************ -->

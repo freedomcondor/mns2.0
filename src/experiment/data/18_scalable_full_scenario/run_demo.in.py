@@ -64,8 +64,8 @@ def generate_link_children_text(text, i, drift):
 	if i == 0:
 		return text
 
-	text = text + '''{ 	robotTypeS = "drone",
-	positionV3 = vector3(-droneDis, ''' + str(drift) + '''0, 0),
+	texta = text + '''{ 	robotTypeS = "drone",
+	positionV3 = vector3(-droneDis, ''' + str(drift) + ''', 0),
 	orientationQ = quaternion(),
 	children = {
 	{	robotTypeS = "pipuck",
@@ -85,6 +85,29 @@ def generate_link_children_text(text, i, drift):
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(pipuckDis/2, pipuckDis, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
+	},\n--]]\n'''
+
+	text = text + '''{ 	robotTypeS = "drone",
+	positionV3 = 1,
+	orientationQ = 1,
+	children = {
+	{	robotTypeS = "pipuck",
+		positionV3 = 1,
+		orientationQ = 1,
+	},
+	{	robotTypeS = "pipuck",
+		positionV3 = 1,
+		orientationQ = 1,
+	},
+
+	---[[
+	{	robotTypeS = "pipuck",
+		positionV3 = 1,
+		orientationQ = 1,
+	},
+	{	robotTypeS = "pipuck",
+		positionV3 = 1,
+		orientationQ = 1,
 	},\n--]]\n'''
 	text = generate_link_children_text(text, i-1, -drift)
 	text = text + "}},\n"
@@ -138,12 +161,16 @@ def generate_structure(structure_id, n, structure_type, th):
 		filedata = file.read()
 
 	if structure_type == "line" :
-		filedata = filedata.replace('DRONE_CHILDREN', generate_link_children_text("", n, th))
+		#filedata = filedata.replace('DRONE_CHILDREN', generate_link_children_text("", n, th))
+		filedata = filedata.replace('N_NODE', str(n))
 	if structure_type == "cross" :
-		filedata = filedata.replace('DRONE_CHILDREN', generate_cross_knot_children_text("", n))
+		#filedata = filedata.replace('DRONE_CHILDREN', generate_cross_knot_children_text("", n))
+		filedata = filedata.replace('N_NODE', str(n))
 	if structure_type == "curve" :
-		filedata = filedata.replace('DRONE_CHILDREN_LEFT', generate_curve_link_text("", n, -th))
-		filedata = filedata.replace('DRONE_CHILDREN_RIGHT', generate_curve_link_text("", n, th))
+		filedata = filedata.replace('N_NODE', str(n))
+		filedata = filedata.replace('TH', str(th))
+		#filedata = filedata.replace('DRONE_CHILDREN_LEFT', generate_curve_link_text("", n, -th))
+		#filedata = filedata.replace('DRONE_CHILDREN_RIGHT', generate_curve_link_text("", n, th))
 
 	with open(testfolder_build + '/' + structure_id + '.lua', 'w') as file:
 		file.write(filedata)
@@ -387,7 +414,7 @@ def generate_target_xml(radius, x, y, tag_edge_distance):
 	return tagstr.format(x, y, radius, tag_edge_distance-radius)
 
 #- argos file ------------------------------------------------------------------
-def generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml, target_xml):
+def generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml, target_xml, arena_size):
 	#read in the file
 	with open(testfolder_build + '/vns_template.argos', 'r') as file :
 		filedata = file.read()
@@ -397,6 +424,7 @@ def generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml,
 	filedata = filedata.replace('DRONES_PIPUCKS', str(drone_pipuck_xml))
 	filedata = filedata.replace('OBSTACLES', str(obstacle_xml))
 	filedata = filedata.replace('TARGET', str(target_xml))
+	filedata = filedata.replace('ARENA_SIZE', str(arena_size))
 	if Visual == False :
 		filedata = filedata.replace('VISUALIZATION_HEAD', '<!--')
 		filedata = filedata.replace('VISUALIZATION_TAIL', '-->')
@@ -408,12 +436,12 @@ def generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml,
 #------------------------------------------------------------------------
 TotalLength = 2500 / 5
 if Visual :
-	TotalLength = 30000 / 5
-RandomSeed = Inputseed or 2
+	TotalLength = 0 / 5
+RandomSeed = Inputseed or 1
 
 random.seed(RandomSeed)
 
-Scale = 4
+Scale = 2
 N = Scale * 2 + 1
 
 obstacle_xml, largest_loc = generate_obstacle(int(Scale / 2) + 1,                # number of gates
@@ -437,7 +465,9 @@ target_xml = generate_target_xml((N)/math.pi/2,               # radius
                                                                 # x, y location
                                  0.3)                           # distance from edge to tag
 
-generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml, target_xml)
+arena_size = Scale * 5 + 8 + (N)/math.pi
+
+generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml, target_xml, arena_size)
 
 generate_structure("morphology1", Scale-1, "line", 0)
 generate_structure("morphology2", N-2, "line", 0)
