@@ -176,10 +176,12 @@ function Allocator.step(vns)
 		-- update my target based on parent's cmd
 	local flag
 	local second_level
+	local self_align
 	local temporary_goal
 	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "branches")) do
 		flag = true
 		second_level = msgM.dataT.branches.second_level
+		self_align = msgM.dataT.branches.self_align
 
 		logger("receive branches")
 		logger(msgM.dataT.branches)
@@ -192,8 +194,12 @@ function Allocator.step(vns)
 			--         }
 			--     2 = {...}
 			--     second_level = nil or true
+			--         -- indicates if I'm under a split node
 			--     goal = {positionV3, orientationQ} 
-			--         --a goal happens if this robot should be temperarily go to the grand parent
+			--         -- a goal indicates the location of grand parent
+			--         -- happens in the first level split
+			--     self_align - nil or true
+			--         -- indicates whether this child should ignore second_level parent chase
 			--	}
 			received_branch.positionV3 = vns.parentR.positionV3 +
 				vector3(received_branch.positionV3):rotate(vns.parentR.orientationQ)
@@ -264,11 +270,16 @@ function Allocator.step(vns)
 			   branch.robotTypeS == "pipuck" then
 				branches[#branches].positionV3 = branch.positionV3
 				branches[#branches].orientationQ = branch.orientationQ
+				branches[#branches].self_align = true
 			end
 		end
 	end
 	Allocator.allocate(vns, branches)
 
+	if second_level == true and self_align ~= true then
+		vns.goal.positionV3 = vns.parentR.positionV3
+		vns.goal.orientationQ = vns.parentR.orientationQ
+	end
 	if temporary_goal ~= nil then
 		vns.goal.positionV3 = temporary_goal.positionV3
 		vns.goal.orientationQ = temporary_goal.orientationQ
@@ -381,18 +392,11 @@ function Allocator.multi_branch_allocate(vns, branches)
 			end
 			send_branches.second_level = true
 			-- send temporary goal based on my temporary goal
-			-- if I got a temporary goal, my children should follow me until I reach my grand parent
-			if branches.goal == nil then
+			-- if I'm a first level split node, send a temporary goal for grand parent location
+			if branches.second_level ~= true then
 				send_branches.goal = {
 					positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
 					orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ),
-				}
-			else
-				send_branches.goal = {
-					--positionV3 = vns.api.virtualFrame.V3_VtoR(branches.goal.positionV3),
-					--orientationQ = vns.api.virtualFrame.Q_VtoR(branches.goal.orientationQ),
-					positionV3 = vns.api.virtualFrame.V3_VtoR(vector3()),
-					orientationQ = vns.api.virtualFrame.Q_VtoR(quaternion()),
 				}
 			end
 
@@ -425,19 +429,11 @@ function Allocator.multi_branch_allocate(vns, branches)
 				positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.positionV3),
 				orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.orientationQ),
 			}
-			-- send a temporary goal
-			-- if I got a temporary goal, my children should follow me until I reach my grand parent
-			if branches.goal == nil then
+			-- if I'm a first level split node, send a temporary goal for grand parent location
+			if branches.second_level ~= true then
 				send_branches.goal = {
 					positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
 					orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ),
-				}
-			else
-				send_branches.goal = {
-					--positionV3 = vns.api.virtualFrame.V3_VtoR(branches.goal.positionV3),
-					--orientationQ = vns.api.virtualFrame.Q_VtoR(branches.goal.orientationQ),
-					positionV3 = vns.api.virtualFrame.V3_VtoR(vector3()),
-					orientationQ = vns.api.virtualFrame.Q_VtoR(quaternion()),
 				}
 			end
 			--send_branches.second_level = branches.second_level
@@ -615,6 +611,7 @@ function Allocator.allocate(vns, branches)
 				orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.orientationQ),
 			}
 			send_branches.second_level = branches.second_level
+			send_branches.self_align = target_branch.self_align
 			vns.Msg.send(source_child.idS, "branches", {branches = send_branches})
 
 			-- calculate farthest value
