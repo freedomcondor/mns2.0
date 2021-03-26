@@ -99,7 +99,7 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	--]]
 	-- if vortex is true, rotate the speed to create a vortex
 	--[[
-	       (up)|     /
+	    moveup |     /
 	           R   \ Ob \
 	                  /
 	--]]
@@ -108,7 +108,7 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	--[[
 	                 /    
 	           R   \ Ob -
-	      (down)\    \      * goal(vortex)
+	   movedown \    \      * goal(vortex)
 	--]]
 
 	local dV3 = myLocV3 - obLocV3

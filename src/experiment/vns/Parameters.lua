@@ -21,9 +21,10 @@ return {
 	        |      \  
 	        |       -\
 	        |         --\ 
-	        |------------+------------------------
-	                     |
-	                dangerzone
+	        |            ---\ 
+	        |---------------+------------------------
+	                        |
+	                    dangerzone
 	--]]
 	avoid_speed_scalar = tonumber(robot.params.avoid_speed_scalar or 0.3),
 
