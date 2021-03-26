@@ -191,11 +191,18 @@ function Allocator.step(vns)
 			--         }
 			--     2 = {...}
 			--     second_level = nil or true
+			--     goal = {positionV3, orientationQ} 
+			--         --a goal happens if this robot should be temperarily go to the grand parent
 			--	}
 			received_branch.positionV3 = vns.parentR.positionV3 +
 				vector3(received_branch.positionV3):rotate(vns.parentR.orientationQ)
 			received_branch.orientationQ = vns.parentR.orientationQ * received_branch.orientationQ
 			received_branch.robotTypeS = vns.allocator.gene_index[received_branch.idN].robotTypeS -- TODO: consider
+		end
+		if msgM.dataT.branches.goal ~= nil then
+			msgM.dataT.branches.goal.positionV3 = vns.parentR.positionV3 +
+				vector3(msgM.dataT.branches.goal.positionV3):rotate(vns.parentR.orientationQ)
+			msgM.dataT.branches.goal.orientationQ = vns.parentR.orientationQ * msgM.dataT.branches.goal.orientationQ
 		end
 		Allocator.multi_branch_allocate(vns, msgM.dataT.branches)
 	end end
@@ -341,6 +348,10 @@ function Allocator.multi_branch_allocate(vns, branches)
 		Allocator.setMorphology(vns, vns.allocator.gene_index[branchID])
 		vns.goal.positionV3 = myTarget.index.positionV3
 		vns.goal.orientationQ = myTarget.index.orientationQ
+		if branches.goal ~= nil then
+			vns.goal.positionV3 = branches.goal.positionV3
+			vns.goal.orientationQ = branches.goal.orientationQ
+		end
 	elseif #(sourceList[1].to) == 0 then
 		Allocator.setMorphology(vns, vns.allocator.gene_index[-1])
 		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3
@@ -361,12 +372,15 @@ function Allocator.multi_branch_allocate(vns, branches)
 				send_branches[#send_branches+1] = {
 					idN = target_branch.index.idN,
 					number = targetItem.number,
-					--positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.index.positionV3),
-					positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
+					positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.index.positionV3),
 					orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.index.orientationQ),
 				}
 			end
 			send_branches.second_level = true
+			send_branches.goal = {
+				positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
+				orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ),
+			}
 
 			vns.Msg.send(sourceChild.idS, "branches", {branches = send_branches})
 			logger("second_level", branches.second_level)
@@ -394,14 +408,13 @@ function Allocator.multi_branch_allocate(vns, branches)
 			send_branches[1] = {
 				idN = target_branch.idN,
 				number = sourceList[i].to[1].number,
-				--positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.positionV3),
-				positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
+				positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.positionV3),
 				orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.orientationQ),
 			}
-			if source_child.robotTypeS ~= target_branch.robotTypeS then
-				send_branches[1].positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3)
-			--	send_branches[1].orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ)
-			end
+			send_branches.goal = {
+				positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
+				orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ),
+			}
 			--send_branches.second_level = branches.second_level
 			send_branches.second_level = true
 			vns.Msg.send(source_child.idS, "branches", {branches = send_branches})
