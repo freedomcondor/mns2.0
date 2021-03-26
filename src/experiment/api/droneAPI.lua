@@ -163,7 +163,7 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 		-- 1 to 1000 as pipuck
 		{index = tonumber(robot.params.pipuck_label_max_number or 1000), typeS = "pipuck"}, 
 		-- 1001 to 2000 as builderbot
-		{index = tonumber(robot.params.builderbot_label_max_number or 2000) typeS = "builderbot"},  
+		{index = tonumber(robot.params.builderbot_label_max_number or 2000), typeS = "builderbot"},  
 	}
 
 	for i, tag in ipairs(tags) do
