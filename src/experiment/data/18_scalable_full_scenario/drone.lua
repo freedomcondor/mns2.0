@@ -266,7 +266,6 @@ return function()
 			end
 		end
 	elseif state == "at_wall" and vns.parentR == nil then
-		vns.allocator.mode_switch = "allocate"
 		-- ob is the largest gate, move in front of it
 		local reach_goal = false
 		if vns.max_gate ~= nil then

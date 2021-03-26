@@ -381,6 +381,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 			end
 			send_branches.second_level = true
 			-- send temporary goal based on my temporary goal
+			-- if I got a temporary goal, my children should follow me until I reach my grand parent
 			if branches.goal == nil then
 				send_branches.goal = {
 					positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
@@ -388,8 +389,10 @@ function Allocator.multi_branch_allocate(vns, branches)
 				}
 			else
 				send_branches.goal = {
-					positionV3 = vns.api.virtualFrame.V3_VtoR(branches.goal.positionV3),
-					orientationQ = vns.api.virtualFrame.Q_VtoR(branches.goal.orientationQ),
+					--positionV3 = vns.api.virtualFrame.V3_VtoR(branches.goal.positionV3),
+					--orientationQ = vns.api.virtualFrame.Q_VtoR(branches.goal.orientationQ),
+					positionV3 = vns.api.virtualFrame.V3_VtoR(vector3()),
+					orientationQ = vns.api.virtualFrame.Q_VtoR(quaternion()),
 				}
 			end
 
@@ -423,6 +426,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 				orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.orientationQ),
 			}
 			-- send a temporary goal
+			-- if I got a temporary goal, my children should follow me until I reach my grand parent
 			if branches.goal == nil then
 				send_branches.goal = {
 					positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
@@ -430,8 +434,10 @@ function Allocator.multi_branch_allocate(vns, branches)
 				}
 			else
 				send_branches.goal = {
-					positionV3 = vns.api.virtualFrame.V3_VtoR(branches.goal.positionV3),
-					orientationQ = vns.api.virtualFrame.Q_VtoR(branches.goal.orientationQ),
+					--positionV3 = vns.api.virtualFrame.V3_VtoR(branches.goal.positionV3),
+					--orientationQ = vns.api.virtualFrame.Q_VtoR(branches.goal.orientationQ),
+					positionV3 = vns.api.virtualFrame.V3_VtoR(vector3()),
+					orientationQ = vns.api.virtualFrame.Q_VtoR(quaternion()),
 				}
 			end
 			--send_branches.second_level = branches.second_level

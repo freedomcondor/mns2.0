@@ -95,6 +95,8 @@ function reset()
 	vns.setGene(vns, gene)
 	-- generate Ccode gene
 	if robot.id == "drone1" then Cgenerator(gene, "Ccode.cpp") end
+
+	vns.allocator.mode_switch = "stationary"
 	-- set BT 
 	bt = BT.create
 	{ type = "sequence", children = {
@@ -122,7 +124,6 @@ function step()
 
 	-- step
 	bt()
-	vns.allocator.mode_switch = "allocate"
 
 	-- loop function message
 	if vns.allocator.target == nil then
@@ -135,6 +136,19 @@ function step()
 	vns.postStep(vns)
 	api.droneMaintainHeight(3.5)
 	api.postStep()
+
+
+	if api.stepCount < 20 then
+		vns.allocator.mode_switch = "stationary"
+	else
+		vns.allocator.mode_switch = "allocate"
+	--[[
+	elseif api.stepCount < 22 then
+		vns.allocator.mode_switch = "allocate"
+	elseif robot.id == "drone1" then
+		vns.allocator.mode_switch = "keep"
+	--]]
+	end
 
 	-- debug
 	api.debug.showChildren(vns)
