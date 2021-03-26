@@ -131,9 +131,9 @@ function Allocator.step(vns)
 	end end
 
 	-- stationary mode
-	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "stationary")) do
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "allocator_stationary")) do
 		vns.goal.positionV3 = vector3()
-		vns.goal.orientationQ = orientationQ()
+		vns.goal.orientationQ = quaternion()
 		Allocator.sendStationary(vns)
 		return 
 	end end
@@ -146,7 +146,7 @@ function Allocator.step(vns)
 	end
 
 	-- keep mode
-	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "keep")) do
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "allocator_keep")) do
 		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3 +
 			vector3(vns.allocator.target.positionV3):rotate(vns.allocator.parentGoal.orientationQ)
 		vns.goal.orientationQ = vns.allocator.parentGoal.orientationQ * vns.allocator.target.orientationQ
@@ -176,6 +176,7 @@ function Allocator.step(vns)
 		-- update my target based on parent's cmd
 	local flag
 	local second_level
+	local temporary_goal
 	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "branches")) do
 		flag = true
 		second_level = msgM.dataT.branches.second_level
@@ -203,6 +204,7 @@ function Allocator.step(vns)
 			msgM.dataT.branches.goal.positionV3 = vns.parentR.positionV3 +
 				vector3(msgM.dataT.branches.goal.positionV3):rotate(vns.parentR.orientationQ)
 			msgM.dataT.branches.goal.orientationQ = vns.parentR.orientationQ * msgM.dataT.branches.goal.orientationQ
+			temporary_goal = msgM.dataT.branches.goal
 		end
 		Allocator.multi_branch_allocate(vns, msgM.dataT.branches)
 	end end
@@ -266,6 +268,11 @@ function Allocator.step(vns)
 		end
 	end
 	Allocator.allocate(vns, branches)
+
+	if temporary_goal ~= nil then
+		vns.goal.positionV3 = temporary_goal.positionV3
+		vns.goal.orientationQ = temporary_goal.orientationQ
+	end
 
 	-- send my new goal to children
 	for idS, robotR in pairs(vns.childrenRT) do
@@ -348,10 +355,6 @@ function Allocator.multi_branch_allocate(vns, branches)
 		Allocator.setMorphology(vns, vns.allocator.gene_index[branchID])
 		vns.goal.positionV3 = myTarget.index.positionV3
 		vns.goal.orientationQ = myTarget.index.orientationQ
-		if branches.goal ~= nil then
-			vns.goal.positionV3 = branches.goal.positionV3
-			vns.goal.orientationQ = branches.goal.orientationQ
-		end
 	elseif #(sourceList[1].to) == 0 then
 		Allocator.setMorphology(vns, vns.allocator.gene_index[-1])
 		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3
@@ -377,10 +380,18 @@ function Allocator.multi_branch_allocate(vns, branches)
 				}
 			end
 			send_branches.second_level = true
-			send_branches.goal = {
-				positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
-				orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ),
-			}
+			-- send temporary goal based on my temporary goal
+			if branches.goal == nil then
+				send_branches.goal = {
+					positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
+					orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ),
+				}
+			else
+				send_branches.goal = {
+					positionV3 = vns.api.virtualFrame.V3_VtoR(branches.goal.positionV3),
+					orientationQ = vns.api.virtualFrame.Q_VtoR(branches.goal.orientationQ),
+				}
+			end
 
 			vns.Msg.send(sourceChild.idS, "branches", {branches = send_branches})
 			logger("second_level", branches.second_level)
@@ -411,10 +422,18 @@ function Allocator.multi_branch_allocate(vns, branches)
 				positionV3 = vns.api.virtualFrame.V3_VtoR(target_branch.positionV3),
 				orientationQ = vns.api.virtualFrame.Q_VtoR(target_branch.orientationQ),
 			}
-			send_branches.goal = {
-				positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
-				orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ),
-			}
+			-- send a temporary goal
+			if branches.goal == nil then
+				send_branches.goal = {
+					positionV3 = vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3),
+					orientationQ = vns.api.virtualFrame.Q_VtoR(vns.parentR.orientationQ),
+				}
+			else
+				send_branches.goal = {
+					positionV3 = vns.api.virtualFrame.V3_VtoR(branches.goal.positionV3),
+					orientationQ = vns.api.virtualFrame.Q_VtoR(branches.goal.orientationQ),
+				}
+			end
 			--send_branches.second_level = branches.second_level
 			send_branches.second_level = true
 			vns.Msg.send(source_child.idS, "branches", {branches = send_branches})
