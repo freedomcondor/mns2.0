@@ -60,6 +60,7 @@
         </debug>
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
+        <directional_leds implementation="default" />
       </actuators>
       <sensors>
         <drone_system implementation="default" />

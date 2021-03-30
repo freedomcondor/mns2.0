@@ -16,6 +16,24 @@ if robot.params.centralize_flag == "true" then centralize_flag = true end
 
 local Cgenerator = require("MorphologyCGenerator")
 
+function VNS.Allocator.calcBaseValue(base, current, target)
+	local base_target_V3 = target - base
+	local base_current_V3 = current - base
+	base_target_V3.z = 0
+	base_current_V3.z = 0
+	local dot = base_current_V3:dot(base_target_V3:normalize())
+	if dot < 0 then 
+		return dot 
+	else
+		local x = dot
+		local x2 = dot ^ 2
+		local l = base_current_V3:length()
+		local y2 = l ^ 2 - x2
+		elliptic_distance2 = x2 + (1/4) * y2
+		return elliptic_distance2
+	end
+end
+
 -- datas ----------------
 local bt
 --local vns
@@ -101,7 +119,7 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
-		vns.create_vns_core_node(vns),
+		vns.create_vns_core_node_no_parent_ack(vns),
 		vns.Driver.create_driver_node_wait(vns),
 	}}
 
@@ -118,7 +136,7 @@ end
 --- step
 function step()
 	-- prestep
-	logger(robot.id, api.stepCount + 1, "-----------------------")
+	--logger(robot.id, api.stepCount + 1, "-----------------------")
 	api.preStep()
 	vns.preStep(vns)
 
@@ -134,24 +152,51 @@ function step()
 
 	-- poststep
 	vns.postStep(vns)
-	api.droneMaintainHeight(3.5)
+	api.droneMaintainHeight(4.0)
 	api.postStep()
 
 
-	if api.stepCount < 20 then
-		vns.allocator.mode_switch = "stationary"
+	if centralize_flag ~= true then
+		if api.stepCount < 20 then
+			vns.allocator.mode_switch = "stationary"
+		else
+			vns.allocator.mode_switch = "allocate"
+		end
 	else
-		vns.allocator.mode_switch = "allocate"
-	--[[
-	elseif api.stepCount < 22 then
-		vns.allocator.mode_switch = "allocate"
-	elseif robot.id == "drone1" then
-		vns.allocator.mode_switch = "keep"
-	--]]
+		if api.stepCount < 20 then
+			vns.allocator.mode_switch = "stationary"
+		elseif api.stepCount < 22 then
+			vns.allocator.mode_switch = "allocate"
+		elseif robot.id == "drone1" then
+			vns.allocator.mode_switch = "keep"
+		end
 	end
 
 	-- debug
 	api.debug.showChildren(vns)
+
+	--[[
+	logger("my assign", vns.assigner.targetS)
+	logger("my parent")
+	if vns.parentR ~= nil then
+		logger(vns.parentR.idS)
+	end
+	logger("children")
+	for idS, robotR in pairs(vns.childrenRT) do
+		logger("\t", idS)
+		logger("\tscale")
+		logger(robotR.scale)
+		logger("\t", robotR.assignTargetS)
+	end
+	--]]
+	--[[
+	for idS, robotR in pairs(vns.connector.seenRobots) do
+		if robotR.robotTypeS == "pipuck" then
+			api.debug.drawArrow("red", vector3(), 
+				robotR.positionV3)
+		end
+	end
+	--]]
 end
 
 --- destroy

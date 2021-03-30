@@ -15,6 +15,7 @@ end
 
 function Connector.reset(vns)
 	vns.connector.waitingRobots = {}
+	vns.connector.waitingParents = {}
 	vns.connector.seenRobots = {}
 	vns.connector.locker_count = 3
 	vns.connector.lastid = {}
@@ -50,7 +51,8 @@ function Connector.newVnsID(vns, idN, lastidPeriod)
 end
 
 function Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
-	vns.connector.lastid[vns.idS] = lastidPeriod or (vns.scale:totalNumber() + 2)
+	--vns.connector.lastid[vns.idS] = lastidPeriod or (vns.scale:totalNumber() + 2)
+	vns.connector.lastid[vns.idS] = lastidPeriod or (vns.depth + 2)
 	vns.idS = _idS
 	vns.idN = _idN
 	local childrenScale = vns.ScaleManager.Scale:new()
@@ -170,6 +172,12 @@ function Connector.waitingCount(vns)
 			vns.connector.waitingRobots[idS] = nil
 		end
 	end
+	for idS, robotR in pairs(vns.connector.waitingParents) do
+		robotR.waiting_count = robotR.waiting_count - 1
+		if robotR.waiting_count == 0 then
+			vns.connector.waitingParents[idS] = nil
+		end
+	end
 end
 
 function Connector.step(vns)
@@ -202,7 +210,7 @@ function Connector.step(vns)
 	-- check dismiss
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "dismiss")) do
 		if vns.parentR ~= nil and msgM.fromS == vns.parentR.idS then
-			Connector.newVnsID(vns)
+			Connector.newVnsID(vns, msgM.dataT and msgM.dataT.newID)  -- if dataT is nil then nil
 			vns.deleteParent(vns)
 			vns.resetMorphology(vns)
 		end
@@ -252,74 +260,156 @@ function Connector.recruitAll(vns)
 	end
 end
 
-function Connector.ackAll(vns)
+function Connector.recruitNear(vns)
+	-- create a available robot list
+	local list = {}
+	for idS, robotR in pairs(vns.connector.seenRobots) do
+		-- if a foreign robot (not parent, not children, note:waiting robots counts in)
+		if vns.childrenRT[idS] == nil and 
+		   --vns.connector.waitingRobots[idS] == nil and 
+		   (vns.parentR == nil or vns.parentR.idS ~= idS) then
+			-- choose safezone according to robot type
+			local safezone
+			if vns.robotTypeS == "drone" and robotR.robotTypeS == "drone" then
+				safezone = vns.Parameters.safezone_drone_drone
+			elseif vns.robotTypeS == "drone" and robotR.robotTypeS == "pipuck" then
+				safezone = vns.Parameters.safezone_drone_pipuck
+			elseif vns.robotTypeS == "pipuck" and robotR.robotTypeS == "drone" then
+				safezone = vns.Parameters.safezone_drone_pipuck
+			elseif vns.robotTypeS == "pipuck" and robotR.robotTypeS == "pipuck" then
+				safezone = vns.Parameters.safezone_pipuck_pipuck
+			end
+			-- calculate 2D length
+			local position2D = vector3(robotR.positionV3)
+			position2D.z = 0
+			if position2D:length() < safezone then
+				list[#list + 1] = {
+					idS = idS,
+					position2D = position2D,
+					robotTypeS = robotR.robotTypeS,
+				}
+			end
+		end
+	end
+	-- check list, recruit all that doesn't have a nearer one
+	for i, robotR in ipairs(list) do
+		local flag = true
+		for j, blocker in ipairs(list) do
+			if i ~= j and 
+			   blocker.position2D:length() < robotR.position2D:length() and
+			   (blocker.position2D-robotR.position2D):length() < robotR.position2D:length() then
+			   --blocker.position2D:dot(robotR.position2D) > 0 then
+				flag = false
+				break
+			end
+		end
+		if flag == true and 
+		   vns.connector.waitingRobots[robotR.idS] == nil then
+			Connector.recruit(vns, vns.connector.seenRobots[robotR.idS])
+		end
+	end
+end
+
+function Connector.ackAll(vns, option)
 	-- check acks, ack the nearest valid recruit
-	local MinDis = math.huge
-	local MinMsg = nil
 	for _, msgM in pairs(vns.Msg.getAM("ALLMSG", "recruit")) do
 		-- check
 		-- if id == my vns id then pass unconditionally
 		-- else, if it is from changing id, then ack
 		-- if not, then check if idN > my idN and my locker
-		if msgM.dataT.idS ~= vns.idS and
-		   msgM.dataT.idN > vns.idN and
-		   vns.connector.locker_count == 0 and
-		   vns.connector.lastid[msgM.dataT.idS] == nil
+		if (msgM.dataT.idS ~= vns.idS and
+		    msgM.dataT.idN > vns.idN and
+		    vns.connector.locker_count == 0 and
+		    vns.connector.lastid[msgM.dataT.idS] == nil
+		    and (option == nil or option.no_parent_ack ~= true or vns.parentR == nil)
+		   )
+		   or
+		   msgM.fromS == vns.connector.greenLight
 		   --(vns.parentR == nil or
 			--vns.connector.lastid[msgM.dataT.idS] == nil
 		   --) 
 		   then
-			local disVec = 
-					vns.api.virtualFrame.V3_RtoV(
-						vector3(-msgM.dataT.positionV3):rotate(msgM.dataT.orientationQ:inverse())
-					)
-			disVec.z = 0
-			local dis = disVec:length()
-			if dis < MinDis then 
-				MinDis = dis
-				MinMsg = msgM
+			if vns.connector.waitingParents[msgM.fromS] ~= nil then
+				if vns.connector.waitingParents[msgM.fromS].nearest == true then
+					-- send ack
+					vns.Msg.send(msgM.fromS, "ack")
+					-- create robotR
+					local robotR = {
+						idS = msgM.fromS,
+						positionV3 = 
+						vns.api.virtualFrame.V3_RtoV(
+							vector3(-msgM.dataT.positionV3):rotate(msgM.dataT.orientationQ:inverse())
+						),
+						orientationQ = 
+							vns.api.virtualFrame.Q_RtoV(
+								msgM.dataT.orientationQ:inverse()
+							),
+						robotTypeS = msgM.dataT.fromTypeS,
+					}
+					-- goodbye to old parent
+					if vns.parentR ~= nil and vns.parentR ~= msgM.fromS then
+						vns.Msg.send(vns.parentR.idS, "dismiss")
+						vns.deleteParent(vns)
+					end
+					-- update vns id
+					--vns.idS = msgM.dataT.idS
+					--vns.idN = msgM.dataT.idN
+					Connector.updateVnsID(vns, msgM.dataT.idS, msgM.dataT.idN)
+					vns.addParent(vns, robotR)
+				else
+					vns.connector.waitingParents[msgM.fromS].waiting_count = 5
+				end
+			else
+				local positionV2 = msgM.dataT.positionV3
+				positionV2.z = 0
+				vns.connector.waitingParents[msgM.fromS] = {
+					waiting_count = 5,
+					distance = positionV2:length(),
+					idS = msgM.fromS,
+				}
+			end
+		else
+			if vns.connector.waitingParents[msgM.fromS] ~= nil then
+				vns.connector.waitingParents[msgM.fromS] = nil
 			end
 		end
 	end
 
-	-- ack according to the nearest message
-	if MinMsg ~= nil then
-		local msgM = MinMsg
-		-- send ack
-		vns.Msg.send(msgM.fromS, "ack")
-		-- create robotR
-		local robotR = {
-			idS = msgM.fromS,
-			positionV3 = 
-				vns.api.virtualFrame.V3_RtoV(
-					vector3(-msgM.dataT.positionV3):rotate(msgM.dataT.orientationQ:inverse())
-				),
-			orientationQ = 
-				vns.api.virtualFrame.Q_RtoV(
-					msgM.dataT.orientationQ:inverse()
-				),
-			robotTypeS = msgM.dataT.fromTypeS,
-		}
-		-- goodbye to old parent
-		if vns.parentR ~= nil and vns.parentR ~= msgM.fromS then
-			vns.Msg.send(vns.parentR.idS, "dismiss")
-			vns.deleteParent(vns)
+	local MinDis = math.huge
+	local MinId = nil
+	-- mark the nearest waiting parents
+	for idS, parent in pairs(vns.connector.waitingParents) do
+		if parent.distance < MinDis then
+			MinDis = parent.distance
+			MinId = idS
 		end
-
-		-- update vns id
-		--vns.idS = msgM.dataT.idS
-		--vns.idN = msgM.dataT.idN
-		Connector.updateVnsID(vns, msgM.dataT.idS, msgM.dataT.idN)
-		vns.addParent(vns, robotR)
+	end
+	for idS, parent in pairs(vns.connector.waitingParents) do
+		if idS == MinId then
+			parent.nearest = true
+		else
+			parent.nearest = nil
+		end
 	end
 end
 
 ------ behaviour tree ---------------------------------------
+function Connector.create_connector_node_no_parent_ack(vns)
+	return function()
+		Connector.step(vns)
+		Connector.ackAll(vns, {no_parent_ack = true})
+		Connector.recruitAll(vns)
+		--Connector.recruitNear(vns)
+		return false, true
+	end
+end
+
 function Connector.create_connector_node(vns)
 	return function()
 		Connector.step(vns)
 		Connector.ackAll(vns)
 		Connector.recruitAll(vns)
+		--Connector.recruitNear(vns)
 		return false, true
 	end
 end

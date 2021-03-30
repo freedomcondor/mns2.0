@@ -16,6 +16,7 @@ VNS.Avoider = require("Avoider")
 VNS.Spreader = require("Spreader")
 VNS.BrainKeeper = require("BrainKeeper")
 VNS.CollectiveSensor = require("CollectiveSensor")
+VNS.IntersectionDetector = require("IntersectionDetector")
 
 VNS.Driver= require("Driver")
 
@@ -28,6 +29,8 @@ VNS.Modules = {
 	VNS.ScaleManager,
 
 	VNS.Allocator,
+	VNS.IntersectionDetector,
+
 	VNS.Avoider,
 	VNS.Spreader,
 	VNS.CollectiveSensor,
@@ -182,6 +185,7 @@ function VNS.create_vns_core_node(vns)
 		vns.Assigner.create_assigner_node(vns),
 		vns.ScaleManager.create_scalemanager_node(vns),
 		vns.Allocator.create_allocator_node(vns),
+		vns.IntersectionDetector.create_intersectiondetector_node(vns),
 		vns.Avoider.create_avoider_node(vns),
 		vns.Spreader.create_spreader_node(vns),
 		vns.BrainKeeper.create_brainkeeper_node(vns),
@@ -198,6 +202,24 @@ function VNS.create_vns_core_node_no_recruit(vns)
 		vns.Assigner.create_assigner_node(vns),
 		vns.ScaleManager.create_scalemanager_node(vns),
 		vns.Allocator.create_allocator_node(vns),
+		vns.IntersectionDetector.create_intersectiondetector_node(vns),
+		vns.Avoider.create_avoider_node(vns),
+		vns.Spreader.create_spreader_node(vns),
+		vns.BrainKeeper.create_brainkeeper_node(vns),
+		--vns.CollectiveSensor.create_collectivesensor_node(vns),
+		--vns.Driver.create_driver_node(vns),
+	}}
+end
+
+function VNS.create_vns_core_node_no_parent_ack(vns)
+	return 
+	{type = "sequence", children = {
+		--vns.create_preconnector_node(vns),
+		vns.Connector.create_connector_node_no_parent_ack(vns),
+		vns.Assigner.create_assigner_node(vns),
+		vns.ScaleManager.create_scalemanager_node(vns),
+		vns.Allocator.create_allocator_node(vns),
+		vns.IntersectionDetector.create_intersectiondetector_node(vns),
 		vns.Avoider.create_avoider_node(vns),
 		vns.Spreader.create_spreader_node(vns),
 		vns.BrainKeeper.create_brainkeeper_node(vns),

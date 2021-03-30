@@ -29,12 +29,13 @@ for folder in os.walk(testfolder_src + "/" + data_set + "/") :
 			total_timestep = j + 1
 		data[j].append(float(line))
 		j = j + 1
-		'''
-		if j == total_timestep and float(line) > 0.1 :
-			print("error case")
-			print(folder[0])
-		'''
+
 	file.close()
+
+	#if data[total_timestep-1][i-1] > 0.1 :
+	if data[300][i-1] > 0.4 :
+		print("error case")
+		print(folder[0])
 
 	'''
 	file = open(folder[0] + "/result_lowerbound.txt","r")

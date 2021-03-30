@@ -21,11 +21,13 @@ end
 function ScaleManager.reset(vns)
 	vns.scale = ScaleManager.Scale:new()
 	vns.scale[vns.robotTypeS] = 1
+	vns.depth = 1
 end
 
 function ScaleManager.addChild(vns, robotR)
 	robotR.scale = ScaleManager.Scale:new()
 	robotR.scale[robotR.robotTypeS] = 1
+	robotR.depth = 1
 end
 
 function ScaleManager.deleteChild(vns, idS)
@@ -43,6 +45,7 @@ function ScaleManager.step(vns)
 	for idS, robotR in pairs(vns.childrenRT) do 
 		for _, msgM in ipairs(vns.Msg.getAM(idS, "scale")) do
 			robotR.scale = ScaleManager.Scale:new(msgM.dataT.scale)
+			robotR.depth = msgM.dataT.depth
 		end 
 	end
 
@@ -83,13 +86,22 @@ function ScaleManager.step(vns)
 	end
 	vns.scale = sumScale
 
+	-- sum up depth
+	local maxdepth = 0
+	for idS, robotR in pairs(vns.childrenRT) do 
+		if robotR.depth > maxdepth then maxdepth = robotR.depth end
+	end
+	vns.depth = maxdepth + 1
+
 	-- report scale
 	local toReport
 	if vns.parentR ~= nil then 
 		toReport = sumScale - vns.parentR.scale 
-		if toReport ~= vns.parentR.lastSendScale then
-			vns.Msg.send(vns.parentR.idS, "scale", {scale = toReport})
+		if toReport ~= vns.parentR.lastSendScale or 
+		   vns.depth ~=  vns.parentR.lastSendDepth then
+			vns.Msg.send(vns.parentR.idS, "scale", {scale = toReport, depth = vns.depth})
 			vns.parentR.lastSendScale = toReport
+			vns.parentR.lastSendDepth = vns.depth 
 		end
 	end
 	for idS, robotR in pairs(vns.childrenRT) do 

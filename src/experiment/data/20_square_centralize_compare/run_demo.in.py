@@ -223,9 +223,9 @@ Centralize_Flag = "false"
 
 drone_pipuck_xml = generate_drone_pipuck_xml(N,              # number of drone
                                              -Scale/2,-Scale/2,  # location of drone1
-                                             -Scale/2,Scale/2,        # x range
-                                             -Scale/2,Scale/2,        # y range
-                                             0.8, 1.2)       # drone near and far limit
+                                             -Scale/2,Scale/2-1,        # x range
+                                             -Scale/2,Scale/2-1,        # y range
+                                             0.6, 1.2)       # drone near and far limit
 
 generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, Centralize_Flag)
 
