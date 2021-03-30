@@ -441,7 +441,7 @@ RandomSeed = Inputseed or 1
 
 random.seed(RandomSeed)
 
-Scale = 4
+Scale = 2
 N = Scale * 2 + 1
 
 obstacle_xml, largest_loc = generate_obstacle(int(Scale / 2) + 1,                # number of gates

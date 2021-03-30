@@ -181,8 +181,8 @@ function Allocator.step(vns)
 		second_level = msgM.dataT.branches.second_level
 		self_align = msgM.dataT.branches.self_align
 
-		--logger("receive branches")
-		--logger(msgM.dataT.branches)
+		logger("receive branches")
+		logger(msgM.dataT.branches)
 
 		if #msgM.dataT.branches == 1 then
 			local color = "green"
@@ -259,9 +259,18 @@ function Allocator.step(vns)
 	-- a group of children with match = nil
 
 	-- if my target is -1, I'm in the process of handing up to grandparent, stop children assign
-	if vns.allocator.target.idN == -1 then
+	-- TODO: what if I'm already in the brain and I have more children 
+	-- somethings when topology changing, there will be -1 perturbation shortly, ignore this -1
+	---[[
+	if vns.allocator.target.idN == -1 and (vns.allocator.extraCount or 0) < 5 then
 		second_level = true
 	end
+	if vns.allocator.target.idN == -1 then
+		vns.allocator.extraCount = (vns.allocator.extraCount or 0) + 1
+	else
+		vns.allocator.extraCount = nil
+	end
+	--]]
 
 	-- assign better child
 	if vns.parentR ~= nil then
@@ -381,7 +390,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	--[[
+	---[[
 	logger("multi-branch sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
@@ -406,9 +415,11 @@ function Allocator.multi_branch_allocate(vns, branches)
 		Allocator.setMorphology(vns, vns.allocator.gene_index[branchID])
 		vns.goal.positionV3 = myTarget.index.positionV3
 		vns.goal.orientationQ = myTarget.index.orientationQ
-		if branchID == -1 then
+		---[[ sometimes when topology changes, these maybe a -1 misjudge shortly, ignore this -1
+		if branchID == -1 and (vns.allocator.extraCount or 0) < 5 then
 			branches.second_level = true
 		end
+		--]]
 	elseif #(sourceList[1].to) == 0 then
 		Allocator.setMorphology(vns, vns.allocator.gene_index[-1])
 		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3
@@ -592,7 +603,7 @@ function Allocator.allocate(vns, branches)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	--[[
+	---[[
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i)
