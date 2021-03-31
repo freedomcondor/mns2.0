@@ -215,11 +215,11 @@ RandomSeed = Inputseed or 1
 
 random.seed(RandomSeed)
 
-Scale = 5
+Scale = 4
 N = Scale ** 2
 
 Centralize_Flag = "false"
-#Centralize_Flag = "true"
+Centralize_Flag = "true"
 
 drone_pipuck_xml = generate_drone_pipuck_xml(N,              # number of drone
                                              -Scale/2,-Scale/2,  # location of drone1

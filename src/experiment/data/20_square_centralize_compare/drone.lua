@@ -9,7 +9,7 @@ logger = require("Logger")
 local api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
-logger.enable()
+logger.disable()
 
 local centralize_flag = false
 if robot.params.centralize_flag == "true" then centralize_flag = true end
