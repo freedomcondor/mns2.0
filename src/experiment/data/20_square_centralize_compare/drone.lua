@@ -11,6 +11,10 @@ local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.disable()
 
+-- time measurement
+local time_start_data_file = "time_start_" .. robot.id .. ".csv"
+local time_end_data_file = "time_end_" .. robot.id .. ".csv"
+
 local centralize_flag = false
 if robot.params.centralize_flag == "true" then centralize_flag = true end
 
@@ -135,6 +139,14 @@ end
 
 --- step
 function step()
+	---[[
+	if api.stepCount == 0 then
+		result = os.execute("@DATECOMMAND@ +%s.%N > " .. time_start_data_file)
+	else
+		result = os.execute("@DATECOMMAND@ +%s.%N >> " .. time_start_data_file)
+	end
+	--]]
+
 	-- prestep
 	logger(robot.id, api.stepCount + 1, "-----------------------")
 	api.preStep()
@@ -195,6 +207,15 @@ function step()
 			api.debug.drawArrow("red", vector3(), 
 				robotR.positionV3)
 		end
+	end
+	--]]
+
+	-- stepCount is +1 in preStep
+	---[[
+	if api.stepCount == 1 then
+		result = os.execute("@DATECOMMAND@ +%s.%N > " .. time_end_data_file)
+	else
+		result = os.execute("@DATECOMMAND@ +%s.%N >> " .. time_end_data_file)
 	end
 	--]]
 end

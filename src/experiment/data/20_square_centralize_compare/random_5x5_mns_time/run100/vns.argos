@@ -1,0 +1,202 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="140.0" ticks_per_second="5" random_seed="100" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+     <!-- Pi-Puck Controller -->
+    <lua_controller id="pipuck">
+      <actuators>
+        <debug implementation="default">
+          <interface id="draw" />
+          <interface id="loop_functions" />
+        </debug>
+        <pipuck_differential_drive implementation="default" />
+        <wifi implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_system implementation="default" />
+        <pipuck_rangefinders implementation="default" show_rays="false" />
+        <wifi implementation="default" show_rays="false" />
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/20_square_centralize_compare/pipuck.lua" />
+    </lua_controller>
+
+    <!-- Predator Controller -->
+    <lua_controller id="predator">
+      <actuators>
+        <debug implementation="default">
+          <interface id="draw" />
+          <interface id="loop_functions" />
+        </debug>
+        <pipuck_differential_drive implementation="default" />
+        <wifi implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_system implementation="default" />
+        <pipuck_rangefinders implementation="default" show_rays="false" />
+        <wifi implementation="default" show_rays="false" />
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/20_square_centralize_compare/predator.lua" />
+    </lua_controller>
+
+     <!-- Drone Controller -->
+    <lua_controller id="drone">
+      <actuators>
+        <debug implementation="default">
+          <interface id="draw" />
+          <interface id="loop_functions" />
+        </debug>
+        <drone_flight_system implementation="default" />
+        <wifi implementation="default" />
+        <directional_leds implementation="default" />
+      </actuators>
+      <sensors>
+        <drone_system implementation="default" />
+        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="false" />
+        <drone_flight_system implementation="default" />
+        <wifi implementation="default" />
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/20_square_centralize_compare/drone.lua" 
+              centralize_flag="false"
+              dangerzone_drone="0.5"/>
+    </lua_controller>
+
+    	<!-- Block Controller -->
+    <lua_controller id="block">
+      <actuators>
+        <directional_leds implementation="default" />
+        <radios implementation="default"/>
+      </actuators>
+      <sensors>
+        <radios implementation="default" show_rays="true"/>
+      </sensors>
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/20_square_centralize_compare/block.lua" />
+    </lua_controller>
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="20, 20, 6" center="0, 0, 2">
+    <floor id="floor" source="loop_functions" pixels_per_meter="1" />
+
+    <!-- ************************************************ -->
+    <drone id="drone1"><body position="-2.5,-2.5,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone2"><body position="-2.0283031527533333,-1.6549470571967104,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone3"><body position="-1.7397173744761254,-1.0280800493723032,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone4"><body position="-2.4095347479304907,-0.6320624982243204,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone5"><body position="-1.1212295317297496,-0.4551730991597407,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone6"><body position="-1.054472852986379,-1.981360072571075,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone7"><body position="-0.1979287319150207,-1.1766634671148801,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone8"><body position="0.4971757735416542,-1.5651158683787258,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone9"><body position="1.1086825070340058,-0.9849044622059497,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone10"><body position="-0.3305677519341299,-0.2908242837420216,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone11"><body position="0.13313964354191876,0.1198913359379099,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone12"><body position="-2.192599209913545,0.42976880635761683,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone13"><body position="1.263184689836451,-1.884987085228507,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone14"><body position="1.1128825583890145,0.46982888798373823,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone15"><body position="0.8602452713545725,1.135790815366605,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone16"><body position="-1.807340675003438,1.0424523302502609,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone17"><body position="1.3736343802375788,-0.10766121079736113,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone18"><body position="-1.141593343052481,-1.315899352341678,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone19"><body position="-0.5611092326903058,0.5979242356877541,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone20"><body position="-1.7644327589466444,-2.3536836804102226,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone21"><body position="0.23332216282058216,0.9033021803520072,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone22"><body position="-1.1418417129890792,0.3264648911154233,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone23"><body position="0.3700904195424566,-0.6008522480810448,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone24"><body position="-1.6615227424385557,-0.0818903981315664,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone25"><body position="0.3272409128610527,-2.421230712050442,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags"><body position="-0.5,-0.5,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+
+    <!-- drones -->
+    <!--
+    <drone id="drone1">
+      <body position="0,0,0" orientation="0,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <distribute>
+      <position method="uniform" min="0,0,0" max="3,3,0" />
+      <orientation method="uniform" min="0,0,0" max="0,0,0" />
+      <entity quantity="8" base_num="2" max_trials="100">
+        <drone id="drone">
+          <controller config="drone"/>
+        </drone>
+      </entity>
+    </distribute>
+
+    <pipuck id="pipuck1"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0,0,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+    -->
+  </arena>
+
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <pointmass3d id="pm3d" iterations="10" />
+    <dynamics3d id="dyn3d" iterations="25" default_friction="0.3">
+      <gravity g="9.8" />
+      <floor friction="10.0" />
+      <virtual_magnetism />
+    </dynamics3d>
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <directional_led id="directional_leds" index="grid" grid_size="20,20,20"/>
+    <tag id="tags" index="grid" grid_size="20,20,20" />
+    <radio id="nfc" index="grid" grid_size="20,20,20" />
+    <radio id="wifi" index="grid" grid_size="20,20,20" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="/Users/harry/Desktop/mns2.0/build/libvns_loop_functions"
+                  label="vns_loop_functions"/>
+
+  <!-- ****************** -->
+  <!-- * Visualization * -->
+  <!-- ****************** -->
+  <!--
+  <visualization>
+    <qt-opengl lua_editor="true" show_boundary="false">
+		  <user_functions library="/Users/harry/Desktop/mns2.0/build/libbuilderbot_qtopengl_user_functions"
+                      label="builderbot_qtopengl_user_functions" >
+      </user_functions>
+      <camera>
+        <placements>
+          <placement index="0" position="0.0130633,-0.359442,25.7009" look_at="0.0130633,-0.359442,24.7009" up="-0.00187965,0.999998,0" lens_focal_length="90" />
+          <placement index="1" position="0.765166,-4.85611,9.38198" look_at="0.619936,-4.28754,8.57227" up="-0.200391,0.784523,0.586827" lens_focal_length="30" />
+          <placement index="2" position="-6.25183,-4.76287,2.69551" look_at="-5.59804,-4.13326,2.27582" up="0.302308,0.291125,0.907665" lens_focal_length="30" />
+          <placement index="3" position="-6.2675,4.75161,2.71277" look_at="-5.59966,4.11924,2.32022" up="0.285045,-0.269901,0.91973" lens_focal_length="30" />
+          <placement index="4" position="0.0122872,0.0534732,25.7009" look_at="0.0122872,0.0534732,24.7009" up="-0.00187965,0.999998,0" lens_focal_length="90" />
+          <placement index="5" position="  0, 15, 15" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="6" position="-15, 15, 15"  look_at="0,0,0.25" lens_focal_length="90" />
+          <placement index="7" position="-15,  0, 15" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="8" position="-15,-15, 15"  look_at="0,0,0.25" lens_focal_length="90" />
+        </placements>
+      </camera>
+    </qt-opengl>
+  </visualization>
+  -->
+
+
+</argos-configuration>

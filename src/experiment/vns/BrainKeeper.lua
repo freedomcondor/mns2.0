@@ -29,6 +29,7 @@ function BrainKeeper.step(vns)
 			             vector3(msgM.dataT.positionV3):rotate(vns.parentR.orientationQ),
 			orientationQ = vns.parentR.orientationQ * msgM.dataT.orientationQ,
 		}
+		vns.brainkeeper.grandParentID = msgM.dataT.grandParentID
 		vns.brainkeeper.countdown = vns.Parameters.brainkeeper_time
 	end end
 
@@ -38,9 +39,13 @@ function BrainKeeper.step(vns)
 		positionV3 = vns.api.virtualFrame.V3_VtoR(vns.brainkeeper.brain.positionV3)
 		orientationQ = vns.api.virtualFrame.Q_VtoR(vns.brainkeeper.brain.orientationQ)
 	end
+
+	local grandParentID = nil
+	if vns.parentR ~= nil then grandParentID = vns.parentR.idS end
+
 	for idS, robotR in pairs(vns.childrenRT) do 
 		vns.Msg.send(idS, "brain_location", {
-			positionV3 = positionV3, orientationQ = orientationQ,
+			positionV3 = positionV3, orientationQ = orientationQ, grandParentID = grandParentID,
 		})
 	end
 
@@ -49,6 +54,7 @@ function BrainKeeper.step(vns)
 	end
 	if vns.brainkeeper.countdown == 0 then
 		vns.brainkeeper.brain = nil
+		vns.brainkeeper.grandParentID = nil
 	end
 end
 

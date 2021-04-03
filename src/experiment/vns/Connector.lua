@@ -53,6 +53,8 @@ end
 function Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
 	--vns.connector.lastid[vns.idS] = lastidPeriod or (vns.scale:totalNumber() + 2)
 	vns.connector.lastid[vns.idS] = lastidPeriod or (vns.depth + 2)
+	vns.connector.locker_count = vns.depth + 2
+
 	vns.idS = _idS
 	vns.idN = _idN
 	local childrenScale = vns.ScaleManager.Scale:new()
@@ -64,7 +66,6 @@ function Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
 		childrenScale = childrenScale + childR.scale
 		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN, lastidPeriod = lastidPeriod})
 	end
-	vns.connector.locker_count = childrenScale:totalNumber() + 2
 end
 
 function Connector.addChild(vns, robotR)
@@ -383,6 +384,12 @@ function Connector.ackAll(vns, option)
 			MinDis = parent.distance
 			MinId = idS
 		end
+	end
+	-- old grand parent has priority
+	if vns.parentR == nil and
+	   vns.brainkeeper.grandParentID ~= nil and
+	   vns.connector.waitingParents[vns.brainkeeper.grandParentID] ~= nil then
+		MinId = vns.brainkeeper.grandParentID
 	end
 	for idS, parent in pairs(vns.connector.waitingParents) do
 		if idS == MinId then

@@ -23,3 +23,5 @@ add_subdirectory(18_scalable_full_scenario)
 add_subdirectory(19_evaluator_test)
 
 add_subdirectory(20_square_centralize_compare)
+add_subdirectory(21_square_centralize_compare_displace)
+add_subdirectory(22_vertebrate_centralize_compare_displace)

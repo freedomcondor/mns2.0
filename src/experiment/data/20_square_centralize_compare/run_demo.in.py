@@ -208,18 +208,18 @@ def generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, centralize_fl
 		file.write(filedata)
 
 #------------------------------------------------------------------------
-TotalLength = 700 / 5
+TotalLength = 50 / 5
 if Visual :
 	TotalLength = 0
 RandomSeed = Inputseed or 1
 
 random.seed(RandomSeed)
 
-Scale = 4
+Scale = 5
 N = Scale ** 2
 
 Centralize_Flag = "false"
-Centralize_Flag = "true"
+#Centralize_Flag = "true"
 
 drone_pipuck_xml = generate_drone_pipuck_xml(N,              # number of drone
                                              -Scale/2,-Scale/2,  # location of drone1

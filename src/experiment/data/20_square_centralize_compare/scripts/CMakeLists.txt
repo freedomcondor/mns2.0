@@ -1,3 +1,5 @@
 configure_file( draw_line.in.py             draw_line.py)
 configure_file( run_single_thread.in.py     run_single_thread.py)
 configure_file( run_threads.in.py           run_threads.py)
+configure_file( box_compare.in.py           box_compare.py)
+configure_file( time_reader.in.py           time_reader.py)
