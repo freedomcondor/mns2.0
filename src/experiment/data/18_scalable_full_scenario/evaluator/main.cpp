@@ -4,12 +4,13 @@
 #include <cstddef>
 #include <string>
 #include <sstream>
+#include <cmath>
 #include "Vector3.h"
 #include "Quaternion.h"
 
 // robot number, step number
-#define N_DRONES 5
-#define N_PIPUCKS 20
+#define N_DRONES 21
+#define N_PIPUCKS 84
 #define N_ROBOTS (N_DRONES+N_PIPUCKS)
 #define N_STEPS 30000
 #define N_PHASES 3
@@ -28,16 +29,19 @@ char str_robots[N_ROBOTS][100];
 //	Vector3 goal_locs[N_ROBOTS*3+1] 
 //	Vector3 goal_level[N_ROBOTS*3+1] 
 //#include "Ccode.cpp"
-#include "Ccode_5drones.cpp"
-//#include "Ccode_21drones.cpp"
-//#include "Ccode_11drones.cpp"
+//#include "Ccode_5drones.cpp"
+//#include "Ccode_7drones.cpp"
 //#include "Ccode_9drones.cpp"
+//#include "Ccode_11drones.cpp"
+#include "Ccode_21drones.cpp"
 
 // robot location and orientation and id for each step
 int n_steps;
 Vector3 locs[N_ROBOTS][N_STEPS];
 Quaternion dirs[N_ROBOTS][N_STEPS];
 int stepids[N_ROBOTS][N_STEPS];
+double phase_error[N_STEPS];
+double phase_error_lowerbound[N_STEPS];
 
 // phases phases[0] stores the start step of phase 0
 int phases[N_PHASES + 1];
@@ -129,7 +133,7 @@ int read_data()
 	return 0;
 }
 
-int calc_phase_data(int start, int end, int phase_i)
+int calc_phase_data(int start, int end, int phase_i, int stretched_length)
 {
 	// assume out and out_lowerbound has already opened successfully
 	if (out == NULL) {printf("result file is not opened\n"); return -1;}
@@ -144,7 +148,9 @@ int calc_phase_data(int start, int end, int phase_i)
 
 	double lowerbound_error_length[N_ROBOTS];
 	double time_period = 0.2;
-	double speed = 0.03;
+	double default_speed = 0.03;
+	double slowdown_dis = 0.35;
+	double stop_dis = 0.01;
 
 	for (int time = start; time < end; time++)
 	{
@@ -173,15 +179,45 @@ int calc_phase_data(int start, int end, int phase_i)
 			if (time == start)
 				lowerbound_error_length[i] = error.len();
 			else
+			{
+				double speed = default_speed;
+				if (lowerbound_error_length[i] < stop_dis)
+					speed = 0;
+				else if (lowerbound_error_length[i] < slowdown_dis)
+					speed = default_speed * lowerbound_error_length[i] / slowdown_dis;
+
 				if (lowerbound_error_length[i] > 0)
 					lowerbound_error_length[i] -= time_period * speed;
+			}
 			sum_lowerbound += lowerbound_error_length[i];
 		}
 		sum_error /= N_ROBOTS;
-		fprintf(out, "%lf\n", sum_error);
+		//fprintf(out, "%lf\n", sum_error);
+		phase_error[time-start] = sum_error;
 
 		sum_lowerbound /= N_ROBOTS;
-		fprintf(out_lowerbound, "%lf\n", sum_lowerbound);
+		//fprintf(out_lowerbound, "%lf\n", sum_lowerbound);
+		phase_error_lowerbound[time-start] = sum_lowerbound;
+	}
+
+	// everything is stored in phase_error and phase_error_lowerbound from start to end-1
+	// stretch to stretched_length
+	// stretch[i] should be origin[i * (origin_length)/(stretched_length)]
+	//double effector = (end - start) * 1.0 / stretched_length;
+	double effector = 1;
+	stretched_length = end-start;
+	for (int i = 0; i < stretched_length; i++)
+	{
+		double index_double = i * effector;
+		int index = std::floor(index_double);
+		double left = index_double - index;
+		double error = phase_error[index+1] * left + 
+		               phase_error[index]   * (1-left);
+		double error_lowerbound = 
+		               phase_error_lowerbound[index+1] * left + 
+		               phase_error_lowerbound[index]   * (1-left);
+		fprintf(out, "%lf\n", error);
+		fprintf(out_lowerbound, "%lf\n", error_lowerbound);
 	}
 
 	return 0;
@@ -194,8 +230,9 @@ int calc_data()
 	out_lowerbound = fopen("result_lowerbound.txt", "w");
 	if (out_lowerbound == NULL) {printf("result_lowerbound file generation failed\n"); return -1;}
 
+	int stretched_lengths[N_PHASES] = {1200, 2800, 1200};
 	for (int k = 0; k < N_PHASES; k++)
-		calc_phase_data(phases[k], phases[k+1], k);
+		calc_phase_data(phases[k], phases[k+1], k, stretched_lengths[k]);
 
 	fclose(out);
 	fclose(out_lowerbound);
