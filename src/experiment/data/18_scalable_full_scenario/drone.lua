@@ -9,7 +9,7 @@ logger = require("Logger")
 local api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
-logger.enable()
+logger.disable()
 
 -- datas ----------------
 local bt
@@ -248,7 +248,8 @@ return function()
 					quaternion(-math.pi/2, vector3(0,0,1))
 			end
 		end
-		count = vns.scale["drone"] * 2 
+		count = vns.scale["drone"] * 5
+		logger("waiting leader, I have", vns.scale["drone"], "drones, I wait steps", vns.scale["drone"] * 5)
 		state = "wait_leader"
 	elseif state == "wait_leader" then
 		count = count - 1
@@ -261,6 +262,8 @@ return function()
 		count = 0
 		state = "wait_structure2"
 	elseif state == "wait_structure2" and vns.parentR ~= nil then
+		logger("waiting structure2, I have", vns.scale["drone"], "drones, I wait steps", (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5)
+		logger("now counting", count)
 		count = count + 1
 		if count >= (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5 then
 			state = "move_forward_after_structure2"
@@ -450,6 +453,8 @@ function step()
 	if vns.allocator.target ~= nil then
 		logger(vns.allocator.target.idN)
 	end
+	logger("vns.goal")
+	logger(vns.goal)
 	logger("vns.scale")
 	logger(vns.scale)
 	logger("parent")
