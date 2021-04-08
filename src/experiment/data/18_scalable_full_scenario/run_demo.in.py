@@ -434,23 +434,24 @@ def generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml,
 		file.write(filedata)
 
 #------------------------------------------------------------------------
-TotalLength = 2500 / 5
+Scale = 3
+
+TotalLength = Scale * 2600 / 5
 if Visual :
-	TotalLength = 0 / 5
+	TotalLength = Scale * 2600 / 5
 RandomSeed = Inputseed or 1
 
 random.seed(RandomSeed)
 
-Scale = 5
 N = Scale * 2 + 1
 
-obstacle_xml, largest_loc = generate_obstacle(int(Scale / 2) + 1,                # number of gates
+obstacle_xml, largest_loc = generate_obstacle(1, #int(Scale / 2) + 1,                # number of gates
                                               0,                # x location of the wall
                                               -(Scale)*1, 
                                               (Scale)*1,    
                                                                 # y range of the gate
                                               0.5, 1.5,         # size range of the wall
-                                              0.3)              # block distance to fill the wall
+                                              0.15)              # block distance to fill the wall
 
 drone_pipuck_xml = generate_drone_pipuck_xml(N, N*4, #N*2+2,          # number of drone and pipuck 
                                              -Scale-2,0,        # location of drone1
