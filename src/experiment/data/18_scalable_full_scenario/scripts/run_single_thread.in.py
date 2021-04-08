@@ -12,7 +12,7 @@ else :
 	test_start = int(sys.argv[1])
 	test_end = int(sys.argv[2])
 
-total_length = 1700
+total_length = 2600 * 3
 
 for i in range(test_start, test_end + 1):
 	print("running test" + str(i))
@@ -21,7 +21,7 @@ for i in range(test_start, test_end + 1):
 	os.system("mkdir " + testfolder_src + "/random/run" + str(i))
 
 	os.system(testfolder_build + "/evaluator/main " + str(total_length) + " ./")
-	os.system("mv result.txt " + testfolder_src + "/random/run" + str(i) + "/result.txt")
 
+	os.system("mv *.txt " + testfolder_src + "/random/run" + str(i))
 	os.system("mv *.csv " + testfolder_src + "/random/run" + str(i))
 	os.system("mv vns.argos " + testfolder_src + "/random/run" + str(i))
