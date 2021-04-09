@@ -6,7 +6,7 @@
   <!-- ************************* -->
   <framework>
     <system threads="0"/>
-    <experiment length="2600" ticks_per_second="5" random_seed="2" />
+    <experiment length="2600.0" ticks_per_second="5" random_seed="2" />
   </framework>
   
   <!-- *************** -->
@@ -29,7 +29,7 @@
         <pipuck_rangefinders implementation="default" show_rays="false" />
         <wifi implementation="default" show_rays="false" />
       </sensors>
-      <params script="/home/harry/code/mns2.0/build/experiment/data/18_scalable_full_scenario/pipuck.lua" 
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/18_scalable_full_scenario/pipuck.lua" 
               brainkeeper_time="500"/>
     </lua_controller>
 
@@ -49,7 +49,7 @@
         <pipuck_rangefinders implementation="default" show_rays="false" />
         <wifi implementation="default" show_rays="false" />
       </sensors>
-      <params script="/home/harry/code/mns2.0/build/experiment/data/18_scalable_full_scenario/predator.lua" />
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/18_scalable_full_scenario/predator.lua" />
     </lua_controller>
 
      <!-- Drone Controller -->
@@ -68,7 +68,7 @@
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="/home/harry/code/mns2.0/build/experiment/data/18_scalable_full_scenario/drone.lua"
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/18_scalable_full_scenario/drone.lua"
               brainkeeper_time="500"/>
     </lua_controller>
 
@@ -81,14 +81,14 @@
       <sensors>
         <radios implementation="default" show_rays="true"/>
       </sensors>
-      <params script="/home/harry/code/mns2.0/build/experiment/data/18_scalable_full_scenario/block.lua" />
+      <params script="/Users/harry/Desktop/mns2.0/build/experiment/data/18_scalable_full_scenario/block.lua" />
     </lua_controller>
   </controllers>
 
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="36.501408748, 36.501408748, 2.5" center="0, 0, 1">
+  <arena size="36.501408748021696, 36.501408748021696, 2.5" center="0, 0, 1">
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- ************************************************ -->
@@ -125,117 +125,150 @@
     -->
     <!-- drones and pipucks--> 
 <drone id="drone1"><body position="-7,0,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone2"><body position="-6.93146897811,1.10316923751,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone3"><body position="-7.99870796945,0.109161437629,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone4"><body position="-5.85671112262,1.30264950978,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone5"><body position="-5.52656737882,2.28175354344,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone6"><body position="-7.67428352974,2.00194301574,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone7"><body position="-8.53679147417,2.51973574497,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone8"><body position="-8.62831633687,-0.731600286222,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone9"><body position="-4.72358240409,1.16165006161,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone10"><body position="-4.34963360542,0.210756012059,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<drone id="drone11"><body position="-5.13122098797,-0.637415231159,0" orientation="0,0,0"/><controller config="drone"/></drone>
-<pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags"><body position="-5.13193376632,1.96586567914,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck2" wifi_medium="wifi" tag_medium="tags"><body position="-7.68989139338,2.26941892511,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck3" wifi_medium="wifi" tag_medium="tags"><body position="-4.91211477141,-0.529178302233,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck4" wifi_medium="wifi" tag_medium="tags"><body position="-3.72685040509,0.0651929689844,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck5" wifi_medium="wifi" tag_medium="tags"><body position="-8.6978133703,-0.302161445772,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck6" wifi_medium="wifi" tag_medium="tags"><body position="-4.7698092435,-0.976554965177,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck7" wifi_medium="wifi" tag_medium="tags"><body position="-7.40348852874,0.0986163004736,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck8" wifi_medium="wifi" tag_medium="tags"><body position="-8.40575505811,2.48392140822,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck9" wifi_medium="wifi" tag_medium="tags"><body position="-7.65595178786,0.691147673107,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck10" wifi_medium="wifi" tag_medium="tags"><body position="-5.00190162737,1.49908834769,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck11" wifi_medium="wifi" tag_medium="tags"><body position="-8.92816798154,2.89837003273,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck12" wifi_medium="wifi" tag_medium="tags"><body position="-4.34814761161,1.74569690851,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck13" wifi_medium="wifi" tag_medium="tags"><body position="-8.77739093985,2.70543932081,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck14" wifi_medium="wifi" tag_medium="tags"><body position="-4.54462024329,-0.158246485438,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck15" wifi_medium="wifi" tag_medium="tags"><body position="-6.9631171105,-0.31559814038,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck16" wifi_medium="wifi" tag_medium="tags"><body position="-5.46128717615,-0.406105715648,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck17" wifi_medium="wifi" tag_medium="tags"><body position="-7.91862840577,-0.261164964357,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck18" wifi_medium="wifi" tag_medium="tags"><body position="-5.3721362552,2.62549736807,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck19" wifi_medium="wifi" tag_medium="tags"><body position="-6.46906391946,-0.33033659787,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck20" wifi_medium="wifi" tag_medium="tags"><body position="-5.8074578489,2.11559220933,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck21" wifi_medium="wifi" tag_medium="tags"><body position="-6.14085204413,1.45257586091,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck22" wifi_medium="wifi" tag_medium="tags"><body position="-5.92460019731,1.37639202545,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck23" wifi_medium="wifi" tag_medium="tags"><body position="-8.83325191469,2.42222462169,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck24" wifi_medium="wifi" tag_medium="tags"><body position="-8.7466737206,-1.18722141856,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck25" wifi_medium="wifi" tag_medium="tags"><body position="-5.03144041787,-0.963233727274,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck26" wifi_medium="wifi" tag_medium="tags"><body position="-6.69035643564,0.910838352317,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck27" wifi_medium="wifi" tag_medium="tags"><body position="-5.51250713089,-0.707732138206,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck28" wifi_medium="wifi" tag_medium="tags"><body position="-8.51766778198,3.10451513345,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck29" wifi_medium="wifi" tag_medium="tags"><body position="-5.55195473765,2.97543945586,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck30" wifi_medium="wifi" tag_medium="tags"><body position="-9.04447758451,2.59555353532,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck31" wifi_medium="wifi" tag_medium="tags"><body position="-7.09544185588,1.29833791175,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck32" wifi_medium="wifi" tag_medium="tags"><body position="-8.07069869723,-0.706171933776,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck33" wifi_medium="wifi" tag_medium="tags"><body position="-8.29762416294,0.468104770862,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck34" wifi_medium="wifi" tag_medium="tags"><body position="-8.57744693485,2.07626164828,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck35" wifi_medium="wifi" tag_medium="tags"><body position="-4.22158043676,-0.307463889477,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck36" wifi_medium="wifi" tag_medium="tags"><body position="-7.17902393984,-0.0188432796029,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck37" wifi_medium="wifi" tag_medium="tags"><body position="-5.34856057785,1.07402249741,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck38" wifi_medium="wifi" tag_medium="tags"><body position="-5.88402455036,2.38507051306,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck39" wifi_medium="wifi" tag_medium="tags"><body position="-7.17280982303,2.1504579939,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck40" wifi_medium="wifi" tag_medium="tags"><body position="-6.40476595022,-0.123278730781,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck41" wifi_medium="wifi" tag_medium="tags"><body position="-7.84271034587,0.557884473575,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck42" wifi_medium="wifi" tag_medium="tags"><body position="-5.16158680135,-1.21114746288,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck43" wifi_medium="wifi" tag_medium="tags"><body position="-4.94451702428,-1.30287399795,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
-<pipuck id="pipuck44" wifi_medium="wifi" tag_medium="tags"><body position="-8.15773224486,-0.12992298021,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<drone id="drone2"><body position="-6.5236470077393856,1.0414114869100004,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone3"><body position="-5.9949577161859375,0.1917005112676442,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone4"><body position="-7.306497425546765,1.7608651964521869,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone5"><body position="-6.166899049946394,2.1384038375584034,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone6"><body position="-6.461931360009881,3.2410924948788793,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone7"><body position="-5.553932012064975,3.9075689685259274,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone8"><body position="-5.206050079337853,1.0321027772307794,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone9"><body position="-8.20991976720429,2.3436054755150426,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone10"><body position="-4.612946063782177,3.1661329279996373,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<drone id="drone11"><body position="-4.495184628533052,1.9071281357347054,0" orientation="0,0,0"/><controller config="drone"/></drone>
+<pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags"><body position="-7.127105300625002,3.0283567369797577,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck2" wifi_medium="wifi" tag_medium="tags"><body position="-6.192056247549954,1.4236249816215736,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck3" wifi_medium="wifi" tag_medium="tags"><body position="-7.4143934098647675,2.1424818182215475,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck4" wifi_medium="wifi" tag_medium="tags"><body position="-5.2193459152359365,0.5762182507597498,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck5" wifi_medium="wifi" tag_medium="tags"><body position="-7.19407521995575,1.2901096905005556,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck6" wifi_medium="wifi" tag_medium="tags"><body position="-4.020391458757446,1.9246132786694332,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck7" wifi_medium="wifi" tag_medium="tags"><body position="-6.300801898968899,2.503478468984719,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck8" wifi_medium="wifi" tag_medium="tags"><body position="-4.315625768929791,3.7147774127552946,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck9" wifi_medium="wifi" tag_medium="tags"><body position="-5.882151770672444,3.4149192462212667,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck10" wifi_medium="wifi" tag_medium="tags"><body position="-8.225049412371554,2.305721423205455,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck11" wifi_medium="wifi" tag_medium="tags"><body position="-6.314522894888279,0.01962394330385031,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck12" wifi_medium="wifi" tag_medium="tags"><body position="-5.336748612032295,4.377255331128415,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck13" wifi_medium="wifi" tag_medium="tags"><body position="-7.023475421722525,3.250884481111928,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck14" wifi_medium="wifi" tag_medium="tags"><body position="-4.140629340626693,3.4550298187826733,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck15" wifi_medium="wifi" tag_medium="tags"><body position="-4.937498222656165,1.1063349865424712,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck16" wifi_medium="wifi" tag_medium="tags"><body position="-4.166130684507828,1.5107768650884132,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck17" wifi_medium="wifi" tag_medium="tags"><body position="-4.102868396905752,3.044524837811437,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck18" wifi_medium="wifi" tag_medium="tags"><body position="-5.778284074524524,0.17516787429927305,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck19" wifi_medium="wifi" tag_medium="tags"><body position="-4.390495336116104,1.2989968665572071,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck20" wifi_medium="wifi" tag_medium="tags"><body position="-4.45324680593039,2.0724948118319215,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck21" wifi_medium="wifi" tag_medium="tags"><body position="-5.271031442489998,0.913147510008006,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck22" wifi_medium="wifi" tag_medium="tags"><body position="-7.1598707778559945,-0.5484585165178935,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck23" wifi_medium="wifi" tag_medium="tags"><body position="-5.1344177053182944,0.3744384057252077,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck24" wifi_medium="wifi" tag_medium="tags"><body position="-5.647016393422304,4.489956126124547,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck25" wifi_medium="wifi" tag_medium="tags"><body position="-4.8588896349634,2.7974047873778005,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck26" wifi_medium="wifi" tag_medium="tags"><body position="-7.316229370277438,0.5925569296078983,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck27" wifi_medium="wifi" tag_medium="tags"><body position="-6.04041827671219,3.647648576920073,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck28" wifi_medium="wifi" tag_medium="tags"><body position="-6.759543755671853,2.0368385607920096,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck29" wifi_medium="wifi" tag_medium="tags"><body position="-4.644100856117364,1.2200371776302532,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck30" wifi_medium="wifi" tag_medium="tags"><body position="-6.388106288860212,1.9699437605112209,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck31" wifi_medium="wifi" tag_medium="tags"><body position="-6.815621461930061,3.251280900238383,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck32" wifi_medium="wifi" tag_medium="tags"><body position="-5.454298109011175,3.71786033636349,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck33" wifi_medium="wifi" tag_medium="tags"><body position="-4.987304428882685,2.141677796188846,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck34" wifi_medium="wifi" tag_medium="tags"><body position="-6.171689626209803,0.7565725506997385,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck35" wifi_medium="wifi" tag_medium="tags"><body position="-6.129758396670604,2.674975312051748,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck36" wifi_medium="wifi" tag_medium="tags"><body position="-6.103935057123417,0.9620484228602884,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck37" wifi_medium="wifi" tag_medium="tags"><body position="-5.148903268096388,1.8668633976796123,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck38" wifi_medium="wifi" tag_medium="tags"><body position="-4.494855746171065,2.7399379471498637,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck39" wifi_medium="wifi" tag_medium="tags"><body position="-6.245664221046103,0.4375036036041191,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck40" wifi_medium="wifi" tag_medium="tags"><body position="-6.513161093351203,2.288656008776771,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck41" wifi_medium="wifi" tag_medium="tags"><body position="-5.279256814409219,1.5936431322342148,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck42" wifi_medium="wifi" tag_medium="tags"><body position="-4.5255514501374705,2.3369662179087314,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck43" wifi_medium="wifi" tag_medium="tags"><body position="-6.834373688230338,0.9100773955689192,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
+<pipuck id="pipuck44" wifi_medium="wifi" tag_medium="tags"><body position="-5.088443352752704,3.2170506722347696,0" orientation="0,0,0"/><controller config="pipuck"/></pipuck>
 
     <!-- obstacles -->
 <block id="obstacle1" init_led_color="blue"><body position="0,-6.0, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle2" init_led_color="blue"><body position="0,-5.7, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle3" init_led_color="blue"><body position="0,-5.4, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle4" init_led_color="blue"><body position="0,-5.1, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle5" init_led_color="blue"><body position="0,-4.8, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle6" init_led_color="blue"><body position="0,-4.5, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle7" init_led_color="blue"><body position="0,-4.2, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle8" init_led_color="blue"><body position="0,-3.9, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle9" init_led_color="blue"><body position="0,-3.65545053443, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle10" init_led_color="orange"><body position="0,-3.59545053443, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle11" init_led_color="blue"><body position="0,-2.66031850105, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle12" init_led_color="blue"><body position="0,-2.36031850105, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle13" init_led_color="blue"><body position="0,-2.06031850105, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle14" init_led_color="blue"><body position="0,-1.76031850105, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle15" init_led_color="blue"><body position="0,-1.46031850105, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle16" init_led_color="blue"><body position="0,-1.38213316651, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle17" init_led_color="orange"><body position="0,-2.72031850105, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle18" init_led_color="orange"><body position="0,-1.32213316651, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle19" init_led_color="blue"><body position="0,-0.638247254341, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle20" init_led_color="blue"><body position="0,-0.338247254341, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle21" init_led_color="blue"><body position="0,-0.0382472543412, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle22" init_led_color="blue"><body position="0,0.261752745659, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle23" init_led_color="blue"><body position="0,0.561752745659, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle24" init_led_color="blue"><body position="0,0.861752745659, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle25" init_led_color="blue"><body position="0,1.16175274566, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle26" init_led_color="blue"><body position="0,1.46175274566, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle27" init_led_color="blue"><body position="0,1.76175274566, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle28" init_led_color="blue"><body position="0,2.06175274566, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle29" init_led_color="blue"><body position="0,2.36175274566, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle30" init_led_color="blue"><body position="0,2.66175274566, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle31" init_led_color="blue"><body position="0,2.96175274566, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle32" init_led_color="blue"><body position="0,3.18583026949, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle33" init_led_color="orange"><body position="0,-0.698247254341, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle34" init_led_color="orange"><body position="0,3.24583026949, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle35" init_led_color="blue"><body position="0,4.68583026949, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle36" init_led_color="blue"><body position="0,4.98583026949, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle37" init_led_color="blue"><body position="0,5.28583026949, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle38" init_led_color="blue"><body position="0,5.58583026949, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle39" init_led_color="blue"><body position="0,5.88583026949, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle40" init_led_color="blue"><body position="0,6.0, 0" orientation="0,0,0" /><controller config="block"/></block>
-<block id="obstacle41" init_led_color="orange"><body position="0,4.62583026949, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle2" init_led_color="blue"><body position="0,-5.85, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle3" init_led_color="blue"><body position="0,-5.699999999999999, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle4" init_led_color="blue"><body position="0,-5.549999999999999, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle5" init_led_color="blue"><body position="0,-5.399999999999999, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle6" init_led_color="blue"><body position="0,-5.249999999999998, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle7" init_led_color="blue"><body position="0,-5.099999999999998, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle8" init_led_color="blue"><body position="0,-4.9499999999999975, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle9" init_led_color="blue"><body position="0,-4.799999999999997, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle10" init_led_color="blue"><body position="0,-4.649999999999997, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle11" init_led_color="blue"><body position="0,-4.4999999999999964, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle12" init_led_color="blue"><body position="0,-4.349999999999996, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle13" init_led_color="blue"><body position="0,-4.199999999999996, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle14" init_led_color="blue"><body position="0,-4.049999999999995, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle15" init_led_color="blue"><body position="0,-3.8999999999999955, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle16" init_led_color="blue"><body position="0,-3.7499999999999956, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle17" init_led_color="blue"><body position="0,-3.5999999999999956, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle18" init_led_color="blue"><body position="0,-3.4499999999999957, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle19" init_led_color="blue"><body position="0,-3.299999999999996, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle20" init_led_color="blue"><body position="0,-3.149999999999996, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle21" init_led_color="blue"><body position="0,-2.999999999999996, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle22" init_led_color="blue"><body position="0,-2.849999999999996, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle23" init_led_color="blue"><body position="0,-2.699999999999996, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle24" init_led_color="blue"><body position="0,-2.5499999999999963, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle25" init_led_color="blue"><body position="0,-2.3999999999999964, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle26" init_led_color="blue"><body position="0,-2.2499999999999964, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle27" init_led_color="blue"><body position="0,-2.0999999999999965, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle28" init_led_color="blue"><body position="0,-1.9499999999999966, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle29" init_led_color="blue"><body position="0,-1.7999999999999967, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle30" init_led_color="blue"><body position="0,-1.6499999999999968, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle31" init_led_color="blue"><body position="0,-1.499999999999997, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle32" init_led_color="blue"><body position="0,-1.349999999999997, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle33" init_led_color="blue"><body position="0,-1.199999999999997, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle34" init_led_color="blue"><body position="0,-1.0499999999999972, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle35" init_led_color="blue"><body position="0,-0.8999999999999971, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle36" init_led_color="blue"><body position="0,-0.7499999999999971, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle37" init_led_color="blue"><body position="0,-0.5999999999999971, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle38" init_led_color="blue"><body position="0,-0.44999999999999707, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle39" init_led_color="blue"><body position="0,-0.29999999999999705, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle40" init_led_color="blue"><body position="0,-0.19154955967749743, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle41" init_led_color="orange"><body position="0,-0.13154955967749743, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle42" init_led_color="blue"><body position="0,1.3084504403225026, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle43" init_led_color="blue"><body position="0,1.4584504403225025, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle44" init_led_color="blue"><body position="0,1.6084504403225024, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle45" init_led_color="blue"><body position="0,1.7584504403225023, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle46" init_led_color="blue"><body position="0,1.9084504403225022, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle47" init_led_color="blue"><body position="0,2.058450440322502, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle48" init_led_color="blue"><body position="0,2.208450440322502, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle49" init_led_color="blue"><body position="0,2.358450440322502, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle50" init_led_color="blue"><body position="0,2.508450440322502, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle51" init_led_color="blue"><body position="0,2.6584504403225018, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle52" init_led_color="blue"><body position="0,2.8084504403225017, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle53" init_led_color="blue"><body position="0,2.9584504403225016, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle54" init_led_color="blue"><body position="0,3.1084504403225015, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle55" init_led_color="blue"><body position="0,3.2584504403225014, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle56" init_led_color="blue"><body position="0,3.4084504403225013, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle57" init_led_color="blue"><body position="0,3.5584504403225012, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle58" init_led_color="blue"><body position="0,3.708450440322501, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle59" init_led_color="blue"><body position="0,3.858450440322501, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle60" init_led_color="blue"><body position="0,4.008450440322501, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle61" init_led_color="blue"><body position="0,4.158450440322501, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle62" init_led_color="blue"><body position="0,4.308450440322502, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle63" init_led_color="blue"><body position="0,4.458450440322502, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle64" init_led_color="blue"><body position="0,4.608450440322502, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle65" init_led_color="blue"><body position="0,4.758450440322503, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle66" init_led_color="blue"><body position="0,4.908450440322503, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle67" init_led_color="blue"><body position="0,5.0584504403225035, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle68" init_led_color="blue"><body position="0,5.208450440322504, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle69" init_led_color="blue"><body position="0,5.358450440322504, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle70" init_led_color="blue"><body position="0,5.5084504403225045, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle71" init_led_color="blue"><body position="0,5.658450440322505, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle72" init_led_color="blue"><body position="0,5.808450440322505, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle73" init_led_color="blue"><body position="0,6.0, 0" orientation="0,0,0" /><controller config="block"/></block>
+<block id="obstacle74" init_led_color="orange"><body position="0,1.2484504403225025, 0" orientation="0,0,0" /><controller config="block"/></block>
 
 
     <!-- target -->
 
 	<prototype id="target" movable="true" friction="2">
-      <body position="13.750704374,3.93583026949,0" orientation="0,0,0" />
+      <body position="13.750704374010848,0.5584504403225026,0" orientation="0,0,0" />
       <links ref="base">
-        <link id="base" geometry="cylinder" radius="1.75070437401" height="0.1" mass="0.01"
+        <link id="base" geometry="cylinder" radius="1.7507043740108488" height="0.1" mass="0.01"
           position="0,0,0" orientation="0,0,0" />
       </links>
       <devices>
         <tags medium="tags">
           <tag anchor="base" observable_angle="75" side_length="0.02"
-               position="-1.45070437401,0.000,0.11" orientation="0,0,0" />
+               position="-1.4507043740108487,0.000,0.11" orientation="0,0,0" />
         </tags>
       </devices>
     </prototype>
@@ -243,15 +276,15 @@
     <prototype id="target" movable="true" friction="2">
       <body position="3.5,
 	<prototype id="target" movable="true" friction="2">
-      <body position="13.750704374,3.93583026949,0" orientation="0,0,0" />
+      <body position="13.750704374010848,0.5584504403225026,0" orientation="0,0,0" />
       <links ref="base">
-        <link id="base" geometry="cylinder" radius="1.75070437401" height="0.1" mass="0.01"
+        <link id="base" geometry="cylinder" radius="1.7507043740108488" height="0.1" mass="0.01"
           position="0,0,0" orientation="0,0,0" />
       </links>
       <devices>
         <tags medium="tags">
           <tag anchor="base" observable_angle="75" side_length="0.02"
-               position="-1.45070437401,0.000,0.11" orientation="0,0,0" />
+               position="-1.4507043740108487,0.000,0.11" orientation="0,0,0" />
         </tags>
       </devices>
     </prototype>_LOCATION_Y,0" orientation="0,0,0" />
@@ -301,7 +334,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="/home/harry/code/mns2.0/build/libvns_loop_functions"
+  <loop_functions library="/Users/harry/Desktop/mns2.0/build/libvns_loop_functions"
                   label="vns_loop_functions"/>
 
   <!-- ****************** -->
@@ -310,7 +343,7 @@
   <!--
   <visualization>
     <qt-opengl lua_editor="true" show_boundary="false">
-		  <user_functions library="/home/harry/code/mns2.0/build/libbuilderbot_qtopengl_user_functions"
+		  <user_functions library="/Users/harry/Desktop/mns2.0/build/libbuilderbot_qtopengl_user_functions"
                       label="builderbot_qtopengl_user_functions" >
       </user_functions>
       <camera>
