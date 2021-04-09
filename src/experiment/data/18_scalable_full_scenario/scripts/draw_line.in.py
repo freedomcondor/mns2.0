@@ -22,6 +22,9 @@ set_average_lowerbound = []
 set_average_error = []
 #     [0, 1, ... , data_set_number-1] x [0, 1, ... , step_number-1]
 
+run_total_error = []
+#     [0, 1, ... , data_set_number-1] x [0, ..., run_number - 1]
+
 data_set_i = -1
 for data_set in data_sets :
 	data_set_i = data_set_i + 1
@@ -33,6 +36,8 @@ for data_set in data_sets :
 	set_average_lowerbound.append([]) #[set_average_lowerbound[data_set_i] = []
 	set_average_error.append([])      #set_average_error[data_set_i] = []
 
+	run_total_error.append([])   # run_total_error[data_set_i] = []
+
 	run_i = -1
 	for folder in os.walk(testfolder_src + "/" + data_set + "/") :
 		#jump over the first one
@@ -40,7 +45,9 @@ for data_set in data_sets :
 			continue
 		run_i = run_i + 1
 	
-		file = open(folder[0] + "/result.txt","r")
+		# read from result.txt
+		#file = open(folder[0] + "/result.txt","r")
+		file = open(folder[0] + "/result_stretched.txt","r")
 		step_i = -1
 		for line in file:
 			step_i = step_i + 1
@@ -60,7 +67,9 @@ for data_set in data_sets :
 			set_average_error[data_set_i][step_i] = set_average_error[data_set_i][step_i] + float(line)
 		file.close()
 
-		file = open(folder[0] + "/result_lowerbound.txt","r")
+		# read from result_lowerbound.txt
+		#file = open(folder[0] + "/result_lowerbound.txt","r")
+		file = open(folder[0] + "/result_lowerbound_stretched.txt","r")
 		step_i = -1
 		for line in file:
 			step_i = step_i + 1
@@ -74,7 +83,26 @@ for data_set in data_sets :
 			set_average_lowerbound[data_set_i][step_i] = set_average_lowerbound[data_set_i][step_i] + float(line)
 			set_average_error[data_set_i][step_i] = set_average_error[data_set_i][step_i] - float(line)
 		file.close()
+
+		# end of for step
+		# now we have data, data_lowerbound, data_error of this run (run_i) ready [data_set_i][:][run_i]
+
+		# calculate total_error for this run (run_i), i.e, sum up [data_set_i][:][run_i] for all the steps
+		run_total_error[data_set_i].append(0)  # run_total_error[data_set_i][run_i] = 0
+		for step_i in range(0, total_timestep) :
+			run_total_error[data_set_i][run_i] = run_total_error[data_set_i][run_i] + data_error[data_set_i][step_i][run_i]
+		run_total_error[data_set_i][run_i] = run_total_error[data_set_i][run_i] / total_timestep 
+
+	# end of for run
+	# now we have data, data_lowerbound, data_error of this this data_set(data_set_i) ready [data_set_i][:][:]
+	#plt.plot(data[data_set_i])
+	#plt.plot(data_lowerbound[data_set_i])
+	plt.plot(data_error[data_set_i])
+
+	# we have run_total_error of this data_set(data_set_i) ready [data_set_i][:]
+	#plt.boxplot(run_total_error[data_set_i], positions=[data_set_i/len(data_sets)])
 	
+	# calculate average of all the runs for each step, produce set_average_data/lowerbound/error [data_set_i][all time step]
 	for step_i in range(0, total_timestep) :
 		set_average_data[data_set_i][step_i] = set_average_data[data_set_i][step_i] / (run_i+1)
 		set_average_lowerbound[data_set_i][step_i] = set_average_lowerbound[data_set_i][step_i] / (run_i+1)
@@ -82,8 +110,9 @@ for data_set in data_sets :
 
 	#plt.plot(set_average_data[data_set_i], color = 'blue')
 	#plt.plot(set_average_lowerbound[data_set_i], color='red')
-	plt.plot(set_average_error[data_set_i])
+	#plt.plot(set_average_error[data_set_i])
 
+'''
 # calculate average lowerbound
 average_lowerbound = []
 # [0, step-1]
@@ -92,16 +121,16 @@ for step_i in range(0, total_timestep) :
 	for data_set_i in range(0, len(data_sets)) :
 		average_lowerbound[step_i] = average_lowerbound[step_i] + set_average_lowerbound[data_set_i][step_i]
 	average_lowerbound[step_i] = average_lowerbound[step_i] / len(data_sets) 
+	#plt.plot(average_lowerbound)
 
-# calculate average lowerbound - error based value
-value = []
+# calculate average lowerbound + error based value
+lb_error_value = []
 # [0, dataset_number-1][0, step - 1]
 for data_set_i in range(0, len(data_sets)) :
-	value.append([])
+	lb_error_value.append([])
 	for step_i in range(0, total_timestep) :
-		value[data_set_i].append(average_lowerbound[step_i] + set_average_error[data_set_i][step_i])
+		lb_error_value[data_set_i].append(average_lowerbound[step_i] + set_average_error[data_set_i][step_i])
+	#plt.plot(lb_error_value[data_set_i])
+'''
 
-plt.plot(average_lowerbound, color = 'red')
-#for data_set_i in range(0, len(data_sets)) :
-#	plt.plot(value[data_set_i])
 plt.show()

@@ -9,8 +9,12 @@
 #include "Quaternion.h"
 
 // robot number, step number
-#define N_DRONES 21
-#define N_PIPUCKS 84
+//#define N_DRONES 5
+//#define N_DRONES 7
+//#define N_DRONES 9
+#define N_DRONES 11
+
+#define N_PIPUCKS (N_DRONES*4)
 #define N_ROBOTS (N_DRONES+N_PIPUCKS)
 #define N_STEPS 30000
 #define N_PHASES 3
@@ -22,8 +26,8 @@ FILE *in[N_ROBOTS];
 FILE *out, *out_lowerbound;
 
 // filename strings
-char dir_base[200] = "";
-char str_robots[N_ROBOTS][100];
+char dir_base[1000] = "";
+char str_robots[N_ROBOTS][1000];
 
 //desired positions and tree depth, include
 //	Vector3 goal_locs[N_ROBOTS*3+1] 
@@ -32,8 +36,8 @@ char str_robots[N_ROBOTS][100];
 //#include "Ccode_5drones.cpp"
 //#include "Ccode_7drones.cpp"
 //#include "Ccode_9drones.cpp"
-//#include "Ccode_11drones.cpp"
-#include "Ccode_21drones.cpp"
+#include "Ccode_11drones.cpp"
+//#include "Ccode_21drones.cpp"
 
 // robot location and orientation and id for each step
 int n_steps;
@@ -67,15 +71,17 @@ int generate_csv_file_name()
 
 int load_file()
 {
-	char filename[100];
+	char filename[1000];
 	for (int i = 0; i < N_ROBOTS; i++)
 	{
 		strcpy(filename, dir_base); 
 		strcat(filename, str_robots[i]); 
+		printf("loading %s\n", filename);
 		in[i] = fopen(filename, "r");
 		if (in[i] == NULL) {printf("open file %s failed\n", filename); return -1;}
 	}
 
+	printf("load file return 0\n");
 	return 0;
 }
 
@@ -204,8 +210,7 @@ int calc_phase_data(int start, int end, int phase_i, int stretched_length)
 	// stretch to stretched_length
 	// stretch[i] should be origin[i * (origin_length)/(stretched_length)]
 	//double effector = (end - start) * 1.0 / stretched_length;
-	double effector = 1;
-	stretched_length = end-start;
+	double effector = 1;  stretched_length = end-start; // no stretch
 	for (int i = 0; i < stretched_length; i++)
 	{
 		double index_double = i * effector;
