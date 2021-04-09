@@ -71,26 +71,51 @@ def scatter3Dplot(A) :
 	ax.scatter3D(X, Y, Z, c=Z, cmap='Greens');
 	plt.show()
 
-A1 = read_data("random_5x5_mns_time", 25, False)
-x = np.matrix(A1)
-print(x.mean())
+A1 = read_data("random_3x3_mns_time", 9, False)
+A1_mean = np.matrix(A1).mean()
 
 A2 = read_data("random_4x4_mns_time", 16, False)
-x = np.matrix(A2)
-print(x.mean())
+A2_mean = np.matrix(A2).mean()
 
-A3 = read_data("random_3x3_mns_time", 9, False)
-x = np.matrix(A3)
-print(x.mean())
+A3 = read_data("random_5x5_mns_time", 25, False)
+A3_mean = np.matrix(A3).mean()
 
 B1 = read_data("random_3x3_ce_time", 9, True)
-x = np.matrix(B1)
-print(x.mean())
+B1_mean = np.matrix(B1).mean()
 
 B2 = read_data("random_4x4_ce_time", 16, True)
-x = np.matrix(B2)
-print(x.mean())
+B2_mean = np.matrix(B2).mean()
 
 B3 = read_data("random_5x5_ce_time", 25, True)
-x = np.matrix(B3)
-print(x.mean())
+B3_mean = np.matrix(B3).mean()
+
+# data to plot
+n_groups = 3
+means_mns = [A1_mean, A2_mean, A3_mean]
+means_ce  = [B1_mean, B2_mean, B3_mean]
+
+# create plot
+fig, ax = plt.subplots()
+index = np.arange(n_groups)
+bar_width = 0.1
+opacity = 0.8
+
+rects1 = plt.bar(index, means_mns, bar_width,
+alpha=opacity,
+color='b',
+label='MNS')
+
+rects2 = plt.bar(index + bar_width, means_ce, bar_width,
+alpha=opacity,
+color='g',
+label='Centralized')
+
+plt.xlabel('Scenario')
+plt.ylabel('Step Time')
+plt.title('Step Time Compare')
+plt.xticks(index + bar_width, ('3x3', '4x4', '5x5'))
+plt.ylim(-10, 90)
+plt.legend()
+
+plt.tight_layout()
+plt.show()
