@@ -37,8 +37,7 @@ function step()
 		api.move(vector3(0.01, -0.01, 0), vector3(0,0,0))
 	end
 
-	robot.directional_leds.set_all_colors('black')
-	robot.directional_leds.set_single_color(2, 'white')
+	api.pipuckShowLED(vector3(1,0,0))
 
 	bt()
 	api.debug.drawArrow("blue", vector3(), vector3(1,0,0))

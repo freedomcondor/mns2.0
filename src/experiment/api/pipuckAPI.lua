@@ -21,8 +21,8 @@ end
 
 api.commonPreStep = api.preStep
 function api.preStep()
-	if robot.directional_leds ~= nil then
-		robot.directional_leds.set_all_colors('black')
+	if robot.leds ~= nil then
+		robot.leds.set_ring_leds(false)
 	end
 	api.commonPreStep()
 end
@@ -79,8 +79,8 @@ function api.debug.showChildren(vns)
 	if vns.parentR ~= nil then
 		api.pipuckShowLED(api.virtualFrame.V3_VtoR(vector3(vns.parentR.positionV3)))
 	else
-		if robot.directional_leds ~= nil then
-			robot.directional_leds.set_all_colors('white')
+		if robot.leds ~= nil then
+			robot.leds.set_body_led(true)
 		end
 	end
 end
@@ -104,8 +104,8 @@ function api.pipuckShowLED(vec)
 	local count = math.floor((th + 22.5) / 45)
 	count = count % 8 + 1
 
-	if robot.directional_leds ~= nil then
-		robot.directional_leds.set_single_color(count, 'white')
+	if robot.leds ~= nil then
+		robot.leds.set_ring_led_index(count, true)
 	end
 end
 
