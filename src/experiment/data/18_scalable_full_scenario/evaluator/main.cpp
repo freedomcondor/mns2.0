@@ -9,10 +9,10 @@
 #include "Quaternion.h"
 
 // robot number, step number
-//#define N_DRONES 5
+#define N_DRONES 5
 //#define N_DRONES 7
 //#define N_DRONES 9
-#define N_DRONES 11
+//#define N_DRONES 11
 
 #define N_PIPUCKS (N_DRONES*4)
 #define N_ROBOTS (N_DRONES+N_PIPUCKS)
@@ -33,11 +33,21 @@ char str_robots[N_ROBOTS][1000];
 //	Vector3 goal_locs[N_ROBOTS*3+1] 
 //	Vector3 goal_level[N_ROBOTS*3+1] 
 //#include "Ccode.cpp"
-//#include "Ccode_5drones.cpp"
-//#include "Ccode_7drones.cpp"
-//#include "Ccode_9drones.cpp"
-#include "Ccode_11drones.cpp"
-//#include "Ccode_21drones.cpp"
+#if N_DRONES == 5
+	#include "Ccode_5drones.cpp"
+#endif 
+#if N_DRONES == 7
+	#include "Ccode_7drones.cpp"
+#endif
+#if N_DRONES == 9
+	#include "Ccode_9drones.cpp"
+#endif
+#if N_DRONES == 11
+	#include "Ccode_11drones.cpp"
+#endif
+#if N_DRONES == 21
+	#include "Ccode_21drones.cpp"
+#endif
 
 // robot location and orientation and id for each step
 int n_steps;
