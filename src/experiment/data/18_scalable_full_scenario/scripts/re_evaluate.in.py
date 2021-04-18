@@ -17,7 +17,7 @@ else :
 	test_start = int(sys.argv[2])
 	test_end = int(sys.argv[3])
 
-total_length = 5 * 2600
+total_length = 2 * 2600
 
 for i in range(test_start, test_end + 1):
 	print("evaluating test" + str(i))

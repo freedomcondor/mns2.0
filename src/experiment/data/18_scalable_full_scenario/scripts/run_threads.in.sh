@@ -4,7 +4,7 @@
 #$ -M weixu.zhu@ulb.be
 #$ -cwd
 
-USERNAME="wzhu"
+USERNAME=`whoami`
 TMPDIR=/tmp/$USERNAME/18_scalable_full_scenario
 #JOBDIR=$HOME/100drone
 #MNSDIR=$HOME/mns2.0/build/experiment/data/18_scalable_full_scenario
@@ -40,10 +40,11 @@ run() {
 	mkdir run$run_number
 	cd run$run_number
 	python3 $MNSDIR/run_demo.py $run_number novisual > $RUN_OUTPUT
-	mkdir $JOBDIR/random/run$run_number
+	mkdir -p $JOBDIR/random/run$run_number
 	mv * $JOBDIR/random/run$run_number
 	echo "$log_indent run $run_number finish" >> $THREADS_LOG_OUTPUT
 	cd ..
+	rm -rf run$run_number
 }
 
 runthread() {

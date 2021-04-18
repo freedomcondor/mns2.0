@@ -95,9 +95,9 @@ for data_set in data_sets :
 
 	# end of for run
 	# now we have data, data_lowerbound, data_error of this this data_set(data_set_i) ready [data_set_i][:][:]
-	#plt.plot(data[data_set_i])
+	plt.plot(data[data_set_i])
 	#plt.plot(data_lowerbound[data_set_i])
-	plt.plot(data_error[data_set_i])
+	#plt.plot(data_error[data_set_i])
 
 	# we have run_total_error of this data_set(data_set_i) ready [data_set_i][:]
 	#plt.boxplot(run_total_error[data_set_i], positions=[data_set_i/len(data_sets)])
