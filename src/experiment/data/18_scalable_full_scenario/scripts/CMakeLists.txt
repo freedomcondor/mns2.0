@@ -1,4 +1,5 @@
 configure_file( draw_line.in.py             draw_line.py)
 configure_file( run_single_thread.in.py     run_single_thread.py)
 configure_file( run_threads.in.py           run_threads.py)
+configure_file( run_threads.in.sh           run_threads.sh)
 configure_file( re_evaluate.in.py           re_evaluate.py)
