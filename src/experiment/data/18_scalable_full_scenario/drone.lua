@@ -9,7 +9,7 @@ logger = require("Logger")
 local api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
-logger.disable()
+logger.enable()
 
 -- datas ----------------
 local bt
@@ -394,10 +394,11 @@ end
 function step()
 	-- log time
 	if robot.id == "drone1" then
-		if math.fmod(api.stepCount, 100) == 0 then    api.stepCount == 0 then
-			os.execute(tostring(api.stepCount) .. "@DATECOMMAND@ +%T.%N > time_log")
-		else
-			os.execute(tostring(api.stepCount) .. "@DATECOMMAND@ +%T.%N >> time_log")
+		if api.stepCount == 0 then
+			os.execute("echo time log start > time_log")
+		end
+		if math.fmod(api.stepCount, 100) == 0 then
+			os.execute("echo " .. tostring(api.stepCount) .. " >> time_log && @DATECOMMAND@ \"+        %T.%N\" >> time_log")
 		end
 	end
 	-- prestep

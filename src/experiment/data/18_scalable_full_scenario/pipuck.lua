@@ -9,7 +9,7 @@ logger = require("Logger")
 local api = require("pipuckAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
-logger.disable()
+logger.enable()
 
 -- datas ----------------
 local bt
