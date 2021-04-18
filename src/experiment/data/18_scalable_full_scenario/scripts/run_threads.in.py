@@ -4,8 +4,8 @@ testfolder_build = "@CMAKE_CURRENT_BINARY_DIR@/.."
 testfolder_src = "@CMAKE_CURRENT_SOURCE_DIR@/.."
 
 base = 0
-threads = 10
-each = 1
+threads = 5
+each = 2
 for i in range(1, threads + 1) :
     os.system("mkdir thread" + str(i))
     command = "python " 

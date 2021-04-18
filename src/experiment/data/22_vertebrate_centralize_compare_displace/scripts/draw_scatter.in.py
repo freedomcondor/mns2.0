@@ -14,7 +14,7 @@ if len(sys.argv) >= 2 :
 jump_timestep = 250
 total_timestep = 1000
 
-recover_judge = 0.015
+recover_judge = 0.010
 
 time = []
 distance = []

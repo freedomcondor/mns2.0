@@ -12,7 +12,7 @@ else :
 	test_start = int(sys.argv[1])
 	test_end = int(sys.argv[2])
 
-total_length = 2600 * 3
+total_length = 2600 * 2
 
 for i in range(test_start, test_end + 1):
 	print("running test" + str(i))

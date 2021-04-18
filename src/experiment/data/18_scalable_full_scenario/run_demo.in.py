@@ -434,7 +434,7 @@ def generate_argos_file(TotalLength, RandomSeed, drone_pipuck_xml, obstacle_xml,
 		file.write(filedata)
 
 #------------------------------------------------------------------------
-Scale = 3
+Scale = 2
 
 TotalLength = Scale * 2600 / 5
 if Visual :

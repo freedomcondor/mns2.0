@@ -46,8 +46,8 @@ for data_set in data_sets :
 		run_i = run_i + 1
 	
 		# read from result.txt
-		#file = open(folder[0] + "/result.txt","r")
-		file = open(folder[0] + "/result_stretched.txt","r")
+		file = open(folder[0] + "/result.txt","r")
+		#file = open(folder[0] + "/result_stretched.txt","r")
 		step_i = -1
 		for line in file:
 			step_i = step_i + 1
@@ -68,8 +68,8 @@ for data_set in data_sets :
 		file.close()
 
 		# read from result_lowerbound.txt
-		#file = open(folder[0] + "/result_lowerbound.txt","r")
-		file = open(folder[0] + "/result_lowerbound_stretched.txt","r")
+		file = open(folder[0] + "/result_lowerbound.txt","r")
+		#file = open(folder[0] + "/result_lowerbound_stretched.txt","r")
 		step_i = -1
 		for line in file:
 			step_i = step_i + 1

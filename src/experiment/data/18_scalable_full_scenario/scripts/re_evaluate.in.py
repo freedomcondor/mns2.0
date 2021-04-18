@@ -22,7 +22,7 @@ total_length = 5 * 2600
 for i in range(test_start, test_end + 1):
 	print("evaluating test" + str(i))
 	os.system(testfolder_build + "/evaluator/main " + str(total_length) + " " + testfolder_src + "/" + data_set + "/run" + str(i) + "/")
-	#os.system("mv result.txt " + testfolder_src + "/" + data_set + "/run" + str(i) + "/result.txt")
-	#os.system("mv result_lowerbound.txt " + testfolder_src + "/" + data_set + "/run" + str(i) + "/result_lowerbound.txt")
-	os.system("mv result.txt " + testfolder_src + "/" + data_set + "/run" + str(i) + "/result_stretched.txt")
-	os.system("mv result_lowerbound.txt " + testfolder_src + "/" + data_set + "/run" + str(i) + "/result_lowerbound_stretched.txt")
+	os.system("mv result.txt " + testfolder_src + "/" + data_set + "/run" + str(i) + "/result.txt")
+	os.system("mv result_lowerbound.txt " + testfolder_src + "/" + data_set + "/run" + str(i) + "/result_lowerbound.txt")
+	#os.system("mv result.txt " + testfolder_src + "/" + data_set + "/run" + str(i) + "/result_stretched.txt")
+	#os.system("mv result_lowerbound.txt " + testfolder_src + "/" + data_set + "/run" + str(i) + "/result_lowerbound_stretched.txt")
