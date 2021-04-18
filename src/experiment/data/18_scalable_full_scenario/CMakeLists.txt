@@ -1,3 +1,9 @@
+IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set(DATECOMMAND "date")
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    set(DATECOMMAND "gdate")
+ENDIF()
+
 configure_file( vns_template.argos.in     
                 vns_template.argos)
 configure_file( drone.lua        drone.lua)

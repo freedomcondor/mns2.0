@@ -392,6 +392,14 @@ end
 
 --- step
 function step()
+	-- log time
+	if robot.id == "drone1" then
+		if math.fmod(api.stepCount, 100) == 0 then    api.stepCount == 0 then
+			os.execute(tostring(api.stepCount) .. "@DATECOMMAND@ +%T.%N > time_log")
+		else
+			os.execute(tostring(api.stepCount) .. "@DATECOMMAND@ +%T.%N >> time_log")
+		end
+	end
 	-- prestep
 	logger(robot.id, api.stepCount + 1, "-----------------------")
 	api.preStep()
