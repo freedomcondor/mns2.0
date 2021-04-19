@@ -22,17 +22,17 @@ target_link_libraries(vns_loop_functions
    ${SROCS_ENTITIES_LIBRARY})
 
 # Compile qtopengl user functions
-if(ARGOS_COMPILE_QTOPENGL)
+if(ARGOS_QTOPENGL_FOUND)
    add_library(builderbot_qtopengl_user_functions MODULE
       qtopengl_user_functions/builderbot_qtopengl_user_functions.h
       qtopengl_user_functions/builderbot_qtopengl_user_functions_widget.h
       qtopengl_user_functions/builderbot_qtopengl_user_functions.cpp
       qtopengl_user_functions/builderbot_qtopengl_user_functions_widget.cpp)
    target_link_libraries(builderbot_qtopengl_user_functions
-      ${ARGOS_QTOPENGL_LIBRARY}
+      ${ARGOS_QTOPENGL_LIBRARIES}
       ${SROCS_ENTITIES_LIBRARY}
       ${SROCS_BUILDERBOT_LIBRARY})
-endif(ARGOS_COMPILE_QTOPENGL)
+endif(ARGOS_QTOPENGL_FOUND)
 
 # Copy lua files
 file(COPY        ${CMAKE_SOURCE_DIR}/experiment/api
