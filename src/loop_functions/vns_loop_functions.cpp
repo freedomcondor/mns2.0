@@ -1,5 +1,8 @@
 #include "vns_loop_functions.h"
 
+#include <argos3/plugins/simulator/entities/radio_entity.h>
+#include <argos3/plugins/simulator/entities/radio_equipped_entity.h>
+
 #define RECORD 1
 
 namespace argos {
@@ -22,6 +25,15 @@ if (RECORD == 1) {
       /* create a vector of the pi-pucks */
       for(const TValueType& t_robot : GetSpace().GetEntitiesByType("pipuck")) {
          m_vecPiPucks.emplace_back(any_cast<CPiPuckEntity*>(t_robot.second));
+      }
+      // set wifi range
+      //for(CPiPuckEntity* pc_pipuck: m_vecPiPucks) {
+      for(SPiPuck& s_pipuck: m_vecPiPucks) {
+         s_pipuck.Entity->GetRadioEquippedEntity().GetRadio(0).SetRange(2.5);
+      }
+      //for(CDroneEntity* pc_drone: m_vecDrones) {
+      for(SDrone& s_drone: m_vecDrones) {
+         s_drone.Entity->GetRadioEquippedEntity().GetRadio(0).SetRange(2.5);
       }
 }
    }
