@@ -17,7 +17,7 @@ function Connector.reset(vns)
 	vns.connector.waitingRobots = {}
 	vns.connector.waitingParents = {}
 	vns.connector.seenRobots = {}
-	vns.connector.locker_count = 3
+	vns.connector.locker_count = vns.Parameters.connector_locker_count_reset
 	vns.connector.lastid = {}
 end
 
@@ -41,7 +41,7 @@ function Connector.recruit(vns, robotR)
 		robotTypeS = robotR.robotTypeS,
 	}
 
-	vns.connector.waitingRobots[robotR.idS].waiting_count = 3
+	vns.connector.waitingRobots[robotR.idS].waiting_count = vns.Parameters.connector_waiting_count
 end
 
 function Connector.newVnsID(vns, idN, lastidPeriod)
@@ -51,7 +51,6 @@ function Connector.newVnsID(vns, idN, lastidPeriod)
 end
 
 function Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
-	--vns.connector.lastid[vns.idS] = lastidPeriod or (vns.scale:totalNumber() + 2)
 	vns.connector.lastid[vns.idS] = lastidPeriod or (vns.depth + 2)
 	vns.connector.locker_count = vns.depth + 2
 
@@ -70,14 +69,14 @@ end
 
 function Connector.addChild(vns, robotR)
 	vns.childrenRT[robotR.idS] = robotR
-	vns.childrenRT[robotR.idS].unseen_count = 3
-	vns.childrenRT[robotR.idS].heartbeat_count = 3
+	vns.childrenRT[robotR.idS].unseen_count = vns.Parameters.connector_unseen_count
+	vns.childrenRT[robotR.idS].heartbeat_count = vns.Parameters.connector_heartbeat_count
 end
 
 function Connector.addParent(vns, robotR)
 	vns.parentR = robotR
-	vns.parentR.unseen_count = 3
-	vns.parentR.heartbeat_count = 5
+	vns.parentR.unseen_count = vns.Parameters.connector_unseen_count
+	vns.parentR.heartbeat_count = vns.Parameters.connector_heartbeat_count
 end
 
 function Connector.deleteChild(vns, idS)
@@ -114,7 +113,7 @@ function Connector.update(vns)
 		if vns.childrenRT[idS] ~= nil then
 			vns.childrenRT[idS].positionV3 = robotR.positionV3
 			vns.childrenRT[idS].orientationQ = robotR.orientationQ
-			vns.childrenRT[idS].unseen_count = 3
+			vns.childrenRT[idS].unseen_count = vns.Parameters.connector_unseen_count
 		end
 	end
 
@@ -122,18 +121,18 @@ function Connector.update(vns)
 	if vns.parentR ~= nil and vns.connector.seenRobots[vns.parentR.idS] ~= nil then
 		vns.parentR.positionV3 = vns.connector.seenRobots[vns.parentR.idS].positionV3
 		vns.parentR.orientationQ = vns.connector.seenRobots[vns.parentR.idS].orientationQ
-		vns.parentR.unseen_count = 3
+		vns.parentR.unseen_count = vns.Parameters.connector_unseen_count
 	end
 
 	-- check heartbeat
 	for idS, robotR in pairs(vns.childrenRT) do
 		for _, msgM in ipairs(vns.Msg.getAM(idS, "heartbeat")) do
-			robotR.heartbeat_count = 3
+			robotR.heartbeat_count = vns.Parameters.connector_heartbeat_count
 		end
 	end
 	if vns.parentR ~= nil then
 		for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "heartbeat")) do
-			vns.parentR.heartbeat_count = 3
+			vns.parentR.heartbeat_count = vns.Parameters.connector_heartbeat_count
 		end
 	end
 
@@ -262,6 +261,7 @@ function Connector.recruitAll(vns)
 end
 
 function Connector.recruitNear(vns)
+	-- only recruit robot that doesn't have a nearer robot in between
 	-- create a available robot list
 	local list = {}
 	for idS, robotR in pairs(vns.connector.seenRobots) do
@@ -323,9 +323,11 @@ function Connector.ackAll(vns, option)
 		    vns.connector.locker_count == 0 and
 		    vns.connector.lastid[msgM.dataT.idS] == nil
 		    and (option == nil or option.no_parent_ack ~= true or vns.parentR == nil)
+			-- no_parent_ack means a robot only ack when it doesn't have a parent
 		   )
 		   or
 		   msgM.fromS == vns.connector.greenLight
+		   -- greenLight comes from intersection detector
 		   --(vns.parentR == nil or
 			--vns.connector.lastid[msgM.dataT.idS] == nil
 		   --) 
@@ -353,18 +355,18 @@ function Connector.ackAll(vns, option)
 						vns.deleteParent(vns)
 					end
 					-- update vns id
-					--vns.idS = msgM.dataT.idS
-					--vns.idN = msgM.dataT.idN
+					-- vns.idS = msgM.dataT.idS
+					-- vns.idN = msgM.dataT.idN
 					Connector.updateVnsID(vns, msgM.dataT.idS, msgM.dataT.idN)
 					vns.addParent(vns, robotR)
 				else
-					vns.connector.waitingParents[msgM.fromS].waiting_count = 5
+					vns.connector.waitingParents[msgM.fromS].waiting_count = vns.Parameters.connector_waiting_parent_count
 				end
 			else
 				local positionV2 = msgM.dataT.positionV3
 				positionV2.z = 0
 				vns.connector.waitingParents[msgM.fromS] = {
-					waiting_count = 5,
+					waiting_count = vns.Parameters.connector_waiting_parent_count,
 					distance = positionV2:length(),
 					idS = msgM.fromS,
 				}
