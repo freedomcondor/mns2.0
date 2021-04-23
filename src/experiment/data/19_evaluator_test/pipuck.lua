@@ -38,8 +38,8 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
-		vns.create_vns_core_node_no_recruit(vns),
-		vns.Driver.create_driver_node_wait(vns),
+		vns.create_vns_core_node(vns, {connector_no_recruit = true}),
+		vns.Driver.create_driver_node(vns, {waiting = true}),
 	}}
 end
 

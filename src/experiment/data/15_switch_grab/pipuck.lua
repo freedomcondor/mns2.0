@@ -55,7 +55,7 @@ function reset()
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
 		vns.create_vns_core_node(vns),
-		vns.Driver.create_driver_node(vns),
+		vns.Driver.create_driver_node(vns, {waiting = true}),
 	}}
 end
 

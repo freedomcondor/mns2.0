@@ -73,7 +73,7 @@ function reset()
 		vns.create_vns_core_node(vns),
 		vns.CollectiveSensor.create_collectivesensor_node(vns),
 		create_head_navigate_node(vns),
-		vns.Driver.create_driver_node_wait(vns),
+		vns.Driver.create_driver_node(vns, {waiting = true}),
 	}}
 end
 

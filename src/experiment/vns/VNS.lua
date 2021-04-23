@@ -177,11 +177,19 @@ function VNS.create_preconnector_node(vns)
 	end
 end
 
-function VNS.create_vns_core_node(vns)
+function VNS.create_vns_core_node(vns, option)
+	-- option = {
+	--      connector_no_recruit = true or false or nil,
+	--      connector_no_parent_ack = true or false or nil,
+	-- }
+	if option == nil then option = {} end
 	return 
 	{type = "sequence", children = {
 		--vns.create_preconnector_node(vns),
-		vns.Connector.create_connector_node(vns),
+		vns.Connector.create_connector_node(vns, 
+			{	no_recruit = option.connector_no_recruit,
+				no_parent_ack = option.connector_no_parent_ack,
+			}),
 		vns.Assigner.create_assigner_node(vns),
 		vns.ScaleManager.create_scalemanager_node(vns),
 		vns.Allocator.create_allocator_node(vns),
@@ -194,46 +202,18 @@ function VNS.create_vns_core_node(vns)
 	}}
 end
 
-function VNS.create_vns_core_node_no_recruit(vns)
-	return 
-	{type = "sequence", children = {
-		--vns.create_preconnector_node(vns),
-		vns.Connector.create_connector_node_no_recruit(vns),
-		vns.Assigner.create_assigner_node(vns),
-		vns.ScaleManager.create_scalemanager_node(vns),
-		vns.Allocator.create_allocator_node(vns),
-		vns.IntersectionDetector.create_intersectiondetector_node(vns),
-		vns.Avoider.create_avoider_node(vns),
-		vns.Spreader.create_spreader_node(vns),
-		vns.BrainKeeper.create_brainkeeper_node(vns),
-		--vns.CollectiveSensor.create_collectivesensor_node(vns),
-		--vns.Driver.create_driver_node(vns),
-	}}
-end
-
-function VNS.create_vns_core_node_no_parent_ack(vns)
-	return 
-	{type = "sequence", children = {
-		--vns.create_preconnector_node(vns),
-		vns.Connector.create_connector_node_no_parent_ack(vns),
-		vns.Assigner.create_assigner_node(vns),
-		vns.ScaleManager.create_scalemanager_node(vns),
-		vns.Allocator.create_allocator_node(vns),
-		vns.IntersectionDetector.create_intersectiondetector_node(vns),
-		vns.Avoider.create_avoider_node(vns),
-		vns.Spreader.create_spreader_node(vns),
-		vns.BrainKeeper.create_brainkeeper_node(vns),
-		--vns.CollectiveSensor.create_collectivesensor_node(vns),
-		--vns.Driver.create_driver_node(vns),
-	}}
-end
-
-function VNS.create_vns_node(vns)
+function VNS.create_vns_node(vns, option)
+	-- option = {
+	--      connector_no_recruit = true or false or nil,
+	--      connector_no_parent_ack = true or false or nil,
+	--      driver_waiting
+	-- }
+	if option == nil then option = {} end
 	return { 
 		type = "sequence", children = {
 		vns.create_preconnector_node(vns),
-		vns.create_vns_core_node(vns),
-		vns.Driver.create_driver_node(vns),
+		vns.create_vns_core_node(vns, option),
+		vns.Driver.create_driver_node(vns, {waiting = driver_waiting}),
 	}}
 end
 

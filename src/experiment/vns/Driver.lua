@@ -46,6 +46,9 @@ function Driver.deleteParent(vns)
 end
 
 function Driver.step(vns, waiting)
+	-- waiting is a flag, true or false or nil,
+	--	   means whether robot stop moving when neighbour out of the safe zone
+
 	-- receive goal from parent
 	local transV3 = vector3()
 	local rotateV3 = vector3()
@@ -180,16 +183,13 @@ function Driver.step(vns, waiting)
 	end
 end
 
-function Driver.create_driver_node(vns)
+function Driver.create_driver_node(vns, option)
+	-- option = {
+	--      waiting = true or false or nil
+	-- }
+	if option == nil then option = {} end
 	return function()
-		Driver.step(vns)
-		return false, true
-	end
-end
-
-function Driver.create_driver_node_wait(vns)
-	return function()
-		Driver.step(vns, true)
+		Driver.step(vns, option.waiting)
 		return false, true
 	end
 end

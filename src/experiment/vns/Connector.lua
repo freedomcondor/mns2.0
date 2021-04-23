@@ -403,31 +403,21 @@ function Connector.ackAll(vns, option)
 end
 
 ------ behaviour tree ---------------------------------------
-function Connector.create_connector_node_no_parent_ack(vns)
+function Connector.create_connector_node(vns, option)
+	-- option = {
+	--     no_parent_ack = true or false or nil
+	--         -- means only ack when I don't have a parent
+	--	   no_recruit = true or false or nil
+	--         -- never recruit, for pipucks
+	-- }
+	if option == nil then option = {} end
 	return function()
 		Connector.step(vns)
-		Connector.ackAll(vns, {no_parent_ack = true})
-		Connector.recruitAll(vns)
+		Connector.ackAll(vns, {no_parent_ack = option.no_parent_ack})
+		if option.no_recruit ~= true then
+			Connector.recruitAll(vns)
+		end
 		--Connector.recruitNear(vns)
-		return false, true
-	end
-end
-
-function Connector.create_connector_node(vns)
-	return function()
-		Connector.step(vns)
-		Connector.ackAll(vns)
-		Connector.recruitAll(vns)
-		--Connector.recruitNear(vns)
-		return false, true
-	end
-end
-
-function Connector.create_connector_node_no_recruit(vns)
-	return function()
-		Connector.step(vns)
-		Connector.ackAll(vns)
-		--Connector.recruitAll(vns)
 		return false, true
 	end
 end

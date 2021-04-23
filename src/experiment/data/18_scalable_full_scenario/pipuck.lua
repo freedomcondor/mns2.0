@@ -88,9 +88,9 @@ function reset()
 	{ type = "sequence", children = {
 		--create_failure_node(vns),
 		vns.create_preconnector_node(vns),
-		vns.create_vns_core_node_no_recruit(vns),
+		vns.create_vns_core_node(vns, {connector_no_recruit = true}),
 		create_brain_chase_node(vns),
-		vns.Driver.create_driver_node_wait(vns),
+		vns.Driver.create_driver_node(vns, {waiting = true}),
 	}}
 end
 

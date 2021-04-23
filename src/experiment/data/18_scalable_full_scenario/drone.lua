@@ -386,7 +386,7 @@ function reset()
 		create_gap_detection_node(vns),
 		create_head_navigate_node(vns),
 		create_brain_chase_node(vns),
-		vns.Driver.create_driver_node_wait(vns),
+		vns.Driver.create_driver_node(vns, {waiting = true}),
 	}}
 end
 
