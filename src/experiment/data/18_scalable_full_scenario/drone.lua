@@ -9,7 +9,9 @@ logger = require("Logger")
 local api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
-logger.enable()
+logger.disable()
+--logger.enable()
+--logger.disable('Allocator')
 
 -- datas ----------------
 local bt

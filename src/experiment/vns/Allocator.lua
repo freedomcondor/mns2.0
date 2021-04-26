@@ -1,5 +1,6 @@
 -- Allocator -----------------------------------------
 ------------------------------------------------------
+logger.register("Allocator")
 --local Arrangement = require("Arrangement")
 local MinCostFlowNetwork = require("MinCostFlowNetwork")
 local DeepCopy = require("DeepCopy")
@@ -393,17 +394,29 @@ function Allocator.multi_branch_allocate(vns, branches)
 	---[[
 	logger("multi-branch sourceList")
 	for i, source in ipairs(sourceList) do
-		logger(i)
-		logger(source, 1)
-		logger("\tid = ", source.index.idS or source.index.idN)
+		logger(i, source.index.idS or source.index.idN, source.index.robotTypeS)
 		logger("\tposition = ", source.index.positionV3)
+		logger("\tnumber")
+		logger(source.number, 2)
+		logger("\tto")
+		for j, to in ipairs(source.to) do
+			logger("\t", j, targetList[to.target].index.idS or targetList[to.target].index.idN)
+			logger("\t\t\tnumber")
+			logger(to.number, 4)
+		end
 	end
 	logger("multi-branch targetList")
 	for i, target in ipairs(targetList) do
-		logger(i)
-		logger(target, 1) 
-		logger("\tid = ", target.index.idS or target.index.idN)
+		logger(i, target.index.idS or target.index.idN, target.index.robotTypeS)
 		logger("\tposition = ", target.index.positionV3)
+		logger("\tnumber")
+		logger(target.number, 2)
+		logger("\tfrom")
+		for j, from in ipairs(target.from) do
+			logger("\t", j, sourceList[from.source].index.idS or sourceList[from.source].index.idN)
+			logger("\t\t\tnumber")
+			logger(from.number, 4)
+		end
 	end
 	--]]
 
@@ -606,17 +619,29 @@ function Allocator.allocate(vns, branches)
 	---[[
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
-		logger(i)
-		logger(source, 1)
-		logger("\tid = ", source.index.idS or source.index.idN)
+		logger(i, source.index.idS or source.index.idN, source.index.robotTypeS)
 		logger("\tposition = ", source.index.positionV3)
+		logger("\tnumber")
+		logger(source.number, 2)
+		logger("\tto")
+		for j, to in ipairs(source.to) do
+			logger("\t", j, targetList[to.target].index.idS or targetList[to.target].index.idN)
+			logger("\t\t\tnumber")
+			logger(to.number, 4)
+		end
 	end
 	logger("targetList")
 	for i, target in ipairs(targetList) do
-		logger(i)
-		logger(target, 1)
-		logger("\tid = ", target.index.idS or target.index.idN)
+		logger(i, target.index.idS or target.index.idN, target.index.robotTypeS)
 		logger("\tposition = ", target.index.positionV3)
+		logger("\tnumber")
+		logger(target.number, 2)
+		logger("\tfrom")
+		for j, from in ipairs(target.from) do
+			logger("\t", j, sourceList[from.source].index.idS or sourceList[from.source].index.idN)
+			logger("\t\t\tnumber")
+			logger(from.number, 4)
+		end
 	end
 	--]]
 
