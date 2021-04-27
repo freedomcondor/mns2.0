@@ -15,12 +15,35 @@ function api.actuator.setNewLocation(locationV3, rad)
 	api.actuator.newRad = rad
 end
 
+---- Virtual Frame and tilt ---------------------
+api.virtualFrame.logicOrientationQ = quaternion()
+-- overwrite rotateInspeed to change logicOrientation
+function api.virtualFrame.rotateInSpeed(speedV3)
+	-- speedV3 in real frame
+	local axis = vector3(speedV3):normalize()
+	if speedV3:length() == 0 then axis = vector3(1,0,0) end
+	api.virtualFrame.logicOrientationQ =
+		quaternion(speedV3:length() * api.time.period,
+				   axis
+		) * api.virtualFrame.logicOrientationQ
+end
+function api.droneTiltVirtualFrame()
+	local tilt = (quaternion(robot.flight_system.orientation.x, vector3(1,0,0)) *
+	              quaternion(robot.flight_system.orientation.y, vector3(0,1,0))):inverse()
+	api.virtualFrame.tiltQ = tilt
+	api.virtualFrame.orientationQ = tilt * api.virtualFrame.logicOrientationQ
+end
+
 ---- Step Function ---------------------
 function api.init()
 	api.droneEnableCameras()
 end
 
---function api.preStep() api.preStep() end
+api.commonPreStep = api.preStep
+function api.preStep()
+	api.droneTiltVirtualFrame()
+	api.commonPreStep()
+end
 
 api.commonPostStep = api.postStep
 function api.postStep()
@@ -111,9 +134,6 @@ end
 function api.droneDetectTags()
 	-- This function returns a tags table, in real robot coordinate frame
 	api.droneDetectLeds()
-	-- when drone is tilting, we assuming the drone is still levelint out
-	local drone_offset = (quaternion(robot.flight_system.orientation.x, vector3(1,0,0)) *
-	                     quaternion(robot.flight_system.orientation.y, vector3(0,1,0))):inverse()
 
 	-- add tags 
 	tags = {}
@@ -123,10 +143,9 @@ function api.droneDetectTags()
 			  (
 			    camera.transform.position + 
 			    vector3(newTag.position):rotate(camera.transform.orientation)
-			  ):rotate(drone_offset)
+			  )
 
 			local orientationQ = 
-				drone_offset * 
 				camera.transform.orientation * 
 				newTag.orientation
 

@@ -30,9 +30,14 @@ end
 
 function api.debug.showVirtualFrame()
 	api.debug.drawArrow(
-		"green", 
-		vector3(0,0,0.1), 
-		vector3(0.2,0,0.1):rotate(api.virtualFrame.orientationQ)
+		"green",
+		vector3(-0.1, 0, 0.1):rotate(api.virtualFrame.orientationQ),
+		vector3( 0.2, 0, 0.1):rotate(api.virtualFrame.orientationQ)
+	)
+	api.debug.drawArrow(
+		"green",
+		vector3(0, -0.1, 0.1):rotate(api.virtualFrame.orientationQ),
+		vector3(0,  0.2, 0.1):rotate(api.virtualFrame.orientationQ)
 	)
 end
 
