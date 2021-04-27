@@ -35,7 +35,7 @@ return
 		},
 		-- left wing
 		{	robotTypeS = "drone",
-			positionV3 = vector3(0, -2*dis, 0),
+			positionV3 = vector3(-dis, -2*dis, 0),
 			orientationQ = quaternion(math.pi/2, vector3(0,0,1)),
 			children = {
 			{	robotTypeS = "pipuck",
@@ -49,7 +49,7 @@ return
 		}},
 		-- right wing
 		{	robotTypeS = "drone",
-			positionV3 = vector3(0, 2*dis, 0),
+			positionV3 = vector3(-dis, 2*dis, 0),
 			orientationQ = quaternion(-math.pi/2, vector3(0,0,1)),
 			children = {
 			{	robotTypeS = "pipuck",

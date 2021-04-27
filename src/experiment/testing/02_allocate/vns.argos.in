@@ -28,7 +28,7 @@
         <pipuck_rangefinders implementation="default" show_rays="false" />
         <wifi implementation="default" show_rays="false" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua"/>
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua" driver_default_speed="0.05"/>
     </lua_controller>
 
      <!-- Drone Controller -->
@@ -46,7 +46,7 @@
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" dangerzone_drone="0.7"/>
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" dangerzone_drone="0.7" driver_default_speed="0.05"/>
     </lua_controller>
   </controllers>
 
@@ -159,15 +159,17 @@
                       label="builderbot_qtopengl_user_functions" >
       </user_functions>
       <camera>
-        <placement idx="0" position="  0,  0, 20"  look_at="0,0,10"   lens_focal_length="50" up="1,0,0"/>
-        <placement idx="1" position="  0,-15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-        <placement idx="2" position=" 15,-15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
-        <placement idx="3" position=" 15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-        <placement idx="4" position=" 15, 15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
-        <placement idx="5" position="  0, 15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-        <placement idx="6" position="-15, 15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
-        <placement idx="7" position="-15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
-        <placement idx="8" position="-15,-15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+        <placements>
+          <placement index="0" position="  0,  0, 20"  look_at="0,0,10"   lens_focal_length="50" up="1,0,0"/>
+          <placement index="1" position="  0,-15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="2" position=" 15,-15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+          <placement index="3" position=" 15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="4" position=" 15, 15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+          <placement index="5" position="  0, 15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="6" position="-15, 15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+          <placement index="7" position="-15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="8" position="-15,-15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+        </placements>
       </camera>
     </qt-opengl>
   </visualization>

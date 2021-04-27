@@ -33,37 +33,17 @@ function init()
 	tabletest.aaa = "aaa"
 	for i, v in pairs(tabletest) do print(i, v) end
 	--]]
+
 	-- test vector3
 	--[[
 	logger("vector3")
 	logger(getmetatable(vector3()))
 	--]]
 
-	-- Deepcopy test
-	local a_deep = {index1 = 1, index2 = vector3(1,1,1)}
-	local b_deep = DeepCopy(a_deep)
-	b_deep.index2 = vector3(b_deep.index2):rotate(quaternion(math.pi/2, vector3(0,0,1)))
-	logger("a_deep")
-	logger(a_deep)
-	logger("b_deep")
-	logger(b_deep)
-end
-
-function step()
-	logger(robot.id, "-----------------------")
-	api.preStep()
-
-	--api.move(vector3(0.01, 0, 0), vector3(0,0,math.pi/100))
-	api.move(vector3(0.01, 0, 0), vector3(0,0,0))
-
-	bt()
-	api.debug.drawArrow("blue", vector3(), vector3(1,0,0))
-
-	api.droneMaintainHeight(1.5)
-	api.postStep()
-
-	-- debug
 	-- quaternion test
+	logger("quaternion test")
+	logger(getmetatable(quaternion()))
+	--[[
 	vec = vector3(1, 0, 0)
 	base = quaternion(math.pi/2, vector3(0,0,1))
 	basevec = vector3(vec):rotate(base)
@@ -72,7 +52,40 @@ function step()
 	sub = sub * base
 	subvec = vector3(vec):rotate(sub)
 	api.debug.drawArrow("green", vector3(0,0,0.1), subvec+vector3(0,0,0.1))
+	--]]
 
+	-- Deepcopy test
+	--[[
+	local a_deep = {index1 = 1, index2 = vector3(1,1,1)}
+	local b_deep = DeepCopy(a_deep)
+	b_deep.index2 = vector3(b_deep.index2):rotate(quaternion(math.pi/2, vector3(0,0,1)))
+	logger("a_deep")
+	logger(a_deep)
+	logger("b_deep")
+	logger(b_deep)
+	--]]
+end
+
+function step()
+	logger(robot.id, "-----------------------")
+	api.preStep()
+
+	--api.move(vector3(0.01, 0, 0), vector3(0,0,math.pi/100))
+	if math.fmod(api.stepCount, 10) < 5 then
+		api.move(vector3(0.05, 0.05, 0), vector3(0,0,0.01))
+	else
+		api.move(vector3(-0.05, -0.05, 0), vector3(0,0,0.01))
+	end
+
+	bt()
+
+	api.droneMaintainHeight(1.5)
+	api.postStep()
+
+	-- debug
+	for i, tag in ipairs(api.droneDetectTags()) do
+		api.debug.drawArrow("blue", vector3(), tag.positionV3)
+	end
 end
 
 function reset()
