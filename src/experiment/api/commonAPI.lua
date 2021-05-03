@@ -90,8 +90,10 @@ function api.debug.showObstacles(vns)
 end
 
 ---- Step Function ----------------------------
+-- 5 step functions :
+-- init, reset, destroy, preStep, postStep
 function api.init()
-	api.reset()
+	--api.reset()
 end
 
 function api.reset()
@@ -101,6 +103,9 @@ function api.reset()
 		orientationQ = quaternion(),
 	}
 	--]]
+end
+
+function api.destroy()
 end
 
 function api.preStep()

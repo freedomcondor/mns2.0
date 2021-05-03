@@ -5,11 +5,16 @@
 local api = require("commonAPI")
 
 ---- actuator --------------------------
--- idealy, I would like to use robot.flight_system.set_targets only once per step
+-- Idealy, I would like to use robot.flight_system.set_targets only once per step
 -- newPosition and newRad are recorded, and enforced at last in dronePostStep
 api.actuator = {}
-api.actuator.newPosition = robot.flight_system.position
-api.actuator.newRad = robot.flight_system.orientation.z
+if robot.flight_system ~= nil then
+	api.actuator.newPosition = robot.flight_system.position
+	api.actuator.newRad = robot.flight_system.orientation.z
+else
+	api.actuator.newPosition = vector3()
+	api.actuator.newRad = 0
+end
 function api.actuator.setNewLocation(locationV3, rad)
 	api.actuator.newPosition = locationV3
 	api.actuator.newRad = rad
@@ -28,31 +33,50 @@ function api.virtualFrame.rotateInSpeed(speedV3)
 		) * api.virtualFrame.logicOrientationQ
 end
 function api.droneTiltVirtualFrame()
-	local tilt = (quaternion(robot.flight_system.orientation.x, vector3(1,0,0)) *
-	              quaternion(robot.flight_system.orientation.y, vector3(0,1,0))):inverse()
+	local tilt
+	if robot.flight_system ~= nil then
+		tilt = (quaternion(robot.flight_system.orientation.x, vector3(1,0,0)) *
+		        quaternion(robot.flight_system.orientation.y, vector3(0,1,0))):inverse()
+	else
+		tilt = quaternion()
+	end
 	api.virtualFrame.tiltQ = tilt
 	api.virtualFrame.orientationQ = tilt * api.virtualFrame.logicOrientationQ
 end
 
----- Step Function ---------------------
+---- overload Step Function ---------------------
+-- 5 step functions :
+-- init, reset, destroy, preStep, postStep
+api.commonInit = api.init
 function api.init()
+	api.commonInit()
 	api.droneEnableCameras()
+end
+
+api.commonDestroy = api.destroy
+function api.destroy()
+	api.droneDisableCameras()
+	api.commonDestroy()
 end
 
 api.commonPreStep = api.preStep
 function api.preStep()
-	api.droneTiltVirtualFrame()
 	api.commonPreStep()
+	api.droneTiltVirtualFrame()
 end
 
 api.commonPostStep = api.postStep
 function api.postStep()
-	robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
+	if robot.flight_system ~= nil then
+		robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
+	end
 	api.commonPostStep()
 end
 
 ---- Height control --------------------
 function api.droneCheckHeight(z)
+	if robot.flight_system == nil then return true end
+
 	if robot.flight_system.position.z - z > 0.01 or 
 	   robot.flight_system.position.z - z < -0.01 or
 	   api.actuator.newPosition.z - z > 0.01 or
@@ -76,6 +100,7 @@ end
 ---- speed control --------------------
 -- everything in robot hardware's coordinate frame
 function api.droneSetSpeed(x, y, z, th)
+	if robot.flight_system == nil then return end
 	-- x, y, z in m/s, x front, z up, y left
 	-- th in rad/s, counter-clockwise positive
 	local rad = robot.flight_system.orientation.z
