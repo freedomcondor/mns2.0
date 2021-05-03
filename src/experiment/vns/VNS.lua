@@ -213,7 +213,7 @@ function VNS.create_vns_node(vns, option)
 		type = "sequence", children = {
 		vns.create_preconnector_node(vns),
 		vns.create_vns_core_node(vns, option),
-		vns.Driver.create_driver_node(vns, {waiting = driver_waiting}),
+		vns.Driver.create_driver_node(vns, {waiting = option.driver_waiting}),
 	}}
 end
 
