@@ -172,7 +172,7 @@ function api.droneDetectTags()
 
 			local orientationQ = 
 				camera.transform.orientation * 
-				newTag.orientation
+				newTag.orientation * quaternion(math.pi, vector3(1,0,0))
 
 			-- check existed
 			local flag = 0
