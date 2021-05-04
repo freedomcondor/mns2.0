@@ -22,6 +22,7 @@ function api.debug.drawArrow(color, begin, finish)
 end
 
 function api.debug.drawRing(color, middle, radius)
+	if robot.debug == nil then return end
 	robot.debug.draw("ring(" .. color .. ")(" .. 
 		tostring(middle) .. ")(" ..
 		tostring(radius) .. ")"
