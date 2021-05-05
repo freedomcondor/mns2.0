@@ -42,7 +42,6 @@ function api.debug.showVirtualFrame()
 	)
 end
 
---[[ probabaly won't use
 function api.debug.showEstimateLocation()
 	api.debug.drawArrow(
 		"red", 
@@ -52,7 +51,6 @@ function api.debug.showEstimateLocation()
 		vector3(0,0,0.1)
 	)
 end
---]]
 
 function api.debug.showParent(vns)
 	if vns.parentR ~= nil then
@@ -118,13 +116,12 @@ function api.postStep()
 	api.debug.showVirtualFrame()
 end
 
---[[ probably won't use
 ---- Location Estimate ------------------------
+	-- estimates the location and orientation of the next step relative to current step
 api.estimateLocation = {
 	positionV3 = vector3(),
 	orientationQ = quaternion(),
 }
---]]
 
 ---- Virtual Coordinate Frame -----------------
 -- instead of turn the real robot, we turn the virtual coordinate frame, 
@@ -166,16 +163,12 @@ function api.move(transV3, rotateV3)
 	api.setSpeed(transRealV3.x, transRealV3.y, transRealV3.z, 0)
 	-- rotate virtual frame
 	api.virtualFrame.rotateInSpeed(rotateRealV3)
-	--[[ probably won't use
-	-- accumulate estimate location
-	api.estimateLocation.positionV3 = 
-		api.estimateLocation.positionV3 + transRealV3 * api.time.period
-	local axis = vector3(rotateRealV3):normalize()
-	if rotateRealV3:length() == 0 then axis = vector3(0,0,1) end
+	-- estimate location of the new step
+	api.estimateLocation.positionV3 = transV3 * api.time.period
+	local axis = vector3(rotateV3):normalize()
+	if rotateV3:length() == 0 then axis = vector3(0,0,1) end
 	api.estimateLocation.orientationQ = 
-		quaternion(rotateRealV3:length() * api.time.period, axis) *
-		api.estimateLocation.orientationQ
-	--]]
+		quaternion(rotateV3:length() * api.time.period, axis)
 end
 
 ------------------------------------------------------

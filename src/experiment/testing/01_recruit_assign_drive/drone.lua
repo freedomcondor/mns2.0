@@ -35,6 +35,9 @@ function reset()
 			vns.ScaleManager.create_scalemanager_node(vns),
 			vns.Driver.create_driver_node(vns),
 		}}
+
+	vns.goal.positionV3 = vector3(1,0,0)
+	vns.goal.orientationQ = quaternion(math.pi/2, vector3(0,0,1))
 end
 
 --- step

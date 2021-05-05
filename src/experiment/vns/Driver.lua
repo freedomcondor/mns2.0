@@ -25,9 +25,10 @@ function Driver.addChild(vns, robotR)
 end
 
 function Driver.preStep(vns)
-	-- TODO goal positionV3 minus estimate distance
-	--vns.goal.positionV3 = nil
-	--vns.goal.orientationQ = nil
+	-- reverse Pos and Ori are old location relative to new location
+	local inverseOri = quaternion(vns.api.estimateLocation.orientationQ):inverse()
+	vns.goal.positionV3 = (vns.goal.positionV3 - vns.api.estimateLocation.positionV3):rotate(inverseOri)
+	vns.goal.orientationQ = vns.goal.orientationQ * inverseOri
 	vns.goal.transV3 = vector3()
 	vns.goal.rotateV3 = vector3()
 end
