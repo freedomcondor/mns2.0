@@ -47,6 +47,7 @@ function step()
 	-- step
 	-- set children goal point to 0.5m to the back
 	for idS, childR in pairs(vns.childrenRT) do
+		childR.goal = {}
 		childR.goal.positionV3 = vector3(-0.5,0,0)
 		childR.goal.orientationQ = quaternion(0, vector3(0,0,1))
 	end

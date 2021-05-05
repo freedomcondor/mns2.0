@@ -4,97 +4,83 @@ local Driver = {}
 
 function Driver.create(vns)
 	vns.goal = {
-		positionV3 = nil,
-		orientationQ = nil,
+		positionV3 = vector3(),
+		orientationQ = quaternion(),
 		transV3 = vector3(),
 		rotateV3 = vector3(),
 	}
 end
 
 function Driver.addChild(vns, robotR)
-	-- each child has a goal position/orientation for destiny
-	--            and a goal speed trans and rotate for obstacle avoidance
+	-- childR.goal is optional, default nil
+	-- only effective when mannualy set
+	--[[
 	robotR.goal = {
 		positionV3 = robotR.positionV3,	
 		orientationQ = robotR.orientationQ,
-		transV3 = vector3(),
-		rotateV3 = vector3(),
+		--transV3 = vector3(),
+		--rotateV3 = vector3(),
 	}
+	--]]
 end
 
 function Driver.preStep(vns)
-	vns.goal.positionV3 = nil
-	vns.goal.orientationQ = nil
+	-- TODO goal positionV3 minus estimate distance
+	--vns.goal.positionV3 = nil
+	--vns.goal.orientationQ = nil
 	vns.goal.transV3 = vector3()
 	vns.goal.rotateV3 = vector3()
-
-	for idS, childR in pairs(vns.childrenRT) do
-		childR.goal.positionV3 = childR.positionV3
-		childR.goal.orientationQ = childR.orientationQ
-		childR.goal.transV3 = vector3()
-		childR.goal.rotateV3 = vector3()
-	end
 end
 
 function Driver.deleteParent(vns)
-	vns.goal = {
-		positionV3 = nil,
-		orientationQ = nil,
-		transV3 = vector3(),
-		rotateV3 = vector3(),
-	}
+	vns.goal.positionV3= vector3()
+	vns.goal.orientationQ = quaternion()
+	vns.goal.transV3 = vector3()
+	vns.goal.rotateV3 = vector3()
 end
 
 function Driver.step(vns, waiting)
 	-- waiting is a flag, true or false or nil,
 	--	   means whether robot stop moving when neighbour out of the safe zone
 
-	-- receive goal from parent
-	local transV3 = vector3()
-	local rotateV3 = vector3()
+	-- receive goal from parent to overwrite vns.goal.position and orientation
 	if vns.parentR ~= nil then
 		for _, msgM in pairs(vns.Msg.getAM(vns.parentR.idS, "drive")) do
-			local receivedPositionV3 = vns.parentR.positionV3 +
+			vns.goal.positionV3 = vns.parentR.positionV3 +
 				vector3(msgM.dataT.positionV3):rotate(vns.parentR.orientationQ)
-			local receivedOrientationQ = vns.parentR.orientationQ * msgM.dataT.orientationQ
-			local receivedTransV3 = vector3(msgM.dataT.transV3):rotate(vns.parentR.orientationQ)
-			local receivedRotateV3 = vector3(msgM.dataT.rotateV3):rotate(vns.parentR.orientationQ)
-
-			if vns.goal.positionV3 ~= nil then receivedPositionV3 = vns.goal.positionV3 end
-			if vns.goal.orientationQ ~= nil then receivedOrientationQ = vns.goal.orientationQ end
-
-			-- calc speed
-			-- the speed to go to goal point (received position)
-			local goalPointTransV3, goalPointRotateV3
-
-			local speed = vns.Parameters.driver_default_speed
-			local threshold = vns.Parameters.driver_slowdown_zone
-			local reach_threshold = vns.Parameters.driver_stop_zone
-			local rotate_speed_scalar = vns.Parameters.driver_default_rotate_scalar
-			local dV3 = vector3(receivedPositionV3)
-			dV3.z = 0
-			local d = dV3:length()
-			if d > threshold then 
-				goalPointTransV3 = dV3:normalize() * speed
-			elseif d < reach_threshold then
-				goalPointTransV3 = vector3()
-			else
-				--goalPointTransV3 = dV3:normalize() * speed * math.sqrt(d / threshold)
-				goalPointTransV3 = dV3:normalize() * speed * (d / threshold)
-			end
-
-			local rotateQ = receivedOrientationQ
-			local angle, axis = rotateQ:toangleaxis()
-			if angle ~= angle then angle = 0 end -- sometimes toangleaxis returns nan
-
-			if angle > math.pi then angle = angle - math.pi * 2 end
-
-			local goalPointRotateV3 = axis * angle * rotate_speed_scalar
-
-			transV3 = goalPointTransV3 + receivedTransV3 
-			rotateV3 = goalPointRotateV3 + receivedRotateV3 
+			vns.goal.orientationQ = vns.parentR.orientationQ * msgM.dataT.orientationQ
 		end
 	end
+
+	-- calculate transV3 and rotateV3 from goal.positionV3 and orientation
+	local transV3 = vector3()
+	local rotateV3 = vector3()
+
+	-- read parameters
+	local speed = vns.Parameters.driver_default_speed
+	local threshold = vns.Parameters.driver_slowdown_zone
+	local reach_threshold = vns.Parameters.driver_stop_zone
+	local rotate_speed_scalar = vns.Parameters.driver_default_rotate_scalar
+
+	-- calc transV3
+	local dV3 = vector3(vns.goal.positionV3)
+	dV3.z = 0
+	local d = dV3:length()
+	if d > threshold then
+		transV3 = dV3:normalize() * speed
+	elseif d < reach_threshold then
+		transV3 = vector3()
+	else
+		transV3 = dV3:normalize() * speed * (d / threshold)
+	end
+
+	-- calc rotateV3
+	local angle, axis = vns.goal.orientationQ:toangleaxis()
+	if angle ~= angle then angle = 0 end -- sometimes toangleaxis returns nan
+
+	if angle > math.pi then angle = angle - math.pi * 2 end
+
+	local rotateV3 = axis * angle * rotate_speed_scalar
 
 	-- respond to goal.transV3 from avoider and spreader
 	transV3 = transV3 + vns.goal.transV3
@@ -132,6 +118,7 @@ function Driver.step(vns, waiting)
 			end
 		end
 
+		-- TODO: not leave children too
 		-- check children
 		for idS, robotR in pairs(vns.childrenRT) do
 			if vns.robotTypeS == "drone" and robotR.robotTypeS == "drone" then
@@ -155,31 +142,17 @@ function Driver.step(vns, waiting)
 		end
 	end
 
-
 	Driver.move(transV3, rotateV3)
 
 	-- send drive to children
-	for _, robotR in pairs(vns.childrenRT) do
-		if robotR.trajectory ~= nil then
-			-- TODO trajectory
-			child_transV3 = vector3()
-			child_rotateV3 = vector3()
-			child_positionV3 = vector3()
-			child_orientationQ = quaternion()
-		else 
-			child_positionV3 = robotR.goal.positionV3
-			child_orientationQ = robotR.goal.orientationQ
-			child_transV3 = robotR.goal.transV3
-			child_rotateV3 = robotR.goal.rotateV3
+	for _, childR in pairs(vns.childrenRT) do
+		if childR.goal ~= nil then
+			vns.Msg.send(childR.idS, "drive",
+			{
+				positionV3 = vns.api.virtualFrame.V3_VtoR(childR.goal.positionV3),
+				orientationQ = vns.api.virtualFrame.Q_VtoR(childR.goal.orientationQ),
+			})
 		end
-
-		vns.Msg.send(robotR.idS, "drive",
-		{
-			transV3 = vns.api.virtualFrame.V3_VtoR(child_transV3),
-			rotateV3 = vns.api.virtualFrame.V3_VtoR(child_rotateV3),
-			positionV3 = vns.api.virtualFrame.V3_VtoR(child_positionV3),
-			orientationQ = vns.api.virtualFrame.Q_VtoR(child_orientationQ),
-		})
 	end
 end
 
