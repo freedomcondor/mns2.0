@@ -13,6 +13,7 @@ local Allocator = {}
 --	vns.allocator.target = {positionV3, orientationQ, robotTypeS, children}
 --	vns.allocator.gene
 --	vns.allocator.gene_index
+--	vns.childrenRT[xx].allocator.match
 --]]
 
 function Allocator.create(vns)
@@ -45,11 +46,12 @@ function Allocator.reset(vns)
 	}
 end
 
-function Allocator.addChild(vns)
+function Allocator.addChild(vns, robotR)
+	robotR.allocator = {match = nil}
 end
 
-function Allocator.deleteChild(vns)
-end
+--function Allocator.deleteChild(vns)
+--end
 
 function Allocator.addParent(vns)
 	vns.mode_switch = "allocate"
@@ -103,8 +105,11 @@ end
 
 function Allocator.preStep(vns)
 	for idS, childR in pairs(vns.childrenRT) do
-		childR.match = nil
+		childR.allocator.match = nil
 	end
+	local inverseOri = quaternion(vns.api.estimateLocation.orientationQ):inverse()
+	vns.allocator.parentGoal.positionV3 = (vns.allocator.parentGoal.positionV3 - vns.api.estimateLocation.positionV3):rotate(inverseOri)
+	vns.allocator.parentGoal.orientationQ = vns.allocator.parentGoal.orientationQ * inverseOri
 end
 
 function Allocator.sendStationary(vns)
@@ -164,7 +169,7 @@ function Allocator.step(vns)
 	end
 
 	-- if I just handovered a child to parent, then I will receive an outdated allocate command, ignore this cmd
-	if vns.parentR ~= nil and vns.parentR.scale_assign_offset:totalNumber() ~= 0 then
+	if vns.parentR ~= nil and vns.parentR.assigner.scale_assign_offset:totalNumber() ~= 0 then
 		for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "branches")) do
 			msgM.ignore = true
 		end
@@ -278,7 +283,7 @@ function Allocator.step(vns)
 		local myValue = Allocator.calcBaseValue(vns.allocator.parentGoal.positionV3, vector3(), vns.goal.positionV3)
 		--local myValue = Allocator.calcBaseValue(vns.parentR.positionV3, vector3(), vns.goal.positionV3)
 		for idS, robotR in pairs(vns.childrenRT) do
-			if robotR.match == nil then
+			if robotR.allocator.match == nil then
 				local value = Allocator.calcBaseValue(vns.allocator.parentGoal.positionV3, robotR.positionV3, vns.goal.positionV3)
 				--local value = Allocator.calcBaseValue(vns.parentR.positionV3, robotR.positionV3, vns.goal.positionV3)
 				if robotR.robotTypeS == vns.robotTypeS and value < myValue then
@@ -294,7 +299,7 @@ function Allocator.step(vns)
 					if second_level ~= true then
 						vns.Assigner.assign(vns, idS, vns.parentR.idS)	
 					end
-					robotR.match = true
+					robotR.allocator.match = send_branches
 				end
 			end
 		end
@@ -360,7 +365,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 	-- create sources from children
 	for idS, robotR in pairs(vns.childrenRT) do
 		sourceList[#sourceList + 1] = {
-			number = vns.ScaleManager.Scale:new(robotR.scale),
+			number = vns.ScaleManager.Scale:new(robotR.scalemanager.scale),
 			index = robotR,
 		}
 	end
@@ -473,7 +478,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 			else
 				vns.Assigner.assign(vns, sourceChild.idS, nil)	
 			end
-			sourceChild.match = true
+			sourceChild.allocator.match = send_branches
 		end
 	end
 
@@ -516,7 +521,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 			end
 
 			-- mark
-			source_child.match = true
+			source_child.allocator.match = send_branches
 		end end
 
 		-- assign
@@ -552,12 +557,12 @@ function Allocator.allocate(vns, branches)
 	local sourceList = {}
 	local sourceSum = vns.ScaleManager.Scale:new()
 	for idS, robotR in pairs(vns.childrenRT) do
-		if robotR.match == nil then
+		if robotR.allocator.match == nil then
 			sourceList[#sourceList + 1] = {
-				number = vns.ScaleManager.Scale:new(robotR.scale),
+				number = vns.ScaleManager.Scale:new(robotR.scalemanager.scale),
 				index = robotR,
 			}
-			sourceSum = sourceSum + robotR.scale
+			sourceSum = sourceSum + robotR.scalemanager.scale
 		end
 	end
 
@@ -663,7 +668,7 @@ function Allocator.allocate(vns, branches)
 
 			vns.Msg.send(sourceChild.idS, "branches", {branches = send_branches})
 			vns.Assigner.assign(vns, sourceChild.idS, nil)	
-			sourceChild.match = true
+			sourceChild.allocator.match = send_branches
 		end
 	end
 
@@ -699,7 +704,7 @@ function Allocator.allocate(vns, branches)
 			end
 
 			-- mark
-			source_child.match = true
+			source_child.allocator.match = send_branches
 		end end
 
 		-- assign
@@ -744,6 +749,7 @@ function Allocator.allocate(vns, branches)
 			else
 				vns.Assigner.assign(vns, source_child.idS, nil)	
 			end
+			source_child.allocator.match = send_branches
 		end end
 	end end
 end

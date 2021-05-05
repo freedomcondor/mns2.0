@@ -223,7 +223,7 @@ function step()
 	for idS, robotR in pairs(vns.childrenRT) do
 		logger("\t", idS)
 		logger("\tscale")
-		logger(robotR.scale)
+		logger(robotR.scalemanager.scale)
 		logger("\t", robotR.assignTargetS)
 	end
 	--]]

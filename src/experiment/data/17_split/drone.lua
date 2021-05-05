@@ -50,13 +50,13 @@ return function()
 	-- move
 	local speed = 0.03
 	if state == "2to1" then
-		if vns.scale.pipuck == 6 then
+		if vns.scalemanager.scale.pipuck == 6 then
 			vns.Spreader.emergency_after_core(vns, vector3(speed,0,0), vector3())
-		elseif vns.scale.pipuck == 4 then
+		elseif vns.scalemanager.scale.pipuck == 4 then
 			vns.Spreader.emergency_after_core(vns, vector3(-speed,0,0), vector3())
 		end
 
-		if vns.scale.drone == 4 then
+		if vns.scalemanager.scale.drone == 4 then
 			state = "1wait"
 			count = 0
 			vns.setMorphology(vns, structure2)
@@ -77,7 +77,7 @@ return function()
 		end
 	elseif state == "1to3" then
 		-- wait for cut children to get back and start counting
-		if vns.scale.drone == 4 then
+		if vns.scalemanager.scale.drone == 4 then
 			count = count + 1
 		end
 		if count == 300 then

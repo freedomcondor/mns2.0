@@ -5,8 +5,12 @@ function Scale:new(table)
 	local instance = {}
 	setmetatable(instance, self)
 	if table == nil then return instance end
-	for i, v in pairs(table) do
-		instance[i] = v
+	if type(table) == "table" then
+		for i, v in pairs(table) do
+			instance[i] = v
+		end
+	elseif type(table) == "string" then
+		instance[table] = 1
 	end
 	return instance
 end

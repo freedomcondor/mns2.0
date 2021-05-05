@@ -5,7 +5,10 @@ local Assigner = {}
 --[[
 --	related data
 --	vns.assigner.targetS
---	vns.childrenRT.xxid.assignTargetS
+--	vns.childrenRT[xxid].assigner = {
+--		targetS
+--		scale_assign_offset
+--	}
 --]]
 
 function Assigner.create(vns)
@@ -17,7 +20,9 @@ function Assigner.reset(vns)
 end
 
 function Assigner.addParent(vns, robotR)
-	robotR.scale_assign_offset = vns.ScaleManager.Scale:new()
+	robotR.assigner = {
+		scale_assign_offset = vns.ScaleManager.Scale:new(),
+	}
 	vns.assigner.targetS = nil
 	if vns.assigner.targetS == robotR.idS then
 		vns.assigner.targetS = nil
@@ -25,7 +30,10 @@ function Assigner.addParent(vns, robotR)
 end
 
 function Assigner.addChild(vns, robotR)
-	robotR.scale_assign_offset = vns.ScaleManager.Scale:new()
+	robotR.assigner = {
+		scale_assign_offset = vns.ScaleManager.Scale:new(),
+		targetS = nil,
+	}
 	if vns.assigner.targetS == robotR.idS then
 		vns.assigner.targetS = nil
 	end
@@ -34,7 +42,7 @@ end
 function Assigner.deleteParent(vns)
 	vns.assigner.targetS = nil
 	for idS, childR in pairs(vns.childrenRT) do
-		if childR.assignTargetS == vns.parentR.idS then
+		if childR.assigner.targetS == vns.parentR.idS then
 			Assigner.assign(vns, idS, nil)
 		end
 	end
@@ -42,7 +50,7 @@ end
 
 function Assigner.deleteChild(vns, deleting_idS)
 	for idS, childR in pairs(vns.childrenRT) do
-		if childR.assignTargetS == deleting_idS then
+		if childR.assigner.targetS == deleting_idS then
 			Assigner.assign(vns, idS, nil)
 		end
 	end
@@ -50,10 +58,10 @@ end
 
 function Assigner.preStep(vns)
 	for idS, childR in pairs(vns.childrenRT) do
-		childR.scale_assign_offset = vns.ScaleManager.Scale:new()
+		childR.assigner.scale_assign_offset = vns.ScaleManager.Scale:new()
 	end
 	if vns.parentR ~= nil then
-		vns.parentR.scale_assign_offset = vns.ScaleManager.Scale:new()
+		vns.parentR.assigner.scale_assign_offset = vns.ScaleManager.Scale:new()
 	end
 end
 
@@ -62,22 +70,7 @@ function Assigner.assign(vns, childIdS, assignToIdS)
 	if childR == nil then return end
 
 	vns.Msg.send(childIdS, "assign", {assignToS = assignToIdS})
-	childR.assignTargetS = assignToIdS
-
-	--update rally point immediately
-	--[[ goal point is not related to assign anymore
-	if vns.childrenRT[assignToIdS] ~= nil then
-		childR.goalPoint = {
-			positionV3 = vns.childrenRT[assignToIdS].positionV3,
-			orientationQ = quaternion()
-		}
-	elseif vns.parentR ~= nil and vns.parentR.idS == assignToIdS then
-		childR.goalPoint = {
-			positionV3 = vns.parentR.positionV3,
-			orientationQ = quaternion()
-		}
-	end
-	--]]
+	childR.assigner.targetS = assignToIdS
 end
 
 function Assigner.step(vns)
@@ -99,7 +92,7 @@ function Assigner.step(vns)
 		sumScale:inc(vns.robotTypeS)
 		-- add children
 		for idS, robotR in pairs(vns.childrenRT) do 
-			sumScale = sumScale + robotR.scale
+			sumScale = sumScale + robotR.scalemanager.scale
 		end
 
 		vns.Msg.send(msgM.fromS, "assign_ack", {oldParent = vns.parentR.idS, scale = sumScale})
@@ -127,17 +120,14 @@ function Assigner.step(vns)
 	-- listen to assign_dismiss
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "assign_dismiss")) do
 		if vns.childrenRT[msgM.fromS] ~= nil then
-			local assignTargetS = vns.childrenRT[msgM.fromS].assignTargetS
 			local assignTargetS = msgM.dataT.newParent
 			if vns.childrenRT[assignTargetS] ~= nil then
-				--vns.childrenRT[assignTargetS].scale_assign_offset:inc(vns.childrenRT[msgM.fromS].robotTypeS)
-				vns.childrenRT[assignTargetS].scale_assign_offset = 
-					vns.childrenRT[assignTargetS].scale_assign_offset + msgM.dataT.scale
+				vns.childrenRT[assignTargetS].assigner.scale_assign_offset =
+					vns.childrenRT[assignTargetS].assigner.scale_assign_offset + msgM.dataT.scale
 				vns.childrenRT[assignTargetS].lastSendScale = nil
 			elseif vns.parentR ~= nil and vns.parentR.idS == assignTargetS then
-				--vns.parentR.scale_assign_offset:inc(vns.childrenRT[msgM.fromS].robotTypeS)
-				vns.parentR.scale_assign_offset = 
-					vns.parentR.scale_assign_offset + msgM.dataT.scale
+				vns.parentR.assigner.scale_assign_offset =
+					vns.parentR.assigner.scale_assign_offset + msgM.dataT.scale
 				vns.parentR.lastSendScale = nil
 			end
 			vns.deleteChild(vns, msgM.fromS)
@@ -149,37 +139,16 @@ function Assigner.step(vns)
 		if vns.childrenRT[msgM.fromS] ~= nil then
 			local assignFrom = msgM.dataT.oldParent
 			if vns.childrenRT[assignFrom] ~= nil then
-				--vns.childrenRT[assignFrom].scale_assign_offset:dec(vns.childrenRT[msgM.fromS].robotTypeS)
-				vns.childrenRT[assignFrom].scale_assign_offset = 
-					vns.childrenRT[assignFrom].scale_assign_offset - msgM.dataT.scale
+				vns.childrenRT[assignFrom].assigner.scale_assign_offset =
+					vns.childrenRT[assignFrom].assigner.scale_assign_offset - msgM.dataT.scale
 				vns.childrenRT[assignFrom].lastSendScale = nil
 			elseif vns.parentR ~= nil and vns.parentR.idS == assignFrom then
-				--vns.parentR.scale_assign_offset:dec(vns.childrenRT[msgM.fromS].robotTypeS)
-				vns.parentR.scale_assign_offset = 
-					vns.parentR.scale_assign_offset - msgM.dataT.scale
+				vns.parentR.assigner.scale_assign_offset =
+					vns.parentR.assigner.scale_assign_offset - msgM.dataT.scale
 				vns.parentR.lastSendScale = nil
 			end
 		end
 	end
-	-- update assigning goalPoint
-	--[[ goal is not related anymore
-	for idS, childR in pairs(vns.childrenRT) do
-		if childR.assignTargetS ~= nil then
-			if vns.childrenRT[childR.assignTargetS] ~= nil then
-				childR.goalPoint = {
-					positionV3 = vns.childrenRT[childR.assignTargetS].positionV3,
-					orientationQ = quaternion()
-				}
-			elseif vns.parentR ~= nil and vns.parentR.idS == childR.assignTargetS then
-				childR.goalPoint = {
-					positionV3 = vns.parentR.positionV3,
-					orientationQ = quaternion()
-				}
-			end
-
-		end
-	end
-	--]]
 end
 
 ------ behaviour tree ---------------------------------------

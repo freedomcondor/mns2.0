@@ -51,32 +51,36 @@ function Connector.newVnsID(vns, idN, lastidPeriod)
 end
 
 function Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
-	vns.connector.lastid[vns.idS] = lastidPeriod or (vns.depth + 2)
-	vns.connector.locker_count = vns.depth + 2
+	vns.connector.lastid[vns.idS] = lastidPeriod or (vns.scalemanager.depth + 2)
+	vns.connector.locker_count = vns.scalemanager.depth + 2
 
 	vns.idS = _idS
 	vns.idN = _idN
-	local childrenScale = vns.ScaleManager.Scale:new()
+	--local childrenScale = vns.ScaleManager.Scale:new()
 	for idS, childR in pairs(vns.childrenRT) do
-		childrenScale = childrenScale + childR.scale
+		--childrenScale = childrenScale + childR.scalemanager.scale
 		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN, lastidPeriod = lastidPeriod})
 	end
 	for idS, childR in pairs(vns.connector.waitingRobots) do
-		childrenScale = childrenScale + childR.scale
+		--childrenScale = childrenScale + childR.scalemanager.scale
 		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN, lastidPeriod = lastidPeriod})
 	end
 end
 
 function Connector.addChild(vns, robotR)
 	vns.childrenRT[robotR.idS] = robotR
-	vns.childrenRT[robotR.idS].unseen_count = vns.Parameters.connector_unseen_count
-	vns.childrenRT[robotR.idS].heartbeat_count = vns.Parameters.connector_heartbeat_count
+	vns.childrenRT[robotR.idS].connector = {
+		unseen_count = vns.Parameters.connector_unseen_count,
+		heartbeat_count = vns.Parameters.connector_heartbeat_count,
+	}
 end
 
 function Connector.addParent(vns, robotR)
 	vns.parentR = robotR
-	vns.parentR.unseen_count = vns.Parameters.connector_unseen_count
-	vns.parentR.heartbeat_count = vns.Parameters.connector_heartbeat_count
+	vns.parentR.connector = {
+		unseen_count = vns.Parameters.connector_unseen_count,
+		heartbeat_count = vns.Parameters.connector_heartbeat_count,
+	}
 end
 
 function Connector.deleteChild(vns, idS)
@@ -92,12 +96,12 @@ end
 function Connector.update(vns)
 	-- updated count
 	for idS, robotR in pairs(vns.childrenRT) do
-		robotR.unseen_count = robotR.unseen_count - 1
-		robotR.heartbeat_count = robotR.heartbeat_count - 1
+		robotR.connector.unseen_count = robotR.connector.unseen_count - 1
+		robotR.connector.heartbeat_count = robotR.connector.heartbeat_count - 1
 	end
 	if vns.parentR ~= nil then
-		vns.parentR.unseen_count = vns.parentR.unseen_count - 1
-		vns.parentR.heartbeat_count = vns.parentR.heartbeat_count - 1
+		vns.parentR.connector.unseen_count = vns.parentR.connector.unseen_count - 1
+		vns.parentR.connector.heartbeat_count = vns.parentR.connector.heartbeat_count - 1
 	end
 	
 	-- update waiting list
@@ -113,7 +117,7 @@ function Connector.update(vns)
 		if vns.childrenRT[idS] ~= nil then
 			vns.childrenRT[idS].positionV3 = robotR.positionV3
 			vns.childrenRT[idS].orientationQ = robotR.orientationQ
-			vns.childrenRT[idS].unseen_count = vns.Parameters.connector_unseen_count
+			vns.childrenRT[idS].connector.unseen_count = vns.Parameters.connector_unseen_count
 		end
 	end
 
@@ -121,29 +125,29 @@ function Connector.update(vns)
 	if vns.parentR ~= nil and vns.connector.seenRobots[vns.parentR.idS] ~= nil then
 		vns.parentR.positionV3 = vns.connector.seenRobots[vns.parentR.idS].positionV3
 		vns.parentR.orientationQ = vns.connector.seenRobots[vns.parentR.idS].orientationQ
-		vns.parentR.unseen_count = vns.Parameters.connector_unseen_count
+		vns.parentR.connector.unseen_count = vns.Parameters.connector_unseen_count
 	end
 
 	-- check heartbeat
 	for idS, robotR in pairs(vns.childrenRT) do
 		for _, msgM in ipairs(vns.Msg.getAM(idS, "heartbeat")) do
-			robotR.heartbeat_count = vns.Parameters.connector_heartbeat_count
+			robotR.connector.heartbeat_count = vns.Parameters.connector_heartbeat_count
 		end
 	end
 	if vns.parentR ~= nil then
 		for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "heartbeat")) do
-			vns.parentR.heartbeat_count = vns.Parameters.connector_heartbeat_count
+			vns.parentR.connector.heartbeat_count = vns.Parameters.connector_heartbeat_count
 		end
 	end
 
 	-- check updated
 	for idS, robotR in pairs(vns.childrenRT) do
-		if robotR.unseen_count == 0 or robotR.heartbeat_count == 0 then
+		if robotR.connector.unseen_count == 0 or robotR.connector.heartbeat_count == 0 then
 			vns.Msg.send(idS, "dismiss")
 			vns.deleteChild(vns, idS)
 		end
 	end
-	if vns.parentR ~= nil and (vns.parentR.unseen_count == 0 or vns.parentR.heartbeat_count == 0) then
+	if vns.parentR ~= nil and (vns.parentR.connector.unseen_count == 0 or vns.parentR.connector.heartbeat_count == 0) then
 		vns.Msg.send(vns.parentR.idS, "dismiss")
 		Connector.newVnsID(vns)
 		vns.deleteParent(vns)

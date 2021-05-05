@@ -71,8 +71,8 @@ function IntersectionDetector.step(vns)
 					local C = vector3(robotR.goalPositionV3 - robotR.positionV3):cross(vector3() - robotR.positionV3)
 					local D = vector3(robotR.goalPositionV3 - robotR.positionV3):cross(vns.goal.positionV3 - robotR.positionV3)
 					if (A:dot(B) < 0 and C:dot(D) < 0) or 
-					   (vns.depth == 1 and new_cost < current_cost) or
-					   (vns.depth > 1 and new_cost + math.sqrt(2) - 1 < current_cost) then
+					   (vns.scalemanager.depth == 1 and new_cost < current_cost) or
+					   (vns.scalemanager.depth > 1 and new_cost + math.sqrt(2) - 1 < current_cost) then
 						-- we have switch intersection
 						vns.api.debug.drawRing("red", vector3(0,0,0.3), 0.1)
 						vns.api.debug.drawRing("red", vector3(0,0,0.32), 0.1)

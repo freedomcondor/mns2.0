@@ -5,21 +5,15 @@ local Avoider = {}
 function Avoider.create(vns)
 	vns.avoider = {}
 	vns.avoider.obstacles = {}
-	Avoider.reset(vns)
 end
 
 function Avoider.reset(vns)
-	vns.avoider = {}
-	vns.avoider.drone_distance = tonumber(robot.params.drone_distance or 1.00)
-	vns.avoider.pipuck_distance = tonumber(robot.params.pipuck_distance or 0.15)
-	vns.avoider.block_distance = tonumber(robot.params.block_distance or 0.15)
-	vns.avoider.predator_distance = tonumber(robot.params.predator_distance or 0.50)
+	vns.avoider.obstacles = {}
 end
 
 function Avoider.preStep(vns)
 	vns.avoider.obstacles = {}
 end
-
 
 function Avoider.step(vns)
 	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
@@ -67,7 +61,6 @@ function Avoider.step(vns)
 	for i, obstacle in ipairs(vns.avoider.obstacles) do
 		if obstacle.type == 3 and vns.robotTypeS == "drone" then
 			local runawayV3 = vector3()
-			--runawayV3 = Avoider.add(vector3(), obstacle.positionV3, runawayV3, vns.avoider.predator_distance)
 			runawayV3 = vector3() - obstacle.positionV3
 			runawayV3.z = 0
 			runawayV3:normalize()

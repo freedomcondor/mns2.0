@@ -250,8 +250,8 @@ return function()
 					quaternion(-math.pi/2, vector3(0,0,1))
 			end
 		end
-		count = vns.scale["drone"] * 5
-		logger("waiting leader, I have", vns.scale["drone"], "drones, I wait steps", vns.scale["drone"] * 5)
+		count = vns.scalemanager.scale["drone"] * 5
+		logger("waiting leader, I have", vns.scalemanager.scale["drone"], "drones, I wait steps", vns.scalemanager.scale["drone"] * 5)
 		state = "wait_leader"
 	elseif state == "wait_leader" then
 		count = count - 1
@@ -264,10 +264,10 @@ return function()
 		count = 0
 		state = "wait_structure2"
 	elseif state == "wait_structure2" and vns.parentR ~= nil then
-		logger("waiting structure2, I have", vns.scale["drone"], "drones, I wait steps", (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5)
+		logger("waiting structure2, I have", vns.scalemanager.scale["drone"], "drones, I wait steps", (vns.scalemanager.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5)
 		logger("now counting", count)
 		count = count + 1
-		if count >= (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5 then
+		if count >= (vns.scalemanager.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5 then
 			state = "move_forward_after_structure2"
 			logger("move_forward_after_structure2")
 		end
@@ -325,9 +325,9 @@ return function()
 		end
 	elseif state == "wait_structure2" then
 		logger("count = ", count)
-		logger("reach = ", (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5)
+		logger("reach = ", (vns.scalemanager.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5)
 		count = count + 1
-			if count >= (vns.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5 then
+			if count >= (vns.scalemanager.scale["drone"]-2) * 1.0 / 0.03 * 5 * 1.5 then
 				state = "after_wall"
 				logger("after_wall")
 			end
@@ -466,14 +466,14 @@ function step()
 	end
 	logger("vns.goal")
 	logger(vns.goal)
-	logger("vns.scale")
-	logger(vns.scale)
+	logger("vns.scalemanager.scale")
+	logger(vns.scalemanager.scale)
 	logger("parent")
 	if vns.parentR ~= nil then
 		logger("id = ", vns.parentR.idS)
 		logger("scale = ")
-		logger(vns.parentR.scale)
-		logger("unseen_count = ", vns.parentR.unseen_count)
+		logger(vns.parentR.scalemanager.scale)
+		logger("unseen_count = ", vns.parentR.connector.unseen_count)
 		logger("position = ", vns.parentR.positionV3)
 		logger("position:length = ", vns.parentR.positionV3:length())
 	end
@@ -481,8 +481,8 @@ function step()
 	for idS, childR in pairs(vns.childrenRT) do
 		logger("id = ", idS)
 		logger("scale = ")
-		logger(childR.scale)
-		logger("unseen_count = ", childR.unseen_count)
+		logger(childR.scalemanager.scale)
+		logger("unseen_count = ", childR.connector.unseen_count)
 		logger("assign = ", childR.assignTargetS)
 		logger("position = ", childR.positionV3)
 		logger("position:length = ", childR.positionV3:length())
