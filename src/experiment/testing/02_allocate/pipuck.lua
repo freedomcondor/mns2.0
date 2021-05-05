@@ -4,12 +4,14 @@ package.path = package.path .. ";@CMAKE_BINARY_DIR@/experiment/vns/?.lua"
 package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 
 pairs = require("RandomPairs")
+
 -- includes -------------
 logger = require("Logger")
 local api = require("pipuckAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
+logger.disable("Allocator")
 
 -- datas ----------------
 local bt
@@ -52,6 +54,14 @@ function step()
 	--api.debug.showChildren(vns)
 	api.debug.showParent(vns)
 
+	vns.debug.logInfo(vns, {
+		idN = true,
+		idS = true,
+		goal = true,
+		target = true,
+		assigner = true,
+		allocator = true,
+	})
 	--[[
 	if vns.brainkeeper.brain ~= nil then
 		robotR = vns.brainkeeper.brain

@@ -11,6 +11,7 @@ local api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
+logger.disable("Allocator")
 
 -- datas ----------------
 local bt
@@ -65,6 +66,14 @@ function step()
 	--api.debug.showChildren(vns)
 	api.debug.showParent(vns)
 
+	vns.debug.logInfo(vns, {
+		idN = true,
+		idS = true,
+		goal = true,
+		target = true,
+		assigner = true,
+		allocator = true,
+	})
 	--[[
 	if vns.brainkeeper.brain ~= nil then
 		local robotR = vns.brainkeeper.brain

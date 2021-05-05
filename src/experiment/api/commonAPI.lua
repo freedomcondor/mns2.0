@@ -11,6 +11,89 @@ end
 ---- step count -------------------------------
 api.stepCount = 0
 
+---- Step Function ----------------------------
+-- 5 step functions :
+-- init, reset, destroy, preStep, postStep
+function api.init()
+	--api.reset()
+end
+
+function api.reset()
+	--[[
+	api.estimateLocation = {
+		positionV3 = vector3(),
+		orientationQ = quaternion(),
+	}
+	--]]
+end
+
+function api.destroy()
+end
+
+function api.preStep()
+	api.stepCount = api.stepCount + 1
+	api.processTime()
+end
+
+function api.postStep()
+	api.debug.showVirtualFrame()
+end
+
+---- Location Estimate ------------------------
+	-- estimates the location and orientation of the next step relative to current step
+api.estimateLocation = {
+	positionV3 = vector3(),
+	orientationQ = quaternion(),
+}
+
+---- Virtual Coordinate Frame -----------------
+	-- instead of turn the real robot, we turn the virtual coordinate frame, 
+	-- so that a pipuck can be "omni directional"
+api.virtualFrame = {}
+api.virtualFrame.orientationQ = quaternion()
+function api.virtualFrame.rotateInSpeed(speedV3)
+	-- speedV3 in real frame
+	local axis = vector3(speedV3):normalize()
+	if speedV3:length() == 0 then axis = vector3(1,0,0) end
+	api.virtualFrame.orientationQ = 
+		quaternion(speedV3:length() * api.time.period,
+				   axis
+		) * api.virtualFrame.orientationQ
+end
+
+function api.virtualFrame.V3_RtoV(vec)
+	return vector3(vec):rotate(api.virtualFrame.orientationQ:inverse())
+end
+function api.virtualFrame.V3_VtoR(vec)
+	return vector3(vec):rotate(api.virtualFrame.orientationQ)
+end
+function api.virtualFrame.Q_RtoV(q)
+	return api.virtualFrame.orientationQ:inverse() * q
+end
+function api.virtualFrame.Q_VtoR(q)
+	return api.virtualFrame.orientationQ * q
+end
+
+---- Speed Control ---------------------------
+function api.setSpeed()
+	print("api.setSpeed needs to be implemented for specific robot")
+end
+
+function api.move(transV3, rotateV3)
+	-- transV3 and rotateV3 in virtual frame
+	local transRealV3 = api.virtualFrame.V3_VtoR(transV3)
+	local rotateRealV3 = api.virtualFrame.V3_VtoR(rotateV3)
+	api.setSpeed(transRealV3.x, transRealV3.y, transRealV3.z, 0)
+	-- rotate virtual frame
+	api.virtualFrame.rotateInSpeed(rotateRealV3)
+	-- estimate location of the new step
+	api.estimateLocation.positionV3 = transV3 * api.time.period
+	local axis = vector3(rotateV3):normalize()
+	if rotateV3:length() == 0 then axis = vector3(0,0,1) end
+	api.estimateLocation.orientationQ = 
+		quaternion(rotateV3:length() * api.time.period, axis)
+end
+
 ---- Debug Draw -------------------------------
 api.debug = {}
 function api.debug.drawArrow(color, begin, finish)
@@ -86,89 +169,6 @@ function api.debug.showObstacles(vns)
 		api.virtualFrame.V3_VtoR(vector3(obstacle.positionV3)))
 		--obstacle.positionV3)
 	end
-end
-
----- Step Function ----------------------------
--- 5 step functions :
--- init, reset, destroy, preStep, postStep
-function api.init()
-	--api.reset()
-end
-
-function api.reset()
-	--[[
-	api.estimateLocation = {
-		positionV3 = vector3(),
-		orientationQ = quaternion(),
-	}
-	--]]
-end
-
-function api.destroy()
-end
-
-function api.preStep()
-	api.stepCount = api.stepCount + 1
-	api.processTime()
-end
-
-function api.postStep()
-	api.debug.showVirtualFrame()
-end
-
----- Location Estimate ------------------------
-	-- estimates the location and orientation of the next step relative to current step
-api.estimateLocation = {
-	positionV3 = vector3(),
-	orientationQ = quaternion(),
-}
-
----- Virtual Coordinate Frame -----------------
--- instead of turn the real robot, we turn the virtual coordinate frame, 
--- so that a pipuck can be "omni directional"
-api.virtualFrame = {}
-api.virtualFrame.orientationQ = quaternion()
-function api.virtualFrame.rotateInSpeed(speedV3)
-	-- speedV3 in real frame
-	local axis = vector3(speedV3):normalize()
-	if speedV3:length() == 0 then axis = vector3(1,0,0) end
-	api.virtualFrame.orientationQ = 
-		quaternion(speedV3:length() * api.time.period,
-				   axis
-		) * api.virtualFrame.orientationQ
-end
-
-function api.virtualFrame.V3_RtoV(vec)
-	return vector3(vec):rotate(api.virtualFrame.orientationQ:inverse())
-end
-function api.virtualFrame.V3_VtoR(vec)
-	return vector3(vec):rotate(api.virtualFrame.orientationQ)
-end
-function api.virtualFrame.Q_RtoV(q)
-	return api.virtualFrame.orientationQ:inverse() * q
-end
-function api.virtualFrame.Q_VtoR(q)
-	return api.virtualFrame.orientationQ * q
-end
-
----- Speed Control ---------------------------
-function api.setSpeed()
-	print("api.setSpeed needs to be implemented for specific robot")
-end
-
-function api.move(transV3, rotateV3)
-	-- transV3 and rotateV3 in virtual frame
-	local transRealV3 = api.virtualFrame.V3_VtoR(transV3)
-	local rotateRealV3 = api.virtualFrame.V3_VtoR(rotateV3)
-	api.setSpeed(transRealV3.x, transRealV3.y, transRealV3.z, 0)
-	-- rotate virtual frame
-	api.virtualFrame.rotateInSpeed(rotateRealV3)
-	-- estimate location of the new step
-	api.estimateLocation.positionV3 = transV3 * api.time.period
-	local axis = vector3(rotateV3):normalize()
-	if rotateV3:length() == 0 then axis = vector3(0,0,1) end
-	api.estimateLocation.orientationQ = 
-		quaternion(rotateV3:length() * api.time.period, axis)
 end
 
 ------------------------------------------------------

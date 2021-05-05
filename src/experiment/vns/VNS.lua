@@ -165,6 +165,94 @@ function VNS.resetMorphology(vns)
 	end
 end
 
+---- Print Debug Info ------------------------------------------
+VNS.debug = {}
+function VNS.debug.logInfo(vns, option, indent_str)
+	if option == nil then option = {ALL = true} end
+	if indent_str == nil then indent_str = "" end
+
+	logger(indent_str .. robot.id, vns.api.stepCount, "-----------------------") 
+	vns.debug.logVNSInfo(vns, option, indent_str)
+	logger(indent_str .. "    parent : ") 
+	if vns.parentR ~= nil then
+		vns.debug.logRobot(vns.parentR, option, indent_str .. "        ")
+	end
+	logger(indent_str .. "    children : ") 
+	for _, childR in pairs(vns.childrenRT) do
+		vns.debug.logRobot(childR, option, indent_str .. "        ")
+	end
+end
+
+function VNS.debug.logVNSInfo(vns, option, indent_str)
+	if option == nil then option = {ALL = true} end
+	if indent_str == nil then indent_str = "" end
+
+	if option.ALL == true or option.idN == true then
+		logger(indent_str .. "    idN              = ", vns.idN) 
+	end
+	if option.ALL == true or option.idS == true then
+		logger(indent_str .. "    idS              = ", vns.idS) 
+	end
+	if option.ALL == true or option.robotTypeS   == true then
+		logger(indent_str .. "    robotTypeS       = ", vns.robotTypeS) 
+	end
+	if option.ALL == true or option.target == true and vns.allocator.target ~= nil then
+		logger(indent_str .. "    allocator.target = ", vns.allocator.target.idN) 
+	end
+	if option.ALL == true or option.goal == true then
+		logger(indent_str .. "    goal.positionV3  = ", vns.goal.positionV3) 
+		logger(indent_str .. "         orientationQ : X = ", vector3(1,0,0):rotate(vns.goal.orientationQ)) 
+		logger(indent_str .. "                        Y = ", vector3(0,1,0):rotate(vns.goal.orientationQ)) 
+		logger(indent_str .. "                        Z = ", vector3(0,0,1):rotate(vns.goal.orientationQ)) 
+		logger(indent_str .. "         transV3     = ", vns.goal.transV3) 
+		logger(indent_str .. "         rotateV3    = ", vns.goal.rotateV3) 
+	end
+	if option.ALL == true or option.scale == true then 
+		logger(indent_str .. "    scale       : ")
+		for typeS, number in pairs(vns.scalemanager.scale) do
+			logger(indent_str .. "                   " .. typeS, number)
+		end
+	end
+end
+
+function VNS.debug.logRobot(robotR, option, indent_str)
+	if option == nil then option = {ALL = true} end
+	if indent_str == nil then indent_str = "" end
+
+	logger(indent_str .. robotR.idS)
+	if option.ALL == true or option.robotTypeS   == true then
+		logger(indent_str .. "    robotTypeS       = ", robotR.robotTypeS) 
+	end
+	if option.ALL == true or option.positionV3   == true then
+		logger(indent_str .. "    positionV3       = ", robotR.positionV3) 
+	end
+	if option.ALL == true or option.orientationQ == true then
+		logger(indent_str .. "    orientationQ : X = ", vector3(1,0,0):rotate(robotR.orientationQ))
+		logger(indent_str .. "                   Y = ", vector3(0,1,0):rotate(robotR.orientationQ))
+		logger(indent_str .. "                   Z = ", vector3(0,0,1):rotate(robotR.orientationQ))
+	end
+	if option.ALL == true or option.scale == true then 
+		logger(indent_str .. "    scale       : ")
+		for typeS, number in pairs(robotR.scalemanager.scale) do
+			logger(indent_str .. "                   " .. typeS, number)
+		end
+	end
+	-- parent doesn't have these: 
+	if (option.ALL == true or option.assigner == true) and robotR.assigner.targetS ~= nil then 
+		logger(indent_str .. "    assigner.targetS = ", robotR.assigner.targetS)
+	end
+	if (option.ALL == true or option.allocator == true) and robotR.allocator ~= nil then 
+		if robotR.allocator.match ~= nil then
+			logger(indent_str .. "    allocator      = ")
+			for _, branch in ipairs(robotR.allocator.match) do
+				logger(indent_str .. "                       " .. branch.idN)
+			end
+		else
+			logger(indent_str .. "    allocator      = nil")
+		end
+	end
+end
+
 ---- Behavior Tree Node ------------------------------------------
 function VNS.create_preconnector_node(vns)
 	local pre_connector_node
