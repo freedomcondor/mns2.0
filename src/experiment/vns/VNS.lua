@@ -237,6 +237,10 @@ function VNS.debug.logRobot(robotR, option, indent_str)
 			logger(indent_str .. "                   " .. typeS, number)
 		end
 	end
+	if (option.ALL == true or option.connector == true) and robotR.connector ~= nil then
+		logger(indent_str .. "    connector.unseen_count    = ", robotR.connector.unseen_count)
+		logger(indent_str .. "             .heartbeat_count = ", robotR.connector.heartbeat_count)
+	end
 	-- parent doesn't have these: 
 	if (option.ALL == true or option.assigner == true) and robotR.assigner.targetS ~= nil then 
 		logger(indent_str .. "    assigner.targetS = ", robotR.assigner.targetS)

@@ -87,6 +87,12 @@ end
 
 ---- LEDs --------------------
 -- everything in robot hardware's coordinate frame
+function api.pipuckShowAllLEDs()
+	for count = 1, 8 do
+		robot.leds.set_ring_led_index(count, true)
+	end
+end
+
 function api.pipuckShowLED(vec)
 	-- direction is a vector3, x front, y left
 	-- th = 0 front, clockwise, -180 to 180
