@@ -22,7 +22,7 @@ Message.list = {}
 Message.waitToSend = {}
 --[[
 	"destiny name" = {
-		1 = {}
+		1 = {cmdS, dataT}
 		2 = {}
 	}
 --]]
@@ -33,17 +33,52 @@ function Message.preStep()
 	Message.arrange()
 end
 
-function Message.postStep()
+function Message.postStep(stepCount)
+	--[[
+	Message.sendTable{
+		fromS = Message.myIDS(),
+		message = Message.waitToSend,
+		stepCount = stepCount,
+		sendtime = robot.system.time, 
+	}
+	--]]
+	---[[
 	for toIDS, list in pairs(Message.waitToSend) do
 		Message.sendTable{
 			toS = toIDS,
 			fromS = Message.myIDS(),
 			message = list,
+			stepCount = stepCount,
+			sendTime = robot.system.time,
 		}
 	end
+	--]]
 end
 
 function Message.arrange()
+	--[[
+	for iN, msgFromEachRobot in ipairs(Message.getTablesAT()) do
+		for toS, msgArray in pairs(msgFromEachRobot.message) do
+			if toS == Message.myIDS() or toS == "ALLMSG" then
+				for jN, msgM in ipairs(msgArray) do
+					msgM.fromS = msgFromEachRobot.fromS
+					msgM.toS = toS
+					if Message.list[msgM.cmdS] == nil then
+						Message.list[msgM.cmdS] = {}
+					end
+					Message.list[msgM.cmdS][#Message.list[msgM.cmdS] + 1] = msgM
+					-- for ALLMSG
+					if Message.list["ALLMSG"] == nil then
+						Message.list["ALLMSG"] = {}
+					end
+					Message.list["ALLMSG"][#Message.list["ALLMSG"] + 1] = msgM
+				end
+			end
+		end
+	end
+	--]]
+
+	---[[
 	for iN, msgArray in ipairs(Message.getTablesAT()) do
 		if msgArray.toS == Message.myIDS() or msgArray.toS == "ALLMSG" then
 			for jN, msgM in ipairs(msgArray.message) do
@@ -61,6 +96,7 @@ function Message.arrange()
 			end
 		end
 	end
+	--]]
 end
 
 function Message.send(toIDS, cmdS, dataT)

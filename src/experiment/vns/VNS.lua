@@ -106,7 +106,7 @@ function VNS.postStep(vns)
 			module.postStep(vns)
 		end
 	end
-	vns.Msg.postStep()
+	vns.Msg.postStep(vns.api.stepCount)
 end
 
 function VNS.addChild(vns, robotR)
@@ -211,6 +211,16 @@ function VNS.debug.logVNSInfo(vns, option, indent_str)
 		logger(indent_str .. "    scale       : ")
 		for typeS, number in pairs(vns.scalemanager.scale) do
 			logger(indent_str .. "                   " .. typeS, number)
+		end
+	end
+	if option.ALL == true or option.connector == true then 
+		logger(indent_str .. "    connector.waitingRobots : ")
+		for idS, robotR in pairs(vns.connector.waitingRobots) do
+			logger(indent_str .. "                           " .. idS, robotR.waiting_count)
+		end
+		logger(indent_str .. "    connector.waitingParents: ")
+		for idS, robotR in pairs(vns.connector.waitingParents) do
+			logger(indent_str .. "                           " .. idS, robotR.waiting_count)
 		end
 	end
 end
