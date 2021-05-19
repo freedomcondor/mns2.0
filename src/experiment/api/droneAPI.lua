@@ -132,6 +132,12 @@ function api.droneEnableCameras()
 	end 
 end
 
+function api.droneDisableCameras()
+	for index, camera in pairs(robot.cameras_system) do
+		camera.disable()
+	end
+end
+
 function api.droneDetectLeds()
 	-- takes tags in camera_frame_reference
 	local led_dis = 0.02 -- distance between leds to the center
