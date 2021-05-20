@@ -21,6 +21,9 @@ add_library(vns_loop_functions MODULE
 target_link_libraries(vns_loop_functions
    ${SROCS_ENTITIES_LIBRARY})
 
+# make a logs folder to store .csv files
+add_custom_target(make_log_folder ALL COMMAND ${CMAKE_COMMAND} -E make_directory logs)
+
 # Compile qtopengl user functions
 if(ARGOS_QTOPENGL_FOUND)
    add_library(builderbot_qtopengl_user_functions MODULE

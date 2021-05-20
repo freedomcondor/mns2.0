@@ -33,7 +33,7 @@ namespace argos {
       struct SDrone {
          SDrone(CDroneEntity* pc_entity) :
             Entity(pc_entity),
-            OutputFileStream(pc_entity->GetId() + ".csv",
+            OutputFileStream("logs/" + pc_entity->GetId() + ".csv",
                              std::ios_base::out | std::ios_base::trunc) {
             OutputFileStream << std::setprecision(3) << std::fixed;
          }
@@ -44,7 +44,7 @@ namespace argos {
       struct SPiPuck {
          SPiPuck(CPiPuckEntity* pc_entity) :
             Entity(pc_entity),
-            OutputFileStream(pc_entity->GetId() + ".csv",
+            OutputFileStream("logs/" + pc_entity->GetId() + ".csv",
                              std::ios_base::out | std::ios_base::trunc)  {
             OutputFileStream << std::setprecision(3) << std::fixed;
          }

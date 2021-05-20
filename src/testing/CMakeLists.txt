@@ -1,4 +1,4 @@
-add_subdirectory(00_environment_test)
+add_subdirectory(00_test_environment)
 
 #add_subdirectory(01_recruit_assign_drive)
 #add_subdirectory(02_allocate)
