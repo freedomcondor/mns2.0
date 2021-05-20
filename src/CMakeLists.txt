@@ -35,13 +35,12 @@ if(ARGOS_QTOPENGL_FOUND)
 endif(ARGOS_QTOPENGL_FOUND)
 
 # Copy lua files
-file(COPY        ${CMAKE_SOURCE_DIR}/experiment/api
-     DESTINATION ${CMAKE_BINARY_DIR}/experiment)
-file(COPY        ${CMAKE_SOURCE_DIR}/experiment/utils
-     DESTINATION ${CMAKE_BINARY_DIR}/experiment)
-file(COPY        ${CMAKE_SOURCE_DIR}/experiment/vns
-     DESTINATION ${CMAKE_BINARY_DIR}/experiment)
+file(COPY        ${CMAKE_SOURCE_DIR}/core/api
+     DESTINATION ${CMAKE_BINARY_DIR}/core)
+file(COPY        ${CMAKE_SOURCE_DIR}/core/utils
+     DESTINATION ${CMAKE_BINARY_DIR}/core)
+file(COPY        ${CMAKE_SOURCE_DIR}/core/vns
+     DESTINATION ${CMAKE_BINARY_DIR}/core)
 
 # Configure examples
-add_subdirectory(experiment/testing)
-add_subdirectory(experiment/data)
+add_subdirectory(testing)

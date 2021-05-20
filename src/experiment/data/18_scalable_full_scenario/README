@@ -1,5 +1,0 @@
-For time measurement in lua, we use os.execute to execute terminal command date +%s.%N to get time.
-For mac, date command is different with linux, so we use gdate instead to get the same output.
-Thats why in CMakeLists we have a platform detection.
-To install gdate for mac:
-     brew install coreutils
