@@ -1,6 +1,6 @@
 add_subdirectory(00_test_environment)
+add_subdirectory(01_test_formation)
 
-#add_subdirectory(01_recruit_assign_drive)
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)
 #add_subdirectory(04_scenario)
