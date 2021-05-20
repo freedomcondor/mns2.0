@@ -205,35 +205,37 @@ function api.droneDetectTags()
 	return tags
 end
 
+api.tagLabelIndex = {
+	block = {
+		from = tonumber(robot.params.block_label_from or 0),
+		to = tonumber(robot.params.block_label_to or 0),
+	},
+
+	pipuck = {
+		from = tonumber(robot.params.pipuck_label_from or 1),
+		to = tonumber(robot.params.pipuck_label_to or 500),
+	},
+
+	builderbot = {
+		from = tonumber(robot.params.builderbot_label_from or 500),
+		to = tonumber(robot.params.builderbot_label_to or 1000),
+	},
+}
+
 function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 	-- this function adds robots (in real frame) from seen tags (in real robot frames)
-	local robotTypeIndex = {
-		-- 0 as block
-		{index = 0, typeS = "block"}, 
-		-- 1 to 1000 as pipuck
-		{index = tonumber(robot.params.pipuck_label_max_number or 1000), typeS = "pipuck"}, 
-		-- 1001 to 2000 as builderbot
-		{index = tonumber(robot.params.builderbot_label_max_number or 2000), typeS = "builderbot"},  
-	}
-
 	for i, tag in ipairs(tags) do
 		local robotTypeS = nil
-		for i, item in ipairs(robotTypeIndex) do
-			if tag.id <= item.index then robotTypeS = item.typeS break end
+		for typeS, index in pairs(api.tagLabelIndex) do
+			if index.from <= tag.id and tag.id <= index.to then
+				robotTypeS = typeS
+				break
+			end
 		end
-		if robotTypeS == nil then robotTypeS = "marker" end
+		if robotTypeS == nil then robotTypeS = "unknown" end
 
 		if robotTypeS ~= nil and robotTypeS ~= "block" then
 			local idS = robotTypeS .. math.floor(tag.id)
-			--[[
-			seenRobots[idS] = {
-				idS = idS,
-				robotTypeS = robotTypeS,
-				positionV3 = api.virtualFrame.V3_RtoV(tag.positionV3),
-				orientationQ = api.virtualFrame.Q_RtoV(tag.orientationQ),
-				-- RtoV : from real coordinate frame to virtual frame
-			}
-			--]]
 			seenRobotsInRealFrame[idS] = {
 				idS = idS,
 				robotTypeS = robotTypeS,
@@ -246,7 +248,8 @@ end
 
 function api.droneAddObstacles(tags, obstaclesInRealFrame) -- tags is an array of R
 	for i, tag in ipairs(tags) do
-		if tag.id == 0 then
+		if api.tagLabelIndex.block.from <= tag.id and
+		   api.tagLabelIndex.block.to >= tag.id then
 			obstaclesInRealFrame[#obstaclesInRealFrame + 1] = {
 				idN = #obstaclesInRealFrame + 1,
 				type = tag.type,

@@ -2,6 +2,7 @@ return {
 	-- safe zone and danger zone-----------------------------------
 	-- recruit happens only if robots in the safezone
 	-- robots wait if neighbours outside the safezone
+	safezone_default = tonumber(robot.params.safezone_default or 1.00), -- for unknown robot type
 	safezone_drone_drone = tonumber(robot.params.safezone_drone_drone or 1.35),
 	safezone_drone_pipuck = tonumber(robot.params.safezone_drone_pipuck or 0.9),
 	safezone_pipuck_pipuck = tonumber(robot.params.safezone_pipuck_pipuck or 0.9),

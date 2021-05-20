@@ -245,7 +245,7 @@ function Connector.recruitAll(vns)
 		if vns.childrenRT[idS] == nil and 
 		   vns.connector.waitingRobots[idS] == nil and 
 		   (vns.parentR == nil or vns.parentR.idS ~= idS) then
-			local safezone
+			local safezone = vns.Parameters.safezone_default
 			if vns.robotTypeS == "drone" and robotR.robotTypeS == "drone" then
 				safezone = vns.Parameters.safezone_drone_drone
 			elseif vns.robotTypeS == "drone" and robotR.robotTypeS == "pipuck" then

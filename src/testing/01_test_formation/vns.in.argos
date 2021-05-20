@@ -28,7 +28,9 @@
         <pipuck_rangefinders implementation="default" show_rays="false" />
         <wifi implementation="default" show_rays="false" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua" driver_default_speed="0.05"/>
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua"
+              driver_default_speed="0.05"
+      />
     </lua_controller>
 
      <!-- Drone Controller -->
@@ -46,7 +48,10 @@
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" dangerzone_drone="0.7" driver_default_speed="0.05"/>
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua"
+              dangerzone_drone="0.7"
+              driver_default_speed="0.05"
+      />
     </lua_controller>
   </controllers>
 
