@@ -34,7 +34,7 @@ function Message.preStep()
 end
 
 function Message.postStep(stepCount)
-	--[[
+	--[[ send one big table
 	Message.sendTable{
 		fromS = Message.myIDS(),
 		message = Message.waitToSend,
@@ -42,7 +42,7 @@ function Message.postStep(stepCount)
 		sendtime = robot.system.time, 
 	}
 	--]]
-	---[[
+	---[[ send table to each
 	for toIDS, list in pairs(Message.waitToSend) do
 		Message.sendTable{
 			toS = toIDS,
@@ -56,7 +56,7 @@ function Message.postStep(stepCount)
 end
 
 function Message.arrange()
-	--[[
+	--[[ receive one big table
 	for iN, msgFromEachRobot in ipairs(Message.getTablesAT()) do
 		for toS, msgArray in pairs(msgFromEachRobot.message) do
 			if toS == Message.myIDS() or toS == "ALLMSG" then
@@ -78,7 +78,7 @@ function Message.arrange()
 	end
 	--]]
 
-	---[[
+	---[[ receive small tables
 	for iN, msgArray in ipairs(Message.getTablesAT()) do
 		if msgArray.toS == Message.myIDS() or msgArray.toS == "ALLMSG" then
 			for jN, msgM in ipairs(msgArray.message) do
