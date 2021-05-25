@@ -1,5 +1,7 @@
-add_subdirectory(00_test_environment)
-add_subdirectory(01_test_formation)
+add_subdirectory(test_00_environment)
+add_subdirectory(test_01_formation)
+
+add_subdirectory(exp_01_real_scenario)
 
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)

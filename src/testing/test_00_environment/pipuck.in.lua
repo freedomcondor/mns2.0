@@ -1,6 +1,6 @@
-package.path = package.path .. ";@CMAKE_BINARY_DIR@/core/api/?.lua"
-package.path = package.path .. ";@CMAKE_BINARY_DIR@/core/utils/?.lua"
---package.path = package.path .. ";@CMAKE_BINARY_DIR@/core/VNS/?.lua"
+package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/api/?.lua"
+package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/utils/?.lua"
+--package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/VNS/?.lua"
 
 pairs = require("RandomPairs")
 
