@@ -267,6 +267,25 @@ function VNS.debug.logRobot(robotR, option, indent_str)
 	end
 end
 
+function VNS.logLoopFunctionInfo(vns)
+	if robot.debug == nil or robot.debug.loop_functions == nil then return end
+
+	-- log virtual frame
+	local str = tostring(vns.api.virtualFrame.orientationQ)
+
+	-- log target
+	if vns.allocator.target == nil then
+		str = str .. ",-2"
+	else
+		str = str .. "," .. tostring(vns.allocator.target.idN)
+	end
+
+	-- log brain name
+	str = str .. "," .. tostring(vns.idS)
+
+	robot.debug.loop_functions(str)
+end
+
 ---- Behavior Tree Node ------------------------------------------
 function VNS.create_preconnector_node(vns)
 	local pre_connector_node
