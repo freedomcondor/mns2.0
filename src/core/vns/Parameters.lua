@@ -45,9 +45,6 @@ return {
 	driver_default_rotate_scalar = tonumber(robot.params.driver_default_rotate_scalar or 0.3),
 
 	-- time out
-	connector_locker_count_reset = tonumber(robot.params.connector_locker_count_reset or 3),
-		-- usually locker count is set to vns.scalemanager.depth + 2 everytime vns id got updated.
-		-- locker_count_reset is only used to set a init number when experiment starts
 	connector_waiting_count = tonumber(robot.params.connector_waiting_count or 3),
 		-- robots wait this waiting_count steps for ack after recruiting a robot
 	connector_waiting_parent_count = tonumber(robot.params.connector_waiting_parent_count or 5),

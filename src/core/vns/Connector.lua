@@ -4,67 +4,35 @@ local Connector = {}
 
 --[[
 	related data:
-	vns.connector.waitingRobots = {}
-	vns.connector.seenRobots
+	vns.connector = {
+		waitingRobots = {}
+		waitingParents = {}
+		seenRobots
+		locker_count
+		lastid[idS] = a number 
+		-- TODO: locker_count may be overlapped with last_id
+	}
+
+	robot(children or parent).connector = {
+		unseen_count
+		heartbeat_count
+	}
 --]]
 
 function Connector.create(vns)
 	vns.connector = {}
-	Connector.reset(vns)
 end
 
 function Connector.reset(vns)
 	vns.connector.waitingRobots = {}
 	vns.connector.waitingParents = {}
 	vns.connector.seenRobots = {}
-	vns.connector.locker_count = vns.Parameters.connector_locker_count_reset
+	vns.connector.locker_count = 0
 	vns.connector.lastid = {}
 end
 
 function Connector.preStep(vns)
 	vns.connector.seenRobots = {}
-end
-
-function Connector.recruit(vns, robotR)
-	vns.Msg.send(robotR.idS, "recruit", {	
-		positionV3 = vns.api.virtualFrame.V3_VtoR(robotR.positionV3),
-		orientationQ = vns.api.virtualFrame.Q_VtoR(robotR.orientationQ),
-		fromTypeS = vns.robotTypeS,
-		idS = vns.idS,
-		idN = vns.idN,
-	}) 
-
-	vns.connector.waitingRobots[robotR.idS] = {
-		idS = robotR.idS,
-		positionV3 = robotR.positionV3,
-		orientationQ = robotR.orientationQ,
-		robotTypeS = robotR.robotTypeS,
-	}
-
-	vns.connector.waitingRobots[robotR.idS].waiting_count = vns.Parameters.connector_waiting_count
-end
-
-function Connector.newVnsID(vns, idN, lastidPeriod)
-	local _idS = vns.Msg.myIDS()
-	local _idN = idN or robot.random.uniform()
-	Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
-end
-
-function Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
-	vns.connector.lastid[vns.idS] = lastidPeriod or (vns.scalemanager.depth + 2)
-	vns.connector.locker_count = vns.scalemanager.depth + 2
-
-	vns.idS = _idS
-	vns.idN = _idN
-	--local childrenScale = vns.ScaleManager.Scale:new()
-	for idS, childR in pairs(vns.childrenRT) do
-		--childrenScale = childrenScale + childR.scalemanager.scale
-		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN, lastidPeriod = lastidPeriod})
-	end
-	for idS, childR in pairs(vns.connector.waitingRobots) do
-		--childrenScale = childrenScale + childR.scalemanager.scale
-		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN, lastidPeriod = lastidPeriod})
-	end
 end
 
 function Connector.addChild(vns, robotR)
@@ -91,6 +59,44 @@ end
 function Connector.deleteParent(vns)
 	if vns.parentR == nil then return end
 	vns.parentR = nil
+end
+
+function Connector.recruit(vns, robotR)
+	vns.Msg.send(robotR.idS, "recruit", {	
+		positionV3 = vns.api.virtualFrame.V3_VtoR(robotR.positionV3),
+		orientationQ = vns.api.virtualFrame.Q_VtoR(robotR.orientationQ),
+		fromTypeS = vns.robotTypeS,
+		idS = vns.idS,
+		idN = vns.idN,
+	}) 
+
+	vns.connector.waitingRobots[robotR.idS] = {
+		idS = robotR.idS,
+		positionV3 = robotR.positionV3,
+		orientationQ = robotR.orientationQ,
+		robotTypeS = robotR.robotTypeS,
+		waiting_count = vns.Parameters.connector_waiting_count,
+	}
+end
+
+function Connector.newVnsID(vns, idN, lastidPeriod)
+	local _idS = vns.Msg.myIDS()
+	local _idN = idN or robot.random.uniform()
+	Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
+end
+
+function Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
+	vns.connector.lastid[vns.idS] = lastidPeriod or (vns.scalemanager.depth + 2)
+	vns.connector.locker_count = vns.scalemanager.depth + 2
+
+	vns.idS = _idS
+	vns.idN = _idN
+	for idS, childR in pairs(vns.childrenRT) do
+		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN, lastidPeriod = lastidPeriod})
+	end
+	for idS, childR in pairs(vns.connector.waitingRobots) do
+		vns.Msg.send(idS, "updateVnsID", {idS = _idS, idN = _idN, lastidPeriod = lastidPeriod})
+	end
 end
 
 function Connector.update(vns)
