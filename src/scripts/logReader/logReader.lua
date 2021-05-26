@@ -13,22 +13,22 @@ function logReader.getCSVList(dir)
 end
 
 function logReader.readLine(str)
+	-- read line and return a structure table
 	local strList = {};
 	string.gsub(str, '[^,]+', function(w) table.insert(strList, w) end);
-	local th = tonumber(strList[8]) * math.pi / 180
 	local stepData = {
 		stepCount = tonumber(strList[1]),
 		positionV3 = vector3(tonumber(strList[2]),
 		                     tonumber(strList[3]),
 		                     tonumber(strList[4])
 		                    ),
-		orientationQ = (quaternion(1,0,0, tonumber(strList[5]) * math.pi / 180) *
+		orientationQ = (quaternion(1,0,0, tonumber(strList[7]) * math.pi / 180) *
 		                quaternion(0,1,0, tonumber(strList[6]) * math.pi / 180) *
-		                quaternion(0,0,1, tonumber(strList[7]) * math.pi / 180)
+		                quaternion(0,0,1, tonumber(strList[5]) * math.pi / 180)
 		               ) *
-		               (quaternion(1,0,0, tonumber(strList[8]) * math.pi / 180) *
+		               (quaternion(1,0,0, tonumber(strList[10]) * math.pi / 180) *
 		                quaternion(0,1,0, tonumber(strList[9]) * math.pi / 180) *
-		                quaternion(0,0,1, tonumber(strList[10]) * math.pi / 180)
+		                quaternion(0,0,1, tonumber(strList[8]) * math.pi / 180)
 		               ),
 		targetID = tonumber(strList[11]),
 		brainID = strList[12],
@@ -37,6 +37,18 @@ function logReader.readLine(str)
 end
 
 function logReader.loadData(dir)
+	-- read all .csvs, and returns a table
+	-- {
+	--      drone1 = {
+	--                  1 = {stepCount, positionV3 ...}
+	--                  2 = {stepCount, positionV3 ...}
+	--               }
+	--      drone2 = { 
+	--                  1 = {stepCount, positionV3 ...}
+	--                  2 = {stepCount, positionV3 ...}
+	--               }
+	-- } 
+	--
 	local robotNameList = logReader.getCSVList(dir)
 	-- for each robot
 	local robotsData = {}
@@ -65,7 +77,73 @@ function logReader.loadData(dir)
 		end
 		--]]
 	end
+	print("load data finish")
 	return robotsData
+end
+
+function logReader.calcDataSegment(robotsData, geneIndex, startStep, endStep)
+	if startStep == nil then startStep = 1 end
+	if endStep == nil then 
+		local length
+		for robotName, stepTable in pairs(robotsData) do
+			length = #stepTable
+			break
+		end
+		endStep = length
+	end
+
+	for step = startStep, endStep do
+		for robotName, robotData in pairs(robotsData) do
+			local brainName = robotData[endStep].brainID
+			local brainData = robotsData[brainName]
+
+			-- the predator, targetID == nil, consider its error is always 0
+			local targetRelativePositionV3 = geneIndex[robotData[endStep].targetID or 1].globalPositionV3
+			local targetGlobalPositionV3 = brainData[step].positionV3 + 
+			                               brainData[step].orientationQ:toRotate(targetRelativePositionV3)
+			local disV3 = targetGlobalPositionV3 - robotData[step].positionV3
+			disV3.z = 0
+			robotData[step].error = disV3:len()
+			--[[
+			if step == endStep then
+				print("robotName = ", robotName)
+				print("brainPosition = ", brainData[step].positionV3)
+				print("brainOrientationQ = X", brainData[step].orientationQ:toRotate(vector3(1,0,0)))
+				print("                    Y", brainData[step].orientationQ:toRotate(vector3(0,1,0)))
+				print("                    Z", brainData[step].orientationQ:toRotate(vector3(0,0,1)))
+				print("targetRelativePositionV3 = ", targetRelativePositionV3)
+				print("targetGlobalPositionV3 = ", targetGlobalPositionV3)
+				print("myPosition = ", robotData[step].positionV3)
+				print("disV3 = ", disV3)
+				print("dis = ", disV3:len())
+			end
+			--]]
+		end
+	end
+end
+
+function logReader.calcMorphID(gene)
+	local globalContainer = {id = 0}
+	local geneIndex = {}
+	gene.globalPositionV3 = vector3()
+	gene.globalOrientationQ = quaternion()
+	logReader.calcMorphChildrenID(gene, globalContainer, geneIndex)
+
+	return geneIndex
+end
+
+function logReader.calcMorphChildrenID(morph, globalContainer, geneIndex)
+	globalContainer.id = globalContainer.id + 1
+	morph.idN = globalContainer.id
+	geneIndex[morph.idN] = morph
+
+	if morph.children ~= nil then
+		for i, child in ipairs(morph.children) do
+			child.globalPositionV3 = morph.globalPositionV3 + morph.globalOrientationQ:toRotate(child.positionV3)
+			child.globalOrientationQ = morph.globalOrientationQ * child.orientationQ
+			logReader.calcMorphChildrenID(child, globalContainer, geneIndex)
+		end
+	end
 end
 
 return logReader

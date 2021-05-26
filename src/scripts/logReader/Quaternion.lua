@@ -162,7 +162,7 @@ end
 -- returns a vector, is a is not a vector, returns a whatever it is
 function Quaternion:toRotate(a)
 	if self.v:len() == 0 and self.w == 0 then
-		return a
+		return vector3(a)
 	end
 	if type(a) == "table" and a.CLASSVECTOR3 == true then
 		---[[
@@ -174,7 +174,7 @@ function Quaternion:toRotate(a)
 		return b
 	else
 		print("In Quaternion:toRotate, para not a Vector3")
-		return a
+		return vector3(a)
 	end
 end
 
