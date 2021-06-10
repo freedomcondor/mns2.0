@@ -23,14 +23,22 @@ local gene = {
 local robotsData = logReader.loadData("./logs")
 local geneIndex = logReader.calcMorphID(gene)
 
-logReader.calcDataSegment(robotsData, geneIndex)
+logReader.calcSegmentData(robotsData, geneIndex)
+logReader.calcSegmentLowerBound(robotsData, geneIndex, 
+	{
+		time_period = 0.2;
+		default_speed = 0.03;
+		slowdown_dis = 0.35;
+		stop_dis = 0.01;
+	}
+)
 
 
 ---[[
 for robotName, robotData in pairs(robotsData) do
 	print(robotName)
 	for i, stepData in ipairs(robotData) do
-		print("\t", stepData.error)
+		print("\t", stepData.lowerBoundError)
 	end
 end
 --]]

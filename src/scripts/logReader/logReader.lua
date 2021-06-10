@@ -1,15 +1,29 @@
-require("lfs")
+--require("lfs")
 vector3 = require('Vector3')
 quaternion = require('Quaternion')
 
 logReader = {}
 function logReader.getCSVList(dir)
+	-- ls dir > fileList.txt and read fileList.txt
+	-- so that we don't have to depend on lfs to get files in a dir
+	os.execute("ls " .. dir .. " > fileList.txt")
+	local f = io.open("fileList.txt", "r")
+	local robotNameList = {}
+	for file in f:lines() do 
+		name, ext = string.match(file, "([^.]+).([^.]+)")
+		if ext == "csv" then table.insert(robotNameList, name) end
+	end
+	io.close(f)
+	os.execute("rm fileList.txt")
+	return robotNameList
+	--[[
 	local robotNameList = {}
 	for file in lfs.dir(dir) do
 		name, ext = string.match(file, "([^.]+).([^.]+)")
 		if ext == "csv" then table.insert(robotNameList, name) end
 	end
 	return robotNameList
+	--]]
 end
 
 function logReader.readLine(str)
@@ -22,6 +36,7 @@ function logReader.readLine(str)
 		                     tonumber(strList[3]),
 		                     tonumber(strList[4])
 		                    ),
+		-- order of euler angles are z, y, x
 		orientationQ = (quaternion(1,0,0, tonumber(strList[7]) * math.pi / 180) *
 		                quaternion(0,1,0, tonumber(strList[6]) * math.pi / 180) *
 		                quaternion(0,0,1, tonumber(strList[5]) * math.pi / 180)
@@ -56,7 +71,7 @@ function logReader.loadData(dir)
 		-- open file
 		local filename = dir .. "/" .. robotName .. ".csv"
 		print("loading " .. filename)
-		f = io.open(filename, "r")
+		local f = io.open(filename, "r")
 		if f == nil then print("load file " .. filename .. "error") return end
 		-- for each line
 		robotData = {}
@@ -81,7 +96,8 @@ function logReader.loadData(dir)
 	return robotsData
 end
 
-function logReader.calcDataSegment(robotsData, geneIndex, startStep, endStep)
+function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
+	-- fill start and end if not provided
 	if startStep == nil then startStep = 1 end
 	if endStep == nil then 
 		local length
@@ -120,6 +136,67 @@ function logReader.calcDataSegment(robotsData, geneIndex, startStep, endStep)
 			--]]
 		end
 	end
+end
+
+function logReader.calcSegmentLowerBound(robotsData, geneIndex, parameters, startStep, endStep)
+	local time_period = parameters.time_period;
+	local default_speed = parameters.default_speed;
+	local slowdown_dis = parameters.slowdown_dis;
+	local stop_dis = parameters.stop_dis;
+	-- fill start and end if not provided
+	if startStep == nil then startStep = 1 end
+	if endStep == nil then 
+		local length
+		for robotName, stepTable in pairs(robotsData) do
+			length = #stepTable
+			break
+		end
+		endStep = length
+	end
+
+	for step = startStep, endStep do
+		for robotName, robotData in pairs(robotsData) do
+			if step == startStep then
+				robotData[step].lowerBoundError = robotData[step].error
+			else
+				local lowerBoundDis = robotData[step-1].lowerBoundError
+				local speed = default_speed;
+				if lowerBoundDis < stop_dis then
+					speed = 0;
+				elseif lowerBoundDis < slowdown_dis then
+					speed = default_speed * lowerBoundDis / slowdown_dis;
+				end
+
+				if lowerBoundDis > 0 then
+					lowerBoundDis = lowerBoundDis - time_period * speed;
+				end
+				robotData[step].lowerBoundError = lowerBoundDis
+			end
+		end
+	end
+end
+
+function logReader.saveData(robotsData, saveFile)
+	-- fill start and end if not provided
+	local startStep = 1
+	local length
+	for robotName, stepTable in pairs(robotsData) do
+		length = #stepTable
+		break
+	end
+	local endStep = length
+
+	local f = io.open(saveFile, "w")
+	for step = startStep, endStep do
+		local error = 0
+		local n = 0
+		for robotName, robotData in pairs(robotsData) do
+			error = robotData[step].error
+			n = n + 1
+		end
+		error = error / n
+	end
+	io.close(f)
 end
 
 function logReader.calcMorphID(gene)
