@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment length="0" ticks_per_second="5" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <lua_controller id="drone">
+      <actuators>
+        <wifi implementation="default" />
+      </actuators>
+      <sensors>
+        <drone_system implementation="default" /> 
+        <wifi implementation="default" />
+        <drone_cameras_system implementation="default">
+          <camera id="arm0"
+                  device="/dev/video2" 
+                  capture_resolution="1024,768"
+                  processing_resolution="1024,768"
+                  processing_offset="0,0"
+                  save_as="/home/root/Isee"
+                  tag_mark_radius="3"/>
+          <!--camera id="arm1"
+                  device="/dev/video2" 
+                  capture_resolution="1024,768"
+                  processing_resolution="1024,768"
+                  processing_offset="0,0"/>
+          <camera id="arm2"
+                  device="/dev/video4" 
+                  capture_resolution="1024,768"
+                  processing_resolution="1024,768"
+                  processing_offset="0,0"/>
+          <camera id="arm3"
+                  device="/dev/video6" 
+                  capture_resolution="1024,768"
+                  processing_resolution="1024,768"
+                  processing_offset="0,0"/-->
+        </drone_cameras_system>
+      </sensors>
+      <params script="01_drone.lua" 
+              pipuck_label_from="0"
+              pipuck_label_to="100"
+              block_label_from="255"
+              block_label_to="255"/>
+    </lua_controller>
+  </controllers>
+
+</argos-configuration>
