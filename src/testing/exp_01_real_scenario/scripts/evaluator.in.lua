@@ -3,10 +3,7 @@ package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/utils/?.lua"
 package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/../?.lua"
 
 logger = require("Logger")
-
 logReader = require("logReader")
-logger = require("logger")
-
 logger.enable()
 
 local gene = {
@@ -33,12 +30,5 @@ logReader.calcSegmentLowerBound(robotsData, geneIndex,
 	}
 )
 
-
----[[
-for robotName, robotData in pairs(robotsData) do
-	print(robotName)
-	for i, stepData in ipairs(robotData) do
-		print("\t", stepData.lowerBoundError)
-	end
-end
---]]
+logReader.saveData(robotsData, "result_data.txt")
+logReader.saveData(robotsData, "result_lowerbound.txt", "lowerBoundError")

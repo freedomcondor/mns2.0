@@ -176,7 +176,8 @@ function logReader.calcSegmentLowerBound(robotsData, geneIndex, parameters, star
 	end
 end
 
-function logReader.saveData(robotsData, saveFile)
+function logReader.saveData(robotsData, saveFile, attribute)
+	if attribute == nil then attribute = 'error' end
 	-- fill start and end if not provided
 	local startStep = 1
 	local length
@@ -191,10 +192,11 @@ function logReader.saveData(robotsData, saveFile)
 		local error = 0
 		local n = 0
 		for robotName, robotData in pairs(robotsData) do
-			error = robotData[step].error
+			error = error + robotData[step][attribute]
 			n = n + 1
 		end
 		error = error / n
+		f:write(tostring(error).."\n")
 	end
 	io.close(f)
 end
