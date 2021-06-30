@@ -139,6 +139,11 @@ function api.droneDisableCameras()
 end
 
 function api.droneDetectLeds()
+	-- detect led is depricated by argos-srocs and resume in the future.
+	for _, camera in pairs(robot.cameras_system) do
+		if camera.detect_led == nil then return end
+	end
+
 	-- takes tags in camera_frame_reference
 	local led_dis = 0.02 -- distance between leds to the center
 	local led_loc_for_tag = {
