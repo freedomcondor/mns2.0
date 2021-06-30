@@ -1,5 +1,6 @@
 add_subdirectory(test_00_environment)
 add_subdirectory(test_01_formation)
+add_subdirectory(test_02_neuron)
 
 add_subdirectory(exp_01_real_scenario)
 

@@ -17,6 +17,7 @@ VNS.Spreader = require("Spreader")
 VNS.BrainKeeper = require("BrainKeeper")
 VNS.CollectiveSensor = require("CollectiveSensor")
 VNS.IntersectionDetector = require("IntersectionDetector")
+VNS.Neuron = require("Neuron")
 
 VNS.Driver= require("Driver")
 
@@ -35,6 +36,8 @@ VNS.Modules = {
 	VNS.Spreader,
 	VNS.CollectiveSensor,
 	VNS.BrainKeeper,
+
+	VNS.Neuron,
 
 	VNS.Driver,
 }

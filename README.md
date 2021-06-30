@@ -24,10 +24,11 @@
 	cd mns2.0
 	mkdir build
 	cd build
-	cmake ../src
+	cmake ../src 
 	make
 	argos3 -c testing/01_test_formation/vns.argos
 	```
+	NOTE: consider using `cmake -DARGOS_BREW_QT_CELLAR=$(brew --cellar qt@5) ../src` if you are using mac with qt5.
 	If everything is right, you should be able to see a group of drones and pipucks forming formations.
 	
 ## Folder Explanation
