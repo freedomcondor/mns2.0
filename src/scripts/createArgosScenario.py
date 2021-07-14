@@ -3,10 +3,11 @@ import sys
 
 #######################################################################
 # random seed
-Inputseed = 1
+Inputseed = 0
 if len(sys.argv) >= 2 :
 	Inputseed = sys.argv[1]
 random.seed(Inputseed)
+Inputseed = str(Inputseed)
 
 #######################################################################
 # real lab scenario
@@ -94,7 +95,25 @@ def generate_real_scenario_object() :
 
 #######################################################################
 # add xml of drone, pipuck, obstacle, targets
-def generate_obstacle_xml(i, x, y, type):
+def generate_obstacle_xml(i, x, y, type) :
+	tag = '''
+	<prototype id="obstacle{}" movable="true" friction="10">
+		<body position="{},{},0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.02"
+				     position="0,0.000,0.11" orientation="0,0,0" />
+			</tags>
+		</devices>
+    </prototype>
+	'''.format(i, x, y)
+	return tag
+
+def generate_block_xml(i, x, y, type) :
 	tag = '''
 	<block id="obstacle{}" init_led_color="{}">
 		<body position="{},{},0" orientation="0,0,0" />
@@ -128,7 +147,7 @@ def generate_target_xml(x, y, radius, tag_edge_distance):
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="{}" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
-			</links>
+		</links>
 		<devices>
 			<tags medium="tags">
 				<tag anchor="base" observable_angle="75" side_length="0.02"
@@ -201,6 +220,12 @@ def generate_gate_locations(gate_number, left_end, right_end, small_limit, large
 #	]
 #	and the middle of the largest gate
 def generate_block_locations(gate_number, left_end, right_end, small_limit, large_limit, step) :
+	return generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, 0.055, "orange", "blue")
+
+def generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, step) :
+	return generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, 0.10, 255, 254)
+
+def generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, brick_size, gate_brick_type, wall_brick_type) :
 	block_locations = []
 	margin = 0.10
 	gate_locations, largest_loc = generate_gate_locations(gate_number, left_end + margin, right_end - margin, small_limit, large_limit)
@@ -215,15 +240,10 @@ def generate_block_locations(gate_number, left_end, right_end, small_limit, larg
 
 		#set blocks from left to right
 		j = left
-		while j < right - 0.055 :
-			block_locations.append([j, "blue"])
+		while j < right - brick_size:
+			block_locations.append([j, wall_brick_type])
 			j = j + step
-		block_locations.append([right, "blue"])
-		#set mark blocks
-		if i != 0 :
-			block_locations.append([left - 0.06, "orange"])
-		if i != gate_number :
-			block_locations.append([right + 0.06, "orange"])
+		block_locations.append([right, gate_brick_type])
 		
 	return block_locations, largest_loc
 
@@ -236,7 +256,8 @@ def generate_block_locations(gate_number, left_end, right_end, small_limit, larg
 #	and the middle of the largest gate
 def generate_wall(gate_number, wall_x, left_end, right_end, small_limit, large_limit, step) :
 	tagstr = ""
-	block_locations, largest_loc = generate_block_locations(gate_number, left_end, right_end, small_limit, large_limit, step) 
+	#block_locations, largest_loc = generate_block_locations(gate_number, left_end, right_end, small_limit, large_limit, step) 
+	block_locations, largest_loc = generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, step) 
 	i = 0
 	for loc in block_locations :
 		i = i + 1
@@ -307,7 +328,7 @@ def generate_slave_locations(n, master_locations,
 
 			#check faraway
 			valid = False
-			for drone_loc in drone_locations :
+			for drone_loc in master_locations :
 				if (loc_x - drone_loc[0]) ** 2 + (loc_y - drone_loc[1]) ** 2 < far_limit ** 2 :
 					valid = True
 					break

@@ -15,15 +15,16 @@ pipuck_locations = generate_slave_locations(8,
                                             -5, -3,             # random x range
                                             -2, 2,              # random y range
 											0.5, 1.0)           # near limit and far limit
-drone_xml = generate_drones(drone_locations, 1)                 # from lable 1 generate drone xml tags
-pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from lable 1 generate pipuck xml tags
+drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
+pipuck_xml = generate_pipuck_xml(1, -3, 0) + \
+             generate_pipucks(pipuck_locations, 2)              # from label 2 generate pipuck xml tags
 
 # wall
 wall_xml, largest_loc = generate_wall(1,                        # number of gates
                                       0,                        # x location of the wall
                                       -2.9, 2.9,                # y range of the wall
                                       0.5, 1.5,                 # size range of the gate
-                                      0.15)                     # block distance to fill the wall
+                                      0.25)                     # block distance to fill the wall
 
 # obstacles
 obstacle_locations = generate_random_locations(5,               # total number
@@ -41,7 +42,7 @@ target_xml = generate_target_xml(3.5, largest_loc, 0.3, 0.3)
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
                     "@CMAKE_CURRENT_BINARY_DIR@/vns.argos",
 	[
-		["RANDOMSEED",    str(1)],
+		["RANDOMSEED",    Inputseed],
 		["TOTALLENGTH",   str(1000)],
 		["REAL_SCENARIO", generate_real_scenario_object()],
 		["DRONES",        drone_xml], 

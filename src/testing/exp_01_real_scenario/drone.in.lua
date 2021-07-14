@@ -1,0 +1,2 @@
+myType = "drone"
+require("common")

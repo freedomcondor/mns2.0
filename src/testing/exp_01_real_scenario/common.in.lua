@@ -6,10 +6,11 @@ package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 pairs = require("AlphaPairs")
 -- includes -------------
 logger = require("Logger")
-local api = require("droneAPI")
+local api = require(myType .. "API")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
+logger.disable("Allocator")
 
 -- datas ----------------
 local bt
@@ -28,16 +29,14 @@ local gene = {
 	}
 }
 
-local Cgenerator = require("MorphologyCGenerator")
+-- VNS option
+VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval
 
 function VNS.Allocator.resetMorphology(vns)
 	vns.Allocator.setMorphology(vns, structure1)
 end
 
-----   count step and record tranform step
-local stepCount
-local tranformStepCSV
-
+--[[
 function create_reaction_node(vns, file)
 return function()
 	-- detect obstacle/predator and send emergency flag
@@ -76,27 +75,22 @@ return function()
 	end
 end
 end
+--]]
 
 -- argos functions ------
 --- init
 function init()
 	api.linkRobotInterface(VNS)
 	api.init() 
-	vns = VNS.create("drone")
+	vns = VNS.create(myType)
 	reset()
 end
 
 --- reset
 function reset()
 	vns.reset(vns)
-	if vns.idS == "drone1" then vns.idN = 1 end
+	if vns.idS == "pipuck1" then vns.idN = 1 end
 	vns.setGene(vns, gene)
-
-	if robot.id == "drone1" then
-		Cgenerator(gene, "Ccode.cpp")
-	end
-
-	tranformStepCSV = io.open("jumpStep.csv", "w");
 
 	vns.setMorphology(vns, structure1)
 	bt = BT.create
@@ -123,7 +117,7 @@ function step()
 
 	-- poststep
 	vns.postStep(vns)
-	api.droneMaintainHeight(1.5)
+	if myType == "drone" then api.droneMaintainHeight(1.5) end
 	api.postStep()
 
 	vns.logLoopFunctionInfo(vns)
@@ -134,4 +128,17 @@ end
 
 --- destroy
 function destroy()
+end
+
+function create_reaction_node(vns)
+return 
+	{ type = "sequence", children = {
+		-- move forward
+		function()
+			if vns.parentR == nil then
+				vns.Spreader.emergency(vns, vector3(0.05,0,0), vector3())
+			end
+			return false, true
+		end
+	}}
 end

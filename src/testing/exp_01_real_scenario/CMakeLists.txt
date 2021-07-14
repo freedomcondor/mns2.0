@@ -2,10 +2,11 @@
 configure_file( run.in.py        run.py)
 configure_file( vns_template.in.argos
                 vns_template.argos)
-configure_file( drone.lua        drone.lua)
-configure_file( pipuck.lua       pipuck.lua)
-configure_file( predator.lua     predator.lua)
-configure_file( block.lua        block.lua)
+configure_file( common.in.lua       common.lua)
+configure_file( drone.in.lua        drone.lua)
+configure_file( pipuck.in.lua       pipuck.lua)
+configure_file( predator.in.lua     predator.lua)
+configure_file( block.in.lua        block.lua)
 
 configure_file( morphology1.lua  morphology1.lua  COPYONLY)
 configure_file( morphology2.lua  morphology2.lua  COPYONLY)

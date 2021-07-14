@@ -1,0 +1,2 @@
+myType = "pipuck"
+require("common")
