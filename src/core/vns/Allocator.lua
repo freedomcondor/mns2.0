@@ -63,6 +63,7 @@ function Allocator.deleteParent(vns)
 		orientationQ = quaternion(),
 	}
 	--vns.Allocator.setMorphology(vns, vns.allocator.gene)
+	-- TODO: resetMorphology?
 end
 
 function Allocator.setGene(vns, morph)
@@ -914,13 +915,33 @@ function Allocator.GraphMatch(sourceList, targetList, originCost, type)
 end
 
 -------------------------------------------------------------------------------
-function Allocator.calcBaseValue(base, current, target)
+function Allocator.calcBaseValue_vertical(base, current, target)
 	local base_target_V3 = target - base
 	local base_current_V3 = current - base
 	base_target_V3.z = 0
 	base_current_V3.z = 0
 	return base_current_V3:dot(base_target_V3:normalize())
 end
+
+function Allocator.calcBaseValue_oval(base, current, target)
+	local base_target_V3 = target - base
+	local base_current_V3 = current - base
+	base_target_V3.z = 0
+	base_current_V3.z = 0
+	local dot = base_current_V3:dot(base_target_V3:normalize())
+	if dot < 0 then 
+		return dot 
+	else
+		local x = dot
+		local x2 = dot ^ 2
+		local l = base_current_V3:length()
+		local y2 = l ^ 2 - x2
+		elliptic_distance2 = x2 + (1/4) * y2
+		return elliptic_distance2
+	end
+end
+
+Allocator.calcBaseValue = Allocator.calcBaseValue_vertical
 
 -------------------------------------------------------------------------------
 function Allocator.calcMorphScale(vns, morph)
