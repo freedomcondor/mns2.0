@@ -36,48 +36,7 @@ function VNS.Allocator.resetMorphology(vns)
 	vns.Allocator.setMorphology(vns, structure1)
 end
 
---[[
-function create_reaction_node(vns, file)
-return function()
-	-- detect obstacle/predator and send emergency flag
-	for i, obstacle in ipairs(vns.avoider.obstacles) do
-		if obstacle.type == 4 then -- blue
-			vns.Spreader.emergency(vns, vector3(), vector3(), "wall")
-		end
-		if obstacle.type == 0 and obstacle.positionV3.x > 0 then -- black
-			vns.Spreader.emergency(vns, vector3(), vector3(), "target")
-			--vns.setMorphology(vns, structure3)
-		end
-	end
-	for idS, robotR in pairs(vns.connector.seenRobots) do
-		if idS == "pipuck40" then
-			vns.Spreader.emergency(vns, vector3(0.01, 0, 0), vector3())
-		end
-	end
-
-	-- the brain change structures accordingly
-	if robot.id == "drone1" then
-		if vns.spreader.spreading_speed.flag == "wall" then
-			if vns.allocator.target ~= structure2 then
-				logger("transform to structure2 : ", stepCount)
-				file:write(tostring(stepCount) .. "\n")
-			end
-			vns.setMorphology(vns, structure2)
-		end
-		if vns.spreader.spreading_speed.flag == "target" then
-			if vns.allocator.target ~= structure3 then
-				logger("transform to structure3 : ", stepCount)
-				file:write(tostring(stepCount) .. "\n")
-				file:close()
-			end
-			vns.setMorphology(vns, structure3)
-		end
-	end
-end
-end
---]]
-
--- argos functions ------
+-- argos functions -----------------------------------------------
 --- init
 function init()
 	api.linkRobotInterface(VNS)
@@ -130,15 +89,58 @@ end
 function destroy()
 end
 
-function create_reaction_node(vns)
-return 
-	{ type = "sequence", children = {
-		-- move forward
-		function()
-			if vns.parentR == nil then
-				vns.Spreader.emergency(vns, vector3(0.05,0,0), vector3())
-			end
-			return false, true
+-- Strategy -----------------------------------------------
+function nearestObstacle(vns)
+	local distance = math.huge
+	local nearest = nil
+	for i, obstacle in ipairs(vns.avoider.obstacles) do
+		if obstacle.positionV3:length() < distance then
+			distance = obstacle.positionV3:length()
+			nearest = obstacle
 		end
-	}}
+	end
+	return nearest
+end
+
+function stablizeOrientation(vns)
+	-- work only when I'm the brain
+	if vns.robotTypeS ~= "pipuck" or vns.parentR ~= nil then return end
+	-- if this is the first time I see an obstacle
+	if vns.nearest_block == nil then
+		vns.nearest_block = nearestObstacle(vns)
+		return
+	end
+	-- If I have an obstacle remembered
+	local current_nearest = nearestObstacle(vns)
+	-- check if it is the same one
+	if current_nearest == nil then vns.nearest_block = nil return end
+	if (current_nearest.positionV3 - vns.nearest_block.positionV3):length() > 0.3 then
+		vns.nearest_block = current_nearest
+		return
+	end
+	-- all clear, adjust orientation based on difference between vns.nearest_block and current_nearest
+	local diff = vns.nearest_block.orientationQ * current_nearest.orientationQ:inverse()
+	vns.api.virtualFrame.orientationQ = vns.api.virtualFrame.orientationQ * diff
+end
+
+function create_reaction_node(vns)
+	local state = "waiting"
+	local stateCount = 0
+	return function()
+		stablizeOrientation(vns)
+		-- waiting for 30 step
+		if state == "waiting" then
+			stateCount = stateCount + 1
+			if stateCount == 300 then
+				stateCount = 0
+				state = "move_forward"
+			end
+		-- move_forward
+		elseif state == "move_forward" then
+			if vns.parentR == nil then
+				vns.Spreader.emergency(vns, vector3(0.03,0,0), vector3())
+			end
+		end
+		return false, true
+	end
 end

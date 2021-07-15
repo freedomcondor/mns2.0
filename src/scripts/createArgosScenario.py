@@ -133,7 +133,7 @@ def generate_drone_xml(i, x, y) :
 
 def generate_pipuck_xml(i, x, y) :
 	tag = '''
-	<pipuck id="pipuck{}" wifi_medium="wifi" tag_medium="tags">
+	<pipuck id="pipuck{}" wifi_medium="wifi" tag_medium="tags" debug="true">
 		<body position="{},{},0" orientation="0,0,0"/>
 		<controller config="pipuck"/>
 	</pipuck>
