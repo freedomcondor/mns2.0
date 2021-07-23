@@ -55,7 +55,7 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
-		create_reaction_node(vns, tranformStepCSV),
+		create_reaction_node(vns),
 		vns.create_vns_core_node(vns),
 		vns.Driver.create_driver_node(vns),
 	}}
@@ -89,7 +89,7 @@ end
 function destroy()
 end
 
--- Strategy -----------------------------------------------
+-- Strategy Tools -----------------------------------------------
 function nearestObstacle(vns)
 	local distance = math.huge
 	local nearest = nil
@@ -102,6 +102,7 @@ function nearestObstacle(vns)
 	return nearest
 end
 
+-- stablize pipuck virtual orientation based on nearby obstacle
 function stablizeOrientation(vns)
 	-- work only when I'm the brain
 	if vns.robotTypeS ~= "pipuck" or vns.parentR ~= nil then return end
@@ -119,10 +120,29 @@ function stablizeOrientation(vns)
 		return
 	end
 	-- all clear, adjust orientation based on difference between vns.nearest_block and current_nearest
-	local diff = vns.nearest_block.orientationQ * current_nearest.orientationQ:inverse()
-	vns.api.virtualFrame.orientationQ = vns.api.virtualFrame.orientationQ * diff
+	local lastX = vector3(1,0,0):rotate(vns.nearest_block.orientationQ)
+	local currentX = vector3(1,0,0):rotate(current_nearest.orientationQ)
+	local diff = currentX - lastX
+	diff.z = 0
+	currentX = lastX + diff
+	local cross = lastX:cross(currentX)
+	local th = math.asin(cross:length())
+	if cross.z < 0 then th = -th end
+	local diffQ = quaternion(th, vector3(0,0,1))
+	local diffQinv = quaternion(th, vector3(0,0,1)):inverse()
+	vns.api.virtualFrame.orientationQ = vns.api.virtualFrame.orientationQ * diffQ
+	vns.nearest_block = current_nearest
+
+	-- adjust orientation of detected objects based the new orientation
+	for i, obstacle in ipairs(vns.avoider.obstacles) do
+		obstacle.orientationQ = obstacle.orientationQ * diffQinv
+	end
+	for i, robot in pairs(vns.connector.seenRobots) do
+		robot.orientationQ = robot.orientationQ * diffQinv
+	end
 end
 
+-- Strategy -----------------------------------------------
 function create_reaction_node(vns)
 	local state = "waiting"
 	local stateCount = 0

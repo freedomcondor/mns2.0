@@ -123,6 +123,10 @@ function api.debug.showVirtualFrame()
 		vector3(0, -0.1, 0.1):rotate(api.virtualFrame.orientationQ),
 		vector3(0,  0.2, 0.1):rotate(api.virtualFrame.orientationQ)
 	)
+	api.debug.drawArrow("blue", 
+		vector3(0,0,0.1),
+		vector3(0.1,0,0.1)
+	)
 end
 
 function api.debug.showEstimateLocation()
@@ -153,6 +157,7 @@ function api.debug.showChildren(vns)
 	-- draw children location
 	for i, robotR in pairs(vns.childrenRT) do
 		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)))
+		--[[
 		api.debug.drawArrow("blue", 
 			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1),
 			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1) +
@@ -160,6 +165,7 @@ function api.debug.showChildren(vns)
 				api.virtualFrame.Q_VtoR(quaternion(robotR.orientationQ))
 			)
 		)
+		--]]
 	end
 end
 

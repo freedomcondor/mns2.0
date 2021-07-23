@@ -9,12 +9,12 @@ drone_locations = generate_random_locations(3,                  # total number
                                             -3, 0,              # origin location
                                             -5, -3,             # random x range
                                             -2, 2,              # random y range
-											0.5, 1.0)           # near limit and far limit
+                                            0.5, 1.0)           # near limit and far limit
 pipuck_locations = generate_slave_locations(8,
                                             drone_locations,
                                             -5, -3,             # random x range
                                             -2, 2,              # random y range
-											0.5, 1.0)           # near limit and far limit
+                                            0.5, 1.0)           # near limit and far limit
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
 pipuck_xml = generate_pipuck_xml(1, -3, 0) + \
              generate_pipucks(pipuck_locations, 2)              # from label 2 generate pipuck xml tags
@@ -31,7 +31,7 @@ obstacle_locations = generate_random_locations(5,               # total number
                                                None, None,      # origin location
                                                -2.5, -0.5,      # x range
                                                -1.0, 1.0,       # y range
-                                               0.0, 3.0)          # near and far limit
+                                               0.0, 3.0)        # near and far limit
 
 obstacle_xml = generate_obstacles(obstacle_locations, 100, "black")
 
