@@ -18,6 +18,7 @@ VNS.BrainKeeper = require("BrainKeeper")
 VNS.CollectiveSensor = require("CollectiveSensor")
 VNS.IntersectionDetector = require("IntersectionDetector")
 VNS.Neuron = require("Neuron")
+VNS.Stabilizer = require("Stabilizer")
 
 VNS.Driver= require("Driver")
 
@@ -28,6 +29,7 @@ VNS.Modules = {
 	VNS.Assigner,
 
 	VNS.ScaleManager,
+	VNS.Stabilizer,
 
 	VNS.Allocator,
 	VNS.IntersectionDetector,
@@ -316,6 +318,7 @@ function VNS.create_vns_core_node(vns, option)
 			}),
 		vns.Assigner.create_assigner_node(vns),
 		vns.ScaleManager.create_scalemanager_node(vns),
+		vns.Stabilizer.create_stabilizer_node(vns),
 		vns.Allocator.create_allocator_node(vns),
 		vns.IntersectionDetector.create_intersectiondetector_node(vns),
 		vns.Avoider.create_avoider_node(vns),

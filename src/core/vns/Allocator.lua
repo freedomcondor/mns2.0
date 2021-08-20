@@ -255,8 +255,10 @@ function Allocator.step(vns)
 		end
 		return
 	end
-	--if I'm brain, stay still
-	if vns.parentR == nil then
+	--if I'm brain, if no stabilizer than stay still
+	if vns.parentR == nil and
+	   vns.stabilizer ~= nil and
+	   vns.stabilizer.allocator_signal == nil then
 		vns.goal.positionV3 = vector3()
 		vns.goal.orientationQ = quaternion()
 	end
