@@ -48,7 +48,8 @@ end
 --- reset
 function reset()
 	vns.reset(vns)
-	if vns.idS == "pipuck1" then vns.idN = 1 end
+	--if vns.idS == "pipuck1" then vns.idN = 1 end
+	if vns.idS == "drone1" then vns.idN = 1 end
 	vns.setGene(vns, gene)
 
 	vns.setMorphology(vns, structure1)
@@ -99,6 +100,9 @@ function nearestObstacle(vns)
 			nearest = obstacle
 		end
 	end
+	if nearest == nil then
+		-- TODO: get pipucks
+	end
 	return nearest
 end
 
@@ -147,11 +151,12 @@ function create_reaction_node(vns)
 	local state = "waiting"
 	local stateCount = 0
 	return function()
-		stablizeOrientation(vns)
+		--stablizeOrientation(vns)
 		-- waiting for 30 step
 		if state == "waiting" then
 			stateCount = stateCount + 1
 			if stateCount == 300 then
+			--if stateCount == nil then
 				stateCount = 0
 				state = "move_forward"
 			end

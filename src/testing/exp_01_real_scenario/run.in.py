@@ -16,8 +16,11 @@ pipuck_locations = generate_slave_locations(8,
                                             -2, 2,              # random y range
                                             0.5, 1.0)           # near limit and far limit
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
-pipuck_xml = generate_pipuck_xml(1, -3, 0) + \
-             generate_pipucks(pipuck_locations, 2)              # from label 2 generate pipuck xml tags
+
+#pipuck_xml = generate_pipuck_xml(1, -3, 0) + \                 # an extra pipuck and pipuck1
+#             generate_pipucks(pipuck_locations, 2)             # from label 2 generate pipuck xml tags
+
+pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 # wall
 wall_xml, largest_loc = generate_wall(1,                        # number of gates
