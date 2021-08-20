@@ -8,6 +8,11 @@ function Driver.create(vns)
 		orientationQ = quaternion(),
 		transV3 = vector3(),
 		rotateV3 = vector3(),
+		--[[last = {
+			transV3 = vector3(),
+			rotateV3 = vector3(),
+		}
+		--]]
 	}
 end
 
@@ -29,6 +34,8 @@ function Driver.preStep(vns)
 	local inverseOri = quaternion(vns.api.estimateLocation.orientationQ):inverse()
 	vns.goal.positionV3 = (vns.goal.positionV3 - vns.api.estimateLocation.positionV3):rotate(inverseOri)
 	vns.goal.orientationQ = vns.goal.orientationQ * inverseOri
+--	vns.goal.last.transV3 = vns.goal.transV3
+--	vns.goal.last.rotateV3 = vns.goal.rotateV3
 	vns.goal.transV3 = vector3()
 	vns.goal.rotateV3 = vector3()
 end
