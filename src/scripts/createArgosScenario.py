@@ -95,49 +95,49 @@ def generate_real_scenario_object() :
 
 #######################################################################
 # add xml of drone, pipuck, obstacle, targets
-def generate_obstacle_xml(i, x, y, type) :
+def generate_obstacle_xml(i, x, y, th, type) :
 	tag = '''
 	<prototype id="obstacle{}" movable="true" friction="10">
-		<body position="{},{},0" orientation="0,0,0" />
+		<body position="{},{},0" orientation="{},0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
 		</links>
 		<devices>
 			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.02"
+				<tag anchor="base" observable_angle="75" side_length="0.02" payload="{}"
 				     position="0,0.000,0.11" orientation="0,0,0" />
 			</tags>
 		</devices>
     </prototype>
-	'''.format(i, x, y)
+	'''.format(i, x, y, th, type)
 	return tag
 
-def generate_block_xml(i, x, y, type) :
+def generate_block_xml(i, x, y, th, type) :
 	tag = '''
 	<block id="obstacle{}" init_led_color="{}">
-		<body position="{},{},0" orientation="0,0,0" />
+		<body position="{},{},0" orientation="{},0,0" />
 		<controller config="block"/>
 	</block>
-	'''.format(i, type, x, y)
+	'''.format(i, type, x, y, th)
 	return tag
 
-def generate_drone_xml(i, x, y) :
+def generate_drone_xml(i, x, y, th) :
 	tag = '''
 	<drone id="drone{}">
-		<body position="{},{},0" orientation="0,0,0"/>
+		<body position="{},{},0" orientation="{},0,0"/>
 		<controller config="drone"/>
 	</drone>
-	'''.format(i, x, y)
+	'''.format(i, x, y, th)
 	return tag
 
-def generate_pipuck_xml(i, x, y) :
+def generate_pipuck_xml(i, x, y, th) :
 	tag = '''
 	<pipuck id="pipuck{}" wifi_medium="wifi" tag_medium="tags" debug="true">
-		<body position="{},{},0" orientation="0,0,0"/>
+		<body position="{},{},0" orientation="{},0,0"/>
 		<controller config="pipuck"/>
 	</pipuck>
-	'''.format(i, x, y)
+	'''.format(i, x, y, th)
 	return tag
 
 def generate_target_xml(x, y, radius, tag_edge_distance):
@@ -219,11 +219,11 @@ def generate_gate_locations(gate_number, left_end, right_end, small_limit, large
 #		[1D-location, type],
 #	]
 #	and the middle of the largest gate
-def generate_block_locations(gate_number, left_end, right_end, small_limit, large_limit, step) :
-	return generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, 0.055, "orange", "blue")
+def generate_block_locations(gate_number, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) :
+	return generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, 0.055, gate_brick_type, wall_brick_type)
 
-def generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, step) :
-	return generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, 0.10, 255, 254)
+def generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) :
+	return generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, 0.10, gate_brick_type, wall_brick_type) # 254 gate, 255 wall brick
 
 def generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, brick_size, gate_brick_type, wall_brick_type) :
 	block_locations = []
@@ -239,11 +239,16 @@ def generate_wall_brick_locations(gate_number, left_end, right_end, small_limit,
 			right = gate_locations[i][0]
 
 		#set blocks from left to right
+		#set left block
 		j = left
+		block_locations.append([left, -90, gate_brick_type])
+		j = j + step
+		#set middle block
 		while j < right - brick_size:
-			block_locations.append([j, wall_brick_type])
+			block_locations.append([j, 0, wall_brick_type])
 			j = j + step
-		block_locations.append([right, gate_brick_type])
+		#set right block
+		block_locations.append([right, 90, gate_brick_type])
 		
 	return block_locations, largest_loc
 
@@ -254,14 +259,14 @@ def generate_wall_brick_locations(gate_number, left_end, right_end, small_limit,
 #		[1D-location, type],
 #	]
 #	and the middle of the largest gate
-def generate_wall(gate_number, wall_x, left_end, right_end, small_limit, large_limit, step) :
+def generate_wall(gate_number, wall_x, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) :
 	tagstr = ""
-	#block_locations, largest_loc = generate_block_locations(gate_number, left_end, right_end, small_limit, large_limit, step) 
-	block_locations, largest_loc = generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, step) 
+	#block_locations, largest_loc = generate_block_locations(gate_number, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) 
+	block_locations, largest_loc = generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) 
 	i = 0
 	for loc in block_locations :
 		i = i + 1
-		tagstr = tagstr + generate_obstacle_xml(i, wall_x, loc[0], loc[1])
+		tagstr = tagstr + generate_obstacle_xml(i, wall_x, loc[0], loc[1], loc[2]) #loc[0 to 2] means y, th, type
 
 	return tagstr, largest_loc
 
@@ -340,7 +345,7 @@ def generate_drones(locations, start_id) :
 	tagstr = ""
 	i = start_id
 	for loc in locations :
-		tagstr = tagstr + generate_drone_xml(i, loc[0], loc[1])
+		tagstr = tagstr + generate_drone_xml(i, loc[0], loc[1], 0)
 		i = i + 1
 	return tagstr
 
@@ -348,7 +353,7 @@ def generate_pipucks(locations, start_id) :
 	tagstr = ""
 	i = start_id
 	for loc in locations :
-		tagstr = tagstr + generate_pipuck_xml(i, loc[0], loc[1])
+		tagstr = tagstr + generate_pipuck_xml(i, loc[0], loc[1], 0)
 		i = i + 1
 	return tagstr
 
@@ -356,7 +361,7 @@ def generate_obstacles(locations, start_id, type) :
 	tagstr = ""
 	i = start_id
 	for loc in locations :
-		tagstr = tagstr + generate_obstacle_xml(i, loc[0], loc[1], type)
+		tagstr = tagstr + generate_obstacle_xml(i, loc[0], loc[1], 0, type)
 		i = i + 1
 	return tagstr
 #######################################################################
