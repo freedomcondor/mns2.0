@@ -107,7 +107,7 @@ function Stabilizer.step(vns)
 		--]]
 
 		--draw reference
-		vns.api.debug.drawArrow("red", 
+		vns.api.debug.drawArrow("255,255,0,0", 
 		    vns.api.virtualFrame.V3_VtoR(vns.stabilizer.reference.positionV3), 
 		    vns.api.virtualFrame.V3_VtoR(
 				vns.stabilizer.reference.positionV3 + vector3(vns.stabilizer.reference_offset.positionV3):rotate(
@@ -116,7 +116,7 @@ function Stabilizer.step(vns)
 			)
 		)
 
-		vns.api.debug.drawArrow("red", 
+		vns.api.debug.drawArrow("255,255,0,0", 
 		    vns.api.virtualFrame.V3_VtoR(
 				vns.stabilizer.reference.positionV3 + vector3(vns.stabilizer.reference_offset.positionV3):rotate(
 					vns.stabilizer.reference.orientationQ
