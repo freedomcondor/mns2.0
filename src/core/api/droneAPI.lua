@@ -257,7 +257,7 @@ function api.droneAddObstacles(tags, obstaclesInRealFrame) -- tags is an array o
 		   api.tagLabelIndex.block.to >= tag.id then
 			obstaclesInRealFrame[#obstaclesInRealFrame + 1] = {
 				idN = #obstaclesInRealFrame + 1,
-				type = tag.type,
+				type = tag.id,
 				robotTypeS = "block",
 				positionV3 = tag.positionV3,
 				orientationQ = tag.orientationQ,
