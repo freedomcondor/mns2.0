@@ -27,7 +27,8 @@ wall_xml, largest_loc = generate_wall(1,                        # number of gate
                                       0,                        # x location of the wall
                                       -2.9, 2.9,                # y range of the wall
                                       0.5, 1.5,                 # size range of the gate
-                                      0.25)                     # block distance to fill the wall
+                                      0.25,                     # block distance to fill the wall
+                                      253, 254)                 # gate_brick_type, and wall_brick_type
 
 # obstacles
 obstacle_locations = generate_random_locations(5,               # total number
@@ -36,10 +37,12 @@ obstacle_locations = generate_random_locations(5,               # total number
                                                -1.0, 1.0,       # y range
                                                0.0, 3.0)        # near and far limit
 
-obstacle_xml = generate_obstacles(obstacle_locations, 100, "black")
+obstacle_xml = generate_obstacles(obstacle_locations, 100, 255) # start id and payload
 
 # target
-target_xml = generate_target_xml(3.5, largest_loc, 0.3, 0.3)
+target_xml = generate_target_xml(3.5, largest_loc, 0,           # x, y, th
+                                 252,                           # payload
+                                 0.3, 0.3)                      # radius and edge
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 

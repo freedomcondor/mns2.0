@@ -70,7 +70,9 @@
         <wifi implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua"
-              dangerzone_block="0.30"/>
+              dangerzone_block="0.30"
+              block_label_from="252"
+              block_label_to="255"/>
     </lua_controller>
 
     	<!-- Block Controller -->

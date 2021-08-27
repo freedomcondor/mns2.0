@@ -4,6 +4,7 @@ package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/vns/?.lua"
 package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 
 pairs = require("AlphaPairs")
+ExperimentCommon = require("ExperimentCommon")
 -- includes -------------
 logger = require("Logger")
 local api = require(myType .. "API")
@@ -11,6 +12,12 @@ local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
 logger.disable("Allocator")
+
+-- parameters ----------------
+local obstacle_type = 255
+local wall_brick_type = 254
+local gate_brick_type = 253
+local target_type = 252
 
 -- datas ----------------
 local bt
@@ -32,6 +39,7 @@ local gene = {
 -- VNS option
 VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval
 
+-- called when a child lost its parent
 function VNS.Allocator.resetMorphology(vns)
 	vns.Allocator.setMorphology(vns, structure1)
 end
@@ -56,9 +64,12 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
-		create_reaction_node(vns),
 		vns.create_vns_core_node(vns),
-		vns.Driver.create_driver_node(vns),
+
+		vns.CollectiveSensor.create_collectivesensor_node(vns),
+		create_reaction_node(vns),
+
+		vns.Driver.create_driver_node(vns, {waiting = true}),
 	}}
 
 	stepCount = 0
@@ -84,66 +95,12 @@ function step()
 	-- debug
 	api.debug.showChildren(vns)
 	--api.debug.showObstacles(vns)
+
+	--ExperimentCommon.detectGates(vns, 253, 1.5) -- gate brick id and longest possible gate size
 end
 
 --- destroy
 function destroy()
-end
-
--- Strategy Tools -----------------------------------------------
-function nearestObstacle(vns)
-	local distance = math.huge
-	local nearest = nil
-	for i, obstacle in ipairs(vns.avoider.obstacles) do
-		if obstacle.positionV3:length() < distance then
-			distance = obstacle.positionV3:length()
-			nearest = obstacle
-		end
-	end
-	if nearest == nil then
-		-- TODO: get pipucks
-	end
-	return nearest
-end
-
--- stablize pipuck virtual orientation based on nearby obstacle
-function stablizeOrientation(vns)
-	-- work only when I'm the brain
-	if vns.robotTypeS ~= "pipuck" or vns.parentR ~= nil then return end
-	-- if this is the first time I see an obstacle
-	if vns.nearest_block == nil then
-		vns.nearest_block = nearestObstacle(vns)
-		return
-	end
-	-- If I have an obstacle remembered
-	local current_nearest = nearestObstacle(vns)
-	-- check if it is the same one
-	if current_nearest == nil then vns.nearest_block = nil return end
-	if (current_nearest.positionV3 - vns.nearest_block.positionV3):length() > 0.3 then
-		vns.nearest_block = current_nearest
-		return
-	end
-	-- all clear, adjust orientation based on difference between vns.nearest_block and current_nearest
-	local lastX = vector3(1,0,0):rotate(vns.nearest_block.orientationQ)
-	local currentX = vector3(1,0,0):rotate(current_nearest.orientationQ)
-	local diff = currentX - lastX
-	diff.z = 0
-	currentX = lastX + diff
-	local cross = lastX:cross(currentX)
-	local th = math.asin(cross:length())
-	if cross.z < 0 then th = -th end
-	local diffQ = quaternion(th, vector3(0,0,1))
-	local diffQinv = quaternion(th, vector3(0,0,1)):inverse()
-	vns.api.virtualFrame.orientationQ = vns.api.virtualFrame.orientationQ * diffQ
-	vns.nearest_block = current_nearest
-
-	-- adjust orientation of detected objects based the new orientation
-	for i, obstacle in ipairs(vns.avoider.obstacles) do
-		obstacle.orientationQ = obstacle.orientationQ * diffQinv
-	end
-	for i, robot in pairs(vns.connector.seenRobots) do
-		robot.orientationQ = robot.orientationQ * diffQinv
-	end
 end
 
 -- Strategy -----------------------------------------------
@@ -151,8 +108,8 @@ function create_reaction_node(vns)
 	local state = "waiting"
 	local stateCount = 0
 	return function()
-		--stablizeOrientation(vns)
-		-- waiting for 30 step
+		-------------------------------------------------------------
+		-- waiting for sometime for the 1st formation
 		if state == "waiting" then
 			stateCount = stateCount + 1
 			if stateCount == 300 then
@@ -160,12 +117,189 @@ function create_reaction_node(vns)
 				stateCount = 0
 				state = "move_forward"
 			end
-		-- move_forward
-		elseif state == "move_forward" then
+
+		-------------------------------------------------------------
+		-- move_forward : brain:
+		--     start the emergency command
+		--     from vns.collectivesensor.receiveList, adjust directions based on the wall
+		elseif state == "move_forward" and vns.parentR == nil then
 			if vns.parentR == nil then
-				vns.Spreader.emergency(vns, vector3(0.03,0,0), vector3())
+				vns.Spreader.emergency_after_core(vns, vector3(0.03,0,0), vector3())
 			end
-		end
+
+			-- adjust heading based on collective sensed wall
+			for i, ob in pairs(vns.collectivesensor.receiveList) do
+				vns.api.debug.drawArrow("red", vector3(),
+					vns.api.virtualFrame.V3_VtoR(ob.positionV3)
+				)
+				vns.goal.orientationQ = ob.orientationQ
+				-- tell adjust stablizer based on the orientation
+				if vns.stabilizer.reference ~= nil then
+					vns.stabilizer.reference_offset.orientationQ = vns.stabilizer.reference.orientationQ:inverse() *
+					                                               vns.goal.orientationQ
+				end
+				break
+			end
+
+			-- if sees a wall brick myself
+			local wall_brick = ExperimentCommon.detectWall(vns, wall_brick_type)
+			if wall_brick ~= nil then
+				state = "stay_in_front_of_the_wall"
+			end
+
+		-- move_forward : body
+		--     report wall up
+		--     and drone would anchor itself according to the wall
+		elseif state == "move_forward" and vns.parentR ~= nil then
+			ExperimentCommon.reportWall(vns, wall_brick_type)
+
+			local wall_brick = ExperimentCommon.detectWall(vns, wall_brick_type)
+			if wall_brick ~= nil then
+				state = "stay_in_front_of_the_wall"
+			end
+			-- if I see a wall, I adjust my distance and orientation
+			--[[
+			for i, ob in pairs(vns.collectivesensor.receiveList) do
+				vns.api.debug.drawArrow("red", vector3(),
+					vns.api.virtualFrame.V3_VtoR(ob.positionV3)
+				)
+			end
+			--]]
+
+		-------------------------------------------------------------
+		elseif state == "stay_in_front_of_the_wall" then
+			-- keep reporting if I'm a child
+			if vns.parentR ~= nil then
+				ExperimentCommon.reportWall(vns, wall_brick_type)
+			end
+
+			-- if I still see the wall, anchor myself
+			local wall_brick = ExperimentCommon.detectWall(vns, wall_brick_type)
+			if wall_brick == nil then
+				--logger("I lost the wall")
+			else
+				-- if I'm the brain
+				-- anchor position
+				if vns.parentR == nil then
+					vns.goal.orientationQ = wall_brick.orientationQ
+					-- distance to the wall
+					local distance = (wall_brick.positionV3 - vns.goal.positionV3):dot(vector3(1,0,0):rotate(wall_brick.orientationQ))
+					vns.goal.positionV3 = vns.goal.positionV3 + 
+						vector3(1,0,0):rotate(wall_brick.orientationQ) * (distance - 0.4)
+				end
+				-- eliminate vertical component in transV3
+				--[[
+				vns.goal.transV3 = vns.goal.transV3 - 
+					vns.goal.transV3:dot(vector3(1,0,0):rotate(wall_brick.orientationQ)) *
+					vector3(1,0,0):rotate(wall_brick.orientationQ)
+				--]]
+			end
+
+			-- If I see the gate and I'm a drone
+			local gateList, gate = ExperimentCommon.detectGates(vns, gate_brick_type, 1.5)
+			if gate ~= nil and vns.robotTypeS == "drone" then
+				if vns.parentR ~= nil then
+					vns.Msg.send(vns.parentR.idS, "dismiss")
+					vns.deleteParent(vns)
+				end
+				vns.Connector.newVnsID(vns, 1 + gate.length, 1)
+				vns.BrainKeeper.reset(vns)
+				vns.setMorphology(vns, structure2)
+
+				vns.goal.positionV3 = gate.positionV3 + vector3(-0.4, 0, 0):rotate(gate.orientationQ)
+				vns.goal.orientationQ = gate.orientationQ
+				-- tell adjust stablizer based on the orientation
+				if vns.stabilizer.reference ~= nil then
+					vns.stabilizer.reference_offset.positionV3 = 
+						(vns.goal.positionV3 - vns.stabilizer.reference.positionV3):rotate(
+							vns.stabilizer.reference.orientationQ:inverse()
+						)
+					vns.stabilizer.reference_offset.orientationQ = vns.stabilizer.reference.orientationQ:inverse() *
+					                                               vns.goal.orientationQ
+				end
+
+				state = "switch_to_structure2"
+
+				stateCount = 0
+			end
+
+
+
+		-------------------------------------------------------------
+		elseif state == "switch_to_structure2" then
+			if vns.parentR == nil then
+				-- move towards the gate
+				local gateList, gate = ExperimentCommon.detectGates(vns, gate_brick_type, 1.5)
+				if gate ~= nil then
+					vns.goal.positionV3 = gate.positionV3 + vector3(-0.4, 0, 0):rotate(gate.orientationQ)
+					vns.goal.orientationQ = gate.orientationQ
+					-- tell adjust stablizer based on the orientation
+					if vns.stabilizer.reference ~= nil then
+						vns.stabilizer.reference_offset.positionV3 = 
+							(vns.goal.positionV3 - vns.stabilizer.reference.positionV3):rotate(
+								vns.stabilizer.reference.orientationQ:inverse()
+							)
+						vns.stabilizer.reference_offset.orientationQ = vns.stabilizer.reference.orientationQ:inverse() *
+						                                               vns.goal.orientationQ
+					end
+				end
+
+				-- tell everyone that we should switch to new state
+				-- most of the children are still in "stay_in_front_of_wall" state
+				for idS, childR in pairs(vns.childrenRT) do
+					vns.Msg.send(idS, "switch_to_state", {state = "switch_to_structure2"})
+				end
+				-- wait, count and move forward
+				stateCount = stateCount + 1
+				if stateCount == 500 then
+				--if stateCount == nil then
+					stateCount = 0
+					state = "move_forward_again"
+				end
+			end
+
+		-------------------------------------------------------------
+		elseif state == "move_forward_again" and vns.parentR == nil then
+			vns.Spreader.emergency_after_core(vns, vector3(0.03,0,0), vector3())
+
+			-- If I see target
+			local target = ExperimentCommon.detectTarget(vns, target_type)
+			if target ~= nil then
+				state = "switch_to_structure3"
+				vns.setMorphology(vns, structure3)
+			end
+
+		-------------------------------------------------------------
+		elseif state == "switch_to_structure3" and vns.parentR == nil then
+			if vns.parentR == nil then
+				-- move towards the gate
+				local target = ExperimentCommon.detectTarget(vns, target_type)
+				if target ~= nil then
+					vns.goal.positionV3 = target.positionV3 + vector3(-0.8, 0, 0):rotate(target.orientationQ)
+					vns.goal.orientationQ = target.orientationQ
+					-- tell adjust stablizer based on the orientation
+					if vns.stabilizer.reference ~= nil then
+						vns.stabilizer.reference_offset.positionV3 = 
+							(vns.goal.positionV3 - vns.stabilizer.reference.positionV3):rotate(
+								vns.stabilizer.reference.orientationQ:inverse()
+							)
+						vns.stabilizer.reference_offset.orientationQ = vns.stabilizer.reference.orientationQ:inverse() *
+						                                               vns.goal.orientationQ
+					end
+				end
+			end
+
+		end -- end of state
+
+		-- if I receive switch state cmd from parent
+		if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "switch_to_state")) do
+			state = msgM.dataT.state
+			for idS, childR in pairs(vns.childrenRT) do
+				vns.Msg.send(idS, "switch_to_state", {state = msgM.dataT.state})
+			end
+		end end
+
+		vns.state = state
 		return false, true
 	end
 end
