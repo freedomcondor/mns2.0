@@ -38,6 +38,19 @@ function Stabilizer.preStep(vns)
 end
 
 function Stabilizer.postStep(vns)
+	-- estimate location of the new step 
+	-- based on spreader.spreading_speed
+	-- assuming this happens before avoider and after reaction_node
+	local input_transV3 = vns.goal.transV3
+	local input_rotateV3 = vns.goal.rotateV3
+	--local input_transV3 = vns.spreader.spreading_speed.positionV3
+	--local input_rotateV3 = vns.spreader.spreading_speed.orientationV3
+	vns.stabilizer.step_offset.positionV3 = input_transV3 * vns.api.time.period
+	local axis = vector3(input_rotateV3):normalize()
+	if input_rotateV3:length() == 0 then axis = vector3(0,0,1) end
+	vns.stabilizer.step_offset.orientationV3 = 
+		quaternion(input_rotateV3:length() * vns.api.time.period, axis)
+
 	--[[
 	if vns.robotTypeS == "pipuck" and vns.parentR ~= nil then
 		for _, msgM in pairs(vns.Msg.getAM(vns.parentR.idS, "you_are_a_reference")) do
@@ -75,7 +88,10 @@ function Stabilizer.step(vns)
 
 		-- find a reference
 		local current_reference = Stabilizer.getNearestReference(vns)
-		if current_reference == nil then return end
+		if current_reference == nil then 
+			vns.stabilizer.allocator_signal = nil
+			return 
+		end
 		-- if it is not the same one
 		--     reset reference and reference_offset
 		if vns.stabilizer.reference == nil or
@@ -105,6 +121,15 @@ function Stabilizer.step(vns)
 			end
 		end
 		--]]
+		
+		-- add goal into reference
+		--[[
+		vns.stabilizer.reference_offset.positionV3 = 
+			vns.stabilizer.reference_offset.positionV3 + 
+			vector3(vns.goal.positionV3):rotate(vns.stabilizer.reference_offset.orientationQ)
+		vns.stabilizer.reference_offset.orientationQ = vns.stabilizer.reference_offset.orientationQ * 
+		                                               vns.goal.orientationQ
+		--]]
 
 		--draw reference
 		vns.api.debug.drawArrow("255,255,0,0", 
@@ -132,6 +157,7 @@ function Stabilizer.step(vns)
 			)
 		)
 
+		--[[
 		-- estimate location of the new step 
 		-- based on spreader.spreading_speed
 		-- assuming this happens before avoider and after reaction_node
@@ -140,6 +166,7 @@ function Stabilizer.step(vns)
 		if vns.spreader.spreading_speed.orientationV3:length() == 0 then axis = vector3(0,0,1) end
 		vns.stabilizer.step_offset.orientationV3 = 
 			quaternion(vns.spreader.spreading_speed.orientationV3:length() * vns.api.time.period, axis)
+		--]]
 
 		-- accumulate step_offset to reference_offset
 		-- offset in reference obstacle's eye

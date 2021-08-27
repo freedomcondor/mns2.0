@@ -146,6 +146,7 @@ function Driver.step(vns, waiting)
 			local real_distance = real_distanceV3:length()
 			if predict_distance > safezone_half and predict_distance > real_distance then
 				transV3 = vector3()
+				vns.goal.transV3 = vector3()
 			end
 		end
 	end
