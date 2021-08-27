@@ -140,22 +140,22 @@ def generate_pipuck_xml(i, x, y, th) :
 	'''.format(i, x, y, th)
 	return tag
 
-def generate_target_xml(x, y, radius, tag_edge_distance):
+def generate_target_xml(x, y, th, type, radius, tag_edge_distance):
 	tag = '''
 	<prototype id="target" movable="true" friction="2">
-		<body position="{},{},0" orientation="0,0,0" />
+		<body position="{},{},0" orientation="{},0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="{}" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
 		</links>
 		<devices>
 			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.02"
+				<tag anchor="base" observable_angle="75" side_length="0.02" payload="{}"
 				     position="{},0.000,0.11" orientation="0,0,0" />
 			</tags>
 		</devices>
     </prototype>
-	'''.format(x, y, radius, tag_edge_distance-radius)
+	'''.format(x, y, th, radius, type, tag_edge_distance-radius)
 	return tag
 
 #######################################################################
