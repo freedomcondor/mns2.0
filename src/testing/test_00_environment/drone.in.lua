@@ -86,6 +86,9 @@ function step()
 	for i, tag in ipairs(api.droneDetectTags()) do
 		api.debug.drawArrow("blue", vector3(), tag.positionV3)
 	end
+
+	-- wifi debug
+	robot.wifi.tx_data({a=1, b=2})
 end
 
 function reset()

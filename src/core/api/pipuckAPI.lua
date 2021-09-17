@@ -72,7 +72,7 @@ api.setSpeed = api.pipuckSetSpeed
 --api.move is implemented in commonAPI
 
 ---- Debugs --------------------
-api.debug.commonShowChildren = api.debug.showChildren
+api.debug.commonShowChildren = api.debug.showChildren -- TODO: change to show parent
 function api.debug.showChildren(vns)
 	api.debug.commonShowChildren(vns)
 	-- draw children location

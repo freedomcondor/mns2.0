@@ -9,6 +9,7 @@ end
 
 function step()
 	api.debug.drawArrow("blue", vector3(), vector3(1,0,0))
+	robot.wifi.tx_data({a=1, b=2})
 end
 
 function reset()

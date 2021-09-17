@@ -97,10 +97,16 @@
       <controller config="drone"/>
     </drone>
 
+    <builderbot id="builderbot2">
+      <body position="-0.5,1,0" orientation="0,0,0"/>
+      <controller config="builderbot"/>
+    </builderbot>
+    <!--
     <drone id="drone2">
       <body position="-0.5,1,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
+    -->
 
     <!-- add pi-puck robots -->
     <pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags">
@@ -108,10 +114,12 @@
       <controller config="pipuck"/>
     </pipuck>
 
+    <!--
     <pipuck id="pipuck2" wifi_medium="wifi" tag_medium="tags">
       <body position="-0.5,-1.2,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck>
+    -->
 
     <!--distribute>
       <position method="uniform" min="-4.5,-4.5,0" max="4.5,4.5,0" />
