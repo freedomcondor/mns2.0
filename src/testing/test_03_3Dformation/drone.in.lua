@@ -17,6 +17,7 @@ logger.disable("Allocator")
 local bt
 --local vns  -- global vns to make vns appear in lua_editor
 local structure = require("morphology")
+VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval
 
 -- argos functions ------
 --- init

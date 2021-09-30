@@ -61,47 +61,16 @@
   <arena size="10, 10, 5.0" center="0, 0, 1">
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
-    <!-- add drones -->
-    <drone id="drone1">
-      <body position="0,0,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone2">
-      <body position="-1,-0.5,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone3">
-      <body position="-2,-0.5,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone4">
-      <body position="-1,-1.5,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <!--
-    <drone id="drone3">
-      <body position="-2,-0.5,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone4">
-      <body position="0,0,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone5">
-      <body position="-1,0,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-    <drone id="drone6">
-      <body position="-2,0,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-    -->
+    <distribute>
+      <position method="uniform" min="-1.0,-1.0,0" max="1.0,1.0,0" />
+      <orientation method="uniform" min="0,0,0" max="360,0,0" />
+      <entity quantity="8" base_num="1" max_trials="100">
+        <drone id="drone">
+            <body position="-2,0,0" orientation="0,0,0"/>
+            <controller config="drone"/>
+        </drone>
+      </entity>
+    </distribute>
 
     <!-- add pi-puck robots -->
     <distribute>

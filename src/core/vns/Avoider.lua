@@ -90,6 +90,35 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	                     |
 	                 threshold
 	--]]
+	local dV3 = myLocV3 - obLocV3
+	local d = dV3:length()
+	if d == 0 then return accumulatorV3 end
+	local ans = accumulatorV3
+	if d < threshold then
+		dV3:normalize()
+		local transV3 = - vns.Parameters.avoid_speed_scalar 
+		                * math.log(d/threshold) 
+		                * dV3:normalize()
+		ans = ans + transV3
+	end
+	return ans
+end
+
+function Avoider.add2D(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
+	-- calculate the avoid speed from obLoc to myLoc,
+	-- add the result into accumulator
+	--[[
+	        |   |
+	        |   |
+	speed   |    |  -log(d/dangerzone) * scalar
+	        |     |
+	        |      \
+	        |       -\
+	        |         --\
+	        |------------+------------------------
+	                     |
+	                 threshold
+	--]]
 	-- if vortex is true, rotate the speed to create a vortex
 	--[[
 	    moveup |     /
