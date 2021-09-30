@@ -118,7 +118,7 @@ function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
 			local targetGlobalPositionV3 = brainData[step].positionV3 + 
 			                               brainData[step].orientationQ:toRotate(targetRelativePositionV3)
 			local disV3 = targetGlobalPositionV3 - robotData[step].positionV3
-			disV3.z = 0
+			--disV3.z = 0
 			robotData[step].error = disV3:len()
 			--[[
 			if step == endStep then

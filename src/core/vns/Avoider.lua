@@ -51,9 +51,9 @@ function Avoider.step(vns)
 			--end
 			avoid_speed.positionV3 = 
 				Avoider.add(vector3(), obstacle.positionV3,
-			            	avoid_speed.positionV3,
-					        vns.Parameters.dangerzone_block,
-							vns.goal.positionV3)
+				            avoid_speed.positionV3,
+				            vns.Parameters.dangerzone_block,
+				            vns.goal.positionV3)
 		end
 	end
 
@@ -62,7 +62,7 @@ function Avoider.step(vns)
 		if obstacle.type == 3 and vns.robotTypeS == "drone" then
 			local runawayV3 = vector3()
 			runawayV3 = vector3() - obstacle.positionV3
-			runawayV3.z = 0
+			--runawayV3.z = 0
 			runawayV3:normalize()
 			runawayV3 = runawayV3 * vns.Parameters.driver_default_speed
 			vns.Spreader.emergency(vns, runawayV3, vector3(), "green") -- TODO: run away from predator
@@ -83,9 +83,9 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	        |   |
 	speed   |    |  -log(d/dangerzone) * scalar
 	        |     |
-	        |      \  
+	        |      \
 	        |       -\
-	        |         --\ 
+	        |         --\
 	        |------------+------------------------
 	                     |
 	                 threshold
@@ -99,7 +99,7 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	-- if vortex is vector3, it means the goal of the robot is at the vortex, 
 	--         add left or right speed accordingly
 	--[[
-	                 /    
+	                 /
 	           R   \ Ob -
 	   movedown \    \      * goal(vortex)
 	--]]
@@ -113,7 +113,7 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 		dV3:normalize()
 		local transV3 = - vns.Parameters.avoid_speed_scalar 
 		                * math.log(d/threshold) 
-						* dV3:normalize()
+		                * dV3:normalize()
 		if type(vortex) == "bool" and vortex == true then
 			ans = ans + transV3:rotate(quaternion(math.pi/4, vector3(0,0,1)))
 		elseif type(vortex) == "userdata" and getmetatable(vortex) == getmetatable(vector3()) then

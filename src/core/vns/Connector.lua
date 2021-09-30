@@ -262,7 +262,7 @@ function Connector.recruitAll(vns)
 				safezone = vns.Parameters.safezone_pipuck_pipuck
 			end
 			local position2D = vector3(robotR.positionV3)
-			position2D.z = 0
+			--position2D.z = 0
 			if position2D:length() < safezone then
 				Connector.recruit(vns, robotR)
 			end
@@ -292,7 +292,7 @@ function Connector.recruitNear(vns)
 			end
 			-- calculate 2D length
 			local position2D = vector3(robotR.positionV3)
-			position2D.z = 0
+			--position2D.z = 0
 			if position2D:length() < safezone then
 				list[#list + 1] = {
 					idS = idS,
@@ -374,7 +374,7 @@ function Connector.ackAll(vns, option)
 				end
 			else
 				local positionV2 = msgM.dataT.positionV3
-				positionV2.z = 0
+				--positionV2.z = 0
 				vns.connector.waitingParents[msgM.fromS] = {
 					waiting_count = vns.Parameters.connector_waiting_parent_count,
 					distance = positionV2:length(),

@@ -391,7 +391,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 		for j = 1, #targetList do
 			local targetPosition = vector3(targetList[j].index.positionV3)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
-			relativeVector.z = 0
+			--relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
 		end
 	end
@@ -616,7 +616,7 @@ function Allocator.allocate(vns, branches)
 		for j = 1, #targetList do
 			local targetPosition = vector3(targetList[j].index.positionV3)
 			local relativeVector = sourceList[i].index.positionV3 - targetPosition
-			relativeVector.z = 0
+			--relativeVector.z = 0
 			originCost[i][j] = relativeVector:length()
 		end
 	end
@@ -920,16 +920,16 @@ end
 function Allocator.calcBaseValue_vertical(base, current, target)
 	local base_target_V3 = target - base
 	local base_current_V3 = current - base
-	base_target_V3.z = 0
-	base_current_V3.z = 0
+	--base_target_V3.z = 0
+	--base_current_V3.z = 0
 	return base_current_V3:dot(base_target_V3:normalize())
 end
 
 function Allocator.calcBaseValue_oval(base, current, target)
 	local base_target_V3 = target - base
 	local base_current_V3 = current - base
-	base_target_V3.z = 0
-	base_current_V3.z = 0
+	--base_target_V3.z = 0
+	--base_current_V3.z = 0
 	local dot = base_current_V3:dot(base_target_V3:normalize())
 	if dot < 0 then 
 		return dot 

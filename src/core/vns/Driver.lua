@@ -72,7 +72,7 @@ function Driver.step(vns, waiting)
 
 	-- calc transV3
 	local dV3 = vector3(vns.goal.positionV3)
-	dV3.z = 0
+	--dV3.z = 0
 	local d = dV3:length()
 	if d > threshold then
 		transV3 = dV3:normalize() * speed
@@ -113,15 +113,15 @@ function Driver.step(vns, waiting)
 			end
 
 			local predict_distanceV3 = predict_location - vns.parentR.positionV3
-			predict_distanceV3.z = 0
+			--predict_distanceV3.z = 0
 			local predict_distance = predict_distanceV3:length()
 			local real_distanceV3 = vector3(vns.parentR.positionV3)
-			real_distanceV3.z = 0
+			--real_distanceV3.z = 0
 			local real_distance = real_distanceV3:length()
 			if predict_distance > safezone_half and predict_distance > real_distance then
 				local new_predict_distanceV3 = predict_distanceV3 * (real_distance / predict_distance)
 				local new_predict_location = vns.parentR.positionV3 + new_predict_distanceV3
-				new_predict_location.z = 0
+				--new_predict_location.z = 0
 				transV3 = new_predict_location * (1/vns.api.time.period)
 			end
 		end
@@ -139,10 +139,10 @@ function Driver.step(vns, waiting)
 			end
 
 			local predict_distanceV3 = predict_location - robotR.positionV3
-			predict_distanceV3.z = 0
+			--predict_distanceV3.z = 0
 			local predict_distance = predict_distanceV3:length()
 			local real_distanceV3 = vector3(robotR.positionV3)
-			real_distanceV3.z = 0
+			--real_distanceV3.z = 0
 			local real_distance = real_distanceV3:length()
 			if predict_distance > safezone_half and predict_distance > real_distance then
 				transV3 = vector3()
