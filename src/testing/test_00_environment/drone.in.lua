@@ -79,7 +79,9 @@ function step()
 
 	bt()
 
-	api.droneMaintainHeight(1.5)
+	if robot.id == "drone1" then
+		api.droneMaintainHeight(1.5)
+	end
 	api.postStep()
 
 	-- debug
