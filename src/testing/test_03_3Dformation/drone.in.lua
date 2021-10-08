@@ -57,6 +57,7 @@ function step()
 	--api.debug.showChildren(vns)
 	api.debug.showParent(vns)
 
+	--[[
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
@@ -65,6 +66,7 @@ function step()
 		assigner = true,
 		allocator = true,
 	})
+	--]]
 end
 
 --- destroy
