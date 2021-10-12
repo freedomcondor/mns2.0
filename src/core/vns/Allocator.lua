@@ -258,7 +258,8 @@ function Allocator.step(vns)
 	--if I'm brain, if no stabilizer than stay still
 	if vns.parentR == nil and
 	   vns.stabilizer ~= nil and
-	   vns.stabilizer.allocator_signal == nil then
+	   vns.stabilizer.allocator_signal == nil and
+	   vns.allocator.keepBrainGoal == nil then
 		vns.goal.positionV3 = vector3()
 		vns.goal.orientationQ = quaternion()
 	end
@@ -918,6 +919,7 @@ end
 
 -------------------------------------------------------------------------------
 function Allocator.calcBaseValue_vertical(base, current, target)
+	logger("vertical")
 	local base_target_V3 = target - base
 	local base_current_V3 = current - base
 	--base_target_V3.z = 0
@@ -926,6 +928,7 @@ function Allocator.calcBaseValue_vertical(base, current, target)
 end
 
 function Allocator.calcBaseValue_oval(base, current, target)
+	logger("oval")
 	local base_target_V3 = target - base
 	local base_current_V3 = current - base
 	--base_target_V3.z = 0
