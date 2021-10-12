@@ -29,11 +29,13 @@ if (RECORD == 1) {
       // set wifi range
       //for(CPiPuckEntity* pc_pipuck: m_vecPiPucks) {
       for(SPiPuck& s_pipuck: m_vecPiPucks) {
-         s_pipuck.Entity->GetRadioEquippedEntity().GetRadio(0).SetRange(2.5);
+         //s_pipuck.Entity->GetRadioEquippedEntity().GetRadio(0).SetRange(2.5);
+         s_pipuck.Entity->GetRadioEquippedEntity().GetRadio(0).SetRange(5);
       }
       //for(CDroneEntity* pc_drone: m_vecDrones) {
       for(SDrone& s_drone: m_vecDrones) {
-         s_drone.Entity->GetRadioEquippedEntity().GetRadio(0).SetRange(2.5);
+         //s_drone.Entity->GetRadioEquippedEntity().GetRadio(0).SetRange(2.5);
+         s_drone.Entity->GetRadioEquippedEntity().GetRadio(0).SetRange(5);
       }
 }
    }
