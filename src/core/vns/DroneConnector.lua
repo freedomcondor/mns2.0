@@ -3,6 +3,8 @@
 --	the drone will always try to recruit seen pipucks
 --]]
 
+DeepCopy = require("DeepCopy")
+
 local DroneConnector = {}
 
 function DroneConnector.preStep(vns)
@@ -40,12 +42,50 @@ function DroneConnector.step(vns)
 
 	---[[
 	-- broadcast my sight so other drones would see me
-	vns.Msg.send("ALLMSG", "reportSight", {mySight = vns.connector.seenRobots, myObstacles = vns.avoider.obstacles})
+	vns.Msg.send("ALLMSG", "reportSight", {mySight = DeepCopy(vns.connector.seenRobots), myObstacles = vns.avoider.obstacles})
 	--]]
 
 	-- for sight report, generate quadcopters
+	-- add those who can see the a common robot with me
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "reportSight")) do
-		vns.connector.seenRobots[msgM.fromS] = DroneConnector.calcQuadR(msgM.fromS, vns.connector.seenRobots, msgM.dataT.mySight)
+		if vns.connector.seenRobots[msgM.fromS] == nil then
+			vns.connector.seenRobots[msgM.fromS] = DroneConnector.calcQuadR(msgM.fromS, vns.connector.seenRobots, msgM.dataT.mySight)
+		end
+	end
+	-- add those who can see me
+	-- add also what they see
+	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "reportSight")) do
+		if msgM.dataT.mySight[vns.Msg.myIDS()] ~= nil then
+			-- I'm seen in this report sight, add this drone into seenRobots
+			local common = msgM.dataT.mySight[vns.Msg.myIDS()]
+			local quad = {
+				idS = msgM.fromS,
+				positionV3 =
+					vector3(-common.positionV3):rotate(
+					common.orientationQ:inverse()),
+				orientationQ =
+					common.orientationQ:inverse(),
+				robotTypeS = "drone",
+			}
+
+			if vns.connector.seenRobots[quad.idS] == nil then --TODO average
+				vns.connector.seenRobots[quad.idS] = quad
+			end
+
+			-- add other pipucks to seenRobots
+			for idS, R in pairs(msgM.dataT.mySight) do
+				if idS ~= vns.Msg.myIDS() and vns.connector.seenRobots[idS] == nil then
+				--   R.robotTypeS ~= "drone" then -- TODO average
+					vns.connector.seenRobots[idS] = {
+						idS = idS,
+						positionV3 = quad.positionV3 +
+						             vector3(R.positionV3):rotate(quad.orientationQ),
+						orientationQ = quad.orientationQ * R.orientationQ,
+						robotTypeS = R.robotTypeS,
+					}
+				end
+			end
+		end
 	end
 
 	-- convert vns.connector.seenRobots from real frame into virtual frame
@@ -80,8 +120,8 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 	local totalPositionV3 = vector3()
 	local totalOrientationQ = quaternion() 
 	for _, robotR in pairs(yourVehiclesTR) do
-		if myVehiclesTR[robotR.idS] ~= nil and
-		   myVehiclesTR[robotR.idS].robotTypeS ~= "drone" then
+		if myVehiclesTR[robotR.idS] ~= nil then
+		--   myVehiclesTR[robotR.idS].robotTypeS ~= "drone" then
 			local myRobotR = myVehiclesTR[robotR.idS]
 			local positionV3 = 
 							myRobotR.positionV3 +

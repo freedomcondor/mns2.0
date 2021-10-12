@@ -222,8 +222,14 @@ api.tagLabelIndex = {
 	},
 
 	builderbot = {
-		from = tonumber(robot.params.builderbot_label_from or 500),
+		from = tonumber(robot.params.builderbot_label_from or 501),
 		to = tonumber(robot.params.builderbot_label_to or 1000),
+	},
+
+	drone = {
+		from = tonumber(robot.params.drone_label_from or 1001),
+		to = tonumber(robot.params.drone_label_to or 1500),
+		offset = vector3(0,0,0.2)
 	},
 }
 
@@ -239,7 +245,7 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 		end
 		if robotTypeS == nil then robotTypeS = "unknown" end
 
-		if robotTypeS ~= nil and robotTypeS ~= "block" then
+		if robotTypeS ~= "unknown" and robotTypeS ~= "block" then
 			local idS = robotTypeS .. math.floor(tag.id)
 			seenRobotsInRealFrame[idS] = {
 				idS = idS,
@@ -247,6 +253,12 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 				positionV3 = tag.positionV3,
 				orientationQ = tag.orientationQ,
 			}
+			-- label robot offset
+			if api.tagLabelIndex[robotTypeS].offset ~= nil then
+				seenRobotsInRealFrame[idS].positionV3 =
+					seenRobotsInRealFrame[idS].positionV3 -
+						api.tagLabelIndex[robotTypeS].offset:rotate(seenRobotsInRealFrame[idS].orientationQ)
+			end
 		end
 	end
 end
