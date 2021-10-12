@@ -49,7 +49,13 @@ function step()
 	-- poststep
 	vns.postStep(vns)
 	if api.stepCount < 10 then
-		api.droneMaintainHeight(1.5)
+		if robot.id == "drone1" then
+			api.droneMaintainHeight(1.5)
+		end
+
+		if robot.id == "drone2" then
+			api.droneMaintainHeight(0.5)
+		end
 	end
 	api.postStep()
 
