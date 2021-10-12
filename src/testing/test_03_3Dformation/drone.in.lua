@@ -16,7 +16,8 @@ logger.disable("Allocator")
 -- datas ----------------
 local bt
 --local vns  -- global vns to make vns appear in lua_editor
-local structure = require("morphology")
+local structure = require("morphology_cube")
+--local structure = require("morphology_octahedron")
 VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval
 
 -- argos functions ------
@@ -34,6 +35,14 @@ function reset()
 	if vns.idS == "drone1" then vns.idN = 1 end
 	vns.setGene(vns, structure)
 	bt = BT.create(VNS.create_vns_node(vns))
+
+	bt = BT.create
+	{ type = "sequence", children = {
+		vns.create_preconnector_node(vns),
+		vns.create_vns_core_node(vns),
+		create_reaction_node(vns),
+		vns.Driver.create_driver_node(vns, {waiting = true}),
+	}}
 end
 
 --- step
@@ -50,7 +59,7 @@ function step()
 	vns.postStep(vns)
 	if api.stepCount < 10 then
 		if robot.id == "drone1" then
-			api.droneMaintainHeight(1.5)
+			api.droneMaintainHeight(3.5)
 		end
 
 		if robot.id == "drone2" then
@@ -60,8 +69,8 @@ function step()
 	api.postStep()
 
 	-- debug
-	--api.debug.showChildren(vns)
-	api.debug.showParent(vns)
+	api.debug.showChildren(vns)
+	--api.debug.showParent(vns)
 
 	--[[
 	vns.debug.logInfo(vns, {
@@ -77,4 +86,40 @@ end
 
 --- destroy
 function destroy()
+end
+
+-- Strategy -----------------------------------------------
+function create_reaction_node(vns)
+	local state = "waiting"
+	local stateCount = 0
+return function()
+	---------------------------------------
+	-- waiting for taking off and form a formation
+	if state == "waiting" then
+		stateCount = stateCount + 1
+		if stateCount == 700 then 
+			state = "roll" 
+			stateCount = 0
+		end
+	elseif state == "roll" and vns.parentR == nil then
+		stateCount = stateCount + 1
+		if stateCount == 1 then
+			local dis = 0.6
+			local th = 10
+			vns.allocator.keepBrainGoal = true
+			--vns.goal.positionV3 = vector3(dis/2*math.sqrt(2) - dis/2,0,-dis/2)
+			vns.goal.positionV3 = vector3(dis * math.cos((90-th) * math.pi / 180) / math.sqrt(2),
+			                              dis * math.cos((90-th) * math.pi / 180) / math.sqrt(2),
+			                              dis * math.sin((90-th) * math.pi / 180)
+			                             ) - 
+			                      vector3(0,
+			                              0,
+			                              dis * math.sin((90) * math.pi / 180)
+										 )
+			vns.goal.orientationQ = quaternion(th * math.pi/180, vector3(-1,1,0))
+		elseif stateCount == 100 then
+			stateCount = 0
+		end
+	end
+end
 end

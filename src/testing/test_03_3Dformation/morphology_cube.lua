@@ -6,7 +6,7 @@ return
 	children = {
 	{	robotTypeS = "drone",
 		positionV3 = vector3(dis, 0, 0),
-		orientationQ = quaternion(-math.pi/2, vector3(0,1,0)),
+		orientationQ = quaternion(math.pi/2, vector3(0,1,0)),
 		children = {
 		{	robotTypeS = "drone",
 			positionV3 = vector3(dis, 0, 0),
@@ -30,7 +30,7 @@ return
 	}},
 
 	{	robotTypeS = "drone",
-		positionV3 = vector3(0, 0, dis),
+		positionV3 = vector3(0, 0, -dis),
 		orientationQ = quaternion(-math.pi/2, vector3(1,0,0)),
 		children = {
 		{	robotTypeS = "drone",
