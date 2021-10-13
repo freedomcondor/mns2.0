@@ -170,6 +170,14 @@ function VNS.resetMorphology(vns)
 	end
 end
 
+function VNS.setGoal(vns, positionV3, orientationQ)
+	for i, module in ipairs(VNS.Modules) do
+		if type(module.setGoal) == "function" then
+			module.setGoal(vns, positionV3, orientationQ)
+		end
+	end
+end
+
 ---- Print Debug Info ------------------------------------------
 VNS.debug = {}
 function VNS.debug.logInfo(vns, option, indent_str)
@@ -318,7 +326,7 @@ function VNS.create_vns_core_node(vns, option)
 			}),
 		vns.Assigner.create_assigner_node(vns),
 		vns.ScaleManager.create_scalemanager_node(vns),
-		vns.Stabilizer.create_stabilizer_node(vns),
+		--vns.Stabilizer.create_stabilizer_node(vns),
 		vns.Allocator.create_allocator_node(vns),
 		vns.IntersectionDetector.create_intersectiondetector_node(vns),
 		vns.Avoider.create_avoider_node(vns),

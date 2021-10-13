@@ -64,6 +64,17 @@ function Stabilizer.postStep(vns)
 	--]]
 end
 
+function Stabilizer.setGoal(vns, positionV3, orientationQ)
+	if vns.stabilizer.reference ~= nil then
+		vns.stabilizer.reference_offset.positionV3 = 
+			(positionV3 - vns.stabilizer.reference.positionV3):rotate(
+				vns.stabilizer.reference.orientationQ:inverse()
+			)
+		vns.stabilizer.reference_offset.orientationQ = vns.stabilizer.reference.orientationQ:inverse() *
+													   orientationQ
+	end
+end
+
 function Stabilizer.step(vns)
 	if vns.parentR ~= nil then
 		-- I'm not the brain

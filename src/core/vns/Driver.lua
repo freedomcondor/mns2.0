@@ -41,10 +41,15 @@ function Driver.preStep(vns)
 end
 
 function Driver.deleteParent(vns)
-	vns.goal.positionV3= vector3()
+	vns.goal.positionV3 = vector3()
 	vns.goal.orientationQ = quaternion()
 	vns.goal.transV3 = vector3()
 	vns.goal.rotateV3 = vector3()
+end
+
+function Driver.setGoal(vns, positionV3, orientationQ)
+	vns.goal.positionV3 = positionV3
+	vns.goal.orientationQ = orientationQ
 end
 
 function Driver.step(vns, waiting)
