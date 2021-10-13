@@ -19,13 +19,17 @@ namespace argos {
 if (RECORD == 1) {
       using TValueType = std::pair<const std::string, CAny>;
       /* create a vector of the drones */
-      for(const TValueType& t_robot : GetSpace().GetEntitiesByType("drone")) {
-         m_vecDrones.emplace_back(any_cast<CDroneEntity*>(t_robot.second));
-      }
+      try{
+         for(const TValueType& t_robot : GetSpace().GetEntitiesByType("drone")) {
+            m_vecDrones.emplace_back(any_cast<CDroneEntity*>(t_robot.second));
+         }
+      } catch (CARGoSException& ex) {}
       /* create a vector of the pi-pucks */
-      for(const TValueType& t_robot : GetSpace().GetEntitiesByType("pipuck")) {
-         m_vecPiPucks.emplace_back(any_cast<CPiPuckEntity*>(t_robot.second));
-      }
+      try {
+         for(const TValueType& t_robot : GetSpace().GetEntitiesByType("pipuck")) {
+            m_vecPiPucks.emplace_back(any_cast<CPiPuckEntity*>(t_robot.second));
+         }
+      } catch (CARGoSException& ex) {}
       // set wifi range
       //for(CPiPuckEntity* pc_pipuck: m_vecPiPucks) {
       for(SPiPuck& s_pipuck: m_vecPiPucks) {
