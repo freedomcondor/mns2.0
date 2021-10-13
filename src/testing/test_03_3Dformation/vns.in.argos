@@ -44,7 +44,7 @@
       </actuators>
       <sensors>
         <drone_system implementation="default" />
-        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="true" />
+        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="false" />
         <drone_flight_system implementation="default" />
         <wifi implementation="default" />
       </sensors>
@@ -63,16 +63,15 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="10, 10, 10.0" center="0, 0, 1">
+  <arena size="20, 10, 10.0" center="0, 0, 1">
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- add drones -->
     <distribute>
-      <position method="uniform" min="-1.0,-1.0,0" max="1.0,1.0,0" />
+      <position method="uniform" min="-4.0,-2.0,0" max="-2.0,2.0,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="8" base_num="1" max_trials="100">
+      <entity quantity="12" base_num="1" max_trials="100">
         <drone id="drone">
-            <body position="-2,0,0" orientation="0,0,0"/>
             <controller config="drone" />
         </drone>
       </entity>
@@ -86,7 +85,7 @@
                    layout="2,2,1" />
       <!--position method="uniform" min="-0.5,-0.5,0" max="0.5,0.5,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" /-->
-      <entity quantity="1" base_num="1001" max_trials="100">
+      <entity quantity="0" base_num="1001" max_trials="100">
         <pipuck id="pipuck"  wifi_medium="wifi" tag_medium="tags">
           <controller config="pipuck"/>
         </pipuck>
@@ -95,14 +94,33 @@
 
     <!-- add obstacles -->
     <prototype id="hull" movable="false">
-      <body position="0,0,0" orientation="0,0,0" />
-      <links ref="body">
-        <link id="body" geometry="convex_hull" mass="1" position="0,0,1" orientation="0,0,0">
-          (0.500, 0.500, 0.000) (0.000, 0.500, 0.000)
-          (0.500, 0.000, 0.000) (0.000, 0.000, 0.000)
-          (0.500, 0.500, 1.500) (0.000, 0.500, 1.500)
-        </link>
+      <body position="0,0,1" orientation="0,-10,10" />
+      <links ref="bottom">
+        <link id="bottom" geometry="box" mass="1" position="0,0,0" orientation="0,0,0" size="0.3, 5.0, 0.3"/>
+        <link id="up"     geometry="box" mass="1" position="0,0,2" orientation="0,0,0" size="0.3, 5.0, 0.3"/>
+        <link id="left"   geometry="box" mass="1" position="0,-2.35,0" orientation="0,0,0" size="0.3, 0.3, 2.0 - 0.3"/>
+        <link id="right"  geometry="box" mass="1" position="0,2.35,0" orientation="0,0,0" size="0.3, 0.3, 2.0 - 0.3"/>
       </links>
+      <joints>
+        <joint id="bottom_up" type="fixed">
+          <parent link="bottom" position="0,0,2" orientation="0,0,0"/>
+          <child  link="up"     position="0,0,0" orientation="0,0,0"/>
+        </joint>
+        <joint id="bottom_left" type="fixed">
+          <parent link="bottom" position="0,-2.35,0" orientation="0,0,0"/>
+          <child  link="left"   position="0,0,0" orientation="0,0,0"/>
+        </joint>
+        <joint id="bottom_right" type="fixed">
+          <parent link="bottom" position="0,2.35,0" orientation="0,0,0"/>
+          <child  link="right"  position="0,0,0" orientation="0,0,0"/>
+        </joint>
+      </joints>
+      <devices>
+        <tags medium="tags">
+          <tag anchor="bottom" observable_angle="75" side_length="0.02" payload="0"
+               position="0,0,0.35" orientation="0,0,0" />
+        </tags>
+		  </devices>
     </prototype>
   </arena>
 

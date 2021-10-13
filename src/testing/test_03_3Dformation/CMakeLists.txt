@@ -9,3 +9,7 @@ configure_file(morphology_cube.lua
 configure_file(morphology_octahedron.lua 
                morphology_octahedron.lua 
                COPYONLY)
+
+configure_file(morphology_223.lua 
+               morphology_223.lua 
+               COPYONLY)
