@@ -222,7 +222,7 @@ api.tagLabelIndex = {
 	},
 
 	builderbot = {
-		from = tonumber(robot.params.builderbot_label_from or 500),
+		from = tonumber(robot.params.builderbot_label_from or 501),
 		to = tonumber(robot.params.builderbot_label_to or 1000),
 	},
 }
@@ -239,7 +239,7 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 		end
 		if robotTypeS == nil then robotTypeS = "unknown" end
 
-		if robotTypeS ~= nil and robotTypeS ~= "block" then
+		if robotTypeS ~= "unknown" and robotTypeS ~= "block" then
 			local idS = robotTypeS .. math.floor(tag.id)
 			seenRobotsInRealFrame[idS] = {
 				idS = idS,
