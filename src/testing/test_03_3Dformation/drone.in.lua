@@ -138,6 +138,7 @@ return function()
 
 		-- if there is an obstacle
 		if nearest_obstacle ~= nil then
+			vns.allocator.keepBrainGoal = true
 			vns.setGoal(vns,
 			            nearest_obstacle.positionV3 + vector3(-1, 0, 1.3),
 			            nearest_obstacle.orientationQ
@@ -166,6 +167,7 @@ return function()
 
 		-- if there is an obstacle
 		if nearest_obstacle ~= nil then
+			vns.allocator.keepBrainGoal = true
 			vns.setGoal(vns,
 						nearest_obstacle.positionV3 + vector3(2, 0, 1.3),
 						nearest_obstacle.orientationQ
