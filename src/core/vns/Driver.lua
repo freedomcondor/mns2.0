@@ -47,6 +47,11 @@ function Driver.deleteParent(vns)
 	vns.goal.rotateV3 = vector3()
 end
 
+function Driver.setGoal(vns, positionV3, orientationQ)
+	vns.goal.positionV3 = positionV3
+	vns.goal.orientationQ = orientationQ
+end
+
 function Driver.step(vns, waiting)
 	-- waiting is a flag, true or false or nil,
 	--	   means whether robot stop moving when neighbour out of the safe zone

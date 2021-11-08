@@ -170,6 +170,14 @@ function VNS.resetMorphology(vns)
 	end
 end
 
+function VNS.setGoal(vns, positionV3, orientationQ)
+	for i, module in ipairs(VNS.Modules) do
+		if type(module.setGoal) == "function" then
+			module.setGoal(vns, positionV3, orientationQ)
+		end
+	end
+end
+
 ---- Print Debug Info ------------------------------------------
 VNS.debug = {}
 function VNS.debug.logInfo(vns, option, indent_str)
