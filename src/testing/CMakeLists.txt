@@ -4,6 +4,8 @@ add_subdirectory(test_02_neuron)
 
 add_subdirectory(exp_01_real_scenario)
 
+add_subdirectory(hw_01_drone_calibration)
+
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)
 #add_subdirectory(04_scenario)
