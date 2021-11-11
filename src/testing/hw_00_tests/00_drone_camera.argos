@@ -67,6 +67,8 @@
           <camera id="arm3"
                   device="/dev/video6" 
 
+                  calibration="drone_camera_system.xml"
+
                   capture_resolution="1024,768"
                   processing_resolution="700,700"
                   processing_offset="162,34"
@@ -83,7 +85,7 @@
         </drone_cameras_system>
         <drone_system implementation="default" /> 
       </sensors>
-      <params script="camera_test.lua" />
+      <params script="00_drone_camera.lua" />
     </lua_controller>
   </controllers>
 
