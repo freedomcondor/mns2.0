@@ -8,7 +8,7 @@ temp_folder="temp"
 
 #----------------------------------------------------------------------------------------------
 # check flags
-while getopts "i:a:s:" arg; do
+while getopts "i:a:s:h" arg; do
 	case $arg in
 		i)
 			echo "ip provided: $OPTARG"
@@ -22,6 +22,8 @@ while getopts "i:a:s:" arg; do
 			echo "save folder provided: $OPTARG"
 			save_folder=$OPTARG
 			;;
+		h)
+			exit
 	esac
 done
 

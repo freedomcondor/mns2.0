@@ -6,7 +6,7 @@ echo $usage
 
 #----------------------------------------------------------------------------------------------
 # check flags
-while getopts "a:i:" arg; do
+while getopts "a:i:t:h" arg; do
 	case $arg in
 		a)
 			echo "arm provided: $OPTARG"
@@ -19,6 +19,9 @@ while getopts "a:i:" arg; do
 		t) 
 			echo "opencv calibrate executable file provided $OPTARG"
 			opencv_calibrate=$OPTARG
+			;;
+		h)
+			exit
 	esac
 done
 
@@ -57,7 +60,7 @@ done
 # create image_list.xml
 output="image_list.xml"
 echo -e \
-"<?xml version="1.0"?>\n\
+"<?xml version=\"1.0\"?>\n\
 <opencv_storage>\n\
 <images>\n\
 $name_list\
