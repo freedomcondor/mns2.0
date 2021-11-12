@@ -72,4 +72,5 @@ echo "$output prepared, ready to calibrate"
 
 #----------------------------------------------------------------------------------------------
 # calibrate
-$opencv_calibrate calibration_input.xml
+sh_file_dir=`dirname $0`
+$opencv_calibrate $sh_file_dir/calibration_input.xml

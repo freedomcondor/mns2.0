@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------
 # usage message 
 usage=\
-"[usage] example: bash copy_images_from_drone.sh -i 192.168.1.102 -a arm0 -s images(folder name) -t temp(folder name)"
+"[usage] example: bash copy_images_from_drone.sh -i 192.168.1.103 -a arm0(default all) -s images(folder name) -t temp(folder name)"
 echo $usage
 
 temp_folder="temp"
@@ -62,6 +62,13 @@ if [ "$arm" != "all" ]; then
 	pnm_name="*$arm.pnm"
 fi
 scp root@$drone_ip:~/$pnm_name $temp_folder
+
+# check temp_folder empty
+if [ "`ls -A $temp_folder`" = "" ]; then
+	echo "[Error] Nothing copied, maybe check ip address or confirm that there are images on the drone?"
+	rm -r $temp_folder
+	exit
+fi
 
 echo "Converting pnms to pngs"
 for f in $temp_folder/*.pnm

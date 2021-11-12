@@ -26,7 +26,7 @@
         <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="true" />
         <drone_flight_system implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/00_drone_calibration.lua" />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone_calibration.lua" />
     </lua_controller>
   </controllers>
 
