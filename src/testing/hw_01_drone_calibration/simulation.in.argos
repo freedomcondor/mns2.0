@@ -54,7 +54,7 @@
           </links>
           <devices>
             <tags medium="tags">
-              <tag anchor="base" observable_angle="75" side_length="0.02" payload="{}"
+              <tag anchor="base" observable_angle="75" side_length="0.02" payload="1"
                    position="0,0.000,0.11" orientation="0,0,0" />
             </tags>
           </devices>
