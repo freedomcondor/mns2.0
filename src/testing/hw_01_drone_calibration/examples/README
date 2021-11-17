@@ -1,0 +1,17 @@
+create a folder, cd inside
+
+bash ../copy_images_from_drone.sh -s images(images2/images3...) -a arm1 -i 192.168.1.103
+
+bash ../calibrate.sh -i "images images2 images3" -a arm1 -t opencv_calibrate_executable
+
+python3 ../create_drone_intrinsic_calibration_file.py -t drone_camera_calibration_arm1.xml
+
+scp drone_camera_calibration_arm1.xml root@192.168.1.103:~/calibration
+
+scp ../update_drone_extrinsic_calibration_file.py root@192.168.1.103:~
+
+put the drone one the grid, run on the drone :
+
+argos3 -c drone_calibration.argos
+
+python3 update_drone_extrinsic_calibration_file.py -t calibration/drone_camera_calibration_arm1.xml -a arm1
