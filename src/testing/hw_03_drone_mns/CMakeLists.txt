@@ -1,8 +1,16 @@
 make_directory(files)
+
+configure_file( dummy_pipuck.lua                dummy_pipuck.lua)
+
 configure_file( 01_drone_api_simu.in.argos      01_drone_api_simu.argos)
 configure_file( 01_drone_api_hw.argos           files/01_drone_api_hw.argos)
 configure_file( 01_drone_api.lua                files/01_drone_api.lua)
-configure_file( dummy_pipuck.lua                dummy_pipuck.lua)
+
+configure_file( 02_drone_vns_simu.in.argos      02_drone_vns_simu.argos)
+configure_file( 02_drone_vns_hw.argos           files/02_drone_vns_hw.argos)
+configure_file( 02_drone_vns.lua                files/02_drone_vns.lua)
+configure_file( 02_pipuck_vns.lua               files/02_pipuck_vns.lua)
+
 
 file(GLOB MY_PUBLIC_HEADERS ${CMAKE_SOURCE_DIR}/core/api/*)
 file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/files)

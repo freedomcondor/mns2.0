@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="0" ticks_per_second="5" random_seed="0" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <lua_controller id="robot">
+      <actuators>
+        <pipuck_differential_drive implementation="default" />
+        <wifi implementation="default" />
+        <pipuck_leds implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+        <wifi implementation="default" />
+        <pipuck_system implementation="default" />
+      </sensors>
+      <params script="02_pipuck_vns.lua" 
+              hardware="true"
+              connector_waiting_count="5"
+              connector_waiting_parent_count="8"
+              connector_unseen_count="10"
+              connector_heartbeat_count="10"
+      />
+    </lua_controller>
+  </controllers>
+
+</argos-configuration>
