@@ -198,8 +198,8 @@ function api.droneSetSpeed(x, y, z, th)
 
 	-- tune these scalars to make x,y,z,th match m/s and rad/s
 		-- 6 and 0.5 are roughly calibrated for simulation
-	local transScalar = 20
-	local rotateScalar = 0.5
+	local transScalar = 50
+	local rotateScalar = 0.1
 
 	x = x * transScalar * api.time.period
 	y = y * transScalar * api.time.period
