@@ -31,6 +31,15 @@ function step()
 
 	bt()
 
+	logger("cameras")
+	for arm, camera in pairs(robot.cameras_system) do
+		logger(camera.tags)
+	end
+	logger("seenRobots")
+	logger(vns.connector.seenRobots)
+	logger("wifi")
+	logger(robot.wifi.rx_data)
+
 	vns.postStep(vns)
 	api.droneMaintainHeight(1.5)
 	api.postStep()
@@ -38,10 +47,6 @@ function step()
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
-		goal = true,
-		target = true,
-		assigner = true,
-		allocator = true,
 	})
 end
 

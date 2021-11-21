@@ -86,7 +86,16 @@ function VNS.reset(vns)
 	vns.childrenRT = {}
 
 	vns.idS = VNS.Msg.myIDS()
-	vns.idN = robot.random.uniform()
+	--vns.idN = robot.random.uniform()
+	if robot.id == "drone2"
+		vns.idN = 0.8
+	elseif robot.id == "pipuck1"
+		vns.idN = 0.6
+	elseif robot.id == "pipuck2"
+		vns.idN = 0.5
+	else
+		vns.idN = robot.random.uniform()
+	end
 
 	for i, module in ipairs(VNS.Modules) do
 		if type(module.reset) == "function" then

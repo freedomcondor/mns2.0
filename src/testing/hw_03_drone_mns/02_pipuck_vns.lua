@@ -31,16 +31,17 @@ function step()
 
 	bt()
 
+	logger("seenRobots")
+	logger(vns.connector.seenRobots)
+	logger("wifi")
+	logger(robot.wifi.rx_data)
+
 	vns.postStep(vns)
 	api.postStep()
 
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
-		goal = true,
-		target = true,
-		assigner = true,
-		allocator = true,
 	})
 end
 
