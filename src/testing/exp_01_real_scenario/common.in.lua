@@ -101,6 +101,7 @@ end
 
 --- destroy
 function destroy()
+	api.destroy()
 end
 
 -- Strategy -----------------------------------------------

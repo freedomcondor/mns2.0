@@ -1,5 +1,9 @@
 local api = {}
 
+if robot.params.hardware == "true" then
+	robot.params.hardware = true
+end
+
 ---- Time -------------------------------------
 api.time = {}
 api.time.currentTime = robot.system.time

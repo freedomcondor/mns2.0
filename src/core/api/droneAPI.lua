@@ -20,6 +20,19 @@ function api.actuator.setNewLocation(locationV3, rad)
 	api.actuator.newRad = rad
 end
 
+-- drone flight preparation sequence
+api.actuator.flight_preparation = {
+	state = "pre_flight",
+	state_duration = 5,
+	state_count = 0,
+}
+
+-- drone hardware setting
+if robot.params.hardware == true then
+	api.actuator.flight_preparation.state_duration = 50
+	api.actuator.hardware_compensate = {}
+end
+
 ---- Virtual Frame and tilt ---------------------
 api.virtualFrame.logicOrientationQ = quaternion()
 -- overwrite rotateInspeed to change logicOrientation
@@ -63,11 +76,63 @@ api.commonPreStep = api.preStep
 function api.preStep()
 	api.commonPreStep()
 	api.droneTiltVirtualFrame()
+
+	if robot.params.hardware == true then
+		if api.actuator.hardware_compensate.earthZ == nil then
+			api.actuator.hardware_compensate.earthZ = robot.flight_system.orientation.z
+			logger("Z earth = ", api.actuator.hardware_compensate.earthZ)
+		end
+	end
 end
 
 api.commonPostStep = api.postStep
 function api.postStep()
 	if robot.flight_system ~= nil then
+		-- flight preparation state machine
+		if api.actuator.flight_preparation.state == "pre_flight" then
+			api.actuator.newPosition.x = 0
+			api.actuator.newPosition.y = 0
+			api.actuator.newRad = 0
+			-- if in simulation, the drone shouldn't fly yet
+			if robot.params.hardware ~= true then
+				api.actuator.newPosition.z = 0
+			end
+
+			api.actuator.flight_preparation.state_count = 
+				api.actuator.flight_preparation.state_count + 1
+			if api.actuator.flight_preparation.state_count >= api.actuator.flight_preparation.state_duration then
+				api.actuator.flight_preparation.state_count = 0
+				api.actuator.flight_preparation.state = "armed"
+				logger("go to armed")
+			end
+		elseif api.actuator.flight_preparation.state == "armed" then
+			api.actuator.newPosition.x = 0
+			api.actuator.newPosition.y = 0
+			api.actuator.newRad = 0
+			-- if in simulation, the drone shouldn't fly yet
+			if robot.params.hardware ~= true then
+				api.actuator.newPosition.z = 0
+			end
+
+			robot.flight_system.set_armed(true, false)
+			robot.flight_system.set_offboard_mode(true)
+			api.actuator.flight_preparation.state = "take_off"
+			logger("go to take_off")
+			api.actuator.flight_preparation.state_count = 0
+		elseif api.actuator.flight_preparation.state == "take_off" then
+			api.actuator.newPosition.x = 0
+			api.actuator.newPosition.y = 0
+			api.actuator.newRad = 0
+
+			api.actuator.flight_preparation.state_count = 
+				api.actuator.flight_preparation.state_count + 1
+			if api.actuator.flight_preparation.state_count >= api.actuator.flight_preparation.state_duration * 2 then
+				api.actuator.flight_preparation.state_count = 0
+				api.actuator.flight_preparation.state = "navigation"
+				logger("go to navigation")
+			end
+		elseif api.actuator.flight_preparation.state == "navigation" then
+		end
 		robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
 	end
 	api.commonPostStep()
@@ -120,6 +185,32 @@ function api.droneSetSpeed(x, y, z, th)
 		vector3(x,y,z):rotate(q) + robot.flight_system.position,
 		rad + th
 	)
+end
+
+if robot.params.hardware == true then
+function api.droneSetSpeed(x, y, z, th)
+	logger("I am hardware drone set speed")
+	if robot.flight_system == nil then return end
+	-- x, y, z in m, x front, z up, y left
+	-- th in rad, counter-clockwise positive
+	local rad = robot.flight_system.orientation.z - api.actuator.hardware_compensate.earthZ
+	local q = quaternion(rad, vector3(0,0,1))
+
+	-- tune these scalars to make x,y,z,th match m/s and rad/s
+		-- 6 and 0.5 are roughly calibrated for simulation
+	local transScalar = 20
+	local rotateScalar = 0.5
+
+	x = x * transScalar * api.time.period
+	y = y * transScalar * api.time.period
+	z = z * transScalar * api.time.period
+	th = th * rotateScalar * api.time.period
+
+	api.actuator.setNewLocation(
+		vector3(x,y,z):rotate(q) + robot.flight_system.position,
+		rad + th
+	)
+end
 end
 
 api.setSpeed = api.droneSetSpeed
