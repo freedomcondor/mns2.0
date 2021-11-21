@@ -87,11 +87,11 @@ function VNS.reset(vns)
 
 	vns.idS = VNS.Msg.myIDS()
 	--vns.idN = robot.random.uniform()
-	if robot.id == "drone2"
+	if robot.id == "drone2" then
 		vns.idN = 0.8
-	elseif robot.id == "pipuck1"
+	elseif robot.id == "pipuck1" then
 		vns.idN = 0.6
-	elseif robot.id == "pipuck2"
+	elseif robot.id == "pipuck2" then
 		vns.idN = 0.5
 	else
 		vns.idN = robot.random.uniform()
