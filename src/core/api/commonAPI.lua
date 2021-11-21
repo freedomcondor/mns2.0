@@ -7,6 +7,7 @@ end
 ---- Time -------------------------------------
 api.time = {}
 api.time.currentTime = robot.system.time
+api.time.period = 0.2
 function api.processTime()
 	api.time.period = robot.system.time - api.time.currentTime
 	api.time.currentTime = robot.system.time

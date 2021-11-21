@@ -7,7 +7,7 @@ logger.disable("Allocator")
 
 -- datas ----------------
 local bt
-local vns
+--local vns
 
 function init()
 	api.linkRobotInterface(VNS)
@@ -21,6 +21,8 @@ function reset()
 	bt = BT.create{type = "sequence", children = {
 		vns.create_preconnector_node(vns),
 		vns.Connector.create_connector_node(vns),
+		create_reaction_node(vns),
+		vns.Driver.create_driver_node(vns),
 	}}
 end
 
@@ -52,4 +54,21 @@ end
 
 function destroy()
 	api.destroy()
+end
+
+function create_reaction_node(vns)
+return function()
+	if vns.parentR == nil then
+		vns.Driver.move(vector3(), vector3(0,0,0.1))
+	end
+
+	for idS, childR in pairs(vns.childrenRT) do
+		childR.goal = {
+			positionV3 = vector3(-0.5, 0, 0),
+			orientationQ = quaternion(),
+		}
+	end
+
+	return false, true
+end
 end

@@ -60,7 +60,7 @@
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- add drones -->
-    <drone id="drone1">
+    <drone id="drone2">
       <body position="0,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
