@@ -1,6 +1,8 @@
 function init()
 	for id, camera in pairs(robot.cameras_system) do    
 		camera.enable()
+		print("camera " .. id .. ", position = " .. tostring(camera.transform.position))
+		print("camera " .. id .. ", orientation = " .. tostring(camera.transform.orientation))
 	end
 end
  

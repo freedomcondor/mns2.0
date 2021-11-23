@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <framework>
+    <experiment length="201" ticks_per_second="5" random_seed="0"/>
+  </framework>
+
+  <controllers>
+    <lua_controller id="test_differential_drive">
+      <actuators>
+        <pipuck_differential_drive implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+      </sensors>
+      <params script="01_pipuck_drive.lua" />
+    </lua_controller>
+  </controllers>
+
+</argos-configuration>
