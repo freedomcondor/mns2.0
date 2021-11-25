@@ -88,7 +88,7 @@ function step()
 	end
 
 	-- wifi debug
-	robot.wifi.tx_data({a=1, b=2})
+	robot.radios.wifi.send({a=1, b=2})
 end
 
 function reset()

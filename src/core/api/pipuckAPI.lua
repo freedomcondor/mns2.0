@@ -29,9 +29,9 @@ end
 
 api.commonPostStep = api.postStep
 function api.postStep()
-	robot.differential_drive.set_target_velocity(
+	robot.differential_drive.set_linear_velocity(
 		api.actuator.newLeft, 
-		-api.actuator.newRight
+		api.actuator.newRight
 	)
 	api.commonPostStep()
 end

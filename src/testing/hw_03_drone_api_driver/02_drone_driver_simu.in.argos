@@ -13,27 +13,7 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-     <!-- Pi-Puck Controller -->
-    <lua_controller id="pipuck">
-      <actuators>
-        <!--debug implementation="default">
-          <interface id="draw" />
-        </debug-->
-        <pipuck_differential_drive implementation="default" />
-        <radios implementation="default" />
-      </actuators>
-      <sensors>
-        <pipuck_differential_drive implementation="default" />
-        <pipuck_system implementation="default" />
-        <pipuck_rangefinders implementation="default" show_rays="false" />
-        <radios implementation="default" />
-      </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua"
-              driver_default_speed="0.05"
-      />
-    </lua_controller>
-
-     <!-- Drone Controller -->
+    <!-- Drone Controller -->
     <lua_controller id="drone">
       <actuators>
         <!--debug implementation="default">
@@ -44,13 +24,20 @@
       </actuators>
       <sensors>
         <drone_system implementation="default" />
-        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="false" />
+        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="true" />
         <drone_flight_system implementation="default" />
         <radios implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua"
-              dangerzone_drone="0.7"
-              driver_default_speed="0.05"
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/02_drone_driver.lua"
+              driver_default_speed="0.5"
+              hardware="false"/>
+    </lua_controller>
+
+    <!-- Pi-Puck Controller -->
+    <lua_controller id="pipuck">
+      <actuators />
+      <sensors />
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/dummy_pipuck.lua"
       />
     </lua_controller>
   </controllers>
@@ -58,49 +45,24 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="10, 10, 2.5" center="0, 0, 1">
+  <arena size="4, 4, 2.5" center="0, 0, 1">
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- add drones -->
     <drone id="drone1" wifi_medium="wifi" tag_medium="tags">
-      <body position="0,-0.5,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone2" wifi_medium="wifi" tag_medium="tags">
-      <body position="-1,-0.5,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone3" wifi_medium="wifi" tag_medium="tags">
-      <body position="-2,-0.5,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone4" wifi_medium="wifi" tag_medium="tags">
       <body position="0,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
 
-    <drone id="drone5" wifi_medium="wifi" tag_medium="tags">
-      <body position="-1,0,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
-    <drone id="drone6" wifi_medium="wifi" tag_medium="tags">
-      <body position="-2,0,0" orientation="0,0,0"/>
-      <controller config="drone"/>
-    </drone>
+    <pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags">
+      <body position="0.3,0.3,0" orientation="30,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
 
-    <!-- add pi-puck robots -->
-    <distribute>
-      <position method="uniform" min="-2.5,-1.5,0" max="0.5,0.5,0" />
-      <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="14" base_num="1" max_trials="100">
-        <pipuck id="pipuck"  wifi_medium="wifi" tag_medium="tags">
-          <controller config="pipuck"/>
-        </pipuck>
-      </entity>
-    </distribute>
+    <pipuck id="pipuck2" wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.3,0.3,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
   </arena>
 
   <!-- ******************* -->
@@ -120,7 +82,6 @@
   <media>
     <directional_led id="directional_leds" index="grid" grid_size="20,20,20"/>
     <tag id="tags" index="grid" grid_size="20,20,20" />
-    <radio id="nfc" index="grid" grid_size="20,20,20" />
     <radio id="wifi" index="grid" grid_size="20,20,20" />
   </media>
 

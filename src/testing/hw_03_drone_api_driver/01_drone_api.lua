@@ -2,6 +2,9 @@ logger = require("Logger")
 api = require("droneAPI")
 logger.enable()
 
+local target = vector3()
+local lostCount = 0
+
 function init()
 	api.init()
 end
@@ -9,7 +12,7 @@ end
 function reset()
 end
 
-local target = vector3()
+
 function step()
 	logger("-- " .. robot.id .. " " .. tostring(api.stepCount) .. " ------------------------------------")
 	api.preStep() 
@@ -23,12 +26,23 @@ function step()
 
 	logger("seenRobots")
 	logger(seenRobots)
+	logger("lostCount = ", lostCount)
 
+	-- set target based on seenRobots
+	-- reset target to vector3() if lost robot for too long
 	local reference_robot = seenRobots["pipuck1"]
 	if reference_robot ~= nil then
 		target = reference_robot.positionV3 + vector3(0.5, 0, 0):rotate(reference_robot.orientationQ)
+		lostCount = 0
+	else
+		lostCount = lostCount + 1
+		if lostCount >= 10 then
+			target = vector3()
+			lostCount = 10
+		end
 	end
 
+	-- fly towards the target
 	api.droneSetSpeed(target.x, target.y, 0, 0)
 	api.droneMaintainHeight(1.5)
 

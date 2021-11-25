@@ -5,7 +5,7 @@
 
 #include <argos3/plugins/robots/pi-puck/simulator/pipuck_entity.h>
 #include <argos3/plugins/robots/drone/simulator/drone_entity.h>
-#include <argos3/plugins/simulator/entities/debug_entity.h>
+//#include <argos3/plugins/simulator/entities/debug_entity.h>
 
 #include <fstream>
 #include <string>

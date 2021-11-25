@@ -185,11 +185,11 @@ end
 ------------------------------------------------------
 function api.linkRobotInterface(VNS)
 	VNS.Msg.sendTable = function(table)
-		robot.wifi.tx_data(table)
+		robot.radios.wifi.send(table)
 	end
 
 	VNS.Msg.getTablesAT = function(table)
-		return robot.wifi.rx_data
+		return robot.radios.wifi.recv
 	end
 
 	VNS.Msg.myIDS = function()
