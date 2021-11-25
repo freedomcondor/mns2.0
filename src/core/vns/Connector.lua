@@ -81,15 +81,6 @@ end
 
 function Connector.newVnsID(vns, idN, lastidPeriod)
 	local _idS = vns.Msg.myIDS()
-
-	if robot.id == "pipuck1" then
-		idN = 0.8
-	elseif robot.id == "drone2" then
-		idN = 0.6
-	elseif robot.id == "pipuck2" then
-		idN = 0.5
-	end
-
 	local _idN = idN or robot.random.uniform()
 
 	Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)

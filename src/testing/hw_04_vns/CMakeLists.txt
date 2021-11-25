@@ -1,0 +1,14 @@
+make_directory(files)
+
+configure_file( 01_drone_vns_simu.in.argos      01_drone_vns_simu.argos)
+configure_file( 01_drone_vns_hw.argos           files/01_drone_vns_hw.argos)
+configure_file( 01_drone_vns.lua                files/01_drone_vns.lua)
+configure_file( 01_pipuck_vns_hw.argos          files/01_pipuck_vns_hw.argos)
+configure_file( 01_pipuck_vns.lua               files/01_pipuck_vns.lua)
+
+file(GLOB MY_PUBLIC_HEADERS ${CMAKE_SOURCE_DIR}/core/api/*)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/files)
+file(GLOB MY_PUBLIC_HEADERS ${CMAKE_SOURCE_DIR}/core/utils/*)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/files)
+file(GLOB MY_PUBLIC_HEADERS ${CMAKE_SOURCE_DIR}/core/vns/*)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/files)

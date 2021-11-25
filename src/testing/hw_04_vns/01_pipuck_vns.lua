@@ -18,6 +18,15 @@ end
 
 function reset()
 	vns.reset(vns)
+
+	if robot.id == "pipuck1" then
+		vns.idN = 1
+	elseif robot.id == "drone2" then
+		vns.idN = 0.8
+	elseif robot.id == "pipuck2" then
+		vns.idN = 0.6
+	end
+
 	bt = BT.create{type = "sequence", children = {
 		vns.create_preconnector_node(vns),
 		vns.Connector.create_connector_node(vns),
@@ -27,7 +36,7 @@ function reset()
 end
 
 function step()
-	logger("-- " .. robot.id .. " " .. tostring(api.stepCount) .. " ------------------------------------")
+	logger("-- " .. robot.id .. " " .. tostring(api.stepCount + 1) .. " ------------------------------------")
 	api.preStep() 
 	vns.preStep(vns)
 
@@ -36,7 +45,7 @@ function step()
 	logger("seenRobots")
 	logger(vns.connector.seenRobots)
 	logger("wifi")
-	logger(robot.wifi.rx_data)
+	logger(robot.radios.wifi.recv)
 
 	vns.postStep(vns)
 	api.postStep()
@@ -44,7 +53,9 @@ function step()
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
+		connector = true,
 	})
+	api.pipuckShowLED(api.virtualFrame.V3_VtoR(vector3(-1,0,0)))
 end
 
 function destroy()

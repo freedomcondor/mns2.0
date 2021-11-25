@@ -27,7 +27,7 @@ function reset()
 end
 
 function step()
-	logger("-- " .. robot.id .. " " .. tostring(api.stepCount) .. " ------------------------------------")
+	logger("-- " .. robot.id .. " " .. tostring(api.stepCount + 1) .. " ------------------------------------")
 	api.preStep() 
 	vns.preStep(vns)
 
@@ -40,7 +40,7 @@ function step()
 	logger("seenRobots")
 	logger(vns.connector.seenRobots)
 	logger("wifi")
-	logger(robot.wifi.rx_data)
+	logger(robot.radios.wifi.recv)
 
 	vns.postStep(vns)
 	api.droneMaintainHeight(1.5)
@@ -49,6 +49,7 @@ function step()
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
+		connector = true,
 	})
 end
 

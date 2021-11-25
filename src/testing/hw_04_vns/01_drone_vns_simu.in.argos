@@ -16,39 +16,40 @@
     <!-- Drone Controller -->
     <lua_controller id="drone">
       <actuators>
-        <debug implementation="default">
+        <!--debug implementation="default">
           <interface id="draw" />
-        </debug>
+        </debug-->
         <drone_flight_system implementation="default" />
-        <wifi implementation="default" />
+        <radios implementation="default" />
       </actuators>
       <sensors>
         <drone_system implementation="default" />
         <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="true" />
         <drone_flight_system implementation="default" />
-        <wifi implementation="default" />
+        <radios implementation="default" />
       </sensors>
       <!--params script="@CMAKE_CURRENT_BINARY_DIR@/drone_navigation.lua" /-->
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/02_drone_vns.lua"
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_vns.lua"
               hardware="false"/>
     </lua_controller>
 
     <!-- Pi-Puck Controller -->
     <lua_controller id="pipuck">
       <actuators>
-        <debug implementation="default">
+        <!--debug implementation="default">
           <interface id="draw" />
-        </debug>
+        </debug-->
         <pipuck_differential_drive implementation="default" />
-        <wifi implementation="default" />
+        <pipuck_leds implementation="default" />
+        <radios implementation="default" />
       </actuators>
       <sensors>
         <pipuck_differential_drive implementation="default" />
         <pipuck_system implementation="default" />
         <pipuck_rangefinders implementation="default" show_rays="false" />
-        <wifi implementation="default" show_rays="false" />
+        <radios implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/02_pipuck_vns.lua"
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_pipuck_vns.lua"
       />
     </lua_controller>
   </controllers>
@@ -60,7 +61,7 @@
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- add drones -->
-    <drone id="drone2">
+    <drone id="drone2" wifi_medium="wifi" tag_medium="tags">
       <body position="0,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
@@ -104,7 +105,6 @@
     <dynamics3d id="dyn3d" iterations="25" default_friction="0.3">
       <gravity g="9.8" />
       <floor friction="1.0" />
-      <virtual_magnetism />
     </dynamics3d>
   </physics_engines>
 
@@ -120,17 +120,17 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="@CMAKE_BINARY_DIR@/libvns_loop_functions"
-                  label="vns_loop_functions"/>
+  <!--loop_functions library="@CMAKE_BINARY_DIR@/libvns_loop_functions"
+                  label="vns_loop_functions"/-->
 
   <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
     <qt-opengl lua_editor="true" show_boundary="false">
-		  <user_functions library="@CMAKE_BINARY_DIR@/libbuilderbot_qtopengl_user_functions"
+		  <!--user_functions library="@CMAKE_BINARY_DIR@/libbuilderbot_qtopengl_user_functions"
                       label="builderbot_qtopengl_user_functions" >
-      </user_functions>
+      </user_functions-->
       <camera>
         <placements>
           <placement index="0" position="  0,  0, 20"  look_at="0,0,10"   lens_focal_length="50" up="1,0,0"/>
@@ -146,6 +146,5 @@
       </camera>
     </qt-opengl>
   </visualization>
-
 
 </argos-configuration>

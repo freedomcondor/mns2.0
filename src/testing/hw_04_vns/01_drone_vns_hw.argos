@@ -91,7 +91,7 @@
           />
         </drone_cameras_system>
       </sensors>
-      <params script="02_drone_vns.lua" 
+      <params script="01_drone_vns.lua" 
               hardware="true"
               connector_waiting_count="5"
               connector_waiting_parent_count="8"
