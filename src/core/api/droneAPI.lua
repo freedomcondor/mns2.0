@@ -29,7 +29,7 @@ api.actuator.flight_preparation = {
 
 -- drone hardware setting
 if robot.params.hardware == true then
-	api.actuator.flight_preparation.state_duration = 50
+	api.actuator.flight_preparation.state_duration = 100
 	api.actuator.hardware_compensate = {}
 end
 
@@ -76,18 +76,12 @@ api.commonPreStep = api.preStep
 function api.preStep()
 	api.commonPreStep()
 	api.droneTiltVirtualFrame()
-
-	if robot.params.hardware == true then
-		if api.actuator.hardware_compensate.earthZ == nil then
-			api.actuator.hardware_compensate.earthZ = robot.flight_system.orientation.z
-			logger("Z earth = ", api.actuator.hardware_compensate.earthZ)
-		end
-	end
 end
 
 api.commonPostStep = api.postStep
 function api.postStep()
-	if robot.flight_system ~= nil then
+	logger("flight_system_ready = ", robot.flight_system.ready())
+	if robot.flight_system ~= nil and robot.flight_system.ready() then
 		-- flight preparation state machine
 		if api.actuator.flight_preparation.state == "pre_flight" then
 			api.actuator.newPosition.x = 0
@@ -133,6 +127,7 @@ function api.postStep()
 			end
 		elseif api.actuator.flight_preparation.state == "navigation" then
 		end
+		logger("setTarget", api.actuator.newPosition, api.actuator.newRad)
 		robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
 	end
 	api.commonPostStep()
@@ -193,7 +188,7 @@ function api.droneSetSpeed(x, y, z, th)
 	if robot.flight_system == nil then return end
 	-- x, y, z in m, x front, z up, y left
 	-- th in rad, counter-clockwise positive
-	local rad = robot.flight_system.orientation.z - api.actuator.hardware_compensate.earthZ
+	local rad = robot.flight_system.orientation.z
 	local q = quaternion(rad, vector3(0,0,1))
 
 	-- tune these scalars to make x,y,z,th match m/s and rad/s
@@ -206,6 +201,10 @@ function api.droneSetSpeed(x, y, z, th)
 	z = z * transScalar * api.time.period
 	th = th * rotateScalar * api.time.period
 
+	logger("sensor reading position", robot.flight_system.position)
+	logger("sensor reading orientation", robot.flight_system.orientation)
+	logger("xyz = ", vector3(x,y,z))
+	logger("xyz from home = ", vector3(x,y,z):rotate(q) + robot.flight_system.position)
 	api.actuator.setNewLocation(
 		vector3(x,y,z):rotate(q) + robot.flight_system.position,
 		rad + th
