@@ -33,6 +33,10 @@ function step()
 
 	bt()
 
+	vns.debug.logVNSInfo(vns, {
+		goal = true,
+	})
+
 	vns:postStep()
 	api.droneMaintainHeight(1.5)
 	api.postStep()
@@ -76,5 +80,8 @@ return function()
 			lostCount = 10
 		end
 	end
+	--vns.goal.positionV3 = vector3(0.5, 0, 0)
+
+	return false, true
 end
 end

@@ -1,4 +1,3 @@
-local Z_to_earth = nil
 local tracking = vector3()
 function init()
 	-- set fsm 
@@ -8,16 +7,18 @@ function init()
 	input = vector3(0,0,1.5)
 
 	-- open camera
+	--[[
 	for id, camera in pairs(robot.cameras_system) do    
 		camera.enable()
 	end
+	--]]
 end
 
  
 function step()
 	if robot.flight_system.ready() then
-		-- record Z_to_earch
-		if Z_to_earth == nil then Z_to_earth = robot.flight_system.orientation.z  print('Z earth' , Z_to_earth)  end
+		print("Argos position = ", robot.flight_system.position, 
+		      "yaw = ", robot.flight_system.orientation.z / math.pi * 180)
 		-- fsm iteration
 		if state == 'pre_flight' then
 			if stream_count <= streaming_dur then
@@ -45,6 +46,7 @@ function step()
 				stream_count = 0
 			end
 		elseif state == 'nav' then
+			--[[
 			local tags = droneDetectTags()
 			print("I see tags")
 			ShowTable(tags)
@@ -58,6 +60,10 @@ function step()
 			local targetLocation = tracking - vector3(0.0, 0.5, 0)
 			targetLocation = targetLocation * 2
 			droneSetTarget(targetLocation.x, targetLocation.y, 0, 10) 
+			--]]
+			--droneSetTarget(0, 0, 0, 10 * math.pi / 180) 
+			--droneSetTarget(0, 0, 0, -math.pi / 18) 
+			droneSetTarget(0, 0, 0, 0) 
 		end
 	end
 	--print("position = ", robot.flight_system.position)
@@ -69,15 +75,19 @@ end
  
 function destroy()
 	-- stop camera
+	--[[
 	for i, camera in ipairs(robot.cameras_system) do    
 		camera.disable()
 	end
+	--]]
 
 	robot.flight_system.set_armed(false, false)
 	robot.flight_system.set_offboard_mode(false)
+	--[[
 	for index, camera in pairs(robot.cameras_system) do
 		camera.disable()
 	end
+	--]]
 end
  
 ----------------------------------------------------------------
@@ -85,20 +95,23 @@ function droneSetTarget(x, y, z, th)
 	if robot.flight_system == nil then return end
 	-- x, y, z in m, x front, z up, y left
 	-- th in rad, counter-clockwise positive
-	local rad = robot.flight_system.orientation.z - Z_to_earth
+	local rad = robot.flight_system.orientation.z 
 	local q = quaternion(rad, vector3(0,0,1))
 
 	local constZ = 1.5
 	local newPosition = vector3(x,y,z):rotate(q) + robot.flight_system.position
 	newPosition.z = constZ
 
+	local newRad = rad + th
+
 	robot.flight_system.set_target_pose(
 		newPosition,
-		rad + th
+		newRad
 	)
 end
 
 ---------------------------------------------------
+--[[
 function droneDetectTags()
 	-- This function returns a tags table, in real robot coordinate frame
 
@@ -142,6 +155,7 @@ function droneDetectTags()
 
 	return tags
 end
+--]]
 
 -------------------------------------------------------------
 function ShowTable(table, number, skipindex)

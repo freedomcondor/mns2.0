@@ -15,10 +15,12 @@
     <lua_controller id="drone">
       <actuators>
         <drone_flight_system implementation="default" />
+        <radios implementation="default" />
       </actuators>
       <sensors>
         <drone_flight_system implementation="default" />
         <drone_system implementation="default" /> 
+        <radios implementation="default" />
         <drone_cameras_system implementation="default">
           <camera id="arm0"
                   device="/dev/camera0" 
@@ -90,6 +92,8 @@
         </drone_cameras_system>
       </sensors>
       <params script="02_drone_driver.lua" 
+              driver_default_speed="0.1"
+              driver_slowdown_zone="0.1"
               hardware="true"/>
     </lua_controller>
   </controllers>

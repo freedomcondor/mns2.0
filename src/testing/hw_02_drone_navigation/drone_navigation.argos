@@ -19,7 +19,11 @@
       <sensors>
         <drone_flight_system implementation="default" />
         <drone_system implementation="default" /> 
-        <drone_cameras_system implementation="default">
+
+          <!--
+            save_as="/home/root/" 
+          -->
+        <!--drone_cameras_system implementation="default">
           <camera id="arm0"
                   device="/dev/camera0" 
 
@@ -36,9 +40,6 @@
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
           />
-          <!--
-            save_as="/home/root/" 
-          -->
           <camera id="arm1"
                   device="/dev/camera1" 
 
@@ -87,7 +88,7 @@
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
           />
-        </drone_cameras_system>
+        </drone_cameras_system-->
       </sensors>
       <params script="drone_navigation.lua" />
     </lua_controller>
