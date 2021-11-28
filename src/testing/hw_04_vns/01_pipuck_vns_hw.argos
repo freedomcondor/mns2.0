@@ -16,12 +16,12 @@
     <lua_controller id="robot">
       <actuators>
         <pipuck_differential_drive implementation="default" />
-        <wifi implementation="default" />
+        <radios implementation="default" />
         <pipuck_leds implementation="default" />
       </actuators>
       <sensors>
         <pipuck_differential_drive implementation="default" />
-        <wifi implementation="default" />
+        <radios implementation="default" />
         <pipuck_system implementation="default" />
       </sensors>
       <params script="01_pipuck_vns.lua" 

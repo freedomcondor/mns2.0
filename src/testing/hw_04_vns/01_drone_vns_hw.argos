@@ -15,12 +15,12 @@
     <lua_controller id="drone">
       <actuators>
         <drone_flight_system implementation="default" />
-        <wifi implementation="default" />
+        <radios implementation="default" />
       </actuators>
       <sensors>
         <drone_flight_system implementation="default" />
         <drone_system implementation="default" /> 
-        <wifi implementation="default" />
+        <radios implementation="default" />
         <drone_cameras_system implementation="default">
           <camera id="arm0"
                   device="/dev/camera0" 
@@ -37,6 +37,8 @@
                   camera_brightness="15"
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
+                   
+                  save_as="/media/usb/" 
           />
           <!--
             save_as="/home/root/" 
@@ -56,6 +58,8 @@
                   camera_brightness="15"
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
+
+                  save_as="/media/usb/" 
           />
           <camera id="arm2"
                   device="/dev/camera3" 
@@ -72,6 +76,8 @@
                   camera_brightness="15"
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
+
+                  save_as="/media/usb/" 
           />
           <camera id="arm3"
                   device="/dev/camera2" 
@@ -88,6 +94,8 @@
                   camera_brightness="15"
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
+
+                  save_as="/media/usb/" 
           />
         </drone_cameras_system>
       </sensors>
