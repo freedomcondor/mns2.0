@@ -7,7 +7,7 @@ function init()
 	input = vector3(0,0,1.5)
 
 	-- open camera
-	--[[
+	---[[
 	for id, camera in pairs(robot.cameras_system) do    
 		camera.enable()
 	end
@@ -46,7 +46,7 @@ function step()
 				stream_count = 0
 			end
 		elseif state == 'nav' then
-			--[[
+			---[[
 			local tags = droneDetectTags()
 			print("I see tags")
 			ShowTable(tags)
@@ -63,7 +63,7 @@ function step()
 			--]]
 			--droneSetTarget(0, 0, 0, 10 * math.pi / 180) 
 			--droneSetTarget(0, 0, 0, -math.pi / 18) 
-			droneSetTarget(0, 0, 0, 0) 
+			--droneSetTarget(0, 0, 0, 0) 
 		end
 	end
 	--print("position = ", robot.flight_system.position)
@@ -75,7 +75,7 @@ end
  
 function destroy()
 	-- stop camera
-	--[[
+	---[[
 	for i, camera in ipairs(robot.cameras_system) do    
 		camera.disable()
 	end
@@ -83,11 +83,6 @@ function destroy()
 
 	robot.flight_system.set_armed(false, false)
 	robot.flight_system.set_offboard_mode(false)
-	--[[
-	for index, camera in pairs(robot.cameras_system) do
-		camera.disable()
-	end
-	--]]
 end
  
 ----------------------------------------------------------------
@@ -111,7 +106,7 @@ function droneSetTarget(x, y, z, th)
 end
 
 ---------------------------------------------------
---[[
+---[[
 function droneDetectTags()
 	-- This function returns a tags table, in real robot coordinate frame
 

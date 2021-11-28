@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <experiment length="0" ticks_per_second="5" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <lua_controller id="drone">
+      <actuators>
+        <drone_leds implementation="default" />
+      </actuators>
+      <sensors>
+      </sensors>
+      <params script="03_drone_led.lua" />
+    </lua_controller>
+  </controllers>
+
+</argos-configuration>

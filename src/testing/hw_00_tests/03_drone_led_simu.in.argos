@@ -29,16 +29,28 @@
         <drone_flight_system implementation="default" />
         <radios implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/02_drone_driver.lua"
-              driver_default_speed="0.5"
+      <!--params script="@CMAKE_CURRENT_BINARY_DIR@/drone_navigation.lua" /-->
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/03_drone_led.lua"
               hardware="false"/>
     </lua_controller>
 
     <!-- Pi-Puck Controller -->
     <lua_controller id="pipuck">
-      <actuators />
-      <sensors />
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/dummy_pipuck.lua"
+      <actuators>
+        <!--debug implementation="default">
+          <interface id="draw" />
+        </debug-->
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_leds implementation="default" />
+        <radios implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_system implementation="default" />
+        <pipuck_rangefinders implementation="default" show_rays="false" />
+        <radios implementation="default" />
+      </sensors>
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/03_pipuck_led.lua"
       />
     </lua_controller>
   </controllers>
@@ -50,17 +62,12 @@
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- add drones -->
-    <drone id="drone1" wifi_medium="wifi" tag_medium="tags">
+    <drone id="drone2" wifi_medium="wifi" tag_medium="tags">
       <body position="0,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
 
-    <pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags">
-      <body position="0.3,0.3,0" orientation="30,0,0"/>
-      <controller config="pipuck"/>
-    </pipuck>
-
-    <pipuck id="pipuck2" wifi_medium="wifi" tag_medium="tags">
+    <pipuck id="pipuck2"  wifi_medium="wifi" tag_medium="tags">
       <body position="-0.3,0.3,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck>
@@ -81,7 +88,8 @@
   <!-- * Media * -->
   <!-- ********* -->
   <media>
-    <directional_led id="directional_leds" index="grid" grid_size="20,20,20"/>
+    <!--directional_led id="directional_leds" index="grid" grid_size="20,20,20"/-->
+    <led id="directional_leds" index="grid" grid_size="20,20,20"/>
     <tag id="tags" index="grid" grid_size="20,20,20" />
     <radio id="wifi" index="grid" grid_size="20,20,20" />
   </media>
