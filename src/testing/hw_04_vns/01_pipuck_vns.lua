@@ -66,6 +66,9 @@ function create_reaction_node(vns)
 return function()
 	if vns.parentR == nil then
 		vns.Driver.move(vector3(), vector3(0,0,0.01))
+		robot.leds.set_ring_leds(true)
+	else
+		vns.api.pipuckShowLED(vns.api.virtualFrame.V3_VtoR(vns.parentR.positionV3))
 	end
 
 	for idS, childR in pairs(vns.childrenRT) do

@@ -70,9 +70,17 @@ function create_reaction_node(vns)
 return function()
 	if vns.parentR == nil then
 		vns.Driver.move(vector3(), vector3(0,0,0.1))
+		robot.leds.set_leds(0,0,0)
+	else
+		robot.leds.set_leds("red")
 	end
 
 	for idS, childR in pairs(vns.childrenRT) do
+		if vns.parentR == nil then
+			robot.leds.set_leds("blue")
+		else
+			robot.leds.set_leds("green")
+		end
 		childR.goal = {
 			positionV3 = vector3(-0.5, 0, 0),
 			orientationQ = quaternion(),
