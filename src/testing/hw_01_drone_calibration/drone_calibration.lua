@@ -115,6 +115,14 @@ function step()
 	end
 	print("cameras_to_robot")
 	ShowTable(cameras_to_robot)
+	for id, camera in pairs(cameras_to_robot) do
+		print("id = ", id)
+		print("  position = ", camera.position)
+		print("  orientation = ", camera.orientation)
+		print("            X = ", vector3(1,0,0):rotate(camera.orientation))
+		print("            Y = ", vector3(0,1,0):rotate(camera.orientation))
+		print("            Z = ", vector3(0,0,1):rotate(camera.orientation))
+	end
 end
 
  

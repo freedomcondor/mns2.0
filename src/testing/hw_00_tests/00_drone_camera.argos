@@ -30,7 +30,7 @@
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
 
-                  save_as="/home/root/" 
+                  save_as="/media/usb/" 
           />
           <camera id="arm1"
                   device="/dev/camera1" 
@@ -46,7 +46,7 @@
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
 
-                  save_as="/home/root/" 
+                  save_as="/media/usb/" 
           />
           <camera id="arm2"
                   device="/dev/camera3" 
@@ -62,7 +62,7 @@
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
 
-                  save_as="/home/root/" 
+                  save_as="/media/usb/" 
           />
           <camera id="arm3"
                   device="/dev/camera2" 
@@ -78,7 +78,7 @@
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
 
-                  save_as="/home/root/" 
+                  save_as="/media/usb/" 
           />
         </drone_cameras_system>
         <drone_system implementation="default" /> 
