@@ -75,7 +75,7 @@ end
 api.commonPreStep = api.preStep
 function api.preStep()
 	api.commonPreStep()
-	api.droneTiltVirtualFrame()
+	--api.droneTiltVirtualFrame()
 end
 
 api.commonPostStep = api.postStep

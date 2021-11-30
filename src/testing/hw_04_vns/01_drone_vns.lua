@@ -42,6 +42,7 @@ function step()
 
 	bt()
 
+	--[[
 	logger("cameras")
 	for arm, camera in pairs(robot.cameras_system) do
 		logger(camera.tags)
@@ -50,6 +51,11 @@ function step()
 	logger(vns.connector.seenRobots)
 	logger("wifi")
 	logger(robot.radios.wifi.recv)
+	--]]
+	logger("seenRobots")
+	for idS, robotR in pairs(vns.connector.seenRobots) do
+		logger("\t", idS)
+	end
 
 	vns.postStep(vns)
 	api.droneMaintainHeight(1.5)
@@ -68,19 +74,23 @@ end
 
 function create_reaction_node(vns)
 return function()
+	--[[
 	if vns.parentR == nil then
-		vns.Driver.move(vector3(), vector3(0,0,0.1))
-		robot.leds.set_leds(0,0,0)
+		--vns.Driver.move(vector3(), vector3(0,0,0.1))
+		--robot.leds.set_leds(0,0,0)
 	else
-		robot.leds.set_leds("red")
+		--robot.leds.set_leds("red")
 	end
+	--]]
 
 	for idS, childR in pairs(vns.childrenRT) do
+		--[[
 		if vns.parentR == nil then
 			robot.leds.set_leds("blue")
 		else
 			robot.leds.set_leds("green")
 		end
+		--]]
 		childR.goal = {
 			positionV3 = vector3(-0.5, 0, 0),
 			orientationQ = quaternion(),

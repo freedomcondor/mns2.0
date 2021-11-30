@@ -15,12 +15,12 @@
     <lua_controller id="drone">
       <actuators>
         <drone_flight_system implementation="default" />
+        <drone_leds implementation="default" />
         <radios implementation="default" />
       </actuators>
       <sensors>
         <drone_flight_system implementation="default" />
         <drone_system implementation="default" /> 
-        <drone_leds implementation="default" />
         <radios implementation="default" />
         <drone_cameras_system implementation="default">
           <camera id="arm0"
@@ -104,8 +104,8 @@
               hardware="true"
               connector_waiting_count="5"
               connector_waiting_parent_count="8"
-              connector_unseen_count="10"
-              connector_heartbeat_count="10"
+              connector_unseen_count="20"
+              connector_heartbeat_count="20"
       />
     </lua_controller>
   </controllers>
