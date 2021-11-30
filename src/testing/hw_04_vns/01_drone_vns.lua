@@ -65,7 +65,13 @@ function step()
 		idN = true,
 		idS = true,
 		connector = true,
+		goal = true,
+		positionV3 = true,
 	})
+
+	logger(" virtual orientationQ : X = ", vector3(1,0,0):rotate(vns.api.virtualFrame.orientationQ)) 
+	logger("                        Y = ", vector3(0,1,0):rotate(vns.api.virtualFrame.orientationQ)) 
+	logger("                        Z = ", vector3(0,0,1):rotate(vns.api.virtualFrame.orientationQ)) 
 end
 
 function destroy()
@@ -74,17 +80,17 @@ end
 
 function create_reaction_node(vns)
 return function()
-	--[[
+	---[[
 	if vns.parentR == nil then
 		--vns.Driver.move(vector3(), vector3(0,0,0.1))
-		--robot.leds.set_leds(0,0,0)
+		robot.leds.set_leds(0,0,0)
 	else
-		--robot.leds.set_leds("red")
+		robot.leds.set_leds("red")
 	end
 	--]]
 
 	for idS, childR in pairs(vns.childrenRT) do
-		--[[
+		---[[
 		if vns.parentR == nil then
 			robot.leds.set_leds("blue")
 		else

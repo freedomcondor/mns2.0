@@ -335,7 +335,9 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 				idS = idS,
 				robotTypeS = robotTypeS,
 				positionV3 = tag.positionV3,
-				orientationQ = tag.orientationQ,
+				orientationQ = tag.orientationQ * 
+				               quaternion(math.pi, vector3(1,0,0)) *
+							   quaternion(math.pi/2, vector3(0,0,1)),
 			}
 		end
 	end
