@@ -80,7 +80,6 @@ end
 
 api.commonPostStep = api.postStep
 function api.postStep()
-	logger("flight_system_ready = ", robot.flight_system.ready())
 	if robot.flight_system ~= nil and robot.flight_system.ready() then
 		-- flight preparation state machine
 		if api.actuator.flight_preparation.state == "pre_flight" then
@@ -97,7 +96,7 @@ function api.postStep()
 			if api.actuator.flight_preparation.state_count >= api.actuator.flight_preparation.state_duration then
 				api.actuator.flight_preparation.state_count = 0
 				api.actuator.flight_preparation.state = "armed"
-				logger("go to armed")
+				logger("Flight System State: go to armed")
 			end
 		elseif api.actuator.flight_preparation.state == "armed" then
 			api.actuator.newPosition.x = 0
@@ -111,7 +110,7 @@ function api.postStep()
 			robot.flight_system.set_armed(true, false)
 			robot.flight_system.set_offboard_mode(true)
 			api.actuator.flight_preparation.state = "take_off"
-			logger("go to take_off")
+			logger("Flight System State: go to take_off")
 			api.actuator.flight_preparation.state_count = 0
 		elseif api.actuator.flight_preparation.state == "take_off" then
 			api.actuator.newPosition.x = 0
@@ -123,11 +122,10 @@ function api.postStep()
 			if api.actuator.flight_preparation.state_count >= api.actuator.flight_preparation.state_duration * 2 then
 				api.actuator.flight_preparation.state_count = 0
 				api.actuator.flight_preparation.state = "navigation"
-				logger("go to navigation")
+				logger("Flight System State: go to navigation")
 			end
 		elseif api.actuator.flight_preparation.state == "navigation" then
 		end
-		logger("setTarget", api.actuator.newPosition, api.actuator.newRad)
 		robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
 	end
 	api.commonPostStep()
@@ -184,7 +182,6 @@ end
 
 if robot.params.hardware == true then
 function api.droneSetSpeed(x, y, z, th)
-	logger("I am hardware drone set speed")
 	if robot.flight_system == nil then return end
 	-- x, y, z in m, x front, z up, y left
 	-- th in rad, counter-clockwise positive
@@ -201,10 +198,6 @@ function api.droneSetSpeed(x, y, z, th)
 	z = z * transScalar * api.time.period
 	th = th * rotateScalar * api.time.period
 
-	logger("sensor reading position", robot.flight_system.position)
-	logger("sensor reading orientation", robot.flight_system.orientation)
-	logger("xyz = ", vector3(x,y,z))
-	logger("xyz from home = ", vector3(x,y,z):rotate(q) + robot.flight_system.position)
 	api.actuator.setNewLocation(
 		vector3(x,y,z):rotate(q) + robot.flight_system.position,
 		rad + th

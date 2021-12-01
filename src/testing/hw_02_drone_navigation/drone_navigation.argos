@@ -21,7 +21,8 @@
         <drone_system implementation="default" /> 
 
           <!--
-            save_as="/home/root/" 
+
+                  save_as="/media/usb/" 
           -->
         <drone_cameras_system implementation="default">
           <camera id="arm0"

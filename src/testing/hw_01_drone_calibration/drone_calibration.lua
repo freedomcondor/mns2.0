@@ -134,6 +134,8 @@ function destroy()
 		camera.disable()
 	end
 
+	if robot.params.big_tag_test == "true" then return end
+
 	local str = "<?xml version=\"1.0\" ?>\n<calibration>\n"
 	for id, camera in pairs(cameras_to_robot) do    
 		str = str .. "  <arm id=\"" .. id .. "\"\n"

@@ -19,7 +19,7 @@
           <camera id="arm0"
                   device="/dev/camera0" 
 
-                  calibration="calibration/drone_camera_calibration_arm0.xml"
+                  calibration="/home/root/calibration/drone_camera_calibration_arm0.xml"
 
                   capture_resolution="1024,768"
                   processing_resolution="700,700"
@@ -37,7 +37,7 @@
           <camera id="arm1"
                   device="/dev/camera1" 
 
-                  calibration="calibration/drone_camera_calibration_arm1.xml"
+                  calibration="/home/root/calibration/drone_camera_calibration_arm1.xml"
 
                   capture_resolution="1024,768"
                   processing_resolution="700,700"
@@ -55,7 +55,7 @@
           <camera id="arm2"
                   device="/dev/camera3" 
 
-                  calibration="calibration/drone_camera_calibration_arm2.xml"
+                  calibration="/home/root/calibration/drone_camera_calibration_arm2.xml"
 
                   capture_resolution="1024,768"
                   processing_resolution="700,700"
@@ -73,7 +73,7 @@
           <camera id="arm3"
                   device="/dev/camera2" 
 
-                  calibration="calibration/drone_camera_calibration_arm3.xml"
+                  calibration="/home/root/calibration/drone_camera_calibration_arm3.xml"
 
                   capture_resolution="1024,768"
                   processing_resolution="700,700"
@@ -91,7 +91,8 @@
         </drone_cameras_system>
         <drone_system implementation="default" /> 
       </sensors>
-      <params script="drone_calibration.lua" />
+      <params script="drone_calibration.lua" 
+              big_tag_test="true"/>
     </lua_controller>
   </controllers>
 

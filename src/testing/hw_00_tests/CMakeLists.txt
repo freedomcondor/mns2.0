@@ -1,5 +1,7 @@
-make_directory(files)
+file(COPY        ${CMAKE_CURRENT_SOURCE_DIR}/drones
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
 
-configure_file( 03_drone_led_simu.in.argos      03_drone_led_simu.argos)
-configure_file( 03_drone_led.lua                03_drone_led.lua)
-configure_file( 03_pipuck_led.lua               03_pipuck_led.lua)
+file(COPY        ${CMAKE_CURRENT_SOURCE_DIR}/pipucks
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+
+configure_file( 03_led_simu.in.argos     03_led_simu.argos)

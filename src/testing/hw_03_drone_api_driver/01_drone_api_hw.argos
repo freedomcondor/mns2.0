@@ -37,7 +37,8 @@
                   camera_exposure_absolute_time="40"
           />
           <!--
-            save_as="/home/root/" 
+
+                  save_as="/media/usb/" 
           -->
           <camera id="arm1"
                   device="/dev/camera1" 

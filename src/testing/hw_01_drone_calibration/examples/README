@@ -1,6 +1,13 @@
-create a folder, cd inside
+create a folder (eg, drone1_arm0), cd inside
 
-bash ../copy_images_from_drone.sh -s images(images2/images3...) -a arm1 -i 192.168.1.103
+run camera tests on the drone to record some images of chess board
+
+bash ../copy_images_from_drone.sh \
+     -i 192.168.1.106:/media/usb/ \
+     -s images(images2/images3...) 
+     -a arm0
+
+repeat multiple times to get several image sets : images1/2/3/4 ....
 
 bash ../calibrate.sh -i "images images2 images3" -a arm1 -t opencv_calibrate_executable
 

@@ -1,4 +1,4 @@
-make_directory(files)
+#make_directory(files)
 
 configure_file( dummy_pipuck.lua                dummy_pipuck.lua)
 
