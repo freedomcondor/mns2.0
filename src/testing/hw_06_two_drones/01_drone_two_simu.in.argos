@@ -73,7 +73,7 @@
     </drone>
 
     <pipuck id="pipuck1"  wifi_medium="wifi" tag_medium="tags">
-      <body position="0.3,0.3,0" orientation="60,0,0"/>
+      <body position="0.5,0.0,0" orientation="60,0,0"/>
       <controller config="pipuck"/>
     </pipuck>
 

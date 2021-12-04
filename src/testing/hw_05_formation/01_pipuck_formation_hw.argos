@@ -30,6 +30,7 @@
               connector_waiting_parent_count="8"
               connector_unseen_count="20"
               connector_heartbeat_count="10"
+              driver_default_speed="0.1"
       />
     </lua_controller>
   </controllers>
