@@ -41,7 +41,7 @@ end
 function api.pipuckSetWheelSpeed(x, y)
 	-- x, y in m/s
 	-- the scalar is to make x,y match m/s
-	local limit = 0.05
+	local limit = 0.1
 	if x > limit then x = limit end
 	if x < -limit then x = -limit end
 	if y > limit then y = limit end

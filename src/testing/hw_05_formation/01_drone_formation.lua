@@ -31,7 +31,7 @@ function step()
 
 	bt()
 
-	--[[
+	---[[
 	logger("cameras")
 	for arm, camera in pairs(robot.cameras_system) do
 		logger(camera.tags)
@@ -49,7 +49,7 @@ function step()
 	vns.postStep(vns)
 	api.droneMaintainHeight(1.5)
 	api.postStep()
-
+---[[
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
@@ -61,8 +61,10 @@ function step()
 	logger(" virtual orientationQ : X = ", vector3(1,0,0):rotate(vns.api.virtualFrame.orientationQ)) 
 	logger("                        Y = ", vector3(0,1,0):rotate(vns.api.virtualFrame.orientationQ)) 
 	logger("                        Z = ", vector3(0,0,1):rotate(vns.api.virtualFrame.orientationQ)) 
-
+--]]
 	signal_led(vns)
+	logger("wifi")
+	logger(robot.radios.wifi.recv)
 end
 
 function destroy()
