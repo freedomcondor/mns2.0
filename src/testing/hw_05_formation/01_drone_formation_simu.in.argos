@@ -30,7 +30,7 @@
         <radios implementation="default" />
       </sensors>
       <!--params script="@CMAKE_CURRENT_BINARY_DIR@/drone_navigation.lua" /-->
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_vns.lua"
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_formation.lua"
               hardware="false"/>
     </lua_controller>
 
@@ -50,7 +50,7 @@
         <pipuck_rangefinders implementation="default" show_rays="false" />
         <radios implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_pipuck_vns.lua"
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_pipuck_formation.lua"
       />
     </lua_controller>
   </controllers>
@@ -74,6 +74,11 @@
 
     <pipuck id="pipuck2"  wifi_medium="wifi" tag_medium="tags">
       <body position="-0.3,0.3,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck>
+
+    <pipuck id="pipuck3"  wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.3,0.1,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck>
    <!--distribute>

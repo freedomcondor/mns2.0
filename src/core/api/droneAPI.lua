@@ -50,6 +50,8 @@ function api.droneTiltVirtualFrame()
 	if robot.flight_system ~= nil then
 		tilt = (quaternion(robot.flight_system.orientation.x, vector3(1,0,0)) *
 		        quaternion(robot.flight_system.orientation.y, vector3(0,1,0))):inverse()
+		-- TODO: better way to swtich tilt
+		tilt = quaternion()
 	else
 		tilt = quaternion()
 	end
@@ -75,7 +77,7 @@ end
 api.commonPreStep = api.preStep
 function api.preStep()
 	api.commonPreStep()
-	--api.droneTiltVirtualFrame()
+	api.droneTiltVirtualFrame()
 end
 
 api.commonPostStep = api.postStep
