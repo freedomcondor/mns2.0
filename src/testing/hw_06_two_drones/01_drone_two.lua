@@ -7,6 +7,7 @@ logger.enable()
 -- datas ----------------
 local bt
 --local vns
+local structure = require("01_morphology")
 
 function init()
 	api.linkRobotInterface(VNS)
@@ -17,9 +18,9 @@ end
 
 function reset()
 	vns.reset(vns)
-	bt = BT.create{type = "sequence", children = {
-		vns.create_preconnector_node(vns),
-	}}
+	if robot.id == "drone2" then vns.idN = 1 end
+	vns.setGene(vns, structure)
+	bt = BT.create(VNS.create_vns_node(vns))
 end
 
 function step()
@@ -48,7 +49,6 @@ end
 function destroy()
 	api.destroy()
 end
-
 
 function signal_led(vns)
 	droneflag = false
