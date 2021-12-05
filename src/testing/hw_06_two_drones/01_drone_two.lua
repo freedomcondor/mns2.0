@@ -3,6 +3,7 @@ local api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
+logger.disable("Allocator")
 
 -- datas ----------------
 local bt
@@ -38,6 +39,10 @@ function step()
 		logger("\t\t             Y = ", vector3(0,1,0):rotate(robotR.orientationQ))
 		logger("\t\t             Z = ", vector3(0,0,1):rotate(robotR.orientationQ))
 	end
+	logger("parent:")
+	if vns.parentR ~= nil then logger("\t", vns.parentR.idS) end
+	logger("children:")
+	for idS, robotR in pairs(vns.childrenRT) do logger("\t", idS) end
 
 	signal_led(vns)
 
