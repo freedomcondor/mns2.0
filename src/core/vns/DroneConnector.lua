@@ -45,7 +45,8 @@ function DroneConnector.step(vns)
 
 	-- for sight report, generate quadcopters
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "reportSight")) do
-		vns.connector.seenRobots[msgM.fromS] = DroneConnector.calcQuadR(msgM.fromS, vns.connector.seenRobots, msgM.dataT.mySight)
+		--vns.connector.seenRobots[msgM.fromS] = DroneConnector.calcQuadR(msgM.fromS, vns.connector.seenRobots, msgM.dataT.mySight)
+		vns.connector.seenRobots[msgM.fromS] = DroneConnector.calcQuadRHW(vns, msgM.fromS, msgM.dataT.mySight)
 	end
 
 	-- convert vns.connector.seenRobots from real frame into virtual frame
@@ -84,11 +85,11 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 		   myVehiclesTR[robotR.idS].robotTypeS ~= "drone" then
 			local myRobotR = myVehiclesTR[robotR.idS]
 			local positionV3 = 
-							myRobotR.positionV3 +
-				             vector3(-robotR.positionV3):rotate(
-							 	--robotR.orientationQ:inverse() * myRobotR.orientationQ
-							 	myRobotR.orientationQ * robotR.orientationQ:inverse() 
-							 )
+			                 myRobotR.positionV3 +
+			                 vector3(-robotR.positionV3):rotate(
+			                    --robotR.orientationQ:inverse() * myRobotR.orientationQ
+			                    myRobotR.orientationQ * robotR.orientationQ:inverse() 
+			                 )
 			local orientationQ = myRobotR.orientationQ * robotR.orientationQ:inverse()
 
 			totalPositionV3 = totalPositionV3 + positionV3
@@ -105,6 +106,37 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 			orientationQ = AverageOrientationQ,
 			robotTypeS = "drone",
 		}
+	end
+	return quadR
+end
+
+function DroneConnector.calcQuadRHW(vns, idS, yourVehiclesTR)
+	local quadR = nil
+	for _, robotR in pairs(yourVehiclesTR) do
+		local myRobotR = nil
+		if vns.connector.seenRobots[robotR.idS] ~= nil then
+			myRobotR = vns.connector.seenRobots[robotR.idS]
+		elseif vns.childrenRT[robotR.idS] ~= nil then
+			myRobotR = vns.childrenRT[robotR.idS]
+		elseif vns.parentR ~= nil and vns.parentR.idS == robotR.idS then
+			myRobotR = vns.parentR
+		end
+		if myRobotR ~= nil then
+			local positionV3 = 
+			                 myRobotR.positionV3 +
+			                 vector3(-robotR.positionV3):rotate(
+			                    --robotR.orientationQ:inverse() * myRobotR.orientationQ
+			                    myRobotR.orientationQ * robotR.orientationQ:inverse() 
+			                 )
+			local orientationQ = myRobotR.orientationQ * robotR.orientationQ:inverse()
+			quadR = {
+				idS = idS,
+				positionV3 = positionV3,
+				orientationQ = orientationQ,
+				robotTypeS = "drone",
+			}
+			break
+		end
 	end
 	return quadR
 end
