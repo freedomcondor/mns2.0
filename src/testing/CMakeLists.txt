@@ -9,6 +9,8 @@ add_subdirectory(hw_01_drone_calibration)
 add_subdirectory(hw_02_drone_navigation)
 add_subdirectory(hw_03_drone_api_driver)
 add_subdirectory(hw_04_vns)
+add_subdirectory(hw_05_formation)
+add_subdirectory(hw_06_two_drones)
 
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)

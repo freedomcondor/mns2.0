@@ -24,12 +24,12 @@
         <radios implementation="default" />
         <pipuck_system implementation="default" />
       </sensors>
-      <params script="01_pipuck_vns.lua" 
+      <params script="01_pipuck_formation.lua" 
               hardware="true"
               connector_waiting_count="5"
               connector_waiting_parent_count="8"
               connector_unseen_count="20"
-              connector_heartbeat_count="20"
+              connector_heartbeat_count="10"
               driver_default_speed="0.1"
       />
     </lua_controller>

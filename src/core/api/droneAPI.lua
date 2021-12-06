@@ -50,6 +50,8 @@ function api.droneTiltVirtualFrame()
 	if robot.flight_system ~= nil then
 		tilt = (quaternion(robot.flight_system.orientation.x, vector3(1,0,0)) *
 		        quaternion(robot.flight_system.orientation.y, vector3(0,1,0))):inverse()
+		-- TODO: better way to swtich tilt
+		tilt = quaternion()
 	else
 		tilt = quaternion()
 	end
@@ -75,7 +77,7 @@ end
 api.commonPreStep = api.preStep
 function api.preStep()
 	api.commonPreStep()
-	--api.droneTiltVirtualFrame()
+	api.droneTiltVirtualFrame()
 end
 
 api.commonPostStep = api.postStep
@@ -96,7 +98,6 @@ function api.postStep()
 			if api.actuator.flight_preparation.state_count >= api.actuator.flight_preparation.state_duration then
 				api.actuator.flight_preparation.state_count = 0
 				api.actuator.flight_preparation.state = "armed"
-				logger("Flight System State: go to armed")
 			end
 		elseif api.actuator.flight_preparation.state == "armed" then
 			api.actuator.newPosition.x = 0
@@ -110,7 +111,6 @@ function api.postStep()
 			robot.flight_system.set_armed(true, false)
 			robot.flight_system.set_offboard_mode(true)
 			api.actuator.flight_preparation.state = "take_off"
-			logger("Flight System State: go to take_off")
 			api.actuator.flight_preparation.state_count = 0
 		elseif api.actuator.flight_preparation.state == "take_off" then
 			api.actuator.newPosition.x = 0
@@ -122,7 +122,6 @@ function api.postStep()
 			if api.actuator.flight_preparation.state_count >= api.actuator.flight_preparation.state_duration * 2 then
 				api.actuator.flight_preparation.state_count = 0
 				api.actuator.flight_preparation.state = "navigation"
-				logger("Flight System State: go to navigation")
 			end
 		elseif api.actuator.flight_preparation.state == "navigation" then
 		end

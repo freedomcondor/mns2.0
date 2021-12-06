@@ -1,0 +1,99 @@
+diff --git a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.cpp b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.cpp
+index caa75b8..2a72406 100644
+--- a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.cpp
++++ b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.cpp
+@@ -83,30 +83,17 @@ namespace argos {
+       }
+ 
+       virtual QSize sizeHint () const {
+-         return QSize(640,480);
++         return QSize(1920,1080);
+       }
++
+       virtual void setGeometry(const QRect& r) {
+          /* Set the layout geometry */
+          QLayout::setGeometry(r);
+          if(m_pcQTOpenGLItem != NULL) {
+             /* Calculate the candidate sizes for the QTOpenGL widget */
+             /* One is height-driven */
+-            QRect cCandidate1(r.x(), r.y(), (r.height() * 4) / 3, r.height());
+-            /* The other is width-driven */
+-            QRect cCandidate2(r.x(), r.y(), r.width(), (r.width() * 3) / 4);
+-            /* Pick the one that fits the rectangle better */
+-            if(r.contains(cCandidate1)) {
+-               /* Horizontal padding needed */
+-               int nPadding = (r.width() - cCandidate1.width()) / 2;
+-               cCandidate1.translate(nPadding, 0);
+-               m_pcQTOpenGLItem->setGeometry(cCandidate1);
+-            }
+-            else {
+-               /* Vertical padding needed */
+-               int nPadding = (r.height() - cCandidate2.height()) / 2;
+-               cCandidate2.translate(0, nPadding);
+-               m_pcQTOpenGLItem->setGeometry(cCandidate2);
+-            }
++            QRect cGeometry(r.x(), r.y(), 1920, 1080);
++            m_pcQTOpenGLItem->setGeometry(cGeometry);
+          }
+       }
+ 
+diff --git a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.cpp b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.cpp
+index d7b9aac..c05fee6 100644
+--- a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.cpp
++++ b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.cpp
+@@ -31,7 +31,7 @@
+ 
+ namespace argos {
+ 
+-   static const Real ASPECT_RATIO         = 4.0f / 3.0f;
++   static const Real ASPECT_RATIO         = 16.0f / 9.0f;
+ 
+    /****************************************/
+    /****************************************/
+@@ -56,8 +56,7 @@ namespace argos {
+       m_pcFloorTexture(NULL),
+       m_pcGroundTexture(NULL) {
+       /* Set the widget's size policy */
+-      QSizePolicy cSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+-      cSizePolicy.setHeightForWidth(true);
++      QSizePolicy cSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+       setSizePolicy(cSizePolicy);
+       /* Grab focus when clicked on */
+       setFocusPolicy(Qt::ClickFocus);
+@@ -91,7 +90,7 @@ namespace argos {
+       /* Initializes the openGL functions */
+       initializeOpenGLFunctions();
+       /* Set clear color */
+-      glClearColor(0, .5, .5, 255); // dark cyan
++      glClearColor(1.0, 1.0, 1.0, 1.0); // dark cyan
+       /* Set up the texture parameters for the floor plane
+          (here we refer to the standard floor, not the floor entity) */
+       m_pcGroundTexture = new QOpenGLTexture(QImage(m_cMainWindow.GetTextureDir() + "/ground.png"));
+diff --git a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h
+index f3cc88e..2867d70 100644
+--- a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h
++++ b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.h
+@@ -188,21 +188,14 @@ namespace argos {
+        * Called internally by Qt to set the aspect ratio.
+        */
+       inline virtual int heightForWidth(int w) const {
+-         return (w * 3) / 4;
++         return (w * 9) / 16;
+       }
+ 
+       /**
+        * Called internally by Qt to know the preferred widget size.
+        */
+       inline virtual QSize sizeHint() const {
+-         return QSize(1024,768);
+-      }
+-
+-      /**
+-       * Called internally by Qt to know the minimum widget size.
+-       */
+-      inline virtual QSize minimumSize() const {
+-         return QSize(320,240);
++         return QSize(1920,1080);
+       }
+ 
+       /**

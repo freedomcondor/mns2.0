@@ -37,9 +37,7 @@
 
                   camera_brightness="15"
                   camera_exposure_auto_mode="false"
-                  camera_exposure_absolute_time="40"
-                   
-                  save_as="/media/usb/" 
+                  camera_exposure_absolute_time="39"
           />
           <!--
                   save_as="/media/usb/" 
@@ -58,9 +56,7 @@
 
                   camera_brightness="15"
                   camera_exposure_auto_mode="false"
-                  camera_exposure_absolute_time="40"
-
-                  save_as="/media/usb/" 
+                  camera_exposure_absolute_time="39"
           />
           <camera id="arm2"
                   device="/dev/camera2" 
@@ -76,9 +72,7 @@
 
                   camera_brightness="15"
                   camera_exposure_auto_mode="false"
-                  camera_exposure_absolute_time="40"
-
-                  save_as="/media/usb/" 
+                  camera_exposure_absolute_time="39"
           />
           <camera id="arm3"
                   device="/dev/camera1" 
@@ -94,18 +88,16 @@
 
                   camera_brightness="15"
                   camera_exposure_auto_mode="false"
-                  camera_exposure_absolute_time="40"
-
-                  save_as="/media/usb/" 
+                  camera_exposure_absolute_time="39"
           />
         </drone_cameras_system>
       </sensors>
-      <params script="01_drone_vns.lua" 
+      <params script="01_drone_formation.lua" 
               hardware="true"
               connector_waiting_count="5"
               connector_waiting_parent_count="8"
               connector_unseen_count="20"
-              connector_heartbeat_count="20"
+              connector_heartbeat_count="10"
       />
     </lua_controller>
   </controllers>
