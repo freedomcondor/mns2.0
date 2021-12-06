@@ -281,7 +281,7 @@ function VNS.debug.logRobot(robotR, option, indent_str)
 end
 
 function VNS.logLoopFunctionInfo(vns)
-	if robot.debug == nil or robot.debug.loop_functions == nil then return end
+	if robot.debug == nil or robot.debug.write == nil then return end
 
 	-- log virtual frame
 	local str = tostring(vns.api.virtualFrame.orientationQ)
@@ -296,7 +296,7 @@ function VNS.logLoopFunctionInfo(vns)
 	-- log brain name
 	str = str .. "," .. tostring(vns.idS)
 
-	robot.debug.loop_functions(str)
+	robot.debug.write(str)
 end
 
 ---- Behavior Tree Node ------------------------------------------

@@ -21,6 +21,7 @@ function init()
 	bt = BT.create
 		{type = "sequence", children = {
 			function()
+				robot.radios.wifi.send({a = "hi, I'm drone", b = 2})
 				logger("I am a btnode")
 				return false, true
 			end,
@@ -89,6 +90,8 @@ function step()
 
 	-- wifi debug
 	robot.radios.wifi.send({a=1, b=2})
+
+	logger(robot.radios.wifi.recv)
 end
 
 function reset()

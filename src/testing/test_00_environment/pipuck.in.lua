@@ -20,6 +20,7 @@ function init()
 	bt = BT.create
 		{type = "sequence", children = {
 			function()
+				robot.radios.wifi.send({a = "hi, I'm pipuck", b = 2})
 				logger("I am a btnode")
 				return false, true
 			end,
@@ -44,6 +45,7 @@ function step()
 
 	api.postStep()
 
+	logger(robot.radios.wifi.recv)
 	-- debug
 	--api.debug.showEstimateLocation()
 end

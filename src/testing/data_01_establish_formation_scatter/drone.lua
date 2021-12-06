@@ -62,9 +62,9 @@ function step()
 
 	-- loop function message
 	if vns.allocator.target == nil then
-		robot.debug.loop_functions("-1")
+		robot.debug.write("-1")
 	else
-		robot.debug.loop_functions(tostring(vns.allocator.target.idN))
+		robot.debug.write(tostring(vns.allocator.target.idN))
 	end
 
 	-- poststep

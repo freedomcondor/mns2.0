@@ -16,9 +16,7 @@
      <!-- Pi-Puck Controller -->
     <lua_controller id="pipuck">
       <actuators>
-        <!--debug implementation="default">
-          <interface id="draw" />
-        </debug-->
+        <debug implementation="default" />
         <pipuck_differential_drive implementation="default" />
         <radios implementation="default" />
         <pipuck_leds implementation="default" />
@@ -35,9 +33,7 @@
      <!-- Drone Controller -->
     <lua_controller id="drone">
       <actuators>
-        <!--debug implementation="default">
-          <interface id="draw" />
-        </debug-->
+        <debug implementation="default" />
         <drone_flight_system implementation="default" />
         <radios implementation="default" />
       </actuators>
@@ -53,9 +49,7 @@
     <!-- Builderbot Controller -->
     <lua_controller id="builderbot">
       <actuators>
-        <!--debug implementation="default">
-          <interface id="draw" />
-        </debug-->
+        <debug implementation="default" />
         <builderbot_electromagnet_system implementation="default" />
         <builderbot_differential_drive implementation="default" />
         <builderbot_lift_system implementation="default" />
@@ -99,6 +93,11 @@
       <controller config="pipuck"/>
     </pipuck>
 
+    <pipuck_ext id="pipuck2" wifi_medium="wifi" tag_medium="tags">
+      <body position="-0.3,0.7,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck_ext>
+
     <!--distribute>
       <position method="uniform" min="-4.5,-4.5,0" max="4.5,4.5,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
@@ -139,16 +138,16 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <!--loop_functions library="@CMAKE_BINARY_DIR@/libvns_loop_functions"
-                  label="vns_loop_functions"/-->
+  <loop_functions library="@CMAKE_BINARY_DIR@/libmy_extensions"
+                  label="my_loop_functions" />
 
   <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
     <qt-opengl lua_editor="true" show_boundary="false">
-		<!--user_functions library="@CMAKE_BINARY_DIR@/libbuilderbot_qtopengl_user_functions"
-                      label="builderbot_qtopengl_user_functions" /-->
+      <user_functions library="@CMAKE_BINARY_DIR@/libmy_qtopengl_extensions"
+                      label="my_qtopengl_user_functions" />
       <camera>
         <placements>
           <placement index="0" position="  0,  0, 20"  look_at="0,0,10"   lens_focal_length="50" up="1,0,0"/>

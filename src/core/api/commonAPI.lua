@@ -103,18 +103,40 @@ end
 api.debug = {}
 function api.debug.drawArrow(color, begin, finish)
 	if robot.debug == nil then return end
-	robot.debug.draw("arrow(" .. color .. ")(" .. 
-		tostring(begin) .. ")(" ..
-		tostring(finish) .. ")"
-	)
+	-- parse color
+	local colorArray = {}
+	for word in string.gmatch(color, '([^,]+)') do
+		colorArray[#colorArray + 1] = word
+	end 
+	-- draw
+	if tonumber(colorArray[1]) == nil then
+		robot.debug.draw_arrow(begin, finish, color)
+	else
+		robot.debug.draw_arrow(begin, finish, 
+		                       tonumber(colorArray[1]),
+		                       tonumber(colorArray[2]),
+		                       tonumber(colorArray[3])
+	                          )
+	end
+
 end
 
 function api.debug.drawRing(color, middle, radius)
 	if robot.debug == nil then return end
-	robot.debug.draw("ring(" .. color .. ")(" .. 
-		tostring(middle) .. ")(" ..
-		tostring(radius) .. ")"
-	)
+	-- parse color
+	local colorArray = {}
+	for word in string.gmatch(color, '([^,]+)') do
+		colorArray[#colorArray + 1] = word
+	end 
+	if tonumber(colorArray[1]) == nil then
+		robot.debug.draw_ring(middle, radius, color) -- 0,0,255 (blue)
+	else
+		robot.debug.draw_arrow(middle, radius, 
+		                       tonumber(colorArray[1]),
+		                       tonumber(colorArray[2]),
+		                       tonumber(colorArray[3])
+	                          )
+	end
 end
 
 function api.debug.showVirtualFrame()
