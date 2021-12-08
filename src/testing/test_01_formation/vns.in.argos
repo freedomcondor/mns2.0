@@ -13,19 +13,16 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-     <!-- Pi-Puck Controller -->
+    <!-- Pi-Puck Controller -->
     <lua_controller id="pipuck">
       <actuators>
-        <!--debug implementation="default">
-          <interface id="draw" />
-        </debug-->
         <pipuck_differential_drive implementation="default" />
+        <pipuck_leds implementation="default" />
+        <debug implementation="default" />
         <radios implementation="default" />
       </actuators>
       <sensors>
-        <pipuck_differential_drive implementation="default" />
         <pipuck_system implementation="default" />
-        <pipuck_rangefinders implementation="default" show_rays="false" />
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua"
@@ -33,12 +30,10 @@
       />
     </lua_controller>
 
-     <!-- Drone Controller -->
+    <!-- Drone Controller -->
     <lua_controller id="drone">
       <actuators>
-        <!--debug implementation="default">
-          <interface id="draw" />
-        </debug-->
+        <debug implementation="default" />
         <drone_flight_system implementation="default" />
         <radios implementation="default" />
       </actuators>
@@ -96,9 +91,9 @@
       <position method="uniform" min="-2.5,-1.5,0" max="0.5,0.5,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
       <entity quantity="14" base_num="1" max_trials="100">
-        <pipuck id="pipuck"  wifi_medium="wifi" tag_medium="tags">
+        <pipuck_ext id="pipuck"  wifi_medium="wifi" tag_medium="tags">
           <controller config="pipuck"/>
-        </pipuck>
+        </pipuck_ext>
       </entity>
     </distribute>
   </arena>
@@ -127,17 +122,16 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <!--loop_functions library="@CMAKE_BINARY_DIR@/libvns_loop_functions"
-                  label="vns_loop_functions"/-->
+  <loop_functions library="@CMAKE_BINARY_DIR@/libmy_extensions"
+                  label="my_loop_functions" />
 
   <!-- ****************** -->
   <!-- * Visualization * -->
   <!-- ****************** -->
   <visualization>
     <qt-opengl lua_editor="true" show_boundary="false">
-		  <!--user_functions library="@CMAKE_BINARY_DIR@/libbuilderbot_qtopengl_user_functions"
-                      label="builderbot_qtopengl_user_functions" >
-      </user_functions-->
+      <user_functions library="@CMAKE_BINARY_DIR@/libmy_qtopengl_extensions"
+                      label="my_qtopengl_user_functions" />
       <camera>
         <placements>
           <placement index="0" position="  0,  0, 20"  look_at="0,0,10"   lens_focal_length="50" up="1,0,0"/>

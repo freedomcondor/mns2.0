@@ -33,7 +33,7 @@ namespace argos {
             Entity(pc_entity),
             EmbodiedEntity(pc_embodied_entity),
             DebugEntity(pc_debug_entity),
-            LogFile(pc_entity->GetId() + ".log") {}
+            LogFile("logs/" + pc_entity->GetId() + ".log") {}
          CEntity* Entity;
          CEmbodiedEntity* EmbodiedEntity;
          CDebugEntity* DebugEntity;

@@ -50,5 +50,7 @@ if(ARGOS_QTOPENGL_FOUND)
     my_extensions)
 endif(ARGOS_QTOPENGL_FOUND)
 
-# Configure examples
+#create a logs folder for logs
+make_directory(logs)
+#add testing sub directory
 add_subdirectory(testing)
