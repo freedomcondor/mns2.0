@@ -191,7 +191,7 @@ namespace argos {
    /****************************************/
    /****************************************/
 
-   const btScalar CDynamics3DPiPuckExtModel::BODY_MASS(0.13);
+   const btScalar CDynamics3DPiPuckExtModel::BODY_MASS(0.33);
    const btScalar CDynamics3DPiPuckExtModel::BODY_DISTANCE_FROM_FLOOR(0.00125);
    const btVector3 CDynamics3DPiPuckExtModel::BODY_HALF_EXTENTS(0.0362, 0.03165, 0.0362);
    const btTransform CDynamics3DPiPuckExtModel::BODY_OFFSET(
@@ -200,7 +200,7 @@ namespace argos {
    const btTransform CDynamics3DPiPuckExtModel::BODY_GEOMETRIC_OFFSET(
       btQuaternion(0.0, 0.0, 0.0, 1.0), btVector3(0.0, -BODY_HALF_EXTENTS.getY(), 0.0)
    );
-   const btScalar CDynamics3DPiPuckExtModel::WHEEL_MASS(0.02);
+   const btScalar CDynamics3DPiPuckExtModel::WHEEL_MASS(0.52);
    const btScalar CDynamics3DPiPuckExtModel::WHEEL_DISTANCE_BETWEEN(0.054);
    const btVector3 CDynamics3DPiPuckExtModel::WHEEL_HALF_EXTENTS(0.02125, 0.0015, 0.02125);
    const btTransform CDynamics3DPiPuckExtModel::WHEEL_GEOMETRIC_OFFSET(
@@ -242,7 +242,7 @@ namespace argos {
    /* TODO calibrate these values */
    const btScalar CDynamics3DPiPuckExtModel::BODY_FRICTION(0.125);
    const btScalar CDynamics3DPiPuckExtModel::WHEEL_MOTOR_MAX_IMPULSE(0.05);
-   const btScalar CDynamics3DPiPuckExtModel::WHEEL_FRICTION(2.0);
+   const btScalar CDynamics3DPiPuckExtModel::WHEEL_FRICTION(1000.0);
    const btScalar CDynamics3DPiPuckExtModel::WHEEL_MOTOR_CLAMP(5.0);
    const btScalar CDynamics3DPiPuckExtModel::WHEEL_MOTOR_KD_COEFFICIENT(2.0);
 
