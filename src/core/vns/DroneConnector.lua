@@ -45,8 +45,8 @@ function DroneConnector.step(vns)
 
 	-- for sight report, generate quadcopters
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "reportSight")) do
-		--vns.connector.seenRobots[msgM.fromS] = DroneConnector.calcQuadR(msgM.fromS, vns.connector.seenRobots, msgM.dataT.mySight)
-		vns.connector.seenRobots[msgM.fromS] = DroneConnector.calcQuadRHW(vns, msgM.fromS, msgM.dataT.mySight)
+		vns.connector.seenRobots[msgM.fromS] = DroneConnector.calcQuadR(msgM.fromS, vns.connector.seenRobots, msgM.dataT.mySight)
+		--vns.connector.seenRobots[msgM.fromS] = DroneConnector.calcQuadRHW(vns, msgM.fromS, msgM.dataT.mySight)
 	end
 
 	-- convert vns.connector.seenRobots from real frame into virtual frame

@@ -188,8 +188,8 @@ function Allocator.step(vns)
 		second_level = msgM.dataT.branches.second_level
 		self_align = msgM.dataT.branches.self_align
 
-		logger("receive branches")
-		logger(msgM.dataT.branches)
+		--logger("receive branches")
+		--logger(msgM.dataT.branches)
 
 		if #msgM.dataT.branches == 1 then
 			local color = "green"
@@ -400,7 +400,7 @@ function Allocator.multi_branch_allocate(vns, branches)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	---[[
+	--[[
 	logger("multi-branch sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i, source.index.idS or source.index.idN, source.index.robotTypeS)
@@ -625,7 +625,7 @@ function Allocator.allocate(vns, branches)
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
 
-	---[[
+	--[[
 	logger("sourceList")
 	for i, source in ipairs(sourceList) do
 		logger(i, source.index.idS or source.index.idN, source.index.robotTypeS)
