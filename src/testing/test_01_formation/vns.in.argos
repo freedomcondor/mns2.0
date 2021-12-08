@@ -26,7 +26,6 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua"
-              driver_default_speed="0.05"
       />
     </lua_controller>
 
@@ -44,8 +43,6 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua"
-              dangerzone_drone="0.7"
-              driver_default_speed="0.05"
       />
     </lua_controller>
   </controllers>
@@ -103,9 +100,9 @@
   <!-- ******************* -->
   <physics_engines>
     <pointmass3d id="pm3d" iterations="10" />
-    <dynamics3d id="dyn3d" iterations="25" default_friction="0.3">
+    <dynamics3d id="dyn3d" iterations="25">
       <gravity g="9.8" />
-      <floor friction="1.0" />
+      <floor />
     </dynamics3d>
   </physics_engines>
 

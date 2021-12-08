@@ -80,7 +80,7 @@ function step()
 
 	bt()
 
-	api.droneMaintainHeight(1.5)
+	api.droneMaintainHeight(1.8)
 	api.postStep()
 
 	-- debug

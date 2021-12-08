@@ -11,7 +11,6 @@ local api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
-logger.disable("Allocator")
 
 -- datas ----------------
 local bt
@@ -52,12 +51,14 @@ function step()
 		vns.deleteParent(vns)
 		vns.Connector.newVnsID(vns, 2)
 		vns.setMorphology(vns, structure)
+		vns.allocator.keepBrainGoal = true
+		vns.setGoal(vns, vector3(), quaternion(math.pi, vector3(0,0,1)))
 	end
 	--]]
 
 	-- poststep
 	vns.postStep(vns)
-	api.droneMaintainHeight(1.5)
+	api.droneMaintainHeight(1.8)
 	api.postStep()
 
 	-- debug

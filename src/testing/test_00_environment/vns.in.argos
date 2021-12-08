@@ -118,9 +118,9 @@
   <!-- ******************* -->
   <physics_engines>
     <pointmass3d id="pm3d" iterations="10" />
-    <dynamics3d id="dyn3d" iterations="25" default_friction="0.3">
+    <dynamics3d id="dyn3d" iterations="25" >
       <gravity g="9.8" />
-      <floor friction="1.0" />
+      <floor />
       <srocs />
     </dynamics3d>
   </physics_engines>
