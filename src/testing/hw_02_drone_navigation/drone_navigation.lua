@@ -59,7 +59,7 @@ function step()
 			print("tracking = ", tracking)
 			local targetLocation = tracking - vector3(0.0, 0.5, 0)
 			targetLocation = targetLocation * 2
-			droneSetTarget(targetLocation.x, targetLocation.y, 0, 10) 
+			droneSetTarget(targetLocation.x, targetLocation.y, 0, 10 * math.pi / 180) 
 			--]]
 			--droneSetTarget(0, 0, 0, 10 * math.pi / 180) 
 			--droneSetTarget(0, 0, 0, -math.pi / 18) 

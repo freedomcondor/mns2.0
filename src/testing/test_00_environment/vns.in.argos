@@ -35,6 +35,7 @@
       <actuators>
         <debug implementation="default" />
         <drone_flight_system implementation="default" />
+        <drone_leds implementation="default" />
         <radios implementation="default" />
       </actuators>
       <sensors>

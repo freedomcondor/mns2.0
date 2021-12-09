@@ -47,7 +47,7 @@ function step()
 	end
 
 	vns.postStep(vns)
-	api.droneMaintainHeight(1.5)
+	api.droneMaintainHeight(1.8)
 	api.postStep()
 ---[[
 	vns.debug.logInfo(vns, {

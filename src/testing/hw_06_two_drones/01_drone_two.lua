@@ -47,8 +47,10 @@ function step()
 	signal_led(vns)
 
 	vns.postStep(vns)
-	api.droneMaintainHeight(1.5)
+	api.droneMaintainHeight(1.8)
 	api.postStep()
+
+	api.debug.showChildren(vns)
 end
 
 function destroy()

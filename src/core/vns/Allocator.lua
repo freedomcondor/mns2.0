@@ -194,16 +194,16 @@ function Allocator.step(vns)
 		if #msgM.dataT.branches == 1 then
 			local color = "green"
 			vns.lastcolor = color
-			vns.api.debug.drawRing(color, vector3(), 0.2)
+			vns.api.debug.drawRing(color, vector3(), 0.12)
 		elseif #msgM.dataT.branches > 1 then
 			local color = "blue"
 			vns.lastcolor = color
-			vns.api.debug.drawRing(color, vector3(), 0.2)
+			vns.api.debug.drawRing(color, vector3(), 0.12)
 		end
 		if second_level == true then
 			local color = "red"
 			vns.lastcolor = color
-			vns.api.debug.drawRing(color, vector3(0,0,0.01), 0.19)
+			vns.api.debug.drawRing(color, vector3(0,0,0.01), 0.11)
 		end
 		for i, received_branch in ipairs(msgM.dataT.branches) do
 			-- branches = 
@@ -237,7 +237,7 @@ function Allocator.step(vns)
 	if flag ~= true and vns.parentR ~= nil then
 		local color = "yellow"
 		vns.lastcolor = color
-		vns.api.debug.drawRing(color, vector3(), 0.2)
+		vns.api.debug.drawRing(color, vector3(), 0.12)
 
 		-- if I don't receive branches cmd, update my goal according to parentGoal
 		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3 + 

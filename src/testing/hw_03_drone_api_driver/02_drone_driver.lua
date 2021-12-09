@@ -38,7 +38,7 @@ function step()
 	})
 
 	vns:postStep()
-	api.droneMaintainHeight(1.5)
+	api.droneMaintainHeight(1.8)
 	api.postStep()
 end
 
@@ -68,7 +68,7 @@ return function()
 
 	-- set target based on seenRobots
 	-- reset target to vector3() if lost robot for too long
-	local reference_robot = vns.connector.seenRobots["pipuck3"]
+	local reference_robot = vns.connector.seenRobots["pipuck1"]
 	if reference_robot ~= nil then
 		robot.leds.set_leds(200,200,200)
 		target = reference_robot.positionV3 + vector3(0.5, 0, 0):rotate(reference_robot.orientationQ)

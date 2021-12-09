@@ -34,6 +34,7 @@
       <actuators>
         <debug implementation="default" />
         <drone_flight_system implementation="default" />
+        <drone_leds implementation="default" />
         <radios implementation="default" />
       </actuators>
       <sensors>
@@ -112,7 +113,6 @@
   <media>
     <directional_led id="directional_leds" index="grid" grid_size="20,20,20"/>
     <tag id="tags" index="grid" grid_size="20,20,20" />
-    <radio id="nfc" index="grid" grid_size="20,20,20" />
     <radio id="wifi" index="grid" grid_size="20,20,20" />
   </media>
 
@@ -123,7 +123,7 @@
                   label="my_loop_functions" />
 
   <!-- ****************** -->
-  <!-- * Visualization * -->
+  <!-- * Visualization  * -->
   <!-- ****************** -->
   <visualization>
     <qt-opengl lua_editor="true" show_boundary="false">
