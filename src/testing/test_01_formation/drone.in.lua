@@ -46,7 +46,7 @@ function step()
 
 	-- rebellion
 	---[[
-	if robot.id == "drone5" and api.stepCount == 300 then
+	if robot.id == "drone5" and api.stepCount == 500 then
 		vns.Msg.send(vns.parentR.idS, "dismiss")
 		vns.deleteParent(vns)
 		vns.Connector.newVnsID(vns, 2)
