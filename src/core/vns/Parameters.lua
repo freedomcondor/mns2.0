@@ -9,7 +9,7 @@ return {
 
 	-- robots avoid each other within dangerzone
 	dangerzone_drone = tonumber(robot.params.dangerzone_drone or 1.00),
-	dangerzone_pipuck = tonumber(robot.params.dangerzone_pipuck or 0.35),
+	dangerzone_pipuck = tonumber(robot.params.dangerzone_pipuck or 0.30),
 	dangerzone_block = tonumber(robot.params.dangerzone_block or 0.15),
 	dangerzone_predator = tonumber(robot.params.dangerzone_predator or 0.50),
 

@@ -249,6 +249,8 @@ function api.droneDetectLeds()
 	end
 end
 
+api.droneTagDetectionRate = tonumber(robot.params.droneTagDetectionRate or 1)
+
 function api.droneDetectTags()
 	-- This function returns a tags table, in real robot coordinate frame
 	api.droneDetectLeds()
@@ -276,7 +278,8 @@ function api.droneDetectTags()
 				end
 			end
 
-			if flag == 0 then
+			local random = robot.random.uniform()
+			if flag == 0 and random < api.droneTagDetectionRate then
 				tags[#tags + 1] = {
 					--idS = "pipuck" .. math.floor(tag.id),
 					--idS = robotTypeS .. math.floor(tag.id),

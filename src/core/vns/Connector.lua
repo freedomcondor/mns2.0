@@ -101,6 +101,16 @@ function Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
 end
 
 function Connector.update(vns)
+	-- estimate new position orientation
+	local inverseOri = quaternion(vns.api.estimateLocation.orientationQ):inverse()
+	for idS, robotR in pairs(vns.childrenRT) do
+		robotR.positionV3 = (robotR.positionV3 - vns.api.estimateLocation.positionV3):rotate(inverseOri)
+		robotR.orientationQ = robotR.orientationQ * inverseOri
+	end
+	if vns.parentR ~= nil then
+		vns.parentR.positionV3 = (vns.parentR.positionV3 - vns.api.estimateLocation.positionV3):rotate(inverseOri)
+		vns.parentR.orientationQ = vns.parentR.orientationQ * inverseOri
+	end
 	-- updated count
 	for idS, robotR in pairs(vns.childrenRT) do
 		robotR.connector.unseen_count = robotR.connector.unseen_count - 1
