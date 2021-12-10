@@ -30,7 +30,7 @@
               connector_waiting_parent_count="8"
               connector_unseen_count="20"
               connector_heartbeat_count="20"
-              safezone_drone_drone="3.00",
+              safezone_drone_drone="3.00"
       />
     </lua_controller>
   </controllers>
