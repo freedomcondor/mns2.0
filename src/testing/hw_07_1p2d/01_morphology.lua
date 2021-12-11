@@ -1,4 +1,4 @@
-local dis = 1.0
+local dis = 1.5
 return 
 {	robotTypeS = "pipuck",
 	positionV3 = vector3(),
