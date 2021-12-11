@@ -13,22 +13,6 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-    <!-- Pi-Puck Controller -->
-    <lua_controller id="pipuck">
-      <actuators>
-        <pipuck_differential_drive implementation="default" />
-        <pipuck_leds implementation="default" />
-        <debug implementation="default" />
-        <radios implementation="default" />
-      </actuators>
-      <sensors>
-        <pipuck_system implementation="default" />
-        <radios implementation="default" />
-      </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_pipuck_two.lua"
-      />
-    </lua_controller>
-
     <!-- Drone Controller -->
     <lua_controller id="drone">
       <actuators>
@@ -43,8 +27,36 @@
         <drone_flight_system implementation="default" />
         <radios implementation="default" />
       </sensors>
-      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_two.lua"
-              safezone_drone_drone="3.00"
+      <!--params script="@CMAKE_CURRENT_BINARY_DIR@/drone_navigation.lua" /-->
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_formation.lua"
+              hardware="false"
+              droneTagDetectionRate="0.2"
+              connector_waiting_count="5"
+              connector_waiting_parent_count="8"
+              connector_unseen_count="30"
+              connector_heartbeat_count="30"
+      />
+    </lua_controller>
+
+    <!-- Pi-Puck Controller -->
+    <lua_controller id="pipuck">
+      <actuators>
+        <debug implementation="default" />
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_leds implementation="default" />
+        <radios implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_system implementation="default" />
+        <pipuck_rangefinders implementation="default" show_rays="false" />
+        <radios implementation="default" />
+      </sensors>
+      <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_pipuck_formation.lua"
+              connector_waiting_count="5"
+              connector_waiting_parent_count="8"
+              connector_unseen_count="30"
+              connector_heartbeat_count="30"
       />
     </lua_controller>
   </controllers>
@@ -57,20 +69,40 @@
 
     <!-- add drones -->
     <drone id="drone1" wifi_medium="wifi" tag_medium="tags">
-      <body position="1.0,0,0" orientation="0,0,0"/>
+      <body position="-0.5,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
 
     <drone id="drone2" wifi_medium="wifi" tag_medium="tags">
-      <body position="0,0,0" orientation="0,0,0"/>
+      <body position="0.5,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
 
     <pipuck_ext id="pipuck1"  wifi_medium="wifi" tag_medium="tags">
-      <body position="0.5,0.0,0" orientation="60,0,0"/>
+      <body position="0.3,0.3,0" orientation="60,0,0"/>
       <controller config="pipuck"/>
     </pipuck_ext>
 
+   <!--distribute>
+      <position    method="grid" center="0,0,0" distances="0.5,0.5,0" layout="1,1,1" />
+      <orientation method="grid" center="0,0,0" distances="0,0,0"     layout="1,1,1" />
+      <entity quantity="1" base_num="1" max_trials="100">
+
+        <prototype id="obstacle" movable="true" friction="10">
+          <links ref="base">
+            <link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
+                  position="0,0,0" orientation="0,0,0" />
+          </links>
+          <devices>
+            <tags medium="tags">
+              <tag anchor="base" observable_angle="75" side_length="0.02" payload="3"
+                   position="0,0.000,0.11" orientation="0,0,0" />
+            </tags>
+          </devices>
+        </prototype>
+
+      </entity>
+    </distribute-->
   </arena>
 
   <!-- ******************* -->

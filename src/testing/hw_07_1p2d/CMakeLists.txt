@@ -1,10 +1,10 @@
 make_directory(files)
 
-configure_file( 01_drone_two_simu.in.argos      01_drone_two_simu.argos)
-configure_file( 01_drone_two_hw.argos           files/01_drone_two_hw.argos)
-configure_file( 01_drone_two.lua                files/01_drone_two.lua)
-configure_file( 01_pipuck_two_hw.argos          files/01_pipuck_two_hw.argos)
-configure_file( 01_pipuck_two.lua               files/01_pipuck_two.lua)
+configure_file( 01_drone_formation_simu.in.argos      01_drone_formation_simu.argos)
+configure_file( 01_drone_formation_hw.argos           files/01_drone_formation_hw.argos)
+configure_file( 01_drone_formation.lua                files/01_drone_formation.lua)
+configure_file( 01_pipuck_formation_hw.argos          files/01_pipuck_formation_hw.argos)
+configure_file( 01_pipuck_formation.lua               files/01_pipuck_formation.lua)
 configure_file( 01_morphology.lua                     files/01_morphology.lua)
 
 file(GLOB MY_PUBLIC_HEADERS ${CMAKE_SOURCE_DIR}/core/api/*)
