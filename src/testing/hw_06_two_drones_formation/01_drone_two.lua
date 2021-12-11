@@ -8,6 +8,7 @@ logger.disable("Allocator")
 -- datas ----------------
 local bt
 --local vns
+local structure = require("01_morphology")
 
 function init()
 	api.linkRobotInterface(VNS)
@@ -19,9 +20,8 @@ end
 function reset()
 	vns.reset(vns)
 	if robot.id == "drone2" then vns.idN = 1 end
-	bt = BT.create{ type = "sequence", children = {
-		vns.create_preconnector_node(vns)
-	}}
+	vns.setGene(vns, structure)
+	bt = BT.create(VNS.create_vns_node(vns))
 end
 
 function step()
@@ -39,12 +39,18 @@ function step()
 		logger("\t\t             Y = ", vector3(0,1,0):rotate(robotR.orientationQ))
 		logger("\t\t             Z = ", vector3(0,0,1):rotate(robotR.orientationQ))
 	end
+	logger("parent:")
+	if vns.parentR ~= nil then logger("\t", vns.parentR.idS) end
+	logger("children:")
+	for idS, robotR in pairs(vns.childrenRT) do logger("\t", idS) end
 
 	signal_led(vns)
 
 	vns.postStep(vns)
 	api.droneMaintainHeight(1.8)
 	api.postStep()
+
+	api.debug.showChildren(vns)
 end
 
 function destroy()

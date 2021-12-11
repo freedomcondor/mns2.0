@@ -16,15 +16,12 @@
       <actuators>
         <drone_flight_system implementation="default" />
         <drone_leds implementation="default" />
+        <radios implementation="default" />
       </actuators>
       <sensors>
         <drone_flight_system implementation="default" />
         <drone_system implementation="default" /> 
-
-          <!--
-
-                  save_as="/media/usb/" 
-          -->
+        <radios implementation="default" />
         <drone_cameras_system implementation="default">
           <camera id="arm0"
                   device="/dev/camera0" 
@@ -42,8 +39,12 @@
                   camera_exposure_auto_mode="false"
                   camera_exposure_absolute_time="40"
           />
+          <!--
+                  save_as="/home/root/" 
+                  save_as="/media/usb/" 
+          -->
           <camera id="arm1"
-                  device="/dev/camera1" 
+                  device="/dev/camera3" 
 
                   calibration="/home/root/calibration/drone_camera_calibration_arm1.xml"
 
@@ -75,7 +76,7 @@
                   camera_exposure_absolute_time="40"
           /-->
           <camera id="arm3"
-                  device="/dev/camera3" 
+                  device="/dev/camera1" 
 
                   calibration="/home/root/calibration/drone_camera_calibration_arm3.xml"
 
@@ -92,7 +93,13 @@
           />
         </drone_cameras_system>
       </sensors>
-      <params script="drone_navigation.lua" />
+      <params script="01_drone_two.lua" 
+              hardware="true"
+              connector_waiting_count="5"
+              connector_waiting_parent_count="8"
+              connector_unseen_count="20"
+              connector_heartbeat_count="20"
+      />
     </lua_controller>
   </controllers>
 

@@ -16,6 +16,7 @@ end
 
  
 function step()
+	robot.leds.set_leds(200,0,0)
 	if robot.flight_system.ready() then
 		print("Argos position = ", robot.flight_system.position, 
 		      "yaw = ", robot.flight_system.orientation.z / math.pi * 180)
@@ -53,19 +54,21 @@ function step()
 			for id, tag in ipairs(tags) do
 				if tag.id == 3 then
 					tracking = tag.positionV3
+					robot.leds.set_leds(200,200,200)
 					break
 				end
 			end
 			print("tracking = ", tracking)
 			local targetLocation = tracking - vector3(0.0, 0.5, 0)
 			targetLocation = targetLocation * 2
-			droneSetTarget(targetLocation.x, targetLocation.y, 0, 10 * math.pi / 180) 
+			droneSetTarget(targetLocation.x, targetLocation.y, 0, 5 * math.pi / 180) 
 			--]]
 			--droneSetTarget(0, 0, 0, 10 * math.pi / 180) 
 			--droneSetTarget(0, 0, 0, -math.pi / 18) 
 			--droneSetTarget(0, 0, 0, 0) 
 		end
 	end
+
 	--print("position = ", robot.flight_system.position)
 	--print("orientation = ", robot.flight_system.orientation)
 end
