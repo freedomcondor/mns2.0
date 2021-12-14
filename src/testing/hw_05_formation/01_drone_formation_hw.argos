@@ -43,7 +43,7 @@
                   save_as="/media/usb/" 
           -->
           <camera id="arm1"
-                  device="/dev/camera3" 
+                  device="/dev/camera1" 
 
                   calibration="/home/root/calibration/drone_camera_calibration_arm1.xml"
 
@@ -75,7 +75,7 @@
                   camera_exposure_absolute_time="39"
           />
           <camera id="arm3"
-                  device="/dev/camera1" 
+                  device="/dev/camera3" 
 
                   calibration="/home/root/calibration/drone_camera_calibration_arm3.xml"
 

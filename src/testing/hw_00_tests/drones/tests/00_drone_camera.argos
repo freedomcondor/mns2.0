@@ -49,7 +49,7 @@
                   save_as="/media/usb/" 
           />
           <camera id="arm2"
-                  device="/dev/camera3" 
+                  device="/dev/camera2" 
 
                   capture_resolution="1024,768"
                   processing_resolution="700,700"
@@ -65,7 +65,7 @@
                   save_as="/media/usb/" 
           />
           <camera id="arm3"
-                  device="/dev/camera2" 
+                  device="/dev/camera3" 
 
                   capture_resolution="1024,768"
                   processing_resolution="700,700"
