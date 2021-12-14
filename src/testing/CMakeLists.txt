@@ -12,6 +12,7 @@ add_subdirectory(hw_04_vns)
 add_subdirectory(hw_05_formation)
 add_subdirectory(hw_06_two_drones)
 add_subdirectory(hw_07_1p2d)
+add_subdirectory(hw_08_2p2d)
 
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)
