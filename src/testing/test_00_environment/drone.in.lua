@@ -71,12 +71,14 @@ function step()
 	logger(robot.id, "-----------------------")
 	api.preStep()
 
-	--api.move(vector3(0.01, 0, 0), vector3(0,0,math.pi/100))
+	api.move(vector3(math.pi/100, 0, 0), vector3(0,0,2*math.pi/100))  -- move along a circle diameter 1m in 100s
+	--[[
 	if math.fmod(api.stepCount, 10) < 5 then
 		api.move(vector3(0.05, 0.05, 0), vector3(0,0,0.01))
 	else
 		api.move(vector3(-0.05, -0.05, 0), vector3(0,0,0.01))
 	end
+	--]]
 
 	bt()
 

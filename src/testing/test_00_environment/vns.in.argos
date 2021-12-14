@@ -73,8 +73,8 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="1.5, 4, 2.5" center="0, 0, 1">
-    <floor id="floor" source="loop_functions" pixels_per_meter="1" />
+  <arena size="4, 4, 2.5" positional_index="grid" center="0, 0, 1">
+    <!--floor id="floor" source="loop_functions" pixels_per_meter="1" /-->
 
     <!-- add builderbots -->
     <builderbot id="builderbot2">

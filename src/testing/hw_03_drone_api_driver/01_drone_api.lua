@@ -45,7 +45,10 @@ function step()
 	end
 
 	-- fly towards the target
-	api.droneSetSpeed(target.x, target.y, 0, 0)
+	local speed = target
+	speed.z = 0
+	local speed = speed:normalize() * 0.05
+	api.droneSetSpeed(speed.x, speed.y, 0, 0)
 	--api.move(vector3(0.1, 0, 0), vector3())
 
 	api.droneMaintainHeight(1.8)
