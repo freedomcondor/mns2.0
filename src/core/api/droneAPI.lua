@@ -9,9 +9,13 @@ local api = require("commonAPI")
 -- newPosition and newRad are recorded, and enforced at last in dronePostStep
 api.actuator = {}
 if robot.flight_system ~= nil then
-	api.actuator.newPosition = robot.flight_system.position
-	api.actuator.newRad = robot.flight_system.orientation.z
+	api.actuator.cmdPosition = vector3()
+	api.actuator.cmdRad = 0
+	api.actuator.newPosition = api.actuator.cmdPosition
+	api.actuator.newRad = api.actuator.cmdRad
 else
+	api.actuator.cmdPosition = vector3()
+	api.actuator.cmdRad = 0
 	api.actuator.newPosition = vector3()
 	api.actuator.newRad = 0
 end
@@ -126,6 +130,8 @@ function api.postStep()
 		elseif api.actuator.flight_preparation.state == "navigation" then
 		end
 		robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
+		api.actuator.cmdPosition = api.actuator.newPosition
+		api.actuator.cmdRad = api.actuator.newRad
 	end
 	api.commonPostStep()
 end
@@ -160,13 +166,21 @@ function api.droneSetSpeed(x, y, z, th)
 	if robot.flight_system == nil then return end
 	-- x, y, z in m/s, x front, z up, y left
 	-- th in rad/s, counter-clockwise positive
-	local rad = robot.flight_system.orientation.z
+	local rad = api.actuator.cmdRad
 	local q = quaternion(rad, vector3(0,0,1))
 
 	-- tune these scalars to make x,y,z,th match m/s and rad/s
 		-- 6 and 0.5 are roughly calibrated for simulation
+	--[[
 	local transScalar = 4
 	local rotateScalar = 0.5
+	if robot.params.hardware == true then
+		transScalar = 50
+		rotateScalar = 0.1
+	end
+	--]]
+	transScalar = 1
+	rotateScalar = 1
 
 	x = x * transScalar * api.time.period
 	y = y * transScalar * api.time.period
@@ -174,34 +188,9 @@ function api.droneSetSpeed(x, y, z, th)
 	th = th * rotateScalar * api.time.period
 
 	api.actuator.setNewLocation(
-		vector3(x,y,z):rotate(q) + robot.flight_system.position,
+		vector3(x,y,z):rotate(q) + api.actuator.cmdPosition,
 		rad + th
 	)
-end
-
-if robot.params.hardware == true then
-function api.droneSetSpeed(x, y, z, th)
-	if robot.flight_system == nil then return end
-	-- x, y, z in m, x front, z up, y left
-	-- th in rad, counter-clockwise positive
-	local rad = robot.flight_system.orientation.z
-	local q = quaternion(rad, vector3(0,0,1))
-
-	-- tune these scalars to make x,y,z,th match m/s and rad/s
-		-- 6 and 0.5 are roughly calibrated for simulation
-	local transScalar = 50
-	local rotateScalar = 0.1
-
-	x = x * transScalar * api.time.period
-	y = y * transScalar * api.time.period
-	z = z * transScalar * api.time.period
-	th = th * rotateScalar * api.time.period
-
-	api.actuator.setNewLocation(
-		vector3(x,y,z):rotate(q) + robot.flight_system.position,
-		rad + th
-	)
-end
 end
 
 api.setSpeed = api.droneSetSpeed
