@@ -47,8 +47,10 @@ function step()
 	-- rebellion
 	---[[
 	if robot.id == "drone5" and api.stepCount == 500 then
-		vns.Msg.send(vns.parentR.idS, "dismiss")
-		vns.deleteParent(vns)
+		if vns.parentR ~= nil then
+			vns.Msg.send(vns.parentR.idS, "dismiss")
+			vns.deleteParent(vns)
+		end
 		vns.Connector.newVnsID(vns, 2)
 		vns.setMorphology(vns, structure)
 		vns.allocator.keepBrainGoal = true

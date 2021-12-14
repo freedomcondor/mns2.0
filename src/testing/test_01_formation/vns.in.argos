@@ -48,7 +48,7 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua"
-              droneTagDetectionRate="0.85"
+              droneTagDetectionRate="0.20"
               connector_waiting_count="5"
               connector_waiting_parent_count="7"
               connector_unseen_count="100"
