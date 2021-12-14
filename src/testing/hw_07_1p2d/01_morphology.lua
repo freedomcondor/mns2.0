@@ -1,4 +1,4 @@
-local dis = 1.5
+local dis = 1.0
 return 
 {	robotTypeS = "pipuck",
 	positionV3 = vector3(),
@@ -6,11 +6,11 @@ return
 	children = {
 	--body
 	{	robotTypeS = "drone",
-		positionV3 = vector3(dis, 0.1, 0),
+		positionV3 = vector3(dis, 0, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	{	robotTypeS = "drone",
-		positionV3 = vector3(-dis, -0.1, 0),
+		positionV3 = vector3(-dis, 0, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 }}

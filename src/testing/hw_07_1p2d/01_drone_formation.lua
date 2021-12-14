@@ -65,7 +65,24 @@ function destroy()
 end
 
 function signal_led(vns)
-	---[[
+	droneflag = false
+	pipuckflag = false
+	for idS, robotR in pairs(vns.connector.seenRobots) do
+		if robotR.robotTypeS == "drone" then
+			droneflag = true
+		end
+		if robotR.robotTypeS == "pipuck" then
+			pipuckflag = true
+		end
+	end
+	if droneflag == true then
+		robot.leds.set_leds("green")
+	elseif pipuckflag == true then
+		robot.leds.set_leds("blue")
+	else
+		robot.leds.set_leds(0,0,0)
+	end
+	--[[
 	if vns.parentR == nil then
 		--vns.Driver.move(vector3(), vector3(0,0,0.1))
 		robot.leds.set_leds(0,0,0)

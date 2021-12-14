@@ -15,6 +15,7 @@
     <lua_controller id="drone">
       <actuators>
         <drone_flight_system implementation="default" />
+        <drone_leds implementation="default" />
       </actuators>
       <sensors>
         <drone_flight_system implementation="default" />
@@ -57,7 +58,7 @@
                   camera_exposure_absolute_time="40"
           />
           <camera id="arm2"
-                  device="/dev/camera3" 
+                  device="/dev/camera2" 
 
                   calibration="/home/root/calibration/drone_camera_calibration_arm2.xml"
 
@@ -73,7 +74,7 @@
                   camera_exposure_absolute_time="40"
           />
           <camera id="arm3"
-                  device="/dev/camera2" 
+                  device="/dev/camera3" 
 
                   calibration="/home/root/calibration/drone_camera_calibration_arm3.xml"
 

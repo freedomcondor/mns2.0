@@ -32,9 +32,11 @@ function step()
 	-- reset target to vector3() if lost robot for too long
 	local reference_robot = seenRobots["pipuck1"]
 	if reference_robot ~= nil then
+		robot.leds.set_leds(200,200,200)
 		target = reference_robot.positionV3 + vector3(0.5, 0, 0):rotate(reference_robot.orientationQ)
 		lostCount = 0
 	else
+		robot.leds.set_leds(0,0,0)
 		lostCount = lostCount + 1
 		if lostCount >= 10 then
 			target = vector3()
