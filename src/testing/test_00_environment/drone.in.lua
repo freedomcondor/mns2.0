@@ -6,7 +6,7 @@ pairs = require("RandomPairs")
 local DeepCopy = require("DeepCopy")
 
 logger = require("Logger")
-local api = require("droneAPI")
+api = require("droneAPI")
 local BT = require("BehaviorTree")
 logger.enable()
 
@@ -71,7 +71,8 @@ function step()
 	logger(robot.id, "-----------------------")
 	api.preStep()
 
-	api.move(vector3(math.pi/100, 0, 0), vector3(0,0,2*math.pi/100))  -- move along a circle diameter 1m in 100s
+	--api.move(vector3(math.pi/100, 0, 0), vector3(0,0,2*math.pi/100))  -- move along a circle diameter 1m in 100s
+	api.move(vector3(0, 0, 0), vector3(0,0,0))  -- move along a circle diameter 1m in 100s
 	--[[
 	if math.fmod(api.stepCount, 10) < 5 then
 		api.move(vector3(0.05, 0.05, 0), vector3(0,0,0.01))

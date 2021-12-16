@@ -4,6 +4,57 @@
 
 local api = require("commonAPI")
 
+---- parameters --------------------------
+api.droneTagDetectionRate = tonumber(robot.params.drone_tag_detection_rate or 1)
+api.dronePositionSensorFilter = {
+	bufferLength = tonumber(robot.params.drone_position_sensor_buffer_length or 1000),
+	buffer = {},
+	pointer = 1,
+	postionSum = vector3(),
+	orientationSum = vector3(),
+}
+for i = 1, api.dronePositionSensorFilter.bufferLength do
+	api.dronePositionSensorFilter.buffer[i] = {
+		position = vector3(),
+		orientation = vector3(),
+	}
+end
+api.droneFilter = function()
+	local i = api.dronePositionSensorFilter.pointer
+	api.dronePositionSensorFilter.postionSum =
+		api.dronePositionSensorFilter.postionSum -
+		api.dronePositionSensorFilter.buffer[i].position
+
+	api.dronePositionSensorFilter.orientationSum =
+		api.dronePositionSensorFilter.orientationSum -
+		api.dronePositionSensorFilter.buffer[i].orientation
+
+	if robot.flight_system ~= nil then
+		api.dronePositionSensorFilter.buffer[i].position = robot.flight_system.position
+		api.dronePositionSensorFilter.buffer[i].orientation = robot.flight_system.orientation
+	else
+		api.dronePositionSensorFilter.buffer[i].position = vector3()
+		api.dronePositionSensorFilter.buffer[i].orientation = vector3()
+	end
+
+	api.dronePositionSensorFilter.postionSum =
+		api.dronePositionSensorFilter.postionSum +
+		api.dronePositionSensorFilter.buffer[i].position
+
+	api.dronePositionSensorFilter.orientationSum =
+		api.dronePositionSensorFilter.orientationSum +
+		api.dronePositionSensorFilter.buffer[i].orientation
+
+	if api.dronePositionSensorFilter.pointer == api.dronePositionSensorFilter.bufferLength then
+		api.dronePositionSensorFilter.pointer = 0
+	end
+	api.dronePositionSensorFilter.pointer =
+		api.dronePositionSensorFilter.pointer + 1
+
+	robot.flight_system.position = api.dronePositionSensorFilter.postionSum * (1/api.dronePositionSensorFilter.bufferLength)
+	robot.flight_system.orientation = api.dronePositionSensorFilter.orientationSum * (1/api.dronePositionSensorFilter.bufferLength)
+end
+
 ---- actuator --------------------------
 -- Idealy, I would like to use robot.flight_system.set_targets only once per step
 -- newPosition and newRad are recorded, and enforced at last in dronePostStep
@@ -34,7 +85,6 @@ api.actuator.flight_preparation = {
 -- drone hardware setting
 if robot.params.hardware == true then
 	api.actuator.flight_preparation.state_duration = 100
-	api.actuator.hardware_compensate = {}
 end
 
 ---- Virtual Frame and tilt ---------------------
@@ -81,6 +131,7 @@ end
 api.commonPreStep = api.preStep
 function api.preStep()
 	api.commonPreStep()
+	api.droneFilter()
 	api.droneTiltVirtualFrame()
 end
 
@@ -166,12 +217,13 @@ function api.droneSetSpeed(x, y, z, th)
 	if robot.flight_system == nil then return end
 	-- x, y, z in m/s, x front, z up, y left
 	-- th in rad/s, counter-clockwise positive
-	local rad = api.actuator.cmdRad
+	--local rad = api.actuator.cmdRad
+	local rad = robot.flight_system.orientation.z
 	local q = quaternion(rad, vector3(0,0,1))
 
 	-- tune these scalars to make x,y,z,th match m/s and rad/s
 		-- 6 and 0.5 are roughly calibrated for simulation
-	--[[
+	---[[
 	local transScalar = 4
 	local rotateScalar = 0.5
 	if robot.params.hardware == true then
@@ -179,8 +231,8 @@ function api.droneSetSpeed(x, y, z, th)
 		rotateScalar = 0.1
 	end
 	--]]
-	transScalar = 1
-	rotateScalar = 1
+	--transScalar = 1
+	--rotateScalar = 1
 
 	x = x * transScalar * api.time.period
 	y = y * transScalar * api.time.period
@@ -188,7 +240,8 @@ function api.droneSetSpeed(x, y, z, th)
 	th = th * rotateScalar * api.time.period
 
 	api.actuator.setNewLocation(
-		vector3(x,y,z):rotate(q) + api.actuator.cmdPosition,
+		--vector3(x,y,z):rotate(q) + api.actuator.cmdPosition,
+		vector3(x,y,z):rotate(q) + robot.flight_system.position,
 		rad + th
 	)
 end
@@ -238,7 +291,6 @@ function api.droneDetectLeds()
 	end
 end
 
-api.droneTagDetectionRate = tonumber(robot.params.droneTagDetectionRate or 1)
 
 function api.droneDetectTags()
 	-- This function returns a tags table, in real robot coordinate frame
