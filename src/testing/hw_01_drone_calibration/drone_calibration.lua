@@ -33,26 +33,29 @@ end
 
 local dis = 0.25 / math.sqrt(2)
 local height = 0
+local dis2 = 0.16
+local ori_45 = quaternion(-math.pi/4, vector3(0,0,1)) *
+               quaternion(math.pi, vector3(1,0,0))
 local reference_tags = {
-	---[[
+	--[[
 	{id = 3, position = vector3( dis, dis, -height),
 	         orientation = quaternion(math.pi, vector3(1,0,0))},   -- for arm0 to see
-	--]]
-
-	---[[
 	{id = 0, position = vector3( -dis, dis,-height), 
 	         orientation = quaternion(math.pi, vector3(1,0,0))},   -- for arm1 to see
-	--]]
-
-	---[[
 	{id = 1, position = vector3( -dis, -dis,-height), 
 	         orientation = quaternion(math.pi, vector3(1,0,0))},   -- for arm2 to see
-	--]]
-
-	---[[
 	{id = 2, position = vector3( dis, -dis,-height), 
 	         orientation = quaternion(math.pi, vector3(1,0,0))},   -- for arm3 to see
 	--]]
+
+	{id = 4, position = vector3( dis2, 0, -height),
+	         orientation = ori_45},   -- for arm0 to see
+	{id = 5, position = vector3( 0, dis2,-height), 
+	         orientation = ori_45},   -- for arm1 to see
+	{id = 6, position = vector3( -dis2, 0,-height), 
+	         orientation = ori_45},   -- for arm2 to see
+	{id = 7, position = vector3( 0, -dis2,-height), 
+	         orientation = ori_45},   -- for arm3 to see
 }
 
 cameras_to_robot = {}
