@@ -45,7 +45,7 @@
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_two.lua"
               safezone_drone_drone="3.00"
-              droneTagDetectionRate="0.15"
+              drone_tag_detection_rate="0.15"
       />
     </lua_controller>
   </controllers>

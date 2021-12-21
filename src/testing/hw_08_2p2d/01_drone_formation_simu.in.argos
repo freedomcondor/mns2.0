@@ -30,7 +30,7 @@
       <!--params script="@CMAKE_CURRENT_BINARY_DIR@/drone_navigation.lua" /-->
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_formation.lua"
               hardware="false"
-              droneTagDetectionRate="0.3"
+              drone_tag_detection_rate="0.3"
               connector_waiting_count="5"
               connector_waiting_parent_count="8"
               connector_unseen_count="50"
