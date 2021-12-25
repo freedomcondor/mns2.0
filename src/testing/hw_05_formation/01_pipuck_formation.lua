@@ -31,21 +31,23 @@ function step()
 
 	bt()
 
-	---[[
+	--[[
 	logger("seenRobots")
 	logger(vns.connector.seenRobots)
 	logger("wifi")
 	logger(robot.radios.wifi.recv)
 	--]]
+	--[[
 	logger("seenRobots")
 	for idS, robotR in pairs(vns.connector.seenRobots) do
 		logger("\t", idS)
 	end
+	--]]
 
 	vns.postStep(vns)
 	api.postStep()
 
----[[
+--[[
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
@@ -59,8 +61,10 @@ function step()
 	logger("                        Z = ", vector3(0,0,1):rotate(vns.api.virtualFrame.orientationQ)) 
 --]]
 	signal_led(vns)
+--[[
 	logger("wifi")
 	logger(robot.radios.wifi.recv)
+--]]
 end
 
 function destroy()

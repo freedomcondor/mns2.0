@@ -31,7 +31,7 @@ function step()
 
 	bt()
 
-	---[[
+	--[[
 	logger("cameras")
 	for arm, camera in pairs(robot.cameras_system) do
 		logger(camera.tags)
@@ -41,15 +41,17 @@ function step()
 	logger("wifi")
 	logger(robot.radios.wifi.recv)
 	--]]
+	--[[
 	logger("seenRobots")
 	for idS, robotR in pairs(vns.connector.seenRobots) do
 		logger("\t", idS)
 	end
+	--]]
 
 	vns.postStep(vns)
 	api.droneMaintainHeight(1.8)
 	api.postStep()
----[[
+--[[
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
@@ -62,9 +64,11 @@ function step()
 	logger("                        Y = ", vector3(0,1,0):rotate(vns.api.virtualFrame.orientationQ)) 
 	logger("                        Z = ", vector3(0,0,1):rotate(vns.api.virtualFrame.orientationQ)) 
 --]]
-	signal_led(vns)
+	signal_led_seenRobots(vns)
+--[[
 	logger("wifi")
 	logger(robot.radios.wifi.recv)
+--]]
 end
 
 function destroy()
@@ -96,4 +100,41 @@ function signal_led(vns)
 	if count == 2 and vns.parentR ~= nil then
 		robot.leds.set_leds(200,200,200)
 	end
+end
+
+function signal_led_seenRobots(vns)
+	droneflag = false
+	pipuckflag = false
+	for idS, robotR in pairs(vns.connector.seenRobots) do
+		if robotR.robotTypeS == "drone" then
+			droneflag = true
+		end
+		if robotR.robotTypeS == "pipuck" then
+			pipuckflag = true
+		end
+	end
+	if droneflag == true then
+		robot.leds.set_leds("green")
+	elseif pipuckflag == true then
+		robot.leds.set_leds("blue")
+	else
+		robot.leds.set_leds(0,0,0)
+	end
+	--[[
+	if vns.parentR == nil then
+		--vns.Driver.move(vector3(), vector3(0,0,0.1))
+		robot.leds.set_leds(0,0,0)
+	else
+		if vns.parentR.robotTypeS == "pipuck" then
+			robot.leds.set_leds("blue")
+			for idS, robotR in pairs(vns.connector.seenRobots) do
+				if robotR.robotTypeS == "drone" then
+					robot.leds.set_leds("green")
+				end
+			end
+		else
+			robot.leds.set_leds("red")
+		end
+	end
+	--]]
 end
