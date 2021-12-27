@@ -1,5 +1,3 @@
-#make_directory(files)
-
 configure_file( dummy_pipuck.lua                dummy_pipuck.lua)
 
 configure_file( 01_drone_api_simu.in.argos      01_drone_api_simu.argos)

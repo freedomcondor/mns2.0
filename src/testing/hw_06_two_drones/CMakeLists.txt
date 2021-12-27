@@ -1,5 +1,3 @@
-make_directory(files)
-
 configure_file( 01_drone_two_simu.in.argos      01_drone_two_simu.argos)
 configure_file( 01_drone_two_hw.argos           files/01_drone_two_hw.argos)
 configure_file( 01_drone_two.lua                files/01_drone_two.lua)

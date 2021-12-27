@@ -71,7 +71,7 @@ return function()
 	local reference_robot = vns.connector.seenRobots["pipuck1"]
 	if reference_robot ~= nil then
 		robot.leds.set_leds(200,200,200)
-		target = reference_robot.positionV3 + vector3(0.5, 0, 0):rotate(reference_robot.orientationQ)
+		target = reference_robot.positionV3 + vector3(1.0, 0, 0):rotate(reference_robot.orientationQ)
 		vns.goal.positionV3 = target
 		lostCount = 0
 	else
