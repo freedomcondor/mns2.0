@@ -94,11 +94,12 @@
       </sensors>
       <params script="01_drone_formation.lua" 
               hardware="true"
-              connector_waiting_count="5"
-              connector_waiting_parent_count="8"
-              connector_unseen_count="20"
+              connector_waiting_count="3"
+              connector_waiting_parent_count="5"
+              connector_unseen_count="10"
               connector_heartbeat_count="10"
               safezone_drone_pipuck="3"
+              dangerzone_drone="1.6"
       />
     </lua_controller>
   </controllers>

@@ -22,6 +22,13 @@ function reset()
 	if robot.id == "pipuck1" then vns.idN = 1 end
 	vns.setGene(vns, structure)
 	bt = BT.create(VNS.create_vns_node(vns))
+	bt = BT.create
+	{ type = "sequence", children = {
+		vns.create_preconnector_node(vns),
+		vns.create_vns_core_node(vns),
+		create_reaction_node(vns),
+		vns.Driver.create_driver_node(vns),
+	}}
 end
 
 function step()
@@ -70,4 +77,16 @@ function signal_led(vns)
 	if count == 0 then
 		robot.leds.set_ring_leds(true)
 	end
+end
+
+function create_reaction_node(vns)
+local count = 0
+return function()
+	count = count + 1
+	if count > 400 then
+		if vns.parentR == nil then
+			vns.setGoal(vns, vector3(0.1, 0, 0), quaternion())
+		end
+	end
+end
 end
