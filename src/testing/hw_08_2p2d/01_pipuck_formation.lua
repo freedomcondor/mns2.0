@@ -21,7 +21,6 @@ function reset()
 	vns.reset(vns)
 	if robot.id == "pipuck1" then vns.idN = 1 end
 	vns.setGene(vns, structure)
-	bt = BT.create(VNS.create_vns_node(vns))
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
@@ -88,5 +87,6 @@ return function()
 			vns.setGoal(vns, vector3(0.1, 0, 0), quaternion())
 		end
 	end
+	return false, true
 end
 end
