@@ -13,7 +13,7 @@
   <!-- * Controllers * -->
   <!-- *************** -->
   <controllers>
-     <!-- Pi-Puck Controller -->
+    <!-- Pi-Puck Controller -->
     <lua_controller id="pipuck">
       <actuators>
         <debug implementation="default" />
@@ -30,7 +30,7 @@
       <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua" />
     </lua_controller>
 
-     <!-- Drone Controller -->
+    <!-- Drone Controller -->
     <lua_controller id="drone">
       <actuators>
         <debug implementation="default" />

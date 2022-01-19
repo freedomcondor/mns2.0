@@ -101,9 +101,6 @@
               safezone_drone_pipuck="3"
               safezone_drone_drone="3"
               dangerzone_drone="1.8"
-              pipuck_label_to="2"
-              block_label_from="3"
-              block_label_to="3"
       />
     </lua_controller>
   </controllers>
