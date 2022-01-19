@@ -1,23 +1,43 @@
 ## Guidelines
 1. This project requires the latest versions of argos3 (https://github.com/ilpincy/argos3) to be installed.
 	"Latest version" is only relative. The current version to work with is:
-	* argos3: 
-		```bash
-		commit c04be869311801976a83613552e111b2eef4dd45 (HEAD -> master, origin/master, origin/HEAD)
-		Author: Michael Allwright <allsey87@gmail.com>
-		Date:   Wed Dec 8 13:44:48 2021 +0100
+	```bash
+	commit c04be869311801976a83613552e111b2eef4dd45 (HEAD -> master, origin/master, origin/HEAD)
+	Author: Michael Allwright <allsey87@gmail.com>
+	Date:   Wed Dec 8 13:44:48 2021 +0100
 
-		Fix the left-right wheel offset in the 3D dynamics model for the Pi-Puck (#196)
-		```
+	Fix the left-right wheel offset in the 3D dynamics model for the Pi-Puck (#196)
+	```
+	To clone:
+	```bash
+	git clone https://github.com/ilpincy/argos3
+	cd argos3
+	git checkout c04be869311801976a83613552e111b2eef4dd45
+	```
 
 2. Before compiling and installing argos, you may want to apply some patch for argos3 from folder `argos3-patch`, depends on what do you need:
 	* `drone-sight-2.5m.patch` is essential, it makes drone cameras look farther than default, so that it works with pipuck-extension with larger tag. To apply the patch, go to argos3 folder and :
 		```bash
 		git apply ../mns2.0/argos3-patch/argos3-sight_2.5m.patch
 		```
+	* `unstable-drone.patch` is to make drone gyro and accelero meters more noisy so that the stablebility of the drone matches reality. 
+		```bash
+		git apply ../mns2.0/argos3-patch/unstable-drone.patch
+		```
 	* `qtopengl-tweaks.patch` is used for fixing the argos qtopengl resolution to 1920x1080 and make drawings look nicer. WARNING: this patch may be outdated
 	* `babydrone.patch` is for hardware, to compile argos on a "virtual drone" on a PC. WARNING: also may be outdated.
 
+	To compile and install argos, follow the instructions of argos. Here is a guideline, you may need to change some details.
+	```bash
+	cd argos3
+	mkdir build
+	cd build
+	cmake -DARGOS_BUILD_NATIVE=ON \
+	      -DARGOS_DOCUMENTATION=OFF \
+	      ../src
+	make -j4
+	sudo make install
+	```
 
 2. After installing argos3, you are clear to build this repository. Clone the repository and run the following commands.
 	```bash
@@ -53,4 +73,4 @@ I have already created several scenarios to play with.
 
 ## Data
 
-`scripts/logReader.lua` is used to read logs, but it needs lua to read you file system, which needs: `luarocks install luafilesystem`
+`scripts/logReader.lua` is used to read logs, but it needs lua to read you file system, which needs: `luarocks install luafilesystem` -- Warn: this is not needed anymore in the new version
