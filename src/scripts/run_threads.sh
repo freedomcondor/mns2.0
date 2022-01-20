@@ -158,9 +158,14 @@ evaluate_single_case() {
 evaluate() {
 	DATADIR=$1
 	cmd=$2
+	check_result_file=$3
 
 	for rundir in $DATADIR/*; do
 		echo $rundir
-		evaluate_single_case $rundir "$cmd"
+		if [ -f "$rundir/$check_result_file" ]; then
+			echo "skip"
+		else
+			evaluate_single_case $rundir "$cmd"
+		fi
 	done
 }

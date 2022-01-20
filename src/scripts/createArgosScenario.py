@@ -238,7 +238,7 @@ def generate_obstacle_xml(i, x, y, th, type) :
 		</links>
 		<devices>
 			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.02" payload="{}"
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="{}"
 				     position="0,0.000,0.11" orientation="0,0,0" />
 			</tags>
 		</devices>
@@ -301,13 +301,23 @@ def generate_target_xml(x, y, th, type, radius, tag_edge_distance):
 #		[left2, right2],
 #	]
 #	and the middle of the largest gate
+attempt_count_down_default = 500
 def generate_gate_locations(gate_number, left_end, right_end, small_limit, large_limit) :
 	a = []
 	largest_length = 0
 	largest_loc = 0
 	for i in range(1, gate_number+1) :
 		valid_position = False
-		while valid_position == False:
+		attempt_count_down = attempt_count_down_default
+		while valid_position == False :
+			# check attempt
+			if attempt_count_down == 0 :
+				print("[warning] gate locations incomplete")
+				break
+			else :
+				attempt_count_down = attempt_count_down - 1
+
+			# generate a random location
 			loc = left_end + random.random() * (right_end - left_end)
 			size = small_limit + random.random() * (large_limit - small_limit)
 			if i == 1 :
@@ -315,6 +325,7 @@ def generate_gate_locations(gate_number, left_end, right_end, small_limit, large
 			left = loc - size/2 
 			right = loc + size/2 
 
+			# valid check
 			if left < left_end or right > right_end :
 				valid_position = False
 				continue
@@ -335,6 +346,8 @@ def generate_gate_locations(gate_number, left_end, right_end, small_limit, large
 				if right - left > largest_length :
 					largest_length = right - left
 					largest_loc = (left + right) / 2
+		if attempt_count_down == 0 :
+			break
 
 	#sort
 	for i in range(0, gate_number-1) :
@@ -419,7 +432,16 @@ def generate_random_locations(n, origin_x,    origin_y,
 	# start generating
 	for i in range(start, n) : # 0/1 to n - 1
 		valid = False
+		attempt_count_down = attempt_count_down_default
 		while valid == False :
+			# check attempt
+			if attempt_count_down == 0 :
+				print("[warning] random locations incomplete")
+				break
+			else :
+				attempt_count_down = attempt_count_down - 1
+
+			# generate a random location
 			loc_x = x_min_limit + random.random() * (x_max_limit - x_min_limit)
 			loc_y = y_min_limit + random.random() * (y_max_limit - y_min_limit)
 
@@ -442,6 +464,8 @@ def generate_random_locations(n, origin_x,    origin_y,
 					break
 			if valid == True :
 				a.append([loc_x, loc_y])
+		if attempt_count_down == 0 :
+			break
 	return a
 
 def generate_slave_locations(n, master_locations,
@@ -451,7 +475,16 @@ def generate_slave_locations(n, master_locations,
 	a = []
 	for i in range(0, n) :
 		valid = False
+		attempt_count_down = attempt_count_down_default
 		while valid == False :
+			# check attempt
+			if attempt_count_down == 0 :
+				print("[warning] slave locations incomplete")
+				break
+			else :
+				attempt_count_down = attempt_count_down - 1
+
+			# generate a random location
 			loc_x = x_min_limit + random.random() * (x_max_limit - x_min_limit)
 			loc_y = y_min_limit + random.random() * (y_max_limit - y_min_limit)
 
@@ -472,6 +505,8 @@ def generate_slave_locations(n, master_locations,
 					break
 			if valid == True :
 				a.append([loc_x, loc_y])
+		if attempt_count_down == 0 :
+			break
 	return a
 
 def generate_drones(locations, start_id) :
