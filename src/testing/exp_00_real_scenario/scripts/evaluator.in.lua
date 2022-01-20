@@ -16,9 +16,9 @@ local gene = {
 		require("morphology3"),
 	}
 }
+local geneIndex = logReader.calcMorphID(gene)
 
 local robotsData = logReader.loadData("./logs")
-local geneIndex = logReader.calcMorphID(gene)
 
 logReader.calcSegmentData(robotsData, geneIndex)
 logReader.calcSegmentLowerBound(robotsData, geneIndex, 
