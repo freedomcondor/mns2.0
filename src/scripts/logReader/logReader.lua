@@ -3,15 +3,26 @@ vector3 = require('Vector3')
 quaternion = require('Quaternion')
 
 logReader = {}
-function logReader.getCSVList(dir)
+function logReader.getCSVList(dir, typelist)
+	-- create a typelist index
+	-- from {"drone", "pipuck"} to {drone = true, pipuck = true}
+	if typelist == nil then typelist = {"drone", "pipuck"} end
+	local typelistIndex = {}
+	for i, v in ipairs(typelist) do
+		typelistIndex[v] = true
+	end
 	-- ls dir > fileList.txt and read fileList.txt
 	-- so that we don't have to depend on lfs to get files in a dir
 	os.execute("ls " .. dir .. " > fileList.txt")
 	local f = io.open("fileList.txt", "r")
 	local robotNameList = {}
 	for file in f:lines() do 
-		name, ext = string.match(file, "([^.]+).([^.]+)")
-		if ext == "csv" then table.insert(robotNameList, name) end
+		-- drone11.log for example
+		local name, ext = string.match(file, "([^.]+).([^.]+)")
+		-- name = drone11, ext = log
+		local robot, number = string.match(name, "(%a+)(%d+)")
+		-- robot = drone, number = 11
+		if ext == "log" and typelistIndex[robot] == true then table.insert(robotNameList, name) end
 	end
 	io.close(f)
 	os.execute("rm fileList.txt")
@@ -31,28 +42,29 @@ function logReader.readLine(str)
 	local strList = {};
 	string.gsub(str, '[^,]+', function(w) table.insert(strList, w) end);
 	local stepData = {
-		stepCount = tonumber(strList[1]),
-		positionV3 = vector3(tonumber(strList[2]),
-		                     tonumber(strList[3]),
-		                     tonumber(strList[4])
+		--stepCount = tonumber(strList[1]),
+		positionV3 = vector3(tonumber(strList[1]),
+		                     tonumber(strList[2]),
+		                     tonumber(strList[3])
 		                    ),
 		-- order of euler angles are z, y, x
-		orientationQ = (quaternion(1,0,0, tonumber(strList[7]) * math.pi / 180) *
-		                quaternion(0,1,0, tonumber(strList[6]) * math.pi / 180) *
-		                quaternion(0,0,1, tonumber(strList[5]) * math.pi / 180)
+		orientationQ = (quaternion(1,0,0, tonumber(strList[6]) * math.pi / 180) *
+		                quaternion(0,1,0, tonumber(strList[5]) * math.pi / 180) *
+		                quaternion(0,0,1, tonumber(strList[4]) * math.pi / 180)
 		               ) *
-		               (quaternion(1,0,0, tonumber(strList[10]) * math.pi / 180) *
-		                quaternion(0,1,0, tonumber(strList[9]) * math.pi / 180) *
-		                quaternion(0,0,1, tonumber(strList[8]) * math.pi / 180)
+		               (quaternion(1,0,0, tonumber(strList[9]) * math.pi / 180) *
+		                quaternion(0,1,0, tonumber(strList[8]) * math.pi / 180) *
+		                quaternion(0,0,1, tonumber(strList[7]) * math.pi / 180)
 		               ),
-		targetID = tonumber(strList[11]),
-		brainID = strList[12],
+		targetID = tonumber(strList[10]),
+		brainID = strList[11],
 	}
 	return stepData
 end
 
-function logReader.loadData(dir)
-	-- read all .csvs, and returns a table
+function logReader.loadData(dir, typelist)
+	-- read typelist example: {"drone", "pipuck"}
+	-- read all drone*.log and pipuck*.log files, and return a table
 	-- {
 	--      drone1 = {
 	--                  1 = {stepCount, positionV3 ...}
@@ -64,15 +76,15 @@ function logReader.loadData(dir)
 	--               }
 	-- } 
 	--
-	local robotNameList = logReader.getCSVList(dir)
+	local robotNameList = logReader.getCSVList(dir, typelist)
 	-- for each robot
 	local robotsData = {}
 	for i, robotName in ipairs(robotNameList) do
 		-- open file
-		local filename = dir .. "/" .. robotName .. ".csv"
-		print("loading " .. filename)
+		local filename = dir .. "/" .. robotName .. ".log"
+		--print("loading " .. filename)
 		local f = io.open(filename, "r")
-		if f == nil then print("load file " .. filename .. "error") return end
+		if f == nil then print("load file " .. filename .. " error") return end
 		-- for each line
 		robotData = {}
 		for l in f:lines() do 
@@ -136,6 +148,7 @@ function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
 			--]]
 		end
 	end
+	print("calcSegmentData finish")
 end
 
 function logReader.calcSegmentLowerBound(robotsData, geneIndex, parameters, startStep, endStep)
@@ -199,14 +212,29 @@ function logReader.saveData(robotsData, saveFile, attribute)
 		f:write(tostring(error).."\n")
 	end
 	io.close(f)
+	print("save data finish")
 end
 
+------------------------------------------------------------------------
+-- to fill each node in the gene with an id and its global position
+--   input:  gene =   drone         output:  gene = drone id=1, globalPosition=xx
+--                    /   \                         /   \
+--                   /     \                       /     \
+--               pipuck   drone                pipuck 2  drone 3
+--
+--   geneIndex = [1, 2, 3] pointing to matching branch
 function logReader.calcMorphID(gene)
 	local globalContainer = {id = 0}
 	local geneIndex = {}
 	gene.globalPositionV3 = vector3()
 	gene.globalOrientationQ = quaternion()
 	logReader.calcMorphChildrenID(gene, globalContainer, geneIndex)
+
+	-- sometimes a robot may have -1 as target
+	geneIndex[-1] = {
+		globalPositionV3 = vector3(),
+		globalOrientationQ = quaternion(),
+	}
 
 	return geneIndex
 end
@@ -224,5 +252,6 @@ function logReader.calcMorphChildrenID(morph, globalContainer, geneIndex)
 		end
 	end
 end
+------------------------------------------------------------------------
 
 return logReader

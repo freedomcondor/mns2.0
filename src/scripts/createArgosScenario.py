@@ -1,17 +1,150 @@
 import random
 import sys
+import getopt
+
+#----------------------------------------------------------------------------------------------
+# usage message 
+usage="[usage] example: python3 xxx.py -r 1 -l 1000 -v true"
+
+#----------------------------------------------------------------------------------------------
+# parse opts
+try:
+	optlist, args = getopt.getopt(sys.argv[1:], "r:l:v:h")
+except:
+	print("[error] unexpected opts")
+	print(usage)
+	sys.exit(0)
+
+Inputseed = 0
+Experiment_length = None
+Visualization = True
+VisualizationArgosFlag = ""
+
+for opt, value in optlist:
+	if opt == "-r":
+		Inputseed = int(value)
+		print("Inputseed provided:", Inputseed)
+	elif opt == "-l":
+		Experiment_length = int(value)
+		print("experiment_length provided:", Experiment_length)
+	elif opt == "-v":
+		if value == "False" or value == "false" :
+			Visualization = False
+		print("visualization provided:", Visualization)
+	elif opt == "-h":
+		print(usage)
+		exit()
+
+if Visualization == False :
+	VisualizationArgosFlag = " -z"
 
 #######################################################################
 # random seed
-Inputseed = 0
-if len(sys.argv) >= 2 :
-	Inputseed = sys.argv[1]
 random.seed(Inputseed)
-Inputseed = str(Inputseed)
+
+#######################################################################
+# Controller
+def generate_drone_controller(params) :
+	text = '''
+    <!-- Drone Controller -->
+    <lua_controller id="drone">
+      <actuators>
+        <debug implementation="default" />
+        <drone_flight_system implementation="default" />
+        <drone_leds implementation="default" />
+        <radios implementation="default" />
+      </actuators>
+      <sensors>
+        <drone_system implementation="default" />
+        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="false" />
+        <drone_flight_system implementation="default" />
+        <radios implementation="default" />
+      </sensors>
+      <params {} />
+    </lua_controller>
+    '''.format(params)
+
+	return text
+
+def generate_pipuck_controller(params) :
+	text = '''
+    <!-- Pi-Puck Controller -->
+    <lua_controller id="pipuck">
+      <actuators>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_leds implementation="default" />
+        <debug implementation="default" />
+        <radios implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_system implementation="default" />
+        <radios implementation="default" />
+      </sensors>
+      <params {} />
+    </lua_controller>
+    '''.format(params)
+
+	return text
+
+def generate_physics_media_loop_visualization(cmake_binary_dir) :
+	text = '''
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <pointmass3d id="pm3d" iterations="10" />
+    <dynamics3d id="dyn3d" iterations="25">
+      <gravity g="9.8" />
+      <floor />
+    </dynamics3d>
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <directional_led id="directional_leds" index="grid" grid_size="20,20,20"/>
+    <tag id="tags" index="grid" grid_size="20,20,20" />
+    <radio id="wifi" index="grid" grid_size="20,20,20" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="{}/libmy_extensions"
+                  label="my_loop_functions" />
+
+  <!-- ****************** -->
+  <!-- * Visualization  * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl lua_editor="true" show_boundary="false">
+      <user_functions library="{}/libmy_qtopengl_extensions"
+                      label="my_qtopengl_user_functions" />
+      <camera>
+        <placements>
+          <placement index="0" position="0.0122872,0.0534732,25.7009" look_at="0.0122872,0.0534732,24.7009" up="-0.00187965,0.999998,0" lens_focal_length="90" />
+          <placement index="1" position="-6.01698,3.45411,1.68985" look_at="-5.13495,3.03202,1.48039" up="0.188941,-0.0904165,0.977817" lens_focal_length="30" />
+          <placement index="2" position="6.24865,-4.76935,2.71261" look_at="5.52826,-4.16628,2.37006" up="-0.262661,0.219888,0.939499" lens_focal_length="30" />
+          <placement index="3" position="-6.25183,-4.76287,2.69551" look_at="-5.59804,-4.13326,2.27582" up="0.302308,0.291125,0.907665" lens_focal_length="30" />
+          <placement index="4" position="-6.2675,4.75161,2.71277" look_at="-5.59966,4.11924,2.32022" up="0.285045,-0.269901,0.91973" lens_focal_length="30" />
+          <placement index="5" position="  0, 15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="6" position="-15, 15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+          <placement index="7" position="-15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="8" position="-15,-15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+        </placements>
+      </camera>
+    </qt-opengl>
+  </visualization>
+    '''.format(cmake_binary_dir, cmake_binary_dir)
+
+	return text
 
 #######################################################################
 # real lab scenario
 def generate_real_scenario_object() :
+	if Visualization == False :
+		return ""
 	text = '''
 	<!-- room -->
 	<!--
@@ -109,7 +242,7 @@ def generate_obstacle_xml(i, x, y, th, type) :
 				     position="0,0.000,0.11" orientation="0,0,0" />
 			</tags>
 		</devices>
-    </prototype>
+	</prototype>
 	'''.format(i, x, y, th, type)
 	return tag
 
@@ -124,7 +257,7 @@ def generate_block_xml(i, x, y, th, type) :
 
 def generate_drone_xml(i, x, y, th) :
 	tag = '''
-	<drone id="drone{}">
+	<drone id="drone{}" wifi_medium="wifi" >
 		<body position="{},{},0" orientation="{},0,0"/>
 		<controller config="drone"/>
 	</drone>
@@ -133,10 +266,10 @@ def generate_drone_xml(i, x, y, th) :
 
 def generate_pipuck_xml(i, x, y, th) :
 	tag = '''
-	<pipuck id="pipuck{}" wifi_medium="wifi" tag_medium="tags" debug="true">
+	<pipuck_ext id="pipuck{}" wifi_medium="wifi" tag_medium="tags" debug="true">
 		<body position="{},{},0" orientation="{},0,0"/>
 		<controller config="pipuck"/>
-	</pipuck>
+	</pipuck_ext>
 	'''.format(i, x, y, th)
 	return tag
 
