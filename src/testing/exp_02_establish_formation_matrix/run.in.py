@@ -28,10 +28,10 @@ pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 g
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
-                    "@CMAKE_CURRENT_BINARY_DIR@/vns.argos",
+                    "vns.argos",
 	[
-		["RANDOMSEED",        Inputseed],
-		["TOTALLENGTH",       str(1000)],
+		["RANDOMSEED",        str(Inputseed)],
+		["TOTALLENGTH",       str((Experiment_length or 800)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
@@ -48,4 +48,4 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 	]
 )
 
-os.system("argos3 -c @CMAKE_CURRENT_BINARY_DIR@/vns.argos")
+os.system("argos3 -c vns.argos" + VisualizationArgosFlag)

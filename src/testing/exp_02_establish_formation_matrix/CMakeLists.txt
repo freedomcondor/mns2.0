@@ -7,3 +7,5 @@ configure_file( morphology.lua  morphology.lua  COPYONLY)
 
 configure_file( run.in.py
                 run.py)
+
+add_subdirectory(scripts)
