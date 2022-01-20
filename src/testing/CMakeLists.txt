@@ -2,8 +2,6 @@ add_subdirectory(test_00_environment)
 add_subdirectory(test_01_formation)
 add_subdirectory(test_02_neuron)
 
-add_subdirectory(exp_01_real_scenario)
-
 add_subdirectory(hw_00_tests)
 add_subdirectory(hw_01_drone_calibration)
 add_subdirectory(hw_02_drone_navigation)
@@ -13,6 +11,13 @@ add_subdirectory(hw_05_formation)
 add_subdirectory(hw_06_two_drones)
 add_subdirectory(hw_07_1p2d)
 add_subdirectory(hw_08_2p2d)
+add_subdirectory(hw_09_brain_drone_stablizer)
+
+add_subdirectory(exp_00_real_scenario)
+add_subdirectory(exp_01_establish_formation_scatter)
+add_subdirectory(exp_02_establish_formation_matrix)
+add_subdirectory(exp_03_obstacle_avoidance_small)
+add_subdirectory(exp_04_obstacle_avoidance_large)
 
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)
