@@ -58,6 +58,7 @@ function Avoider.step(vns)
 	end
 
 	-- avoid predators
+	--[[
 	for i, obstacle in ipairs(vns.avoider.obstacles) do
 		if obstacle.type == 3 and vns.robotTypeS == "drone" then
 			local runawayV3 = vector3()
@@ -68,6 +69,7 @@ function Avoider.step(vns)
 			vns.Spreader.emergency(vns, runawayV3, vector3(), "green") -- TODO: run away from predator
 		end
 	end
+	--]]
 
 	-- TODO: maybe add surpress or not
 	-- add the speed to goal -- the brain can't be influended
