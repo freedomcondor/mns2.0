@@ -34,15 +34,16 @@ namespace argos {
          c_entity.AddComponent(*m_pcDebugEntity);
       }
 
-      virtual void Init(TConfigurationNode& t_tree) {}
+      virtual void Init(TConfigurationNode& t_tree) {
+         m_pvecArrows = &m_pcDebugEntity->GetArrows();
+         m_pvecRings = &m_pcDebugEntity->GetRings();
+         m_pvecMessages = &m_pcDebugEntity->GetMessages();
+      }
 
       virtual void Update() {
-         m_pcDebugEntity->GetArrows().swap(m_vecArrows);
-         m_vecArrows.clear();
-         m_pcDebugEntity->GetRings().swap(m_vecRings);
-         m_vecRings.clear();
-         m_pcDebugEntity->GetMessages().swap(m_vecMessages);
-         m_vecMessages.clear();
+         m_pvecArrows->clear();
+         m_pvecRings->clear();
+         m_pvecMessages->clear();
       }
 
       virtual void Reset() {}
@@ -57,9 +58,9 @@ namespace argos {
    private:
       CDebugEntity* m_pcDebugEntity;
       
-      TArrowVec m_vecArrows;
-      TRingVec m_vecRings;
-      TMessageVec m_vecMessages;
+      TArrowVec* m_pvecArrows;
+      TRingVec* m_pvecRings;
+      TMessageVec* m_pvecMessages;
    };
 }
 

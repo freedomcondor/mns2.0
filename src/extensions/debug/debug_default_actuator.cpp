@@ -47,7 +47,7 @@ namespace argos {
       /* write to the actuator */
       CDebugDefaultActuator* pcDebugActuator = 
          CLuaUtility::GetDeviceInstance<CDebugDefaultActuator>(pt_lua_state, "debug");
-      pcDebugActuator->m_vecArrows.emplace_back(cFrom, cTo, cColor);
+      pcDebugActuator->m_pvecArrows->emplace_back(cFrom, cTo, cColor);
       return 0;
    }
 #endif
@@ -89,7 +89,7 @@ namespace argos {
       /* write to the actuator */
       CDebugDefaultActuator* pcDebugActuator = 
          CLuaUtility::GetDeviceInstance<CDebugDefaultActuator>(pt_lua_state, "debug");
-      pcDebugActuator->m_vecRings.emplace_back(cCenter, fRadius, cColor);
+      pcDebugActuator->m_pvecRings->emplace_back(cCenter, fRadius, cColor);
       return 0;
    }
 #endif
@@ -109,7 +109,7 @@ namespace argos {
       /* write to the actuator */
       CDebugDefaultActuator* pcDebugActuator = 
          CLuaUtility::GetDeviceInstance<CDebugDefaultActuator>(pt_lua_state, "debug");
-      pcDebugActuator->m_vecMessages.emplace_back(lua_tostring(pt_lua_state, 1));
+      pcDebugActuator->m_pvecMessages->emplace_back(lua_tostring(pt_lua_state, 1));
       return 0;
    }
 #endif
