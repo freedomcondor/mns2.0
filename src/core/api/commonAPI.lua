@@ -131,7 +131,7 @@ function api.debug.drawRing(color, middle, radius)
 	if tonumber(colorArray[1]) == nil then
 		robot.debug.draw_ring(middle, radius, color) -- 0,0,255 (blue)
 	else
-		robot.debug.draw_arrow(middle, radius, 
+		robot.debug.draw_ring(middle, radius, 
 		                       tonumber(colorArray[1]),
 		                       tonumber(colorArray[2]),
 		                       tonumber(colorArray[3])
