@@ -1,8 +1,12 @@
 local api = {}
 
-if robot.params.hardware == "true" then
-	robot.params.hardware = true
-end
+---- parameters --------------------------
+api.parameters = {}
+api.parameters.droneTagDetectionRate = tonumber(robot.params.drone_tag_detection_rate or 1)
+api.parameters.obstacle_match_distance = tonumber(robot.params.obstacle_match_distance or 0.18)
+api.parameters.obstacle_unseen_count = tonumber(robot.params.obstacle_unseen_count or 3)
+if robot.params.hardware == "true" then robot.params.hardware = true end
+if robot.params.simulation == "true" then robot.params.simulation = true end
 
 ---- Time -------------------------------------
 api.time = {}
@@ -24,7 +28,7 @@ function api.init()
 end
 
 function api.reset()
-	--[[
+	---[[
 	api.estimateLocation = {
 		positionV3 = vector3(),
 		orientationQ = quaternion(),

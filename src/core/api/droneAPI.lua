@@ -4,9 +4,6 @@
 
 local api = require("commonAPI")
 
----- parameters --------------------------
-api.droneTagDetectionRate = tonumber(robot.params.drone_tag_detection_rate or 1)
-
 ---- Sensor Filter --------------------------
 --[[
 api.dronePositionSensorFilter = {
@@ -151,7 +148,7 @@ function api.droneTiltVirtualFrame()
 		tilt = (quaternion(robot.flight_system.orientation.x, vector3(1,0,0)) *
 		        quaternion(robot.flight_system.orientation.y, vector3(0,1,0))):inverse()
 		-- TODO: better way to swtich tilt
-		tilt = quaternion()
+		--tilt = quaternion()
 	else
 		tilt = quaternion()
 	end
@@ -321,7 +318,7 @@ function api.droneDetectTags()
 			end
 
 			local random = robot.random.uniform()
-			if flag == 0 and random < api.droneTagDetectionRate then
+			if flag == 0 and random < api.parameters.droneTagDetectionRate then
 				tags[#tags + 1] = {
 					--idS = "pipuck" .. math.floor(tag.id),
 					--idS = robotTypeS .. math.floor(tag.id),
@@ -371,7 +368,7 @@ function api.droneAddSeenRobots(tags, seenRobotsInRealFrame)
 			seenRobotsInRealFrame[idS] = {
 				idS = idS,
 				robotTypeS = robotTypeS,
-				positionV3 = tag.positionV3,
+				positionV3 = tag.positionV3 + vector3(0,0,-0.08):rotate(tag.orientationQ),
 				orientationQ = tag.orientationQ,
 			}
 		end
@@ -383,10 +380,10 @@ function api.droneAddObstacles(tags, obstaclesInRealFrame) -- tags is an array o
 		if api.tagLabelIndex.block.from <= tag.id and
 		   api.tagLabelIndex.block.to >= tag.id then
 			obstaclesInRealFrame[#obstaclesInRealFrame + 1] = {
-				idN = #obstaclesInRealFrame + 1,
+				--idN = #obstaclesInRealFrame + 1,
 				type = tag.id,
 				robotTypeS = "block",
-				positionV3 = tag.positionV3,
+				positionV3 = tag.positionV3 + vector3(0,0,-0.1):rotate(tag.orientationQ),
 				orientationQ = tag.orientationQ,
 			}
 		end
