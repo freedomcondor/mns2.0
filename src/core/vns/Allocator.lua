@@ -108,9 +108,11 @@ function Allocator.preStep(vns)
 	for idS, childR in pairs(vns.childrenRT) do
 		childR.allocator.match = nil
 	end
-	local inverseOri = quaternion(vns.api.estimateLocation.orientationQ):inverse()
-	vns.allocator.parentGoal.positionV3 = (vns.allocator.parentGoal.positionV3 - vns.api.estimateLocation.positionV3):rotate(inverseOri)
-	vns.allocator.parentGoal.orientationQ = vns.allocator.parentGoal.orientationQ * inverseOri
+	if vns.parentR ~= nil then
+		local inverseOri = quaternion(vns.api.estimateLocation.orientationQ):inverse()
+		vns.allocator.parentGoal.positionV3 = (vns.allocator.parentGoal.positionV3 - vns.api.estimateLocation.positionV3):rotate(inverseOri)
+		vns.allocator.parentGoal.orientationQ = vns.allocator.parentGoal.orientationQ * inverseOri
+	end
 end
 
 function Allocator.sendStationary(vns)
@@ -240,9 +242,11 @@ function Allocator.step(vns)
 		vns.api.debug.drawRing(color, vector3(), 0.12)
 
 		-- if I don't receive branches cmd, update my goal according to parentGoal
+		--[[
 		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3 + 
 			vector3(vns.allocator.target.positionV3):rotate(vns.allocator.parentGoal.orientationQ)
 		vns.goal.orientationQ = vns.allocator.parentGoal.orientationQ * vns.allocator.target.orientationQ
+		--]]
 
 		-- send my new goal and don't send command for my children, everyone keep still
 		-- send my new goal to children
@@ -256,6 +260,7 @@ function Allocator.step(vns)
 		return
 	end
 	--if I'm brain, if no stabilizer than stay still
+	--[[
 	if vns.parentR == nil and
 	   vns.stabilizer ~= nil and
 	   vns.stabilizer.allocator_signal == nil and
@@ -263,6 +268,13 @@ function Allocator.step(vns)
 		vns.goal.positionV3 = vector3()
 		vns.goal.orientationQ = quaternion()
 	end
+	--]]
+	--[[
+	if vns.parentR == nil and vns.allocator.keepBrainGoal == nil then
+		vns.goal.positionV3 = vector3()
+		vns.goal.orientationQ = quaternion()
+	end
+	--]]
 
 	-- I should have a target (either updated or not), 
 	-- a goal for this step
