@@ -4,12 +4,15 @@
 --]]
 
 local PipuckConnector = {}
+local SensorUpdater = require("SensorUpdater")
 
 function PipuckConnector.preStep(vns)
 	vns.connector.seenRobots = {}
 end
 
 function PipuckConnector.step(vns)
+	local seenObstacles = {}
+
 	-- For any sight report, update quadcopter and other pipucks to seenRobots
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "reportSight")) do
 		if msgM.dataT.mySight[vns.Msg.myIDS()] ~= nil then
@@ -53,16 +56,16 @@ function PipuckConnector.step(vns)
 
 					-- check positionV3 in existing obstacles
 					local flag = true
-					for j, existing_ob in ipairs(vns.avoider.obstacles) do
-						if (existing_ob.positionV3 - positionV3):length() < 0.02 then
+					for j, existing_ob in ipairs(seenObstacles) do
+						if (existing_ob.positionV3 - positionV3):length() < vns.api.parameters.obstacle_match_distance then
 							flag = false
 							break
 						end
 					end
 
 					if flag == true then
-						vns.avoider.obstacles[#vns.avoider.obstacles + 1] = {
-							idN = #vns.avoider.obstacles + 1,
+						seenObstacles[#seenObstacles + 1] = {
+							--idN = #vns.avoider.obstacles + 1,
 							type = obstacle.type,
 							robotTypeS = "block",
 							positionV3 = positionV3,
@@ -86,18 +89,33 @@ function PipuckConnector.step(vns)
 		}
 	end
 
-	-- convert vns.avoider.obstacles from real frame into virtual frame
-	local obstaclesinR = vns.avoider.obstacles
-	vns.avoider.obstacles = {}
-	for i, v in ipairs(obstaclesinR) do
-		vns.avoider.obstacles[i] = {
-			idN = i,
+	-- convert seenObstacles from real frame into virtual frame seenObstaclesInVirtualFrame
+	local seenObstaclesInVirtualFrame = {}
+	for i, v in ipairs(seenObstacles) do
+		seenObstaclesInVirtualFrame[i] = {
 			type = v.type,
 			robotTypeS = v.robotTypeS,
 			positionV3 = vns.api.virtualFrame.V3_RtoV(v.positionV3),
 			orientationQ = vns.api.virtualFrame.Q_RtoV(v.orientationQ),
 		}
 	end
+
+	SensorUpdater.updateObstacles(vns, seenObstaclesInVirtualFrame, vns.avoider.obstacles)
+
+	--[[
+	for i, ob in ipairs(vns.avoider.obstacles) do
+		local color = "green"
+		if ob.unseen_count ~= 3 then color = "red" end
+		vns.api.debug.drawArrow(color,
+		                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0)),
+		                        vns.api.virtualFrame.V3_VtoR(vector3(ob.positionV3))
+		                       )
+		vns.api.debug.drawArrow(color,
+		                        vns.api.virtualFrame.V3_VtoR(vector3(ob.positionV3)),
+		                        vns.api.virtualFrame.V3_VtoR(vector3(ob.positionV3) + vector3(0.1,0,0):rotate(ob.orientationQ))
+		                       )
+	end
+	--]]
 end
 
 function PipuckConnector.create_pipuckconnector_node(vns)

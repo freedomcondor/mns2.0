@@ -4,6 +4,9 @@
 --]]
 
 require("DeepCopy")
+local SensorUpdater = require("SensorUpdater")
+local Transform = require("Transform")
+
 
 local DroneConnector = {}
 
@@ -18,9 +21,10 @@ function DroneConnector.step(vns)
 		vns.connector.seenRobots
 	)
 
+	local seenObstacles = {}
 	vns.api.droneAddObstacles(
 		vns.api.droneDetectTags(),
-		vns.avoider.obstacles
+		seenObstacles
 	)
 
 	-- report my sight to all seen pipucks, and drones in parent and children
@@ -42,7 +46,8 @@ function DroneConnector.step(vns)
 
 	---[[
 	-- broadcast my sight so other drones would see me
-	vns.Msg.send("ALLMSG", "reportSight", {mySight = vns.connector.seenRobots, myObstacles = vns.avoider.obstacles})
+	--vns.Msg.send("ALLMSG", "reportSight", {mySight = vns.connector.seenRobots, myObstacles = vns.avoider.obstacles})
+	vns.Msg.send("ALLMSG", "reportSight", {mySight = vns.connector.seenRobots, myObstacles = seenObstacles})
 	--]]
 
 	-- for sight report, generate quadcopters
@@ -83,25 +88,41 @@ function DroneConnector.step(vns)
 		}
 	end
 
-	-- convert vns.avoider.obstacles from real frame into virtual frame
-	local obstaclesinR = vns.avoider.obstacles
-	vns.avoider.obstacles = {}
-	for i, v in ipairs(obstaclesinR) do
-		vns.avoider.obstacles[i] = {
-			idN = i,
+	-- convert seenObstacles from real frame into virtual frame seenObstaclesInVirtualFrame
+	local seenObstaclesInVirtualFrame = {}
+	for i, v in ipairs(seenObstacles) do
+		seenObstaclesInVirtualFrame[i] = {
 			type = v.type,
 			robotTypeS = v.robotTypeS,
 			positionV3 = vns.api.virtualFrame.V3_RtoV(v.positionV3),
 			orientationQ = vns.api.virtualFrame.Q_RtoV(v.orientationQ),
 		}
 	end
+
+	SensorUpdater.updateObstacles(vns, seenObstaclesInVirtualFrame, vns.avoider.obstacles)
+
+	--[[
+	if vns.parentR == nil then
+	for i, ob in ipairs(vns.avoider.obstacles) do
+		local color = "green"
+		if ob.unseen_count ~= vns.api.parameters.obstacle_unseen_count then color = "red" end
+		vns.api.debug.drawArrow(color, 
+		                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0)), 
+		                        vns.api.virtualFrame.V3_VtoR(vector3(ob.positionV3))
+		                       )
+		vns.api.debug.drawArrow(color, 
+		                        vns.api.virtualFrame.V3_VtoR(vector3(ob.positionV3)),
+		                        vns.api.virtualFrame.V3_VtoR(vector3(ob.positionV3) + vector3(0.1,0,0):rotate(ob.orientationQ))
+		                       )
+	end
+	end
+	--]]
 end
 
 function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 	local quadR = nil
 	local n = 0
-	local totalPositionV3 = vector3()
-	local totalOrientationQ = quaternion() 
+	local totalAcc = Transform.createAccumulator()
 	for _, robotR in pairs(yourVehiclesTR) do
 		if myVehiclesTR[robotR.idS] ~= nil and
 		   myVehiclesTR[robotR.idS].robotTypeS ~= "drone" then
@@ -114,18 +135,16 @@ function DroneConnector.calcQuadR(idS, myVehiclesTR, yourVehiclesTR)
 			                 )
 			local orientationQ = myRobotR.orientationQ * robotR.orientationQ:inverse()
 
-			totalPositionV3 = totalPositionV3 + positionV3
-			totalOrientationQ = orientationQ -- TODO: find a better way to average quaternion
-
+			Transform.addAccumulator(totalAcc, {positionV3 = positionV3, orientationQ = orientationQ})
 			n = n + 1
 		end
 	end
 	if n >= 1 then
-		local AverageOrientationQ = totalOrientationQ
+		local average = Transform.averageAccumulator(totalAcc)
 		quadR = {
 			idS = idS,
-			positionV3 = totalPositionV3 * (1.0/n),
-			orientationQ = AverageOrientationQ,
+			positionV3 = average.positionV3,
+			orientationQ = average.orientationQ,
 			robotTypeS = "drone",
 		}
 	end

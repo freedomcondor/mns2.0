@@ -3,8 +3,9 @@
 local Avoider = {}
 
 function Avoider.create(vns)
-	vns.avoider = {}
-	vns.avoider.obstacles = {}
+	vns.avoider = {
+		obstacles = {}
+	}
 end
 
 function Avoider.reset(vns)
@@ -12,7 +13,6 @@ function Avoider.reset(vns)
 end
 
 function Avoider.preStep(vns)
-	vns.avoider.obstacles = {}
 end
 
 function Avoider.step(vns)
