@@ -36,13 +36,13 @@ function init()
 	--]]
 
 	-- test vector3
-	--[[
+	---[[
 	logger("vector3")
 	logger(getmetatable(vector3()))
 	--]]
 
 	-- quaternion test
-	--[[
+	---[[
 	logger("quaternion test")
 	logger(getmetatable(quaternion()))
 	vec = vector3(1, 0, 0)
