@@ -1,17 +1,14 @@
 diff --git a/src/plugins/robots/drone/simulator/pointmass3d_drone_model.cpp b/src/plugins/robots/drone/simulator/pointmass3d_drone_model.cpp
-index 42af876..d254a19 100644
+index 42af876..aeea463 100644
 --- a/src/plugins/robots/drone/simulator/pointmass3d_drone_model.cpp
 +++ b/src/plugins/robots/drone/simulator/pointmass3d_drone_model.cpp
-@@ -423,18 +423,21 @@ namespace argos
+@@ -423,18 +423,18 @@ namespace argos
     const Real CPointMass3DDroneModel::MEMS_GYRO_BIAS_INIT = 0.0007;
     const Real CPointMass3DDroneModel::MEMS_GYRO_RANDOM_WALK_INIT = 0.0007;
     const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_MEAN = 0;
 -   const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_STD_DEV_X = 0.25;
 -   const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_STD_DEV_Y = 0.25;
 -   const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_STD_DEV_Z = 0.1;
-+   //const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_STD_DEV_X = 0.25;
-+   //const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_STD_DEV_Y = 0.25;
-+   //const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_STD_DEV_Z = 0.1;
 +   const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_STD_DEV_X = 0.75;
 +   const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_STD_DEV_Y = 0.75;
 +   const Real CPointMass3DDroneModel::MEMS_GYRO_NOISE_STD_DEV_Z = 0.3;
