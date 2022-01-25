@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="0" ticks_per_second="5" random_seed="0" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    <lua_controller id="robot">
+      <actuators>
+        <pipuck_differential_drive implementation="default" />
+        <radios implementation="default" />
+        <pipuck_leds implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_differential_drive implementation="default" />
+        <radios implementation="default" />
+        <pipuck_system implementation="default" />
+      </sensors>
+      <params script="01_pipuck_formation.lua" 
+              hardware="true"
+              connector_waiting_count="3"
+              connector_waiting_parent_count="5"
+              connector_unseen_count="15"
+              connector_heartbeat_count="10"
+              safezone_drone_pipuck="3"
+              safezone_drone_drone="3"
+              dangerzone_drone="1.8"
+      />
+    </lua_controller>
+  </controllers>
+
+</argos-configuration>
