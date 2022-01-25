@@ -15,7 +15,7 @@ while getopts "r:e:h" arg; do
 			echo "run flag provided: $OPTARG"
 			RUN_FLAG=$OPTARG
 			;;
-		a)
+		e)
 			echo "evalutate flag provided: $OPTARG"
 			EVA_FLAG=$OPTARG
 			;;
@@ -25,12 +25,11 @@ while getopts "r:e:h" arg; do
 done
 
 #-- run threads functions ---------------------------------------------------------------------
-LOG_INDENT="                  |"
-  LOG_LINE="-------------------"
+LOG_INDENT="                |"
+  LOG_LINE="-----------------"
 THREADS_LOG_OUTPUT=/dev/stdout
 RUN_OUTPUT=output.log
 KILL_THREADS=kill_threads.sh
-KILL_THREADS_BASH=bashkill_threads.sh
 
 run() {
 	# `run 2 3` means run No.2 on thread No.3 (thread No is for indents)
@@ -45,7 +44,7 @@ run() {
 
 	# check if datadir case exists and it is already finished in tmpdir
 	if [ -d "$DATADIR/run$run_number" ] && [ ! -d "run$run_number" ]; then
-		echo "$log_indent skip run$run_number"
+		echo "$log_indent skip run$run_number" >> $THREADS_LOG_OUTPUT
 		return
 	fi
 
@@ -102,10 +101,11 @@ run_threads() {
 	echo "echo ---------------" >> $KILL_THREADS
 	echo "echo killing threads" >> $KILL_THREADS
 
+	echo "Execute in $TMPDIR, copy back in $DATADIR" > $THREADS_LOG_OUTPUT
 	# create temp dir
 	CURRENTDIR=`pwd`
 	if [ -d $TMPDIR ]; then
-		echo "[warning] $TMPDIR already exists"
+		echo "[warning] $TMPDIR already exists" >> $THREADS_LOG_OUTPUT
 	else
 		mkdir -p $TMPDIR
 	fi
@@ -116,9 +116,8 @@ run_threads() {
 	for (( indent=0; indent<$threads; indent++ )); do log_line="$log_line$LOG_LINE"; done
 
 	# start log
-	echo "Execute in $TMPDIR, copy back in $DATADIR" >> $THREADS_LOG_OUTPUT
-	echo "Experiment start" > $THREADS_LOG_OUTPUT
-	echo "$log_line" > $THREADS_LOG_OUTPUT
+	echo "Experiment start" >> $THREADS_LOG_OUTPUT
+	echo "$log_line" >> $THREADS_LOG_OUTPUT
 
 	# start threads
 	for (( i_thread=0; i_thread<$threads; i_thread++ )); 
@@ -137,7 +136,7 @@ run_threads() {
 
 	# wait to finish
 	wait
-	echo "$log_line" > $THREADS_LOG_OUTPUT
+	echo "$log_line" >> $THREADS_LOG_OUTPUT
 	echo "Experiment finish" >> $THREADS_LOG_OUTPUT
 
 	# clean
@@ -151,7 +150,7 @@ evaluate_single_case() {
 	cmd=$2
 	CURRENTDIR=`pwd`
 	cd $RUNDIR
-	$cmd
+	$cmd >> $THREADS_LOG_OUTPUT
 	cd $CURRENTDIR
 }
 
@@ -161,9 +160,9 @@ evaluate() {
 	check_result_file=$3
 
 	for rundir in $DATADIR/*; do
-		echo $rundir
+		echo $rundir >> $THREADS_LOG_OUTPUT
 		if [ -f "$rundir/$check_result_file" ]; then
-			echo "skip"
+			echo "skip" >> $THREADS_LOG_OUTPUT
 		else
 			evaluate_single_case $rundir "$cmd"
 		fi

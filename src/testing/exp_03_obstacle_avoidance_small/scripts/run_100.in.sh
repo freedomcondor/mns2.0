@@ -3,6 +3,8 @@ source @CMAKE_SOURCE_DIR@/scripts/run_threads.sh
 
 DATADIR=@CMAKE_CURRENT_SOURCE_DIR@/../data
 TMPDIR=threads
+#THREADS_LOG_OUTPUT="/home/harry/code/mns2.0/build/out.log"
+
 #run 2 3 "python3 @CMAKE_CURRENT_BINARY_DIR@/../run.py -l 50" $DATADIR
 #run_single_thread 2 4 4 "python3 @CMAKE_CURRENT_BINARY_DIR@/../run.py -l 60" $DATADIR
 
@@ -15,14 +17,14 @@ if [ "$RUN_FLAG" != "false" ]; then
 	            $DATADIR \
 	            $TMPDIR
 else
-	echo "skip run threads"
+	echo "skip run threads" >> $THREADS_LOG_OUTPUT
 fi
 
 if [ "$EVA_FLAG" != "false" ]; then
-	echo "Evaluating"
+	echo "Evaluating" >> $THREADS_LOG_OUTPUT
 	evaluate $DATADIR \
 	         "lua @CMAKE_CURRENT_BINARY_DIR@/evaluator.lua"
 	#         "rm result_data.txt"
 else
-	echo "skip evaluating"
+	echo "skip evaluating" >> $THREADS_LOG_OUTPUT
 fi
