@@ -69,10 +69,8 @@ function Stabilizer.step(vns)
 	local offsetAcc = Transform.createAccumulator()
 
 	local flag = false
-	local nearestDis = math.huge
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		if ob.stabilizer ~= nil and ob.unseen_count == vns.api.parameters.obstacle_unseen_count then
-		--if ob.stabilizer ~= nil then
 			flag = true
 			-- add offset (choose the nearest)
 			local offset = {positionV3 = vector3(), orientationQ = quaternion()}
@@ -80,8 +78,26 @@ function Stabilizer.step(vns)
 			Transform.CxBisA(ob, ob.stabilizer, offset)
 			-- add offset into offsetAcc
 			Transform.addAccumulator(offsetAcc, offset)
+			ob.stabilizer.offset = offset
 		end
 	end
+
+	-- filter wrong case (sometimes obstacles are too close, they may be messed up with each other)
+	-- check with average and subtrack from acc
+	flag = false
+	local averageOffset = Transform.averageAccumulator(offsetAcc)
+	for i, ob in ipairs(vns.avoider.obstacles) do
+		if ob.stabilizer ~= nil and ob.unseen_count == vns.api.parameters.obstacle_unseen_count then
+			if (ob.stabilizer.offset.positionV3 - averageOffset.positionV3):length() > vns.api.parameters.obstacle_match_distance / 2 then
+				Transform.subAccumulator(offsetAcc, ob.stabilizer.offset)
+				ob.stabilizer = nil
+			else
+				flag = true
+			end
+			ob.offset = nil
+		end
+	end
+
 	local offset = {positionV3 = vector3(), orientationQ = quaternion()}
 	if flag == true then
 		-- average offsetAcc into offset
