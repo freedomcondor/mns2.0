@@ -27,7 +27,7 @@ local bt
 local gene = require("morphology")
 
 -- VNS option
-VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval
+-- VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval -- default is oval
 
 -- argos functions -----------------------------------------------
 --- init
@@ -73,8 +73,6 @@ function step()
 	-- debug
 	api.debug.showChildren(vns)
 	--api.debug.showObstacles(vns)
-
-	--ExperimentCommon.detectGates(vns, 253, 1.5) -- gate brick id and longest possible gate size
 end
 
 --- destroy

@@ -31,12 +31,13 @@ wall_xml, largest_loc = generate_wall(1,                        # number of gate
                                       253, 254)                 # gate_brick_type, and wall_brick_type
 
 # obstacles
-obstacle_locations = generate_random_locations(5,               # total number
+obstacle_locations = generate_random_locations(10,               # total number
                                                None, None,      # origin location
                                                -2.5, -0.5,      # x range
-                                               -1.0, 1.0,       # y range
-                                               0.0, 3.0)        # near and far limit
-
+                                               -2.0, 2.0,       # y range
+                                               0.5, 3.0)        # near and far limit
+mark_locations = generate_line_locations(2, 1, largest_loc, 2.5, largest_loc)
+obstacle_locations += mark_locations
 obstacle_xml = generate_obstacles(obstacle_locations, 100, 255) # start id and payload
 
 # target

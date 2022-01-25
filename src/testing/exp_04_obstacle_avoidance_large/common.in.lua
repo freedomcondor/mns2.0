@@ -16,19 +16,13 @@ logger.enable()
 logger.disable("Allocator")
 logger.disable("Stabilizer")
 
--- parameters ----------------
-local obstacle_type = 255
-local wall_brick_type = 254
-local gate_brick_type = 253
-local target_type = 252
-
 -- datas ----------------
 local bt
 --local vns
 local gene = require("morphology")
 
 -- VNS option
-VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval
+-- VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval -- default is oval
 
 -- argos functions -----------------------------------------------
 --- init
@@ -75,8 +69,6 @@ function step()
 	-- debug
 	api.debug.showChildren(vns)
 	--api.debug.showObstacles(vns)
-
-	--ExperimentCommon.detectGates(vns, 253, 1.5) -- gate brick id and longest possible gate size
 end
 
 --- destroy
@@ -87,9 +79,10 @@ end
 function create_head_navigate_node(vns)
 return function()
 	if vns.parentR ~= nil or vns.robotTypeS == "pipuck" then return false, true end
-	local speed = 0.05
+	if vns.robotTypeS == "drone" and vns.api.actuator.flight_preparation.state ~= "navigation" then return end
+	local speed = 0.02
 	local speedx = speed
 	local speedy = speed * math.cos(math.pi * api.stepCount/500)
-	vns.Spreader.emergency(vns, vector3(speedx,speedy,0), vector3(), nil, true)
+	vns.Spreader.emergency_after_core(vns, vector3(speedx,speedy,0), vector3(), nil, true)
 	return false, true
 end end
