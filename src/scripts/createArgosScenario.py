@@ -283,7 +283,7 @@ def generate_target_xml(x, y, th, type, radius, tag_edge_distance):
 		</links>
 		<devices>
 			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.02" payload="{}"
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="{}"
 				     position="{},0.000,0.11" orientation="0,0,0" />
 			</tags>
 		</devices>
@@ -416,6 +416,18 @@ def generate_wall(gate_number, wall_x, left_end, right_end, small_limit, large_l
 
 	return tagstr, largest_loc
 
+def generate_line_locations(number, x_left, y_left, x_right, y_right) :
+	a = []
+	x = x_left
+	y = y_left
+	x_inc = (x_right - x_left) / (number-1)
+	y_inc = (y_right - y_left) / (number-1)
+	for i in range(1,number + 1):
+		a.append([x,y])
+		x = x + x_inc
+		y = y + y_inc
+
+	return a
 #- random locations ------------------------------------------------------------------------
 def generate_random_locations(n, origin_x,    origin_y, 
                                  x_min_limit, x_max_limit,
