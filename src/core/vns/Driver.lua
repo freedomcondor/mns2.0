@@ -65,8 +65,8 @@ function Driver.step(vns, waiting)
 		end
 	end
 
-	--[[
 	local color = "255,0,255,0"
+	--[[
 	vns.api.debug.drawArrow(color, 
 	                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
 	                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3 + vector3(0.1,0,0):rotate(vns.goal.orientationQ))
@@ -75,6 +75,7 @@ function Driver.step(vns, waiting)
 	                       vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
 	                       0.05
 	                      )
+	--]]
 	vns.api.debug.drawArrow(color,
 	                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0)),
 	                        vns.api.virtualFrame.V3_VtoR(vector3(vns.goal.positionV3 + vector3(0,0,0.1)))

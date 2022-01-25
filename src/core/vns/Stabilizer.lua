@@ -85,11 +85,7 @@ function Stabilizer.step(vns)
 	local offset = {positionV3 = vector3(), orientationQ = quaternion()}
 	if flag == true then
 		-- average offsetAcc into offset
-		--logger("offset orientationQ = ", vns.goal.orientationQ)
-		logger(offsetAcc)
 		Transform.averageAccumulator(offsetAcc, offset)
-		--logger("after, offset = ")
-		--logger(offset)
 		vns.goal.positionV3 = offset.positionV3
 		vns.goal.orientationQ = offset.orientationQ
 		vns.allocator.keepBrainGoal = true

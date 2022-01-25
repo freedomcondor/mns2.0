@@ -65,7 +65,6 @@ function PipuckConnector.step(vns)
 
 					if flag == true then
 						seenObstacles[#seenObstacles + 1] = {
-							--idN = #vns.avoider.obstacles + 1,
 							type = obstacle.type,
 							robotTypeS = "block",
 							positionV3 = positionV3,
