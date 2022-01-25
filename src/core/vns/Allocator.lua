@@ -956,7 +956,8 @@ function Allocator.calcBaseValue_oval(base, current, target)
 	end
 end
 
-Allocator.calcBaseValue = Allocator.calcBaseValue_vertical
+--Allocator.calcBaseValue = Allocator.calcBaseValue_vertical
+Allocator.calcBaseValue = Allocator.calcBaseValue_oval
 
 -------------------------------------------------------------------------------
 function Allocator.calcMorphScale(vns, morph)
