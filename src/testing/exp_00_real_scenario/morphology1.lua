@@ -1,5 +1,6 @@
 local p_dis = 0.6
 local d_dis = 1.2
+local height = 1.8
 return 
 {	robotTypeS = "drone",
 	positionV3 = vector3(-p_dis, 0, 0),
@@ -7,19 +8,19 @@ return
 	---[[
 	children = {
 	{	robotTypeS = "pipuck",
-           positionV3 = vector3(-p_dis, -p_dis, 0),
+           positionV3 = vector3(-p_dis, -p_dis, -height),
            orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	{	robotTypeS = "pipuck",
-           positionV3 = vector3(-p_dis, p_dis, 0),
+           positionV3 = vector3(-p_dis, p_dis, -height),
           orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	{	robotTypeS = "pipuck",
-           positionV3 = vector3(p_dis, -p_dis, 0),
+           positionV3 = vector3(p_dis, -p_dis, -height),
            orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	{	robotTypeS = "pipuck",
-           positionV3 = vector3(p_dis, p_dis, 0),
+           positionV3 = vector3(p_dis, p_dis, -height),
           orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 
@@ -29,11 +30,11 @@ return
 		---[[
 		children = {
 		{	robotTypeS = "pipuck",
-			positionV3 = vector3(-p_dis, -p_dis, 0),
+			positionV3 = vector3(-p_dis, -p_dis, -height),
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 		{	robotTypeS = "pipuck",
-			positionV3 = vector3(-p_dis, p_dis, 0),
+			positionV3 = vector3(-p_dis, p_dis, -height),
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 	}},
@@ -42,11 +43,11 @@ return
 		orientationQ = quaternion(math.pi/2, vector3(0,0,1)),
 		children = {
 		{	robotTypeS = "pipuck",
-			positionV3 = vector3(-p_dis, -p_dis, 0),
+			positionV3 = vector3(-p_dis, -p_dis, -height),
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 		{	robotTypeS = "pipuck",
-			positionV3 = vector3(-p_dis, p_dis, 0),
+			positionV3 = vector3(-p_dis, p_dis, -height),
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 	}},

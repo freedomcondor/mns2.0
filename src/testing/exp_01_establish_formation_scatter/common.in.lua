@@ -50,6 +50,7 @@ function reset()
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
 		vns.create_vns_core_node(vns),
+		--create_head_navigate_node(vns),
 		vns.Driver.create_driver_node(vns, {waiting = true}),
 	}}
 end
@@ -79,3 +80,14 @@ end
 function destroy()
 	api.destroy()
 end
+
+function create_head_navigate_node(vns)
+	return function()
+		if vns.parentR ~= nil or vns.robotTypeS == "pipuck" then return false, true end
+		if vns.robotTypeS == "drone" and vns.api.actuator.flight_preparation.state ~= "navigation" then return end
+		local speed = 0.020
+		local speedx = speed
+		local speedy = speed * math.cos(math.pi * api.stepCount/500)
+		vns.Spreader.emergency_after_core(vns, vector3(speedx,speedy,0), vector3(), nil, true)
+		return false, true
+	end end

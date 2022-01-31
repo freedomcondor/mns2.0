@@ -55,4 +55,5 @@ return {
 		-- robots disconnect after this steps after stop receiving hearbeat from a neighbour (parent + children)
 
 	brainkeeper_time = tonumber(robot.params.brainkeeper_time or 100), 
+	stabilizer_preference_robot = robot.params.stabilizer_preference_robot or "pipuck1",
 }

@@ -6,6 +6,7 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 # Inputseed, Experiment_length, Visualization = True or False, VisualizationArgosFlag = "" or " -z" in inherited
 
 import os
+import math 
 
 # drone and pipuck
 drone_locations = generate_random_locations(2,                  # total number
@@ -22,19 +23,29 @@ drone_xml = generate_drones(drone_locations, 1)                 # from label 1 g
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 # obstacles
-large_obstacle_locations = generate_random_locations(80,               # total number
+large_obstacle_locations = generate_random_locations(0,               # total number
                                                      None, None,      # origin location
                                                      -3, 3,      # x range
                                                      -2.5, 2.5,       # y range
                                                      1.0, 3.0)        # near and far limit
 obstacle_locations = []
+#d = 0.10 * math.sqrt(2)
 d = 0.10
+d_sqrt3_2 = d / math.sqrt(3)
 for loc in large_obstacle_locations :
+    obstacle_locations.append([loc[0], loc[1] + d_sqrt3_2 * 2])
+    obstacle_locations.append([loc[0] + d, loc[1] - d_sqrt3_2])
+    obstacle_locations.append([loc[0] - d, loc[1] - d_sqrt3_2])
+    '''
     obstacle_locations.append([loc[0]-d, loc[1]-d])
     obstacle_locations.append([loc[0]+d, loc[1]-d])
     obstacle_locations.append([loc[0]+d, loc[1]+d])
     obstacle_locations.append([loc[0]-d, loc[1]+d])
-
+    obstacle_locations.append([loc[0]-d, loc[1]])
+    obstacle_locations.append([loc[0], loc[1]-d])
+    obstacle_locations.append([loc[0]+d, loc[1]])
+    obstacle_locations.append([loc[0], loc[1]+d])
+    '''
 
 obstacle_xml = generate_obstacles(obstacle_locations, 100, 0) # start id and payload
 
@@ -44,7 +55,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],  # Inputseed is inherit from createArgosScenario.py
-		["TOTALLENGTH",       str((Experiment_length or 2200)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 3700)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
@@ -52,11 +63,13 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="pipuck"
+              connector_unseen_count="30"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="drone"
-              safezone_drone_drone="1.3"
+              drone_tag_detection_rate="1.0"
+              connector_unseen_count="30"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
 	]

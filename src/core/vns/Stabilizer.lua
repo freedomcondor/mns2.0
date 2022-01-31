@@ -6,9 +6,11 @@ local Transform = require("Transform")
 local Stabilizer = {}
 
 function Stabilizer.create(vns)
+	vns.stabilizer = {}
 end
 
 function Stabilizer.reset(vns)
+	vns.stabilizer = {}
 end
 
 function Stabilizer.preStep(vns)
@@ -19,7 +21,8 @@ function Stabilizer.addParent(vns)
 		ob.stabilizer = nil
 	end
 end
-function Stabilizer.addParent(vns)
+
+function Stabilizer.deleteParent(vns)
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		ob.stabilizer = nil
 	end
@@ -47,6 +50,8 @@ function Stabilizer.postStep(vns)
 			Transform.AxCisB(newGoal, ob.stabilizer, ob.stabilizer)
 		end
 	end
+
+	vns.allocator.lock_goal = false
 end
 
 function Stabilizer.setGoal(vns, positionV3, orientationQ)
@@ -60,7 +65,12 @@ end
 
 function Stabilizer.step(vns)
 	-- If I'm not the brain, don't do anything
-	if vns.parentR ~= nil then return end
+	if vns.parentR ~= nil then 
+		if vns.robotTypeS == "pipuck" then
+			Stabilizer.pipuckListenRequest(vns)
+		end
+		return 
+	end
 	-- If I'm a drone and I haven't take off, don't do anything
 	if vns.robotTypeS == "drone" and vns.api.actuator.flight_preparation.state ~= "navigation" then return end
 
@@ -84,7 +94,7 @@ function Stabilizer.step(vns)
 
 	-- filter wrong case (sometimes obstacles are too close, they may be messed up with each other)
 	-- check with average and subtrack from acc
-	flag = false
+	flag = false -- flag for valid reference obstacles
 	local averageOffset = Transform.averageAccumulator(offsetAcc)
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		if ob.stabilizer ~= nil and ob.unseen_count == vns.api.parameters.obstacle_unseen_count then
@@ -98,17 +108,38 @@ function Stabilizer.step(vns)
 		end
 	end
 
+	local obstacle_flag = false
+	for i, ob in ipairs(vns.avoider.obstacles) do
+		obstacle_flag = true
+		break
+	end
+
+	-- check
+	local colorflag = false
 	local offset = {positionV3 = vector3(), orientationQ = quaternion()}
 	if flag == true then
 		-- average offsetAcc into offset
 		Transform.averageAccumulator(offsetAcc, offset)
 		vns.goal.positionV3 = offset.positionV3
 		vns.goal.orientationQ = offset.orientationQ
-		vns.allocator.keepBrainGoal = true
-	else
-		-- offset = current goal
+		colorflag = true
+		--vns.allocator.keepBrainGoal = true
+	elseif obstacle_flag == true then 
+		-- There are obstacles, I just don't see them, wait to see them, set offset as the current goal
 		offset.positionV3 = vns.goal.positionV3 
-		offset.orientationQ = vns.goal.orientationQ 
+		offset.orientationQ = vns.goal.orientationQ
+	elseif obstacle_flag == false then 
+		-- set a pipuck as reference
+		local offset = Stabilizer.robotReference(vns)
+		if offset == nil then
+			offset = {}
+			offset.positionV3 = vns.goal.positionV3 
+			offset.orientationQ = vns.goal.orientationQ
+		else
+			vns.goal.positionV3 = offset.positionV3
+			vns.goal.orientationQ = offset.orientationQ
+			colorflag = true
+		end
 	end
 
 	-- for each new obstacle without a stabilizer, set a stabilizer
@@ -121,6 +152,7 @@ function Stabilizer.step(vns)
 	end
 
 	---[[
+	if colorflag then
 	local color = "255,0,255,0"
 	vns.api.debug.drawArrow(color, 
 	                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
@@ -131,6 +163,89 @@ function Stabilizer.step(vns)
 	                       0.1
 	                      )
 	--]]
+						end
+end
+
+function Stabilizer.getReferenceChild(vns)
+	-- get a reference pipuck
+	if vns.childrenRT[vns.Parameters.stabilizer_preference_robot] ~= nil then
+		-- check preference
+		return vns.childrenRT[vns.Parameters.stabilizer_preference_robot]
+	elseif vns.childrenRT[vns.stabilizer.lastReference] ~= nil then
+		return vns.childrenRT[vns.stabilizer.lastReference]
+	else
+		-- get the nearest
+		local nearestDis = math.huge
+		local ref = nil
+		for idS, robotR in pairs(vns.childrenRT) do
+			if robotR.robotTypeS == "pipuck" and robotR.positionV3:length() < nearestDis then
+				nearestDis = robotR.positionV3:length()
+				ref = robotR
+			end
+		end
+		if ref ~= nil then
+			vns.stabilizer.lastReference = ref.idS
+		end
+		return ref
+	end
+end
+
+function Stabilizer.pipuckListenRequest(vns)
+	for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "stabilizer_request")) do
+		-- calculate where my parent should be related to me
+		local parentTransform = {}
+		if vns.allocator.target == nil then
+			parentTransform.positionV3 = vector3()
+			parentTransform.orientationQ = quaternion()
+		else
+			Transform.AxCis0(vns.allocator.target, parentTransform)
+		end
+		local self_check = {}
+		Transform.AxBisC(vns.goal, parentTransform, self_check)
+
+		vns.Msg.send(vns.parentR.idS, "stabilizer_reply", {
+			parentTransform = {
+				positionV3 = vns.api.virtualFrame.V3_VtoR(parentTransform.positionV3),
+				orientationQ = vns.api.virtualFrame.Q_VtoR(parentTransform.orientationQ),
+			},
+			self_check = {
+				positionV3 = vns.api.virtualFrame.V3_VtoR(self_check.positionV3),
+				orientationQ = vns.api.virtualFrame.Q_VtoR(self_check.orientationQ),
+			},
+			moving = true
+		})
+		--vns.allocator.lock_goal = true
+	end
+end
+
+function Stabilizer.robotReference(vns)
+	local refRobot = Stabilizer.getReferenceChild(vns)
+	if refRobot == nil then return nil end
+
+	local color = "255,0,255,0"
+	vns.api.debug.drawArrow(color, 
+	                        vns.api.virtualFrame.V3_VtoR(vector3()),
+	                        vns.api.virtualFrame.V3_VtoR(refRobot.positionV3)
+	                       )	
+
+	vns.Msg.send(refRobot.idS, "stabilizer_request")
+	for _, msgM in ipairs(vns.Msg.getAM(refRobot.idS, "stabilizer_reply")) do
+		local offset = msgM.dataT.parentTransform
+		Transform.AxBisC(refRobot, offset, offset)
+		local self_check = msgM.dataT.self_check
+		Transform.AxBisC(refRobot, self_check, self_check)
+		--if (self_check.positionV3 - vns.goal.positionV3):length() < 0.25 then
+		local disV2 = offset.positionV3 - vns.goal.positionV3
+		disV2.z = 0
+		if disV2:length() < 0.50 then
+			--[[
+			if msgM.dataT.moving == true then
+				offset.orientationQ = vns.goal.orientationQ
+			end
+			--]]
+			return offset
+		end
+	end
 end
 
 ------ behaviour tree ---------------------------------------
