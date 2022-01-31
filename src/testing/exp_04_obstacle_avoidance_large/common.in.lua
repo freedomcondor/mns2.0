@@ -71,7 +71,7 @@ function step()
 		--api.debug.showObstacles(vns)
 	end
 
-	vns.api.debug.drawRing("255, 255, 0", 
+	vns.api.debug.drawRing("255, 255, 0",
 	                       vector3(0,0,-1.7),
 	                       vns.Parameters.safezone_drone_pipuck
 	                      )
@@ -90,7 +90,6 @@ return function()
 	local speed = 0.020
 	local speedx = speed
 	local speedy = speed * math.cos(math.pi * api.stepCount/500)
-	--vns.Spreader.emergency_after_core(vns, vector3(speedx,speedy,0), vector3(), nil, true)
-	vns.Spreader.emergency_after_core(vns, vector3(speedx,0,0), vector3(), nil, true)
+	vns.Spreader.emergency_after_core(vns, vector3(speedx,speedy,0), vector3(), nil, true)
 	return false, true
 end end

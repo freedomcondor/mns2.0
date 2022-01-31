@@ -152,11 +152,11 @@ function Stabilizer.step(vns)
 	---[[
 	if colorflag then
 		local color = "255,0,255,0"
-		vns.api.debug.drawArrow(color, 
+		vns.api.debug.drawArrow(color,
 		                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
 		                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3 + vector3(0.1,0,0):rotate(vns.goal.orientationQ))
 		                       )
-		vns.api.debug.drawRing(color, 
+		vns.api.debug.drawRing(color,
 		                       vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
 		                       0.1
 		                      )

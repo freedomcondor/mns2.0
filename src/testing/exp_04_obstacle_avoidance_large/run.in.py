@@ -6,7 +6,7 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 # Inputseed, Experiment_length, Visualization = True or False, VisualizationArgosFlag = "" or " -z" in inherited
 
 import os
-import math 
+import math
 
 # drone and pipuck
 drone_locations = generate_random_locations(2,                  # total number
@@ -23,7 +23,7 @@ drone_xml = generate_drones(drone_locations, 1)                 # from label 1 g
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 # obstacles
-large_obstacle_locations = generate_random_locations(0,               # total number
+large_obstacle_locations = generate_random_locations(80,               # total number
                                                      None, None,      # origin location
                                                      -3, 3,      # x range
                                                      -2.5, 2.5,       # y range

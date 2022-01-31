@@ -167,14 +167,13 @@ function Driver.step(vns, waiting)
 			real_distanceV3.z = 0
 			local real_distance = real_distanceV3:length()
 			if predict_distance > safezone_half and predict_distance > real_distance then
-			--if predict_distance > safezone_half then
 				transV3 = vector3()
 				vns.goal.transV3 = vector3()
 
-					vns.api.debug.drawArrow("255, 255, 0", 
-	                        vns.api.virtualFrame.V3_VtoR(vector3()),
-	                        vns.api.virtualFrame.V3_VtoR(robotR.positionV3)
-	                       )
+				vns.api.debug.drawArrow("255, 255, 0",
+					vns.api.virtualFrame.V3_VtoR(vector3()),
+					vns.api.virtualFrame.V3_VtoR(robotR.positionV3)
+				)
 			end
 		end
 	end
