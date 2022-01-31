@@ -50,8 +50,6 @@ function Stabilizer.postStep(vns)
 			Transform.AxCisB(newGoal, ob.stabilizer, ob.stabilizer)
 		end
 	end
-
-	vns.allocator.lock_goal = false
 end
 
 function Stabilizer.setGoal(vns, positionV3, orientationQ)
@@ -65,11 +63,11 @@ end
 
 function Stabilizer.step(vns)
 	-- If I'm not the brain, don't do anything
-	if vns.parentR ~= nil then 
+	if vns.parentR ~= nil then
 		if vns.robotTypeS == "pipuck" then
 			Stabilizer.pipuckListenRequest(vns)
 		end
-		return 
+		return
 	end
 	-- If I'm a drone and I haven't take off, don't do anything
 	if vns.robotTypeS == "drone" and vns.api.actuator.flight_preparation.state ~= "navigation" then return end
@@ -115,7 +113,7 @@ function Stabilizer.step(vns)
 	end
 
 	-- check
-	local colorflag = false
+	local colorflag = false -- flag for whether to show circle or not
 	local offset = {positionV3 = vector3(), orientationQ = quaternion()}
 	if flag == true then
 		-- average offsetAcc into offset
@@ -124,16 +122,16 @@ function Stabilizer.step(vns)
 		vns.goal.orientationQ = offset.orientationQ
 		colorflag = true
 		--vns.allocator.keepBrainGoal = true
-	elseif obstacle_flag == true then 
+	elseif obstacle_flag == true then
 		-- There are obstacles, I just don't see them, wait to see them, set offset as the current goal
 		offset.positionV3 = vns.goal.positionV3 
 		offset.orientationQ = vns.goal.orientationQ
-	elseif obstacle_flag == false then 
+	elseif obstacle_flag == false then
 		-- set a pipuck as reference
 		local offset = Stabilizer.robotReference(vns)
 		if offset == nil then
 			offset = {}
-			offset.positionV3 = vns.goal.positionV3 
+			offset.positionV3 = vns.goal.positionV3
 			offset.orientationQ = vns.goal.orientationQ
 		else
 			vns.goal.positionV3 = offset.positionV3
@@ -153,17 +151,17 @@ function Stabilizer.step(vns)
 
 	---[[
 	if colorflag then
-	local color = "255,0,255,0"
-	vns.api.debug.drawArrow(color, 
-	                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
-	                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3 + vector3(0.1,0,0):rotate(vns.goal.orientationQ))
-	                       )
-	vns.api.debug.drawRing(color, 
-	                       vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
-	                       0.1
-	                      )
+		local color = "255,0,255,0"
+		vns.api.debug.drawArrow(color, 
+		                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
+		                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3 + vector3(0.1,0,0):rotate(vns.goal.orientationQ))
+		                       )
+		vns.api.debug.drawRing(color, 
+		                       vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
+		                       0.1
+		                      )
+	end
 	--]]
-						end
 end
 
 function Stabilizer.getReferenceChild(vns)
@@ -208,13 +206,7 @@ function Stabilizer.pipuckListenRequest(vns)
 				positionV3 = vns.api.virtualFrame.V3_VtoR(parentTransform.positionV3),
 				orientationQ = vns.api.virtualFrame.Q_VtoR(parentTransform.orientationQ),
 			},
-			self_check = {
-				positionV3 = vns.api.virtualFrame.V3_VtoR(self_check.positionV3),
-				orientationQ = vns.api.virtualFrame.Q_VtoR(self_check.orientationQ),
-			},
-			moving = true
 		})
-		--vns.allocator.lock_goal = true
 	end
 end
 
@@ -223,26 +215,18 @@ function Stabilizer.robotReference(vns)
 	if refRobot == nil then return nil end
 
 	local color = "255,0,255,0"
-	vns.api.debug.drawArrow(color, 
+	vns.api.debug.drawArrow(color,
 	                        vns.api.virtualFrame.V3_VtoR(vector3()),
 	                        vns.api.virtualFrame.V3_VtoR(refRobot.positionV3)
-	                       )	
+	                       )
 
 	vns.Msg.send(refRobot.idS, "stabilizer_request")
 	for _, msgM in ipairs(vns.Msg.getAM(refRobot.idS, "stabilizer_reply")) do
 		local offset = msgM.dataT.parentTransform
 		Transform.AxBisC(refRobot, offset, offset)
-		local self_check = msgM.dataT.self_check
-		Transform.AxBisC(refRobot, self_check, self_check)
-		--if (self_check.positionV3 - vns.goal.positionV3):length() < 0.25 then
 		local disV2 = offset.positionV3 - vns.goal.positionV3
 		disV2.z = 0
 		if disV2:length() < 0.50 then
-			--[[
-			if msgM.dataT.moving == true then
-				offset.orientationQ = vns.goal.orientationQ
-			end
-			--]]
 			return offset
 		end
 	end
