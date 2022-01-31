@@ -6,7 +6,7 @@
   <!-- ************************* -->
   <framework>
     <system threads="0" />
-    <experiment length="440.0" ticks_per_second="5" random_seed="4" />
+    <experiment length="600.0" ticks_per_second="5" random_seed="4" />
   </framework>
   
   <!-- *************** -->
@@ -27,8 +27,9 @@
         <radios implementation="default" />
       </sensors>
       <params 
-              script="/home/harry/code/mns2.0/build/testing/exp_04_obstacle_avoidance_large/common.lua"
+              script="/Users/harry/Desktop/mns2.0/build/testing/exp_04_obstacle_avoidance_large/common.lua"
               my_type="pipuck"
+              connector_unseen_count="30"
          />
     </lua_controller>
     
@@ -48,9 +49,10 @@
         <radios implementation="default" />
       </sensors>
       <params 
-              script="/home/harry/code/mns2.0/build/testing/exp_04_obstacle_avoidance_large/common.lua"
+              script="/Users/harry/Desktop/mns2.0/build/testing/exp_04_obstacle_avoidance_large/common.lua"
               my_type="drone"
-              safezone_drone_drone="1.3"
+              drone_tag_detection_rate="1.0"
+              connector_unseen_count="30"
          />
     </lua_controller>
     
@@ -115,7 +117,7 @@
     <!-- random obstacles-->
     
 	<prototype id="obstacle100" movable="true" friction="10">
-		<body position="2.275566674670936,2.173687991711725,0" orientation="0,0,0" />
+		<body position="2.375566674670936,2.38915804554965,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -129,7 +131,7 @@
 	</prototype>
 	
 	<prototype id="obstacle101" movable="true" friction="10">
-		<body position="2.475566674670936,2.173687991711725,0" orientation="0,0,0" />
+		<body position="2.475566674670936,2.2159529647927623,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -143,7 +145,7 @@
 	</prototype>
 	
 	<prototype id="obstacle102" movable="true" friction="10">
-		<body position="2.475566674670936,2.373687991711725,0" orientation="0,0,0" />
+		<body position="2.275566674670936,2.2159529647927623,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -157,7 +159,7 @@
 	</prototype>
 	
 	<prototype id="obstacle103" movable="true" friction="10">
-		<body position="2.275566674670936,2.373687991711725,0" orientation="0,0,0" />
+		<body position="-0.5374339135867467,2.3320118906028315,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -171,7 +173,7 @@
 	</prototype>
 	
 	<prototype id="obstacle104" movable="true" friction="10">
-		<body position="-0.6374339135867467,2.1165418367649065,0" orientation="0,0,0" />
+		<body position="-0.43743391358674677,2.158806809845944,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -185,7 +187,7 @@
 	</prototype>
 	
 	<prototype id="obstacle105" movable="true" friction="10">
-		<body position="-0.43743391358674677,2.1165418367649065,0" orientation="0,0,0" />
+		<body position="-0.6374339135867467,2.158806809845944,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -199,7 +201,7 @@
 	</prototype>
 	
 	<prototype id="obstacle106" movable="true" friction="10">
-		<body position="-0.43743391358674677,2.3165418367649067,0" orientation="0,0,0" />
+		<body position="0.7230628287811749,1.7051090573291885,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -213,7 +215,7 @@
 	</prototype>
 	
 	<prototype id="obstacle107" movable="true" friction="10">
-		<body position="-0.6374339135867467,2.3165418367649067,0" orientation="0,0,0" />
+		<body position="0.8230628287811749,1.5319039765723008,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -227,7 +229,7 @@
 	</prototype>
 	
 	<prototype id="obstacle108" movable="true" friction="10">
-		<body position="0.6230628287811749,1.4896390034912632,0" orientation="0,0,0" />
+		<body position="0.6230628287811749,1.5319039765723008,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -241,7 +243,7 @@
 	</prototype>
 	
 	<prototype id="obstacle109" movable="true" friction="10">
-		<body position="0.8230628287811749,1.4896390034912632,0" orientation="0,0,0" />
+		<body position="1.7024740489281296,-0.5709086115353532,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -255,7 +257,7 @@
 	</prototype>
 	
 	<prototype id="obstacle110" movable="true" friction="10">
-		<body position="0.8230628287811749,1.6896390034912634,0" orientation="0,0,0" />
+		<body position="1.8024740489281297,-0.744113692292241,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -269,7 +271,7 @@
 	</prototype>
 	
 	<prototype id="obstacle111" movable="true" friction="10">
-		<body position="0.6230628287811749,1.6896390034912634,0" orientation="0,0,0" />
+		<body position="1.6024740489281295,-0.744113692292241,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -283,7 +285,7 @@
 	</prototype>
 	
 	<prototype id="obstacle112" movable="true" friction="10">
-		<body position="1.6024740489281295,-0.7863786653732784,0" orientation="0,0,0" />
+		<body position="2.890491897191259,-0.2647673498033509,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -297,7 +299,7 @@
 	</prototype>
 	
 	<prototype id="obstacle113" movable="true" friction="10">
-		<body position="1.8024740489281297,-0.7863786653732784,0" orientation="0,0,0" />
+		<body position="2.990491897191259,-0.4379724305602387,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -311,7 +313,7 @@
 	</prototype>
 	
 	<prototype id="obstacle114" movable="true" friction="10">
-		<body position="1.8024740489281297,-0.5863786653732784,0" orientation="0,0,0" />
+		<body position="2.790491897191259,-0.4379724305602387,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -325,7 +327,7 @@
 	</prototype>
 	
 	<prototype id="obstacle115" movable="true" friction="10">
-		<body position="1.6024740489281295,-0.5863786653732784,0" orientation="0,0,0" />
+		<body position="1.0609627054908337,-1.6363272718284174,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -339,7 +341,7 @@
 	</prototype>
 	
 	<prototype id="obstacle116" movable="true" friction="10">
-		<body position="2.790491897191259,-0.4802374036412761,0" orientation="0,0,0" />
+		<body position="1.1609627054908338,-1.809532352585305,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -353,7 +355,7 @@
 	</prototype>
 	
 	<prototype id="obstacle117" movable="true" friction="10">
-		<body position="2.990491897191259,-0.4802374036412761,0" orientation="0,0,0" />
+		<body position="0.9609627054908337,-1.809532352585305,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -367,7 +369,7 @@
 	</prototype>
 	
 	<prototype id="obstacle118" movable="true" friction="10">
-		<body position="2.990491897191259,-0.28023740364127614,0" orientation="0,0,0" />
+		<body position="-1.505648091967421,2.6036526892783765,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -381,7 +383,7 @@
 	</prototype>
 	
 	<prototype id="obstacle119" movable="true" friction="10">
-		<body position="2.790491897191259,-0.28023740364127614,0" orientation="0,0,0" />
+		<body position="-1.405648091967421,2.430447608521489,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -395,7 +397,7 @@
 	</prototype>
 	
 	<prototype id="obstacle120" movable="true" friction="10">
-		<body position="0.9609627054908337,-1.8517973256663427,0" orientation="0,0,0" />
+		<body position="-1.6056480919674212,2.430447608521489,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -409,7 +411,7 @@
 	</prototype>
 	
 	<prototype id="obstacle121" movable="true" friction="10">
-		<body position="1.1609627054908338,-1.8517973256663427,0" orientation="0,0,0" />
+		<body position="-2.2663604541934825,0.26167798595652747,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -423,7 +425,7 @@
 	</prototype>
 	
 	<prototype id="obstacle122" movable="true" friction="10">
-		<body position="1.1609627054908338,-1.6517973256663425,0" orientation="0,0,0" />
+		<body position="-2.1663604541934824,0.0884729051996397,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -437,7 +439,7 @@
 	</prototype>
 	
 	<prototype id="obstacle123" movable="true" friction="10">
-		<body position="0.9609627054908337,-1.6517973256663425,0" orientation="0,0,0" />
+		<body position="-2.3663604541934826,0.0884729051996397,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -451,7 +453,7 @@
 	</prototype>
 	
 	<prototype id="obstacle124" movable="true" friction="10">
-		<body position="-1.6056480919674212,2.3881826354404514,0" orientation="0,0,0" />
+		<body position="-2.8100978566643913,-1.1125616390623085,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -465,7 +467,7 @@
 	</prototype>
 	
 	<prototype id="obstacle125" movable="true" friction="10">
-		<body position="-1.405648091967421,2.3881826354404514,0" orientation="0,0,0" />
+		<body position="-2.710097856664391,-1.2857667198191962,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -479,7 +481,7 @@
 	</prototype>
 	
 	<prototype id="obstacle126" movable="true" friction="10">
-		<body position="-1.405648091967421,2.5881826354404516,0" orientation="0,0,0" />
+		<body position="-2.9100978566643914,-1.2857667198191962,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -493,7 +495,7 @@
 	</prototype>
 	
 	<prototype id="obstacle127" movable="true" friction="10">
-		<body position="-1.6056480919674212,2.5881826354404516,0" orientation="0,0,0" />
+		<body position="-1.545665255531201,-1.344202480169073,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -507,7 +509,7 @@
 	</prototype>
 	
 	<prototype id="obstacle128" movable="true" friction="10">
-		<body position="-2.3663604541934826,0.046207932118602274,0" orientation="0,0,0" />
+		<body position="-1.4456652555312008,-1.5174075609259607,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -521,7 +523,7 @@
 	</prototype>
 	
 	<prototype id="obstacle129" movable="true" friction="10">
-		<body position="-2.1663604541934824,0.046207932118602274,0" orientation="0,0,0" />
+		<body position="-1.645665255531201,-1.5174075609259607,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -535,7 +537,7 @@
 	</prototype>
 	
 	<prototype id="obstacle130" movable="true" friction="10">
-		<body position="-2.1663604541934824,0.24620793211860229,0" orientation="0,0,0" />
+		<body position="2.40571294663701,0.8853373872686514,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -549,7 +551,7 @@
 	</prototype>
 	
 	<prototype id="obstacle131" movable="true" friction="10">
-		<body position="-2.3663604541934826,0.24620793211860229,0" orientation="0,0,0" />
+		<body position="2.50571294663701,0.7121323065117636,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -563,7 +565,7 @@
 	</prototype>
 	
 	<prototype id="obstacle132" movable="true" friction="10">
-		<body position="-2.9100978566643914,-1.3280316929002338,0" orientation="0,0,0" />
+		<body position="2.30571294663701,0.7121323065117636,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -577,7 +579,7 @@
 	</prototype>
 	
 	<prototype id="obstacle133" movable="true" friction="10">
-		<body position="-2.710097856664391,-1.3280316929002338,0" orientation="0,0,0" />
+		<body position="-0.03427186366292734,-1.9199868632204693,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -591,7 +593,7 @@
 	</prototype>
 	
 	<prototype id="obstacle134" movable="true" friction="10">
-		<body position="-2.710097856664391,-1.1280316929002336,0" orientation="0,0,0" />
+		<body position="0.06572813633707267,-2.093191943977357,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -605,7 +607,7 @@
 	</prototype>
 	
 	<prototype id="obstacle135" movable="true" friction="10">
-		<body position="-2.9100978566643914,-1.1280316929002336,0" orientation="0,0,0" />
+		<body position="-0.13427186366292734,-2.093191943977357,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -619,7 +621,7 @@
 	</prototype>
 	
 	<prototype id="obstacle136" movable="true" friction="10">
-		<body position="-1.645665255531201,-1.5596725340069983,0" orientation="0,0,0" />
+		<body position="-0.9804624931720793,0.900015053408662,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -633,7 +635,7 @@
 	</prototype>
 	
 	<prototype id="obstacle137" movable="true" friction="10">
-		<body position="-1.4456652555312008,-1.5596725340069983,0" orientation="0,0,0" />
+		<body position="-0.8804624931720794,0.7268099726517742,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -647,7 +649,7 @@
 	</prototype>
 	
 	<prototype id="obstacle138" movable="true" friction="10">
-		<body position="-1.4456652555312008,-1.3596725340069982,0" orientation="0,0,0" />
+		<body position="-1.0804624931720794,0.7268099726517742,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -661,7 +663,7 @@
 	</prototype>
 	
 	<prototype id="obstacle139" movable="true" friction="10">
-		<body position="-1.645665255531201,-1.3596725340069982,0" orientation="0,0,0" />
+		<body position="2.7376743478949557,-2.0126271056293583,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -675,7 +677,7 @@
 	</prototype>
 	
 	<prototype id="obstacle140" movable="true" friction="10">
-		<body position="2.30571294663701,0.6698673334307262,0" orientation="0,0,0" />
+		<body position="2.8376743478949558,-2.185832186386246,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -689,7 +691,7 @@
 	</prototype>
 	
 	<prototype id="obstacle141" movable="true" friction="10">
-		<body position="2.50571294663701,0.6698673334307262,0" orientation="0,0,0" />
+		<body position="2.6376743478949556,-2.185832186386246,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -703,7 +705,7 @@
 	</prototype>
 	
 	<prototype id="obstacle142" movable="true" friction="10">
-		<body position="2.50571294663701,0.8698673334307262,0" orientation="0,0,0" />
+		<body position="0.8111387400884746,0.4614997330239434,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -717,7 +719,7 @@
 	</prototype>
 	
 	<prototype id="obstacle143" movable="true" friction="10">
-		<body position="2.30571294663701,0.8698673334307262,0" orientation="0,0,0" />
+		<body position="0.9111387400884746,0.28829465226705564,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -731,7 +733,7 @@
 	</prototype>
 	
 	<prototype id="obstacle144" movable="true" friction="10">
-		<body position="-0.13427186366292734,-2.1354569170583946,0" orientation="0,0,0" />
+		<body position="0.7111387400884747,0.28829465226705564,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -745,7 +747,7 @@
 	</prototype>
 	
 	<prototype id="obstacle145" movable="true" friction="10">
-		<body position="0.06572813633707267,-2.1354569170583946,0" orientation="0,0,0" />
+		<body position="-1.6887512148314756,-2.368164812519102,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -759,7 +761,7 @@
 	</prototype>
 	
 	<prototype id="obstacle146" movable="true" friction="10">
-		<body position="0.06572813633707267,-1.9354569170583944,0" orientation="0,0,0" />
+		<body position="-1.5887512148314755,-2.5413698932759896,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -773,7 +775,7 @@
 	</prototype>
 	
 	<prototype id="obstacle147" movable="true" friction="10">
-		<body position="-0.13427186366292734,-1.9354569170583944,0" orientation="0,0,0" />
+		<body position="-1.7887512148314757,-2.5413698932759896,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -787,7 +789,7 @@
 	</prototype>
 	
 	<prototype id="obstacle148" movable="true" friction="10">
-		<body position="-1.0804624931720794,0.6845449995707368,0" orientation="0,0,0" />
+		<body position="-0.17093928537213054,0.24751328286808436,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -801,7 +803,7 @@
 	</prototype>
 	
 	<prototype id="obstacle149" movable="true" friction="10">
-		<body position="-0.8804624931720794,0.6845449995707368,0" orientation="0,0,0" />
+		<body position="-0.07093928537213054,0.07430820211119661,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -815,7 +817,7 @@
 	</prototype>
 	
 	<prototype id="obstacle150" movable="true" friction="10">
-		<body position="-0.8804624931720794,0.8845449995707367,0" orientation="0,0,0" />
+		<body position="-0.2709392853721305,0.07430820211119661,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -829,7 +831,7 @@
 	</prototype>
 	
 	<prototype id="obstacle151" movable="true" friction="10">
-		<body position="-1.0804624931720794,0.8845449995707367,0" orientation="0,0,0" />
+		<body position="-2.8416392469858014,-2.213614197408417,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -843,7 +845,7 @@
 	</prototype>
 	
 	<prototype id="obstacle152" movable="true" friction="10">
-		<body position="2.6376743478949556,-2.2280971594672834,0" orientation="0,0,0" />
+		<body position="-2.7416392469858013,-2.3868192781653046,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -857,7 +859,7 @@
 	</prototype>
 	
 	<prototype id="obstacle153" movable="true" friction="10">
-		<body position="2.8376743478949558,-2.2280971594672834,0" orientation="0,0,0" />
+		<body position="-2.9416392469858015,-2.3868192781653046,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -871,7 +873,7 @@
 	</prototype>
 	
 	<prototype id="obstacle154" movable="true" friction="10">
-		<body position="2.8376743478949558,-2.028097159467283,0" orientation="0,0,0" />
+		<body position="-2.9366923884925944,1.8039148674363419,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -885,7 +887,7 @@
 	</prototype>
 	
 	<prototype id="obstacle155" movable="true" friction="10">
-		<body position="2.6376743478949556,-2.028097159467283,0" orientation="0,0,0" />
+		<body position="-2.8366923884925943,1.6307097866794542,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -899,7 +901,7 @@
 	</prototype>
 	
 	<prototype id="obstacle156" movable="true" friction="10">
-		<body position="0.7111387400884747,0.24602967918601823,0" orientation="0,0,0" />
+		<body position="-3.0366923884925945,1.6307097866794542,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -913,7 +915,7 @@
 	</prototype>
 	
 	<prototype id="obstacle157" movable="true" friction="10">
-		<body position="0.9111387400884746,0.24602967918601823,0" orientation="0,0,0" />
+		<body position="0.4558948782337424,-0.632325659297426,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -927,7 +929,7 @@
 	</prototype>
 	
 	<prototype id="obstacle158" movable="true" friction="10">
-		<body position="0.9111387400884746,0.4460296791860182,0" orientation="0,0,0" />
+		<body position="0.5558948782337424,-0.8055307400543138,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -941,7 +943,7 @@
 	</prototype>
 	
 	<prototype id="obstacle159" movable="true" friction="10">
-		<body position="0.7111387400884747,0.4460296791860182,0" orientation="0,0,0" />
+		<body position="0.35589487823374244,-0.8055307400543138,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -955,7 +957,7 @@
 	</prototype>
 	
 	<prototype id="obstacle160" movable="true" friction="10">
-		<body position="-1.7887512148314757,-2.583634866357027,0" orientation="0,0,0" />
+		<body position="-1.2729327714990375,-0.2996738366549183,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -969,7 +971,7 @@
 	</prototype>
 	
 	<prototype id="obstacle161" movable="true" friction="10">
-		<body position="-1.5887512148314755,-2.583634866357027,0" orientation="0,0,0" />
+		<body position="-1.1729327714990374,-0.4728789174118061,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -983,7 +985,7 @@
 	</prototype>
 	
 	<prototype id="obstacle162" movable="true" friction="10">
-		<body position="-1.5887512148314755,-2.383634866357027,0" orientation="0,0,0" />
+		<body position="-1.3729327714990376,-0.4728789174118061,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -997,7 +999,7 @@
 	</prototype>
 	
 	<prototype id="obstacle163" movable="true" friction="10">
-		<body position="-1.7887512148314757,-2.383634866357027,0" orientation="0,0,0" />
+		<body position="-1.8742825932806115,1.6729074683462357,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -1011,7 +1013,7 @@
 	</prototype>
 	
 	<prototype id="obstacle164" movable="true" friction="10">
-		<body position="-0.2709392853721305,0.03204322903015919,0" orientation="0,0,0" />
+		<body position="-1.7742825932806114,1.499702387589348,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -1025,7 +1027,7 @@
 	</prototype>
 	
 	<prototype id="obstacle165" movable="true" friction="10">
-		<body position="-0.07093928537213054,0.03204322903015919,0" orientation="0,0,0" />
+		<body position="-1.9742825932806116,1.499702387589348,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -1039,7 +1041,7 @@
 	</prototype>
 	
 	<prototype id="obstacle166" movable="true" friction="10">
-		<body position="-0.07093928537213054,0.2320432290301592,0" orientation="0,0,0" />
+		<body position="1.330794044734982,2.5034398449596655,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -1053,7 +1055,7 @@
 	</prototype>
 	
 	<prototype id="obstacle167" movable="true" friction="10">
-		<body position="-0.2709392853721305,0.2320432290301592,0" orientation="0,0,0" />
+		<body position="1.430794044734982,2.330234764202778,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -1067,329 +1069,7 @@
 	</prototype>
 	
 	<prototype id="obstacle168" movable="true" friction="10">
-		<body position="-2.9416392469858015,-2.429084251246342,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle169" movable="true" friction="10">
-		<body position="-2.7416392469858013,-2.429084251246342,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle170" movable="true" friction="10">
-		<body position="-2.7416392469858013,-2.229084251246342,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle171" movable="true" friction="10">
-		<body position="-2.9416392469858015,-2.229084251246342,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle172" movable="true" friction="10">
-		<body position="-3.0366923884925945,1.5884448135984166,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle173" movable="true" friction="10">
-		<body position="-2.8366923884925943,1.5884448135984166,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle174" movable="true" friction="10">
-		<body position="-2.8366923884925943,1.7884448135984168,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle175" movable="true" friction="10">
-		<body position="-3.0366923884925945,1.7884448135984168,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle176" movable="true" friction="10">
-		<body position="0.35589487823374244,-0.8477957131353512,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle177" movable="true" friction="10">
-		<body position="0.5558948782337424,-0.8477957131353512,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle178" movable="true" friction="10">
-		<body position="0.5558948782337424,-0.6477957131353512,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle179" movable="true" friction="10">
-		<body position="0.35589487823374244,-0.6477957131353512,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle180" movable="true" friction="10">
-		<body position="-1.3729327714990376,-0.5151438904928435,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle181" movable="true" friction="10">
-		<body position="-1.1729327714990374,-0.5151438904928435,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle182" movable="true" friction="10">
-		<body position="-1.1729327714990374,-0.3151438904928435,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle183" movable="true" friction="10">
-		<body position="-1.3729327714990376,-0.3151438904928435,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle184" movable="true" friction="10">
-		<body position="-1.9742825932806116,1.4574374145083104,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle185" movable="true" friction="10">
-		<body position="-1.7742825932806114,1.4574374145083104,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle186" movable="true" friction="10">
-		<body position="-1.7742825932806114,1.6574374145083106,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle187" movable="true" friction="10">
-		<body position="-1.9742825932806116,1.6574374145083106,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle188" movable="true" friction="10">
-		<body position="1.2307940447349819,2.2879697911217405,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle189" movable="true" friction="10">
-		<body position="1.430794044734982,2.2879697911217405,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle190" movable="true" friction="10">
-		<body position="1.430794044734982,2.4879697911217407,0" orientation="0,0,0" />
-		<links ref="base">
-			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
-			      position="0,0,0" orientation="0,0,0" />
-		</links>
-		<devices>
-			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
-				     position="0,0.000,0.11" orientation="0,0,0" />
-			</tags>
-		</devices>
-	</prototype>
-	
-	<prototype id="obstacle191" movable="true" friction="10">
-		<body position="1.2307940447349819,2.4879697911217407,0" orientation="0,0,0" />
+		<body position="1.2307940447349819,2.330234764202778,0" orientation="0,0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
 			      position="0,0,0" orientation="0,0,0" />
@@ -1429,7 +1109,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="/home/harry/code/mns2.0/build/libmy_extensions"
+  <loop_functions library="/Users/harry/Desktop/mns2.0/build/libmy_extensions"
                   label="my_loop_functions" />
 
   <!-- ****************** -->
@@ -1437,7 +1117,7 @@
   <!-- ****************** -->
   <visualization>
     <qt-opengl lua_editor="true" show_boundary="false">
-      <user_functions library="/home/harry/code/mns2.0/build/libmy_qtopengl_extensions"
+      <user_functions library="/Users/harry/Desktop/mns2.0/build/libmy_qtopengl_extensions"
                       label="my_qtopengl_user_functions" />
       <camera>
         <placements>
