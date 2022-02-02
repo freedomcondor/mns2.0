@@ -24,7 +24,7 @@ pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 g
 # obstacles
 obstacle_locations = generate_random_locations(80,               # total number
                                                None, None,      # origin location
-                                               -3, 3,      # x range
+                                               -3.5, 3,      # x range
                                                -2.5, 2.5,       # y range
                                                0.7, 3.0)        # near and far limit
 
@@ -44,14 +44,10 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="pipuck"
-              connector_unseen_count="30"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="drone"
-              safezone_drone_drone="1.3"
-              drone_tag_detection_rate="1.0"
-              connector_unseen_count="30"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
 	]

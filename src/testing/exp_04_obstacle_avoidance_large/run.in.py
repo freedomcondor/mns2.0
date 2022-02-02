@@ -27,7 +27,7 @@ large_obstacle_locations = generate_random_locations(80,               # total n
                                                      None, None,      # origin location
                                                      -3, 3,      # x range
                                                      -2.5, 2.5,       # y range
-                                                     1.0, 3.0)        # near and far limit
+                                                     1.2, 3.0)        # near and far limit
 obstacle_locations = []
 #d = 0.10 * math.sqrt(2)
 d = 0.10
@@ -63,13 +63,12 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="pipuck"
-              connector_unseen_count="30"
+              safezone_drone_pipuck="0.8"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="drone"
-              drone_tag_detection_rate="1.0"
-              connector_unseen_count="30"
+              safezone_drone_pipuck="0.8"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
 	]

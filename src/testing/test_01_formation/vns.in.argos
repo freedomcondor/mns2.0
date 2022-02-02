@@ -28,9 +28,9 @@
       <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua"
               connector_waiting_count="5"
               connector_waiting_parent_count="7"
-              connector_unseen_count="10"
-              obstacle_unseen_count="10"
-              dangerzone_pipuck="0.50"
+              connector_unseen_count="20"
+              obstacle_unseen_count="20"
+              dangerzone_drone="1.0"
       />
     </lua_controller>
 
@@ -52,9 +52,9 @@
               drone_tag_detection_rate="0.50"
               connector_waiting_count="5"
               connector_waiting_parent_count="7"
-              connector_unseen_count="10"
-              obstacle_unseen_count="10"
-              dangerzone_pipuck="0.50"
+              connector_unseen_count="20"
+              obstacle_unseen_count="20"
+              dangerzone_drone="1.0"
       />
     </lua_controller>
   </controllers>
@@ -67,31 +67,31 @@
 
     <!-- add drones -->
     <drone id="drone1" wifi_medium="wifi" tag_medium="tags">
-      <body position="0,-0.5,0" orientation="0,0,0"/>
+      <body position="0,-0.5,0" orientation="-45,0,0"/>
       <controller config="drone"/>
     </drone>
 
     <drone id="drone2" wifi_medium="wifi" tag_medium="tags">
-      <body position="-1,-0.5,0" orientation="0,0,0"/>
+      <body position="-1,-0.5,0" orientation="-45,0,0"/>
       <controller config="drone"/>
     </drone>
 
     <drone id="drone3" wifi_medium="wifi" tag_medium="tags">
-      <body position="-2,-0.5,0" orientation="0,0,0"/>
+      <body position="-2,-0.5,0" orientation="-45,0,0"/>
       <controller config="drone"/>
     </drone>
 
     <drone id="drone4" wifi_medium="wifi" tag_medium="tags">
-      <body position="0,0,0" orientation="0,0,0"/>
+      <body position="0,0,0" orientation="-45,0,0"/>
       <controller config="drone"/>
     </drone>
 
     <drone id="drone5" wifi_medium="wifi" tag_medium="tags">
-      <body position="-1,0,0" orientation="0,0,0"/>
+      <body position="-1,0,0" orientation="-45,0,0"/>
       <controller config="drone"/>
     </drone>
     <drone id="drone6" wifi_medium="wifi" tag_medium="tags">
-      <body position="-2,0,0" orientation="0,0,0"/>
+      <body position="-2,0,0" orientation="-45,0,0"/>
       <controller config="drone"/>
     </drone>
 
@@ -107,7 +107,7 @@
     </distribute>
 
     <!-- add an obstacle as stabilizer -->
-    <prototype id="obstacle1" movable="true" friction="10">
+    <!--prototype id="obstacle1" movable="true" friction="10">
       <body position="0,0,0" orientation="0,0,0" />
       <links ref="base">
         <link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
@@ -119,7 +119,7 @@
                position="0,0.000,0.11" orientation="0,0,0" />
         </tags>
       </devices>
-    </prototype>
+    </prototype-->
 
     <prototype id="obstacle2" movable="true" friction="10">
       <body position="-1.5,1,0" orientation="0,0,0" />
