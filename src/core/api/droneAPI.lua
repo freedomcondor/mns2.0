@@ -130,7 +130,8 @@ api.actuator.flight_preparation.run_state = function()
 end
 
 ---- Virtual Frame and tilt ---------------------
-api.virtualFrame.logicOrientationQ = quaternion()
+api.virtualFrame.orientationQ = quaternion(math.pi/4, vector3(0,0,1))
+api.virtualFrame.logicOrientationQ = api.virtualFrame.orientationQ
 -- overwrite rotateInspeed to change logicOrientation
 function api.virtualFrame.rotateInSpeed(speedV3)
 	-- speedV3 in real frame
