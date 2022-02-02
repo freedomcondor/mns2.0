@@ -50,6 +50,8 @@ function Stabilizer.postStep(vns)
 			Transform.AxCisB(newGoal, ob.stabilizer, ob.stabilizer)
 		end
 	end
+
+	vns.allocator.goal_lock = nil
 end
 
 function Stabilizer.setGoal(vns, positionV3, orientationQ)
@@ -198,8 +200,10 @@ function Stabilizer.pipuckListenRequest(vns)
 		else
 			Transform.AxCis0(vns.allocator.target, parentTransform)
 		end
-		local self_check = {}
-		Transform.AxBisC(vns.goal, parentTransform, self_check)
+
+		local disV2 = vector3(vns.goal.positionV3)
+		disV2.z = 0
+		if disV2:length() > vns.Parameters.stabilizer_pipuck_reference_distance then return end
 
 		vns.Msg.send(vns.parentR.idS, "stabilizer_reply", {
 			parentTransform = {
@@ -207,6 +211,13 @@ function Stabilizer.pipuckListenRequest(vns)
 				orientationQ = vns.api.virtualFrame.Q_VtoR(parentTransform.orientationQ),
 			},
 		})
+		vns.allocator.goal_lock = true
+
+		local color = "255,0,255,0"
+		vns.api.debug.drawRing(color,
+		                       vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3 + vector3(0,0,0.1)),
+		                       0.1
+		                      )
 	end
 end
 
@@ -224,11 +235,8 @@ function Stabilizer.robotReference(vns)
 	for _, msgM in ipairs(vns.Msg.getAM(refRobot.idS, "stabilizer_reply")) do
 		local offset = msgM.dataT.parentTransform
 		Transform.AxBisC(refRobot, offset, offset)
-		local disV2 = offset.positionV3 - vns.goal.positionV3
-		disV2.z = 0
-		if disV2:length() < 0.50 then
-			return offset
-		end
+		-- TODO: check?
+		return offset
 	end
 end
 

@@ -355,6 +355,11 @@ function Allocator.step(vns)
 		vns.goal.orientationQ = temporary_goal.orientationQ
 	end
 
+	if vns.allocator.goal_lock == true then
+		vns.goal.positionV3 = vector3()
+		vns.goal.orientationQ = quaternion()
+	end
+
 	-- send my new goal to children
 	for idS, robotR in pairs(vns.childrenRT) do
 		vns.Msg.send(idS, "parentGoal", {
