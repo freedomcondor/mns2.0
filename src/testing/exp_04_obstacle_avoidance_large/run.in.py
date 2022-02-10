@@ -33,9 +33,9 @@ obstacle_locations = []
 d = 0.10
 d_sqrt3_2 = d / math.sqrt(3)
 for loc in large_obstacle_locations :
-    obstacle_locations.append([loc[0], loc[1] + d_sqrt3_2 * 2])
-    obstacle_locations.append([loc[0] + d, loc[1] - d_sqrt3_2])
-    obstacle_locations.append([loc[0] - d, loc[1] - d_sqrt3_2])
+    obstacle_locations.append([loc[0] - d_sqrt3_2*2, loc[1]])
+    obstacle_locations.append([loc[0] + d_sqrt3_2, loc[1] + d])
+    obstacle_locations.append([loc[0] + d_sqrt3_2, loc[1] - d])
     '''
     obstacle_locations.append([loc[0]-d, loc[1]-d])
     obstacle_locations.append([loc[0]+d, loc[1]-d])
@@ -63,16 +63,16 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="pipuck"
-              safezone_drone_pipuck="0.8"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="drone"
-              safezone_drone_pipuck="0.8"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
 	]
 )
+
+              #safezone_drone_pipuck="0.8"
 
 #os.system("argos3 -c @CMAKE_CURRENT_BINARY_DIR@/vns.argos" + VisualizationArgosFlag)
 os.system("argos3 -c vns.argos" + VisualizationArgosFlag)

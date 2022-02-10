@@ -45,11 +45,12 @@ function Avoider.step(vns)
 	-- avoid obstacles
 	if vns.robotTypeS ~= "drone" then
 		for i, obstacle in ipairs(vns.avoider.obstacles) do if obstacle.added ~= true then
-			local vortex = false
+			--local vortex = false
 			--if obstacle.type == 1 then
 			--	vortex = true
 			--end
 
+			--[[
 			-- counting in nearby obstacles and average
 			--local virtualOb = {positionV3 = obstacle.positionV3, number = 1}
 			local virtualOb = {positionV3 = vector3(), number = 0}
@@ -70,22 +71,20 @@ function Avoider.step(vns)
 			end
 			local virtual_danger_zone = vns.Parameters.dangerzone_block + longest
 			                            --vns.api.parameters.obstacle_match_distance * (virtualOb.number - 1) / 2
+			--]]
 
 			avoid_speed.positionV3 = 
-				--[[
 				Avoider.add(vector3(), obstacle.positionV3,
 				            avoid_speed.positionV3,
-				            vns.Parameters.dangerzone_block,
-				            vns.goal.positionV3)
-				--]]
-				Avoider.add(vector3(), virtualOb.positionV3,
-				            avoid_speed.positionV3,
-				            virtual_danger_zone,
-				            vns.goal.positionV3)
+				            vns.Parameters.dangerzone_block)
+				            --virtual_danger_zone)
+				            --vns.goal.positionV3)
 		end end -- end of obstacle.added ~= true and for
+		--[[
 		for i, obstacle in ipairs(vns.avoider.obstacles) do
 			obstacle.added = nil
 		end
+		--]]
 	end
 
 	-- avoid predators
