@@ -1,6 +1,7 @@
 add_subdirectory(test_00_environment)
 add_subdirectory(test_01_formation)
 add_subdirectory(test_02_neuron)
+add_subdirectory(test_03_dynamic_bt)
 
 add_subdirectory(hw_00_tests)
 add_subdirectory(hw_01_drone_calibration)
