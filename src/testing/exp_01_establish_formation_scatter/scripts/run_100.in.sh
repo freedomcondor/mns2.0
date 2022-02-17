@@ -10,7 +10,7 @@ TMPDIR=threads
 #append "-l 30" to python3 to overwrite experiment length
 
 if [ "$RUN_FLAG" != "false" ]; then
-	run_threads 10 2 3 \
+	run_threads 1 2 4 \
 	            "python3 @CMAKE_CURRENT_BINARY_DIR@/../run.py" \
 	            $DATADIR \
 	            $TMPDIR
