@@ -56,9 +56,19 @@ function logReader.readLine(str)
 		                quaternion(0,1,0, tonumber(strList[8]) * math.pi / 180) *
 		                quaternion(0,0,1, tonumber(strList[7]) * math.pi / 180)
 		               ),
-		targetID = tonumber(strList[10]),
-		brainID = strList[11],
+		goalPositionV3 = vector3(tonumber(strList[10]),
+		                         tonumber(strList[11]),
+		                         tonumber(strList[12])
+		                        ),
+		goalOrientationQ = (quaternion(1,0,0, tonumber(strList[15]) * math.pi / 180) *
+		                    quaternion(0,1,0, tonumber(strList[14]) * math.pi / 180) *
+		                    quaternion(0,0,1, tonumber(strList[13]) * math.pi / 180)
+		                   ),
+		targetID = tonumber(strList[16]),
+		brainID = strList[17],
 	}
+	stepData.goalPositionV3 = stepData.positionV3 + stepData.orientationQ:toRotate(stepData.goalPositionV3)
+	stepData.goalOrientationQ = stepData.orientationQ * stepData.goalOrientationQ
 	return stepData
 end
 
@@ -127,9 +137,12 @@ function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
 
 			-- the predator, targetID == nil, consider its error is always 0
 			local targetRelativePositionV3 = geneIndex[robotData[endStep].targetID or 1].globalPositionV3
-			local targetGlobalPositionV3 = brainData[step].positionV3 + 
-			                               brainData[step].orientationQ:toRotate(targetRelativePositionV3)
+			--local targetGlobalPositionV3 = brainData[step].positionV3 + 
+			--                               brainData[step].orientationQ:toRotate(targetRelativePositionV3)
+			local targetGlobalPositionV3 = brainData[step].goalPositionV3 + 
+			                               brainData[step].goalOrientationQ:toRotate(targetRelativePositionV3)
 			local disV3 = targetGlobalPositionV3 - robotData[step].positionV3
+			--local disV3 = targetGlobalPositionV3 - robotData[step].goalPositionV3
 			disV3.z = 0
 			robotData[step].error = disV3:len()
 			--[[

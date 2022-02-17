@@ -286,12 +286,18 @@ function VNS.logLoopFunctionInfo(vns)
 	-- log virtual frame
 	local str = tostring(vns.api.virtualFrame.orientationQ)
 
+	-- log goal position
+	str = str .. "," .. tostring(vns.goal.positionV3)
+	-- log goal orientation
+	str = str .. "," .. tostring(vns.goal.orientationQ)
+
 	-- log target
 	if vns.allocator.target == nil then
 		str = str .. ",-2"
 	else
 		str = str .. "," .. tostring(vns.allocator.target.idN)
 	end
+
 
 	-- log brain name
 	str = str .. "," .. tostring(vns.idS)
@@ -326,8 +332,8 @@ function VNS.create_vns_core_node(vns, option)
 			}),
 		vns.Assigner.create_assigner_node(vns),
 		vns.ScaleManager.create_scalemanager_node(vns),
-		vns.Stabilizer.create_stabilizer_node(vns),
 		vns.Allocator.create_allocator_node(vns),
+		vns.Stabilizer.create_stabilizer_node(vns),
 		vns.IntersectionDetector.create_intersectiondetector_node(vns),
 		vns.Avoider.create_avoider_node(vns),
 		vns.Spreader.create_spreader_node(vns),
