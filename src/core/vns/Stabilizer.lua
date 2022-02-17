@@ -50,8 +50,6 @@ function Stabilizer.postStep(vns)
 			Transform.AxCisB(newGoal, ob.stabilizer, ob.stabilizer)
 		end
 	end
-
-	vns.allocator.goal_lock = nil
 end
 
 function Stabilizer.setGoal(vns, positionV3, orientationQ)
@@ -168,10 +166,13 @@ end
 
 function Stabilizer.getReferenceChild(vns)
 	-- get a reference pipuck
+	--[[
 	if vns.childrenRT[vns.Parameters.stabilizer_preference_robot] ~= nil then
 		-- check preference
 		return vns.childrenRT[vns.Parameters.stabilizer_preference_robot]
-	elseif vns.childrenRT[vns.stabilizer.lastReference] ~= nil then
+	--]]
+	--elseif vns.childrenRT[vns.stabilizer.lastReference] ~= nil then
+	if vns.childrenRT[vns.stabilizer.lastReference] ~= nil then
 		return vns.childrenRT[vns.stabilizer.lastReference]
 	else
 		-- get the nearest
@@ -194,9 +195,10 @@ function Stabilizer.pipuckListenRequest(vns)
 	for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "stabilizer_request")) do
 		-- calculate where my parent should be related to me
 		local parentTransform = {}
-		if vns.allocator.target == nil then
-			parentTransform.positionV3 = vector3()
-			parentTransform.orientationQ = quaternion()
+		if vns.allocator.target == nil or vns.allocator.target.idN == -1 then
+			return
+			--parentTransform.positionV3 = vector3()
+			--parentTransform.orientationQ = quaternion()
 		else
 			Transform.AxCis0(vns.allocator.target, parentTransform)
 		end
@@ -211,7 +213,9 @@ function Stabilizer.pipuckListenRequest(vns)
 				orientationQ = vns.api.virtualFrame.Q_VtoR(parentTransform.orientationQ),
 			},
 		})
-		vns.allocator.goal_lock = true
+
+		vns.goal.positionV3 = vector3()
+		vns.goal.orientationQ = quaternion()
 
 		local color = "255,0,255,0"
 		vns.api.debug.drawRing(color,
@@ -236,6 +240,11 @@ function Stabilizer.robotReference(vns)
 		local offset = msgM.dataT.parentTransform
 		Transform.AxBisC(refRobot, offset, offset)
 		-- TODO: check?
+
+		local disV2 = vector3(offset.positionV3)
+		disV2.z = 0
+		if disV2:length() > vns.Parameters.stabilizer_pipuck_reference_distance * 2 then return end
+
 		return offset
 	end
 end
