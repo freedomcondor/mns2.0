@@ -1,0 +1,10 @@
+configure_file( 01_pipuck_formation_simu.in.argos     01_pipuck_formation_simu.argos)
+configure_file( 01_pipuck_formation_hw.argos          files/01_pipuck_formation_hw.argos)
+configure_file( 01_pipuck_formation.lua               files/01_pipuck_formation.lua)
+
+file(GLOB MY_PUBLIC_HEADERS ${CMAKE_SOURCE_DIR}/core/api/*)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/files)
+file(GLOB MY_PUBLIC_HEADERS ${CMAKE_SOURCE_DIR}/core/utils/*)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/files)
+file(GLOB MY_PUBLIC_HEADERS ${CMAKE_SOURCE_DIR}/core/vns/*)
+file(COPY ${MY_PUBLIC_HEADERS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/files)
