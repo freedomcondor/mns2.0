@@ -1,6 +1,7 @@
 add_subdirectory(test_00_environment)
 add_subdirectory(test_01_formation)
 add_subdirectory(test_02_neuron)
+add_subdirectory(test_03_dynamic_bt)
 
 add_subdirectory(hw_00_tests)
 add_subdirectory(hw_01_drone_calibration)
@@ -12,6 +13,7 @@ add_subdirectory(hw_06_two_drones)
 add_subdirectory(hw_07_1p2d)
 add_subdirectory(hw_08_2p2d)
 add_subdirectory(hw_09_brain_drone_stabilizer)
+add_subdirectory(hw_10_pipucks_optitrack)
 
 add_subdirectory(exp_00_real_scenario)
 add_subdirectory(exp_01_establish_formation_scatter)
