@@ -280,7 +280,29 @@ function VNS.debug.logRobot(robotR, option, indent_str)
 	end
 end
 
+function VNS.logLoopFunctionInfoHW(vns)
+	logger("I'm here, too")
+	local targetID = -2
+	if vns.allocator.target ~= nil then
+		targetID = vns.allocator.target.idN
+	end
+
+	VNS.Msg.sendTable{
+		toS = "LOGINFO",
+		stepCount = vns.api.stepCount,
+		virtualFrameQ = vns.api.virtualFrame.orientationQ,
+		goalPositionV3 = vns.goal.positionV3,
+		goalOrientationQ = vns.goal.orientationQ,
+		targetID = targetID,
+		vnsID = vns.idS,
+	}
+end
+
 function VNS.logLoopFunctionInfo(vns)
+	logger("I'm here")
+	if robot.params.hardware == true then
+		return VNS.logLoopFunctionInfoHW(vns)
+	end
 	if robot.debug == nil or robot.debug.write == nil then return end
 
 	-- log virtual frame

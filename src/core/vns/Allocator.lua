@@ -22,6 +22,7 @@ function Allocator.create(vns)
 			positionV3 = vector3(),
 			orientationQ = quaternion(),
 			robotTypeS = vns.robotTypeS,
+			idN = -1,
 		},
 		parentGoal = {
 			positionV3 = vector3(),
@@ -37,6 +38,7 @@ function Allocator.reset(vns)
 			positionV3 = vector3(),
 			orientationQ = quaternion(),
 			robotTypeS = vns.robotTypeS,
+			idN = -1,
 		},
 		parentGoal = {
 			positionV3 = vector3(),
