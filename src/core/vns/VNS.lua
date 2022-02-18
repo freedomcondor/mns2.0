@@ -281,7 +281,6 @@ function VNS.debug.logRobot(robotR, option, indent_str)
 end
 
 function VNS.logLoopFunctionInfoHW(vns)
-	logger("I'm here, too")
 	local targetID = -2
 	if vns.allocator.target ~= nil then
 		targetID = vns.allocator.target.idN
@@ -299,7 +298,6 @@ function VNS.logLoopFunctionInfoHW(vns)
 end
 
 function VNS.logLoopFunctionInfo(vns)
-	logger("I'm here")
 	if robot.params.hardware == true then
 		return VNS.logLoopFunctionInfoHW(vns)
 	end
