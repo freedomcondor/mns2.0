@@ -11,7 +11,7 @@
         <pipuck_leds implementation="default" />
       </actuators>
       <sensors />
-      <params script="01_pipuck_drive.lua" />
+      <params script="03_pipuck_led.lua" />
     </lua_controller>
   </controllers>
 
