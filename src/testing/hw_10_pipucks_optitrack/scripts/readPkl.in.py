@@ -9,9 +9,9 @@ def setAxParameters(ax):
 	ax.set_xlabel("x")
 	ax.set_ylabel("y")
 	ax.set_zlabel("z")
-	ax.set_xlim([-0.5, 1.0])
-	ax.set_ylim([-0.5, 1.0])
-	ax.set_zlim([-0.5, 1.0])
+	ax.set_xlim([-1.0, 1.0])
+	ax.set_ylim([-1.0, 1.0])
+	ax.set_zlim([-1.0, 1.0])
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
@@ -31,11 +31,11 @@ def draw_optitrack_data(robot_name):
 
 	'''
 	drawRobot(ax, data[1]['position'], Quaternion(data[1]['orientation']))
-	drawRobot(ax, [0,0,0], Quaternion(data[1]['orientation'][0],
-	                                              data[1]['orientation'][1],
-	                                              data[1]['orientation'][2],
-	                                              data[1]['orientation'][3]
-	                                             )
+	drawRobot(ax, [0,0,0], Quaternion(data[1]['orientation'][3],
+	                                  data[1]['orientation'][0],
+	                                  data[1]['orientation'][1],
+	                                  data[1]['orientation'][2]
+	                                 )
 	         )
 	plt.show()
 
@@ -47,10 +47,15 @@ def draw_optitrack_data(robot_name):
 	for step in data:
 		if step['timestamp'] < time :
 			continue
-		time = time + 1000
+		time = time + 500
 
 		#drawVector3(ax, [0,0,0], step['position'], "blue")
-		drawRobot(ax, step['position'], Quaternion(step['orientation']))
+		drawRobot(ax, step['position'], Quaternion(step['orientation'][3],
+	                                               step['orientation'][0],
+	                                               step['orientation'][1],
+	                                               step['orientation'][2]
+	                                              )
+		         )
 
 		print(step['timestamp'])
 		#plt.pause((step['timestamp'] - lastTimestamp) / 1000000)
@@ -60,4 +65,67 @@ def draw_optitrack_data(robot_name):
 		setAxParameters(ax)
 		plt.draw()
 
-draw_optitrack_data("pipuck2")
+#draw_optitrack_data("pipuck2")
+#draw_optitrack_data("pipuck3")
+
+robots_idx = generateRobotsDictionary()
+generateRobotsColors(robots_idx)
+
+timestamp = 0
+stepTime = 200
+while True:
+	for id, robot_idx in robots_idx.items():
+		optitrack_step_data = getNextRobotOptitrackStep(robot_idx, timestamp)
+		message_step_data = getNextRobotMessageStep(robot_idx, timestamp)
+		if optitrack_step_data == None:
+			exit()
+
+		drawRobot(ax, optitrack_step_data['position'], Quaternion(optitrack_step_data['orientation'][3],
+		                                                          optitrack_step_data['orientation'][0],
+		                                                          optitrack_step_data['orientation'][1],
+		                                                          optitrack_step_data['orientation'][2]
+		                                                         ),
+		          robot_idx['color']
+		         )
+		
+		'''
+		virtualFrameQTuple = getTupleListByFirstElement(message_step_data['data'], 'virtualFrameQ')
+
+		drawRobot(ax, 
+		          optitrack_step_data['position'], 
+		          Quaternion(optitrack_step_data['orientation'][3],
+		                     optitrack_step_data['orientation'][0],
+		                     optitrack_step_data['orientation'][1],
+		                     optitrack_step_data['orientation'][2]
+		                    ) *
+		          Quaternion(virtualFrameQTuple[0],
+		                     virtualFrameQTuple[1],
+		                     virtualFrameQTuple[2],
+		                     virtualFrameQTuple[3],
+		                    ),
+		          'blue',
+		          0.1
+		         )
+		'''
+
+	plt.pause(0.01)
+	ax.clear()
+	setAxParameters(ax)
+	plt.draw()
+
+	timestamp = timestamp + stepTime
+
+#optitrack_step_data = getNextRobotOptitrackStep(robots_idx['pipuck2'], 3000)
+message_step_data = getNextRobotMessageStep(robots_idx['pipuck2'], 5000)
+print(message_step_data)
+#print(optitrack_step_data)
+
+optitrack_step_data = getNextRobotOptitrackStep(robots_idx['pipuck2'], 5000)
+message_step_data = getNextRobotMessageStep(robots_idx['pipuck2'], 7000)
+print(message_step_data)
+print(optitrack_step_data)
+
+optitrack_step_data = getNextRobotOptitrackStep(robots_idx['pipuck2'], 2000000)
+message_step_data = getNextRobotMessageStep(robots_idx['pipuck2'], 2000000)
+print(message_step_data)
+print(optitrack_step_data)
