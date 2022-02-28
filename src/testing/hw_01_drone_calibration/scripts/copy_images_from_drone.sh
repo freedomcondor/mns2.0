@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------------------------
 # usage message 
 usage=\
-"[usage] example: bash copy_images_from_drone.sh -i 192.168.1.103:/media/usb/ -a arm0(default all) -s images(folder name) -t temp(folder name)"
+"[usage] example: bash copy_images_from_drone.sh -i root@192.168.1.103:/media/usb/ -a arm0(default all) -s images(folder name) -t temp(folder name)"
 echo $usage
 
 temp_folder="temp"
@@ -30,7 +30,7 @@ done
 #----------------------------------------------------------------------------------------------
 # default value
 if [ -z "$drone_ip" ]; then
-	drone_ip="192.168.1.103:/media/usb/"
+	drone_ip="root@192.168.1.103:/media/usb/"
 	echo "ip not provided, use $drone_ip by default"
 fi
 if [ -z "$arm" ]; then
@@ -61,7 +61,7 @@ pnm_name="*.pnm"
 if [ "$arm" != "all" ]; then
 	pnm_name="*$arm.pnm"
 fi
-scp root@$drone_ip$pnm_name $temp_folder
+scp $drone_ip$pnm_name $temp_folder
 
 # check temp_folder empty
 if [ "`ls -A $temp_folder`" = "" ]; then
