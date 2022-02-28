@@ -25,7 +25,7 @@ function reset()
 end
 
 function step()
-	logger("-- " .. robot.id .. " " .. tostring(api.stepCount + 1) .. " ------------------------------------")
+	--logger("-- " .. robot.id .. " " .. tostring(api.stepCount + 1) .. " ------------------------------------")
 	api.preStep() 
 	vns.preStep(vns)
 
@@ -41,7 +41,7 @@ function step()
 	logger("wifi")
 	logger(robot.radios.wifi.recv)
 	--]]
-	---[[
+	--[[
 	logger("seenRobots")
 	for idS, robotR in pairs(vns.connector.seenRobots) do
 		logger("\t", idS)
