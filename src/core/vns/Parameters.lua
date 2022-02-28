@@ -42,7 +42,7 @@ return {
 	driver_default_speed = tonumber(robot.params.driver_default_speed or 0.05),
 	driver_slowdown_zone = tonumber(robot.params.driver_slowdown_zone or 0.10),
 	driver_stop_zone = tonumber(robot.params.driver_stop_zone or 0.01),
-	driver_default_rotate_scalar = tonumber(robot.params.driver_default_rotate_scalar or 0.3),
+	driver_default_rotate_scalar = tonumber(robot.params.driver_default_rotate_scalar or 0.6),
 
 	-- time out
 	connector_waiting_count = tonumber(robot.params.connector_waiting_count or 7),

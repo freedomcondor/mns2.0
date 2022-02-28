@@ -5,7 +5,10 @@ api.parameters = {}
 api.parameters.droneTagDetectionRate = tonumber(robot.params.drone_tag_detection_rate or 0.8)
 api.parameters.obstacle_match_distance = tonumber(robot.params.obstacle_match_distance or 0.18)
 api.parameters.obstacle_unseen_count = tonumber(robot.params.obstacle_unseen_count or 8)
-if robot.params.hardware == "true" then robot.params.hardware = true end
+if robot.params.hardware == "true" then
+	robot.params.hardware = true
+	api.parameters.droneTagDetectionRate = 1
+end
 if robot.params.simulation == "true" then robot.params.simulation = true end
 
 ---- Time -------------------------------------
