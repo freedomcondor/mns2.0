@@ -9,8 +9,8 @@ def setAxParameters(ax):
 	ax.set_xlabel("x")
 	ax.set_ylabel("y")
 	ax.set_zlabel("z")
-	ax.set_xlim([-1.0, 1.0])
-	ax.set_ylim([-1.0, 1.0])
+	ax.set_xlim([1, 3.0])
+	ax.set_ylim([-2.0, 0.0])
 	ax.set_zlim([-1.0, 1.0])
 
 fig = plt.figure()
@@ -76,8 +76,10 @@ stepTime = 200
 while True:
 	for id, robot_idx in robots_idx.items():
 		optitrack_step_data = getNextRobotOptitrackStep(robot_idx, timestamp)
-		message_step_data = getNextRobotMessageStep(robot_idx, timestamp)
+		message_step_data = getNextRobotLogInfoMessageStep(robot_idx, timestamp)
 		if optitrack_step_data == None:
+			exit()
+		if message_step_data == None:
 			exit()
 
 		drawRobot(ax, optitrack_step_data['position'], Quaternion(optitrack_step_data['orientation'][3],
@@ -88,7 +90,6 @@ while True:
 		          robot_idx['color']
 		         )
 		
-		'''
 		virtualFrameQTuple = getTupleListByFirstElement(message_step_data['data'], 'virtualFrameQ')
 
 		drawRobot(ax, 
@@ -106,7 +107,6 @@ while True:
 		          'blue',
 		          0.1
 		         )
-		'''
 
 	plt.pause(0.01)
 	ax.clear()
