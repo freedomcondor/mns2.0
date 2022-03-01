@@ -83,7 +83,7 @@
       <body position="-0.3,-0.1,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck_ext>
-   <!--distribute>
+   <distribute>
       <position    method="grid" center="0,0,0" distances="0.5,0.5,0" layout="1,1,1" />
       <orientation method="grid" center="0,0,0" distances="0,0,0"     layout="1,1,1" />
       <entity quantity="1" base_num="1" max_trials="100">
@@ -95,14 +95,14 @@
           </links>
           <devices>
             <tags medium="tags">
-              <tag anchor="base" observable_angle="75" side_length="0.02" payload="3"
+              <tag anchor="base" observable_angle="75" side_length="0.02" payload="0"
                    position="0,0.000,0.11" orientation="0,0,0" />
             </tags>
           </devices>
         </prototype>
 
       </entity>
-    </distribute-->
+    </distribute>
   </arena>
 
   <!-- ******************* -->
