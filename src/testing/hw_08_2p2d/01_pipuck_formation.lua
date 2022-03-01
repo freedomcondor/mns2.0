@@ -51,6 +51,7 @@ function step()
 	vns.postStep(vns)
 	api.postStep()
 
+	vns.logLoopFunctionInfo(vns)
 --[[
 	vns.debug.logInfo(vns, {
 		idN = true,

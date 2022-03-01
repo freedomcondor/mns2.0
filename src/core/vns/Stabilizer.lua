@@ -130,6 +130,7 @@ function Stabilizer.step(vns)
 		offset.orientationQ = vns.goal.orientationQ
 	elseif obstacle_flag == false then
 		-- set a pipuck as reference
+		--[[
 		local offset = Stabilizer.robotReference(vns)
 		if offset == nil then
 			offset = {}
@@ -140,6 +141,7 @@ function Stabilizer.step(vns)
 			vns.goal.orientationQ = offset.orientationQ
 			colorflag = true
 		end
+		--]]
 	end
 
 	-- for each new obstacle without a stabilizer, set a stabilizer
