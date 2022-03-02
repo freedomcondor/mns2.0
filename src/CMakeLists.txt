@@ -7,8 +7,12 @@ cmake_policy(SET CMP0071 NEW)
 set(OpenGL_GL_PREFERENCE "LEGACY")
 
 # Make sure we are under Unix
+
 if(NOT UNIX)
-  message(FATAL_ERROR "ARGoS compiles only under UNIX, sorry!")
+  add_subdirectory(testing)
+  message("ARGoS compiles only under UNIX, sorry!")
+  message("windows detected, generate only tests")
+  return()
 endif(NOT UNIX)
 
 set(CMAKE_MACOSX_RPATH 0)
