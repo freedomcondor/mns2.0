@@ -1,5 +1,5 @@
-local dis = 0.5
-local height = 1.8
+local dis = 0.4
+local height = 1.2
 return 
 {	robotTypeS = "drone",
 	positionV3 = vector3(),

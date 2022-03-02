@@ -135,7 +135,10 @@ api.virtualFrame.logicOrientationQ = api.virtualFrame.orientationQ
 -- overwrite rotateInspeed to change logicOrientation
 function api.virtualFrame.rotateInSpeed(speedV3)
 	-- speedV3 in real frame
-	local axis = vector3(speedV3):normalize()
+	local speedV3_in_Z = vector3(speedV3)
+	speedV3_in_Z.x = 0
+	speedV3_in_Z.y = 0
+	local axis = vector3(speedV3_in_Z):normalize()
 	if speedV3:length() == 0 then axis = vector3(1,0,0) end
 	api.virtualFrame.logicOrientationQ =
 		quaternion(speedV3:length() * api.time.period,
@@ -227,7 +230,7 @@ function api.droneSetSpeed(x, y, z, th)
 	local transScalar = 4
 	local rotateScalar = 0.5
 	if robot.params.hardware == true then
-		transScalar = 50
+		transScalar = 80
 		rotateScalar = 0.1
 	end
 	--]]
