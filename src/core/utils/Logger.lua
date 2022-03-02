@@ -6,7 +6,11 @@ function log_print(a, ...)
 	if DebugMessage.filelog == nil then
 		print(a, ...)
 	else
-		DebugMessage.filelog:write(a, ...)
+		DebugMessage.filelog:write(tostring(a))
+		arg = {...}
+		for i, v in ipairs(arg) do
+			DebugMessage.filelog:write(" " .. tostring(v))
+		end
 		DebugMessage.filelog:write("\n")
 	end
 end
