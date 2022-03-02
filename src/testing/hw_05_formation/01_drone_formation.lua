@@ -3,6 +3,7 @@ local api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
+logger.enableFileLog()
 logger.disable("Allocator")
 
 -- datas ----------------
@@ -51,6 +52,8 @@ function step()
 	vns.postStep(vns)
 	api.droneMaintainHeight(1.8)
 	api.postStep()
+
+	vns.logLoopFunctionInfo(vns)
 --[[
 	vns.debug.logInfo(vns, {
 		idN = true,

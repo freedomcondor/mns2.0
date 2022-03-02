@@ -1,5 +1,6 @@
 import pickle
 import sys
+import os
 import re
 
 if len(sys.argv) < 2:
@@ -200,3 +201,13 @@ def print_optitrack_data(robot_name):
       print(step['timestamp'])
       print(step['position'])
       print(step['orientation'])
+
+def copy_file_log(robot):
+   ip_addr = robot.socketaddr.split(":", 1)[0]
+   os.system("scp root@" + ip_addr + ":/home/root/*.filelog .")
+
+def copy_file_logs():
+	for robot_name, robot in drones.items() :
+      copy_file_log(robot)
+	for robot_name, robot in pipucks.items() :
+      copy_file_log(robot)
