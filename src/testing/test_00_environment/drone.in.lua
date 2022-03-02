@@ -9,6 +9,7 @@ logger = require("Logger")
 api = require("droneAPI")
 local BT = require("BehaviorTree")
 logger.enable()
+logger.enableFileLog(robot.id .. ".filelog")
 
 local bt
 
