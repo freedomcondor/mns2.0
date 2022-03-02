@@ -54,7 +54,7 @@ function step()
 	api.postStep()
 
 	vns.logLoopFunctionInfo(vns)
---[[
+
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
@@ -63,6 +63,7 @@ function step()
 		positionV3 = true,
 	})
 
+--[[
 	logger(" virtual orientationQ : X = ", vector3(1,0,0):rotate(vns.api.virtualFrame.orientationQ)) 
 	logger("                        Y = ", vector3(0,1,0):rotate(vns.api.virtualFrame.orientationQ)) 
 	logger("                        Z = ", vector3(0,0,1):rotate(vns.api.virtualFrame.orientationQ)) 

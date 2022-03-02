@@ -36,7 +36,7 @@ function DebugMessage.enableFileLog(fileName)
 	if fileName == nil then
 		fileName = robot.id .. ".filelog"
 		if robot.params.hardware == true or robot.params.hardware == "true" then
-			fileName = "~/" .. fileName
+			fileName = "/home/root/" .. fileName
 		end
 	end
 	DebugMessage.filelog = io.open(fileName, "w")
