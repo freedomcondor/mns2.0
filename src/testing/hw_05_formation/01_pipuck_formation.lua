@@ -3,6 +3,7 @@ local api = require("pipuckAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
+logger.enableFileLog()
 logger.disable("Allocator")
 
 -- datas ----------------
