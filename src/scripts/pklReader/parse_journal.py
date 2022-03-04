@@ -207,7 +207,7 @@ def copy_file_log(robot):
    os.system("scp root@" + ip_addr + ":/home/root/*.filelog .")
 
 def copy_file_logs():
-	for robot_name, robot in drones.items() :
+   for robot_name, robot in drones.items() :
       copy_file_log(robot)
-	for robot_name, robot in pipucks.items() :
+   for robot_name, robot in pipucks.items() :
       copy_file_log(robot)

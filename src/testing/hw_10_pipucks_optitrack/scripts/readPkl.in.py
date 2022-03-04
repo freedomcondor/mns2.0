@@ -12,6 +12,7 @@ def setAxParameters(ax):
 	ax.set_xlim([1, 3.0])
 	ax.set_ylim([-2.0, 0.0])
 	ax.set_zlim([-1.0, 1.0])
+	ax.view_init(30, 60)
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
@@ -68,7 +69,7 @@ def draw_optitrack_data(robot_name):
 #draw_optitrack_data("pipuck2")
 #draw_optitrack_data("pipuck3")
 
-robots_idx = generateRobotsDictionary()
+robots_idx = generateRobotsIndex(drones, pipucks)
 generateRobotsColors(robots_idx)
 
 timestamp = 0
@@ -90,7 +91,7 @@ while True:
 		          robot_idx['color']
 		         )
 		
-		virtualFrameQTuple = getTupleListByFirstElement(message_step_data['data'], 'virtualFrameQ')
+		virtualFrameQTuple = getTupleListByFirstElement(message_step_data, 'virtualFrameQ')
 
 		drawRobot(ax, 
 		          optitrack_step_data['position'], 
