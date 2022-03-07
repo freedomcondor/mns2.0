@@ -16,6 +16,7 @@ return
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(dis, dis, -h),
 		orientationQ = quaternion(0, vector3(0,0,1)),
+		reference = true,
 	},
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(dis, -dis, -h),
