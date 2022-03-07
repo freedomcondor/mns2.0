@@ -112,10 +112,12 @@ api.actuator.flight_preparation.run_state = function()
 			robot.flight_system.set_offboard_mode(true)
 			api.actuator.flight_preparation.state = "take_off"
 			api.actuator.flight_preparation.state_count = 0
+			if robot.params.hardware ~= true then
+				api.actuator.newRad = robot.random.uniform() * math.pi * 2
+			end
 		elseif api.actuator.flight_preparation.state == "take_off" then
 			api.actuator.newPosition.x = 0
 			api.actuator.newPosition.y = 0
-			api.actuator.newRad = 0
 
 			api.actuator.flight_preparation.state_count =
 				api.actuator.flight_preparation.state_count + 1
