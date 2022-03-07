@@ -19,7 +19,7 @@ function Avoider.step(vns)
 	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
 	-- avoid seen robots
 	-- the brain is not influenced by other robots
-	if vns.parentR ~= nil then
+	if vns.parentR ~= nil and vns.stabilizer.referencing_me ~= true then
 		for idS, robotR in pairs(vns.connector.seenRobots) do
 			-- avoid drone
 			if robotR.robotTypeS == vns.robotTypeS and

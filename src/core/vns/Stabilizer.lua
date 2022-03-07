@@ -14,6 +14,8 @@ function Stabilizer.reset(vns)
 end
 
 function Stabilizer.preStep(vns)
+	vns.stabilizer.referencing_robot = nil
+	vns.stabilizer.referencing_me = nil
 end
 
 function Stabilizer.addParent(vns)
@@ -70,7 +72,7 @@ function Stabilizer.step(vns)
 		return
 	end
 	-- If I'm a drone brain and I haven't fully taken off, don't do anything
-	if vns.robotTypeS == "drone" and vns.api.actuator.flight_preparation.state ~= "navigation" then return end
+	--if vns.robotTypeS == "drone" and vns.api.actuator.flight_preparation.state ~= "navigation" then return end
 	-- If I'm a pipuck brain, I don't need stabilizer
 	if vns.robotTypeS == "pipuck" then return end
 
@@ -124,11 +126,15 @@ function Stabilizer.step(vns)
 		vns.goal.orientationQ = offset.orientationQ
 		colorflag = true
 		--vns.allocator.keepBrainGoal = true
+		vns.stabilizer.lastReference = nil
+	--[[
 	elseif obstacle_flag == true then
 		-- There are obstacles, I just don't see them, wait to see them, set offset as the current goal
 		offset.positionV3 = vns.goal.positionV3 
 		offset.orientationQ = vns.goal.orientationQ
 	elseif obstacle_flag == false then
+	--]]
+	else
 		-- set a pipuck as reference
 		local offset = Stabilizer.robotReference(vns)
 		if offset == nil then
@@ -177,12 +183,35 @@ function Stabilizer.getReferenceChild(vns)
 	if vns.childrenRT[vns.stabilizer.lastReference] ~= nil then
 		return vns.childrenRT[vns.stabilizer.lastReference]
 	else
-		-- get the nearest
+		-- get the nearest to reference pipuck in morphology
+		-- get the reference pipuck in morphology
+		local reference_position = nil
+		if vns.allocator.target.children ~= nil then
+			local flag = false
+			for _, branch in ipairs(vns.allocator.target.children) do
+				if branch.reference == true then
+					reference_position = branch.positionV3
+					flag = true
+					break
+				end
+			end
+			if flag == false then
+				for _, branch in ipairs(vns.allocator.target.children) do
+					if branch.robotTypeS == "pipuck" then
+						reference_position = branch.positionV3
+						break
+					end
+				end
+			end
+		end
 		local nearestDis = math.huge
 		local ref = nil
 		for idS, robotR in pairs(vns.childrenRT) do
-			if robotR.robotTypeS == "pipuck" and robotR.positionV3:length() < nearestDis then
-				nearestDis = robotR.positionV3:length()
+			local locV3 = robotR.positionV3 - reference_position
+			locV3.z = 0
+			local dis = locV3:length()
+			if robotR.robotTypeS == "pipuck" and dis < nearestDis then
+				nearestDis = dis
 				ref = robotR
 			end
 		end
@@ -195,6 +224,7 @@ end
 
 function Stabilizer.pipuckListenRequest(vns)
 	for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "stabilizer_request")) do
+		vns.stabilizer.referencing_me = true
 		-- calculate where my parent should be related to me
 		local parentTransform = {}
 		if vns.allocator.target == nil or vns.allocator.target.idN == -1 then
@@ -204,10 +234,6 @@ function Stabilizer.pipuckListenRequest(vns)
 		else
 			Transform.AxCis0(vns.allocator.target, parentTransform)
 		end
-
-		local disV2 = vector3(vns.goal.positionV3)
-		disV2.z = 0
-		if disV2:length() > vns.Parameters.stabilizer_pipuck_reference_distance then return end
 
 		vns.Msg.send(vns.parentR.idS, "stabilizer_reply", {
 			parentTransform = {
@@ -231,6 +257,8 @@ function Stabilizer.robotReference(vns)
 	local refRobot = Stabilizer.getReferenceChild(vns)
 	if refRobot == nil then return nil end
 
+	vns.stabilizer.referencing_robot = refRobot
+
 	local color = "255,0,255,0"
 	vns.api.debug.drawArrow(color,
 	                        vns.api.virtualFrame.V3_VtoR(vector3()),
@@ -242,10 +270,6 @@ function Stabilizer.robotReference(vns)
 		local offset = msgM.dataT.parentTransform
 		Transform.AxBisC(refRobot, offset, offset)
 		-- TODO: check?
-
-		local disV2 = vector3(offset.positionV3)
-		disV2.z = 0
-		if disV2:length() > vns.Parameters.stabilizer_pipuck_reference_distance * 2 then return end
 
 		return offset
 	end

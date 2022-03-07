@@ -236,6 +236,7 @@ function Allocator.step(vns)
 			msgM.dataT.branches.goal.orientationQ = vns.parentR.orientationQ * msgM.dataT.branches.goal.orientationQ
 			temporary_goal = msgM.dataT.branches.goal
 		end
+
 		Allocator.multi_branch_allocate(vns, msgM.dataT.branches)
 	end end end
 	if flag ~= true and vns.parentR ~= nil then
@@ -335,7 +336,10 @@ function Allocator.step(vns)
 					vector3(branch.positionV3):rotate(vns.goal.orientationQ),
 				orientationQ = vns.goal.orientationQ * branch.orientationQ, 
 				robotTypeS = branch.robotTypeS,
-			 }
+				-- Stabilizer hack -----------------------
+				reference = branch.reference
+			}
+
 			-- do not drift if self align switch is on
 			if vns.allocator.self_align == true and
 			   vns.robotTypeS == "drone" and
@@ -346,7 +350,67 @@ function Allocator.step(vns)
 			end
 		end
 	end
+
+	-- Stabilizer hack ------------------------------------------------------
+	-- get a reference in branches
+	if vns.stabilizer.referencing_robot ~= nil then
+		local flag = false
+		for _, branch in ipairs(branches) do
+			if branch.reference == true then
+				branch.robotTypeS = "reference_pipuck"
+				flag = true
+				branch.number = vns.ScaleManager.Scale:new(branch.number)
+				branch.number:dec("pipuck")
+				branch.number:inc("reference_pipuck")
+				break
+			end
+		end
+		if flag == false then
+			for _, branch in ipairs(branches) do
+				if branch.robotTypeS == "pipuck" then
+					branch.robotTypeS = "reference_pipuck"
+					branch.number = vns.ScaleManager.Scale:new(branch.number)
+					branch.number:dec("pipuck")
+					branch.number:inc("reference_pipuck")
+					break
+				end
+			end
+		end
+	end
+	-- Stabilizer hack ------------------------------------------------------
+	-- change reference pipuck to reference_pipuck
+	if vns.stabilizer.referencing_robot ~= nil then
+		local ref = vns.stabilizer.referencing_robot
+		if ref.scalemanager.scale["reference_pipuck"] == nil or
+		   ref.scalemanager.scale["reference_pipuck"] == 0 then
+			ref.robotTypeS = "reference_pipuck"
+			ref.scalemanager.scale:dec("pipuck")
+			ref.scalemanager.scale:inc("reference_pipuck")
+		end
+	end
+	-- end Stabilizer hack ------------------------------------------------------
+
 	Allocator.allocate(vns, branches)
+
+	-- Stabilizer hack ------------------------------------------------------
+	-- change reference pipuck back to pipuck
+	if vns.stabilizer.referencing_robot ~= nil then
+		local ref = vns.stabilizer.referencing_robot
+		if ref.scalemanager.scale["reference_pipuck"] == 1 then
+			ref.robotTypeS = "pipuck"
+			ref.scalemanager.scale:inc("pipuck")
+			ref.scalemanager.scale:dec("reference_pipuck")
+		end
+	end
+	-- end Stabilizer hack ------------------------------------------------------
+
+	-- Stabilizer hack ------------------------------------------------------
+	-- stop moving is I'm referenced
+	if vns.stabilizer.referencing_me == true then
+		vns.goal.positionV3 = vector3()
+		vns.goal.orientationQ = quaternion()
+	end
+	-- end Stabilizer hack ------------------------------------------------------
 
 	if second_level == true and self_align ~= true and vns.parentR ~= nil then -- parent may be deleted by intersection
 		vns.goal.positionV3 = vns.parentR.positionV3
@@ -368,6 +432,12 @@ function Allocator.step(vns)
 end
 
 function Allocator.multi_branch_allocate(vns, branches)
+	--- Stabilizer hack -------------------
+	if vns.stabilizer.referencing_me == true then
+		vns.robotTypeS = "reference_pipuck"
+	end
+	--- end Stabilizer hack -------------------
+
 	local sourceList = {}
 	-- create sources from myself
 	local tempScale = vns.ScaleManager.Scale:new()
@@ -413,6 +483,8 @@ function Allocator.multi_branch_allocate(vns, branches)
 
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
+	-- Stabilizer hack ----
+	Allocator.GraphMatch(sourceList, targetList, originCost, "reference_pipuck")
 
 	--[[
 	logger("multi-branch sourceList")
@@ -442,6 +514,12 @@ function Allocator.multi_branch_allocate(vns, branches)
 		end
 	end
 	--]]
+
+	--- Stabilizer hack -------------------
+	if vns.stabilizer.referencing_me == true then
+		vns.robotTypeS = "pipuck"
+	end
+	--- end Stabilizer hack -------------------
 
 	-- set myself  
 	local myTarget = nil
@@ -638,6 +716,8 @@ function Allocator.allocate(vns, branches)
 
 	Allocator.GraphMatch(sourceList, targetList, originCost, "pipuck")
 	Allocator.GraphMatch(sourceList, targetList, originCost, "drone")
+	-- Stabilizer hack ----
+	Allocator.GraphMatch(sourceList, targetList, originCost, "reference_pipuck")
 
 	--[[
 	logger("sourceList")
