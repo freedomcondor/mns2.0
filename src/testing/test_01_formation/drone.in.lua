@@ -32,6 +32,10 @@ function reset()
 	if vns.idS == "drone1" then vns.idN = 1 end
 	vns.setGene(vns, structure)
 	bt = BT.create(VNS.create_vns_node(vns))
+
+	if vns.robotTypeS == "drone" then
+		vns.setGoal(vns, vector3(0,0,1.8), quaternion())
+	end
 end
 
 --- step

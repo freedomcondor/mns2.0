@@ -127,14 +127,14 @@ function Stabilizer.step(vns)
 		colorflag = true
 		--vns.allocator.keepBrainGoal = true
 		vns.stabilizer.lastReference = nil
-	--[[
+	---[[
 	elseif obstacle_flag == true then
 		-- There are obstacles, I just don't see them, wait to see them, set offset as the current goal
 		offset.positionV3 = vns.goal.positionV3 
 		offset.orientationQ = vns.goal.orientationQ
 	elseif obstacle_flag == false then
 	--]]
-	else
+	--else
 		-- set a pipuck as reference
 		local offset = Stabilizer.robotReference(vns)
 		if offset == nil then
@@ -174,13 +174,13 @@ end
 
 function Stabilizer.getReferenceChild(vns)
 	-- get a reference pipuck
-	--[[
+	---[[
 	if vns.childrenRT[vns.Parameters.stabilizer_preference_robot] ~= nil then
 		-- check preference
 		return vns.childrenRT[vns.Parameters.stabilizer_preference_robot]
 	--]]
-	--elseif vns.childrenRT[vns.stabilizer.lastReference] ~= nil then
-	if vns.childrenRT[vns.stabilizer.lastReference] ~= nil then
+	elseif vns.childrenRT[vns.stabilizer.lastReference] ~= nil then
+	--if vns.childrenRT[vns.stabilizer.lastReference] ~= nil then
 		return vns.childrenRT[vns.stabilizer.lastReference]
 	else
 		-- get the nearest to reference pipuck in morphology
