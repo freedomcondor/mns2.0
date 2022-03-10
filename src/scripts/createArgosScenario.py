@@ -56,7 +56,7 @@ def generate_drone_controller(params) :
       </actuators>
       <sensors>
         <drone_system implementation="default" />
-        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="true" />
+        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="false" />
         <drone_flight_system implementation="default" />
         <radios implementation="default" />
       </sensors>
@@ -482,20 +482,20 @@ def generate_random_locations(n, origin_x,    origin_y,
 
 def generate_slave_locations(n, master_locations,
                                 x_min_limit, x_max_limit,
-                                y_min_limit, y_max_limit, 
+                                y_min_limit, y_max_limit,
                                 near_limit, far_limit) :
-	generate_slave_locations_with_origin(n, 
-	                                     master_locations, 
-	                                     None, None, 
+	generate_slave_locations_with_origin(n,
+	                                     master_locations,
+	                                     None, None,
 	                                     x_min_limit, x_max_limit,
-	                                     y_min_limit, y_max_limit, 
+	                                     y_min_limit, y_max_limit,
 	                                     near_limit, far_limit)
 
-	
+
 def generate_slave_locations_with_origin(n, master_locations,
                                          origin_x, origin_y,
                                          x_min_limit, x_max_limit,
-                                         y_min_limit, y_max_limit, 
+                                         y_min_limit, y_max_limit,
                                          near_limit, far_limit) :
 	a = []
 

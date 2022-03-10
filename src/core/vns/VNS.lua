@@ -341,14 +341,23 @@ function VNS.create_vns_core_node(vns, option)
 	-- option = {
 	--      connector_no_recruit = true or false or nil,
 	--      connector_no_parent_ack = true or false or nil,
+	--      specific_name = "drone1"
+	--      specific_time = 150
+	--          -- If I am stabilizer_preference_robot then ack to only drone1 for 150 steps
 	-- }
 	if option == nil then option = {} end
+	if robot.id == vns.Parameters.stabilizer_preference_robot then
+		option.specific_name = vns.Parameters.stabilizer_preference_brain
+		option.specific_time = vns.Parameters.stabilizer_preference_brain_time
+	end
 	return 
 	{type = "sequence", children = {
 		--vns.create_preconnector_node(vns),
 		vns.Connector.create_connector_node(vns, 
 			{	no_recruit = option.connector_no_recruit,
 				no_parent_ack = option.connector_no_parent_ack,
+				specific_name = option.specific_name,
+				specific_time = option.specific_time,
 			}),
 		vns.Assigner.create_assigner_node(vns),
 		vns.ScaleManager.create_scalemanager_node(vns),

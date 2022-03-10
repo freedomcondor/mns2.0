@@ -333,8 +333,13 @@ function Connector.recruitNear(vns)
 end
 
 function Connector.ackAll(vns, option)
+	return Connector.ackSpecific(vns, "ALLMSG", option)
+end
+
+function Connector.ackSpecific(vns, specific_name, option)
 	-- check acks, ack the nearest valid recruit
-	for _, msgM in pairs(vns.Msg.getAM("ALLMSG", "recruit")) do
+	--for _, msgM in pairs(vns.Msg.getAM("ALLMSG", "recruit")) do
+	for _, msgM in pairs(vns.Msg.getAM(specific_name, "recruit")) do
 		-- check
 		-- if id == my vns id then pass unconditionally
 		-- else, if it is from changing id, then ack
@@ -430,11 +435,23 @@ function Connector.create_connector_node(vns, option)
 	--         -- means only ack when I don't have a parent
 	--	   no_recruit = true or false or nil
 	--         -- never recruit, for pipucks
+	--     specific_name = "drone1"
+	--     specific_time = 500
+	--         -- ack only to drone1 for first 500 steps
 	-- }
 	if option == nil then option = {} end
 	return function()
 		Connector.step(vns)
-		Connector.ackAll(vns, {no_parent_ack = option.no_parent_ack})
+
+		-- ack, specific or all
+		if option.specific_time == nil then option.specific_time = 0 end
+		if option.specific_name ~= nil and vns.api.stepCount < option.specific_time then
+			Connector.ackSpecific(vns, option.specific_name, {no_parent_ack = option.no_parent_ack})
+		else
+			Connector.ackAll(vns, {no_parent_ack = option.no_parent_ack})
+		end
+
+		-- recruit
 		if option.no_recruit ~= true then
 			Connector.recruitAll(vns)
 		end

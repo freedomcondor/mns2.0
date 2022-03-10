@@ -7,17 +7,17 @@ import os
 # drone and pipuck
 drone_locations = []
 matrix = [2, 2]
-start = [0, 0]
-step  = [1.2, 1.2]
+start = [1, 1]
+step  = [-2, -2]
 for i in range(0, matrix[0]) :
 	for j in range(0, matrix[1]) :
 		drone_locations.append([start[0] + step[0] * i, 
 		                        start[1] + step[1] * j])
 
-pipuck_locations = []
-matrix = [5, 2]
-start = [0, 0.4]
-step  = [0.3, 0.3]
+pipuck_locations = [[0.7, 0.7]]
+matrix = [3, 3]
+start = [-0.4, 0.4]
+step  = [0.4, -0.4]
 for i in range(0, matrix[0]) :
 	for j in range(0, matrix[1]) :
 		pipuck_locations.append([start[0] + step[0] * i, 
@@ -38,10 +38,15 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="pipuck"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="drone"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
+			  safezone_drone_drone="2"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
 	]
