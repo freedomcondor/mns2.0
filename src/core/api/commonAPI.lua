@@ -3,6 +3,10 @@ local api = {}
 ---- parameters --------------------------
 api.parameters = {}
 api.parameters.droneTagDetectionRate = tonumber(robot.params.drone_tag_detection_rate or 0.9)
+
+api.parameters.pipuckWheelSpeedLimit = tonumber(robot.params.pipuck_wheel_speed_limit or 0.1)
+api.parameters.pipuckRotationScalar = tonumber(robot.params.pipuck_rotation_scalar or 0.01)
+
 api.parameters.obstacle_match_distance = tonumber(robot.params.obstacle_match_distance or 0.18)
 api.parameters.obstacle_unseen_count = tonumber(robot.params.obstacle_unseen_count or 3)
 if robot.params.hardware == "true" then

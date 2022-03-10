@@ -41,7 +41,7 @@ end
 function api.pipuckSetWheelSpeed(x, y)
 	-- x, y in m/s
 	-- the scalar is to make x,y match m/s
-	local limit = 0.15
+	local limit = api.parameters.pipuckWheelSpeedLimit
 	if x > limit then x = limit end
 	if x < -limit then x = -limit end
 	if y > limit then y = limit end
@@ -56,7 +56,7 @@ end
 function api.pipuckSetRotationSpeed(x, th)
 	-- x, in m/s, x front,
 	-- th in rad/s, counter-clockwise positive
-	local scalar = 0.03
+	local scalar = api.parameters.pipuckRotationScalar
 	local aug = scalar * th
 	api.pipuckSetWheelSpeed(x - aug, x + aug)
 end

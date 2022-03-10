@@ -6,7 +6,7 @@ package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/vns/?.lua"
 package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 
 pairs = require("AlphaPairs")
-ExperimentCommon = require("ExperimentCommon")
+local Transform = require("Transform")
 -- includes -------------
 logger = require("Logger")
 local api = require(myType .. "API")
@@ -84,12 +84,22 @@ end
 
 function create_head_navigate_node(vns)
 return function()
-	if vns.api.stepCount < 300 then return false, true end
+	if #vns.avoider.obstacles ~= 0 then
+		local orientationAcc = Transform.createAccumulator()
+		for id, ob in ipairs(vns.avoider.obstacles) do
+			Transform.addAccumulator(orientationAcc, {positionV3 = vector3(), orientationQ = ob.orientationQ})
+		end
+		local averageOri = Transform.averageAccumulator(orientationAcc).orientationQ
+		vns.setGoal(vns, vns.goal.positionV3, averageOri)
+	end
+
+	if vns.api.stepCount < 150 then return false, true end
+	---[[
 	if vns.parentR ~= nil or vns.robotTypeS == "pipuck" then return false, true end
-	if vns.robotTypeS == "drone" and vns.api.actuator.flight_preparation.state ~= "navigation" then return end
-	local speed = 0.020
+	local speed = 0.02
 	local speedx = speed
 	local speedy = speed * math.cos(math.pi * api.stepCount/500)
 	vns.Spreader.emergency_after_core(vns, vector3(speedx,speedy,0), vector3(), nil, true)
+	--]]
 	return false, true
 end end

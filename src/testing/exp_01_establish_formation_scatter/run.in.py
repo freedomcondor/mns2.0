@@ -43,6 +43,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="drone"
               stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
 	]
