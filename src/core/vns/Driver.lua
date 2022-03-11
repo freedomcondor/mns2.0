@@ -1,6 +1,7 @@
 -- Driver -----------------------------------------
 ------------------------------------------------------
 local Driver = {}
+local Transform = require("Transform")
 
 function Driver.create(vns)
 	vns.goal = {
@@ -192,12 +193,41 @@ function Driver.step(vns, waiting)
 	end
 end
 
+function Driver.adjustHeight(vns)
+	-- estimate height
+	local average_height = 0
+	local average_count = 0
+	for i, ob in ipairs(vns.avoider.obstacles) do
+		-- obstacle see goal, obstacle x X = new goal
+		local obSeeGoal = {}
+		Transform.AxCisB(ob, vns.goal, obSeeGoal)
+		average_height = average_height + obSeeGoal.positionV3.z
+		average_count = average_count + 1
+	end
+
+	for idS, robot in pairs(vns.connector.seenRobots) do
+		if robot.robotTypeS == "pipuck" then
+			local robotSeeGoal = {}
+			Transform.AxCisB(robot, vns.goal, robotSeeGoal)
+			average_height = average_height + robotSeeGoal.positionV3.z
+			average_count = average_count + 1
+		end
+	end
+
+	if average_count == 0 then return end
+
+	average_height = average_height / average_count
+	local altitudeError = vns.api.parameters.droneDefaultHeight - average_height
+	vns.setGoal(vns, vns.goal.positionV3 + vector3(0,0,altitudeError):rotate(vns.goal.orientationQ), vns.goal.orientationQ)
+end
+
 function Driver.create_driver_node(vns, option)
 	-- option = {
 	--      waiting = true or false or nil
 	-- }
 	if option == nil then option = {} end
 	return function()
+		if vns.robotTypeS == "drone" then Driver.adjustHeight(vns) end
 		Driver.step(vns, option.waiting)
 		return false, true
 	end
