@@ -31,13 +31,14 @@ function Stabilizer.deleteParent(vns)
 end
 
 function Stabilizer.postStep(vns)
+	-- effect only for brain
+	if vns.parentR ~= nil then return end
+
 	-- estimate location of the new step 
-	-- based on spreader.spreading_speed
-	-- assuming this happens before avoider and after reaction_node
 	local input_transV3 = vns.goal.transV3
 	local input_rotateV3 = vns.goal.rotateV3
-	--local input_transV3 = vns.spreader.spreading_speed.positionV3
-	--local input_rotateV3 = vns.spreader.spreading_speed.orientationV3
+
+	-- calculate new goal
 	local newGoal = {}
 	newGoal.positionV3 = input_transV3 * vns.api.time.period
 
@@ -61,6 +62,21 @@ function Stabilizer.setGoal(vns, positionV3, orientationQ)
 		ob.stabilizer = {}
 		Transform.AxCisB(newGoal, ob, ob.stabilizer)
 	end
+end
+
+function Stabilizer.adjustHeight(vns)
+	-- estimate height
+	local average_height = 0
+	for i, ob in ipairs(vns.avoider.obstacles) do
+		-- obstacle see goal, obstacle x X = new goal
+		local obSeeGoal = {}
+		Transform.AxCisB(ob, vns.goal, obSeeGoal)
+		average_height = average_height + obSeeGoal.positionV3.z
+	end
+	average_height = average_height / #vns.avoider.obstacles
+	local altitudeError = vns.api.parameters.droneDefaultHeight - average_height
+
+	vns.setGoal(vns, vns.goal.positionV3 + vector3(0,0,altitudeError):rotate(vns.goal.orientationQ), vns.goal.orientationQ)
 end
 
 function Stabilizer.step(vns)
@@ -127,6 +143,9 @@ function Stabilizer.step(vns)
 		colorflag = true
 		--vns.allocator.keepBrainGoal = true
 		vns.stabilizer.lastReference = nil
+		Stabilizer.adjustHeight(vns)
+		offset.positionV3 = vns.goal.positionV3
+		offset.orientationQ = vns.goal.orientationQ
 	---[[
 	elseif obstacle_flag == true then
 		-- There are obstacles, I just don't see them, wait to see them, set offset as the current goal

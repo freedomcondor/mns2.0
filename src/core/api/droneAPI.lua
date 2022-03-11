@@ -73,6 +73,31 @@ function api.actuator.setNewLocation(locationV3, rad)
 	api.actuator.newRad = rad
 end
 
+-- drone altitude noise
+api.actuator.altitude_bias = {
+	biasScalar = robot.random.uniform(1 - api.parameters.droneAltitudeBias, 1 + api.parameters.droneAltitudeBias),
+}
+
+api.actuator.altitude_bias.changeSensorZ = function()
+	if hardware ~= true then
+		robot.flight_system.position.z = robot.flight_system.position.z * api.actuator.altitude_bias.biasScalar
+		robot.flight_system.position.z = robot.flight_system.position.z + robot.random.uniform(
+			-api.parameters.droneAltitudeNoise,
+			api.parameters.droneAltitudeNoise
+		)
+	end
+end
+
+api.actuator.altitude_bias.changeActuatorZ = function()
+	if hardware ~= true then
+		api.actuator.newPosition.z = api.actuator.newPosition.z / api.actuator.altitude_bias.biasScalar
+		api.actuator.newPosition.z = api.actuator.newPosition.z + robot.random.uniform(
+			-api.parameters.droneAltitudeNoise,
+			api.parameters.droneAltitudeNoise
+		)
+	end
+end
+
 -- drone flight preparation sequence
 ---- take off reparation -------------------
 api.actuator.flight_preparation = {
@@ -87,6 +112,7 @@ api.actuator.flight_preparation.run_state = function()
 		if api.actuator.flight_preparation.state == "pre_flight" then
 			api.actuator.newPosition.x = 0
 			api.actuator.newPosition.y = 0
+			api.actuator.newPosition.z = api.parameters.droneDefaultHeight
 			api.actuator.newRad = 0
 			-- if in simulation, the drone shouldn't fly yet
 			if robot.params.hardware ~= true then
@@ -102,6 +128,7 @@ api.actuator.flight_preparation.run_state = function()
 		elseif api.actuator.flight_preparation.state == "armed" then
 			api.actuator.newPosition.x = 0
 			api.actuator.newPosition.y = 0
+			api.actuator.newPosition.z = api.parameters.droneDefaultHeight
 			api.actuator.newRad = 0
 			-- if in simulation, the drone shouldn't fly yet
 			if robot.params.hardware ~= true then
@@ -118,6 +145,7 @@ api.actuator.flight_preparation.run_state = function()
 		elseif api.actuator.flight_preparation.state == "take_off" then
 			api.actuator.newPosition.x = 0
 			api.actuator.newPosition.y = 0
+			api.actuator.newPosition.z = api.parameters.droneDefaultHeight
 
 			api.actuator.flight_preparation.state_count =
 				api.actuator.flight_preparation.state_count + 1
@@ -181,6 +209,7 @@ api.commonPreStep = api.preStep
 function api.preStep()
 	api.commonPreStep()
 	--api.droneFilter()
+	api.actuator.altitude_bias.changeSensorZ()
 	api.droneTiltVirtualFrame()
 end
 
@@ -188,6 +217,7 @@ api.commonPostStep = api.postStep
 function api.postStep()
 	api.actuator.flight_preparation.run_state()
 	if robot.flight_system ~= nil then
+		api.actuator.altitude_bias.changeActuatorZ()
 		robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
 	end
 	api.commonPostStep()

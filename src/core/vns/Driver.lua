@@ -94,7 +94,7 @@ function Driver.step(vns, waiting)
 
 	-- calc transV3
 	local dV3 = vector3(vns.goal.positionV3)
-	dV3.z = 0
+	--dV3.z = 0
 	local d = dV3:length()
 	if d > threshold then
 		transV3 = dV3:normalize() * speed
