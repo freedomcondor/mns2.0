@@ -31,6 +31,8 @@
               connector_unseen_count="20"
               obstacle_unseen_count="20"
               dangerzone_drone="1.0"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
       />
     </lua_controller>
 
@@ -55,6 +57,9 @@
               connector_unseen_count="20"
               obstacle_unseen_count="20"
               dangerzone_drone="1.0"
+              drone_default_height="1.8"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
       />
     </lua_controller>
   </controllers>
@@ -62,44 +67,49 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="10, 10, 2.5" center="0, 0, 1">
+  <arena size="10, 10, 3.0" center="0, 0, 1">
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- add drones -->
     <drone id="drone1" wifi_medium="wifi" tag_medium="tags">
-      <body position="0,-0.5,0" orientation="-45,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <!--drone id="drone2" wifi_medium="wifi" tag_medium="tags">
-      <body position="-1,-0.5,0" orientation="-45,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone3" wifi_medium="wifi" tag_medium="tags">
-      <body position="-2,-0.5,0" orientation="-45,0,0"/>
-      <controller config="drone"/>
-    </drone>
-
-    <drone id="drone4" wifi_medium="wifi" tag_medium="tags">
       <body position="0,0,0" orientation="-45,0,0"/>
       <controller config="drone"/>
     </drone>
 
-    <drone id="drone5" wifi_medium="wifi" tag_medium="tags">
+    <drone id="drone2" wifi_medium="wifi" tag_medium="tags">
       <body position="-1,0,0" orientation="-45,0,0"/>
       <controller config="drone"/>
     </drone>
-    <drone id="drone6" wifi_medium="wifi" tag_medium="tags">
+
+    <drone id="drone3" wifi_medium="wifi" tag_medium="tags">
       <body position="-2,0,0" orientation="-45,0,0"/>
       <controller config="drone"/>
-    </drone-->
+    </drone>
 
+    <drone id="drone4" wifi_medium="wifi" tag_medium="tags">
+      <body position="0,1,0" orientation="-45,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <drone id="drone5" wifi_medium="wifi" tag_medium="tags">
+      <body position="-1,1,0" orientation="-45,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <drone id="drone6" wifi_medium="wifi" tag_medium="tags">
+      <body position="-2,1,0" orientation="-45,0,0"/>
+      <controller config="drone"/>
+    </drone>
+
+    <pipuck_ext id="pipuck1"  wifi_medium="wifi" tag_medium="tags">
+      <body position="0.5,0.5,0" orientation="0,0,0"/>
+      <controller config="pipuck"/>
+    </pipuck_ext>
     <!-- add pi-puck robots -->
     <distribute>
-      <position method="uniform" min="-2.5,-1.5,0" max="0.5,0.5,0" />
+      <position method="uniform" min="-2.5,-0.5,0" max="0.5,1.5,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="4" base_num="1" max_trials="100">
+      <entity quantity="13" base_num="2" max_trials="100">
         <pipuck_ext id="pipuck"  wifi_medium="wifi" tag_medium="tags">
           <controller config="pipuck"/>
         </pipuck_ext>

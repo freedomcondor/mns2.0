@@ -7,7 +7,7 @@ return
 	orientationQ = quaternion(),
 	children = {
 	{	robotTypeS = "pipuck",
-		positionV3 = vector3(-pipuckDis/2, -pipuckDis, -height),
+		positionV3 = vector3(-pipuckDis, -pipuckDis, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	{	robotTypeS = "pipuck",
@@ -20,7 +20,7 @@ return
 		reference = true,
 	},
 	{	robotTypeS = "pipuck",
-		positionV3 = vector3(pipuckDis/2, -pipuckDis, -height),
+		positionV3 = vector3(pipuckDis, -pipuckDis, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 
@@ -29,11 +29,11 @@ return
 		orientationQ = quaternion(0, vector3(0,0,1)),
 		children = {
 		{	robotTypeS = "pipuck",
-            positionV3 = vector3(pipuckDis/2, pipuckDis, -height),
+            positionV3 = vector3(pipuckDis, pipuckDis, -height),
             orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 		{	robotTypeS = "pipuck",
-            positionV3 = vector3(-pipuckDis/2, pipuckDis, -height),
+            positionV3 = vector3(-pipuckDis, pipuckDis, -height),
             orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 	}},

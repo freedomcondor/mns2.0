@@ -66,7 +66,6 @@ function step()
 
 	-- poststep
 	vns.postStep(vns)
-	if myType == "drone" then api.droneMaintainHeight(1.8) end
 	api.postStep()
 
 	vns.logLoopFunctionInfo(vns)
