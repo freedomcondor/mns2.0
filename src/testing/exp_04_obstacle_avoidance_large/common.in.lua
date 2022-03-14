@@ -83,6 +83,7 @@ end
 
 function create_head_navigate_node(vns)
 return function()
+	-- align with the average direction of the obstacles
 	if #vns.avoider.obstacles ~= 0 then
 		local orientationAcc = Transform.createAccumulator()
 		for id, ob in ipairs(vns.avoider.obstacles) do

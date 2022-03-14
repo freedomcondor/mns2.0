@@ -32,12 +32,11 @@ large_obstacle_locations = generate_random_locations(80,               # total n
                                                      1.2, 3.0)        # near and far limit
 obstacle_locations = []
 #d = 0.10 * math.sqrt(2)
-d = 0.10
-d_sqrt3_2 = d / math.sqrt(3)
+d = 0.06
 for loc in large_obstacle_locations :
-    obstacle_locations.append([loc[0] - d_sqrt3_2*2, loc[1]])
-    obstacle_locations.append([loc[0] + d_sqrt3_2, loc[1] + d])
-    obstacle_locations.append([loc[0] + d_sqrt3_2, loc[1] - d])
+    obstacle_locations.append([loc[0] - d, loc[1]])
+    obstacle_locations.append([loc[0] + d, loc[1] + d])
+    obstacle_locations.append([loc[0] + d, loc[1] - d])
     '''
     obstacle_locations.append([loc[0]-d, loc[1]-d])
     obstacle_locations.append([loc[0]+d, loc[1]-d])
@@ -69,6 +68,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_brain="drone1"
               pipuck_wheel_speed_limit="0.2"
               pipuck_rotation_scalar="0.03"
+              safezone_drone_pipuck="1.0"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
@@ -76,6 +76,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
               drone_default_height="1.8"
+              safezone_drone_pipuck="1.0"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
 	]

@@ -36,6 +36,11 @@ local gene = {
 -- VNS option
 -- VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval -- default is oval
 
+-- called when a child lost its parent
+function VNS.Allocator.resetMorphology(vns)
+	vns.Allocator.setMorphology(vns, structure1)
+end
+
 -- argos functions -----------------------------------------------
 --- init
 function init()
@@ -74,13 +79,15 @@ function step()
 
 	-- poststep
 	vns.postStep(vns)
-	if myType == "drone" then api.droneMaintainHeight(1.8) end
 	api.postStep()
 
 	vns.logLoopFunctionInfo(vns)
 	-- debug
 	api.debug.showChildren(vns)
-	--api.debug.showObstacles(vns)
+
+	if vns.parentR == nil then
+		api.debug.showObstacles(vns)
+	end
 
 	--ExperimentCommon.detectGates(vns, 253, 1.5) -- gate brick id and longest possible gate size
 end
@@ -97,13 +104,16 @@ local count = 0
 return function()
 	-- only run for brain
 	if vns.parentR ~= nil then return false, true end
+	if vns.api.stepCount < 150 then return false, true end
 
 	-- detect target
-	local targetV3 = nil
+	local target = nil
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		if ob.type == 100 then
-			targetV3 = ob.positionV3 - vector3(0.8,0,0)
-			targetV3.z = 0
+			target = {
+				positionV3 = ob.positionV3 - vector3(0.8,0,0),
+				orientationQ = ob.orientationQ,
+			}
 		end
 	end
 
@@ -111,24 +121,25 @@ return function()
 	if state == "reach" then
 		-- move
 		local speed = 0.03
-		if targetV3 == nil then
+		if target == nil then
 			vns.Spreader.emergency_after_core(vns, vector3(speed,0,0), vector3())
 		else
-			vns.Spreader.emergency_after_core(vns, 
-				speed * vector3(targetV3):normalize(), 
-				vector3()
-			)
+			vns.setGoal(vns, target.positionV3, target.orientationQ)
+			target.positionV3.z = 0
 		end
 
-		if targetV3 ~= nil and targetV3:length() < 0.02 then
+		--local disV2 = vector3(target.positionV3)
+		if target ~= nil and target.positionV3:length() < 0.02 then
 			state = "stretch"
+			logger("stretch")
 			count = 0
 			vns.setMorphology(vns, structure2)
 		end
 	elseif state == "stretch" then
 		count = count + 1
-		if count == 350 then
+		if count == 250 then
 			state = "clutch"
+			logger("clutch")
 			count = 0
 			vns.setMorphology(vns, structure3)
 		end
@@ -136,13 +147,24 @@ return function()
 		count = count + 1
 		if count == 150 then
 			state = "retrieve"
+			logger("retrieve")
 			count = 0
 			vns.setMorphology(vns, structure4)
 		end
 	elseif state == "retrieve" then
+		-- remove stabilizer information for target
+		for i, ob in ipairs(vns.avoider.obstacles) do
+			if ob.type == 100 then
+				ob.stabilizer = nil
+				-- TODO : investigate
+				vns.avoider.obstacles[i] = nil
+			end
+		end
+
 		count = count + 1
 		if count == 250 then
 			state = "end"
+			logger("end")
 			vns.setMorphology(vns, structure1)
 		end
 	end

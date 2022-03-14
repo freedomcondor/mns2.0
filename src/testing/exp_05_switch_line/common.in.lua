@@ -6,7 +6,7 @@ package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/vns/?.lua"
 package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 
 pairs = require("AlphaPairs")
-ExperimentCommon = require("ExperimentCommon")
+local Transform = require("Transform")
 -- includes -------------
 logger = require("Logger")
 local api = require(myType .. "API")
@@ -33,6 +33,11 @@ local gene = {
 
 -- VNS option
 -- VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_oval -- default is oval
+
+-- called when a child lost its parent
+function VNS.Allocator.resetMorphology(vns)
+	vns.Allocator.setMorphology(vns, structure1)
+end
 
 -- argos functions -----------------------------------------------
 --- init
@@ -78,9 +83,9 @@ function step()
 	vns.logLoopFunctionInfo(vns)
 	-- debug
 	api.debug.showChildren(vns)
-	--api.debug.showObstacles(vns)
-
-	--ExperimentCommon.detectGates(vns, 253, 1.5) -- gate brick id and longest possible gate size
+	if vns.parentR == nil then
+		api.debug.showObstacles(vns)
+	end
 end
 
 --- destroy
@@ -95,11 +100,6 @@ return function()
 	-- only run for brain
 	if vns.parentR ~= nil then return false, true end
 
-	-- append collective sensor to obstacles
-	for i, v in ipairs(vns.collectivesensor.receiveList) do
-		table.insert(vns.avoider.obstacles, v)
-	end
-
 	-- detect width
 	local left = 5
 	local right = -5
@@ -113,6 +113,17 @@ return function()
 			right = ob.positionV3.y
 		end
 	end
+	for i, ob in ipairs(vns.collectivesensor.receiveList) do
+		if ob.positionV3.y > 0 and ob.type == 100 and
+		   ob.positionV3.y < left then
+			left = ob.positionV3.y
+		end
+		if ob.positionV3.y < 0 and ob.type == 100 and
+		   ob.positionV3.y > right then
+			right = ob.positionV3.y
+		end
+	end
+
 	local width = left - right
 
 	-- State
@@ -128,10 +139,56 @@ return function()
 			vns.setMorphology(vns, structure3)
 			logger("state3")
 		end
+	elseif state == 3 then
+		for id, ob in ipairs(vns.avoider.obstacles) do
+			if ob.type == 101 then
+				state = 4
+				vns.setMorphology(vns, structure1)
+			end
+		end
+	elseif state == 4 then
+		for id, ob in ipairs(vns.avoider.obstacles) do
+			if ob.type == 101 then
+				vns.setGoal(vns, ob.positionV3 - vector3(1.0, 0, 0), ob.orientationQ)
+				return false, true
+			end
+		end
 	end
 
 	-- move
-	local speed = 0.03
+	if vns.api.stepCount < 150 then return false, true end
+
+	-- align with the average direction of the obstacles
+	if #vns.avoider.obstacles ~= 0 then
+		local orientationAcc = Transform.createAccumulator()
+		local left = 5
+		local right = -5
+		for id, ob in ipairs(vns.avoider.obstacles) do
+
+			-- check left and right
+			if ob.positionV3.y > 0 and ob.type == 100 and
+			   ob.positionV3.y < left then
+				left = ob.positionV3.y
+		 	end
+			if ob.positionV3.y < 0 and ob.type == 100 and
+			   ob.positionV3.y > right then
+				right = ob.positionV3.y
+			end
+
+			-- accumulate orientation
+			Transform.addAccumulator(orientationAcc, {positionV3 = vector3(), orientationQ = ob.orientationQ})
+		end
+
+		local averageOri = Transform.averageAccumulator(orientationAcc).orientationQ
+
+		if left > 0 and right < 0 and 
+		   left ~= 5 and right ~= -5 then
+			vns.goal.positionV3.y = (left + right) / 2
+			vns.setGoal(vns, vns.goal.positionV3, averageOri)
+		end
+	end
+
+	local speed = 0.05
 	vns.Spreader.emergency_after_core(vns, vector3(speed,0,0), vector3())
 	return false, true
 end end

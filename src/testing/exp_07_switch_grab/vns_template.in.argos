@@ -20,7 +20,7 @@
   <!-- *********************** -->
   <!-- * Arena configuration * -->
   <!-- *********************** -->
-  <arena size="15, 12, 2.5" center="0, 0, 1">
+  <arena size="15, 12, 4.0" center="0, 0, 1">
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
     <!-- real scenario -->
     REAL_SCENARIO

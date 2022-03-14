@@ -43,11 +43,16 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="pipuck"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
+              dangerzone_pipuck="0.30"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="drone"
-              safezone_drone_drone="1.3"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
+              drone_default_height="1.8"
               block_label_from="100"
               block_label_to="101"
         ''')],

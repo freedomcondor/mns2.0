@@ -4,7 +4,7 @@ return {
 	-- robots wait if neighbours outside the safezone
 	safezone_default = tonumber(robot.params.safezone_default or 1.00), -- for unknown robot type
 	safezone_drone_drone = tonumber(robot.params.safezone_drone_drone or 1.70),
-	safezone_drone_pipuck = tonumber(robot.params.safezone_drone_pipuck or 1.00),
+	safezone_drone_pipuck = tonumber(robot.params.safezone_drone_pipuck or 1.20),
 	safezone_pipuck_pipuck = tonumber(robot.params.safezone_pipuck_pipuck or 1.00),
 
 	-- robots avoid each other within dangerzone
