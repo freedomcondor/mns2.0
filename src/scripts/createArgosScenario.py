@@ -229,6 +229,27 @@ def generate_real_scenario_object() :
 #######################################################################
 # add xml of drone, pipuck, obstacle, targets
 def generate_obstacle_xml(i, x, y, th, type) :
+	return generate_obstacle_box_xml(i, x, y, th, type)
+
+def generate_obstacle_box_xml(i, x, y, th, type) :
+	tag = '''
+	<prototype id="obstacle{}" movable="true" friction="10">
+		<body position="{},{},0" orientation="{},0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="{}"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	'''.format(i, x, y, th, type)
+	return tag
+
+def generate_obstacle_cylinder_xml(i, x, y, th, type) :
 	tag = '''
 	<prototype id="obstacle{}" movable="true" friction="10">
 		<body position="{},{},0" orientation="{},0,0" />
@@ -239,7 +260,7 @@ def generate_obstacle_xml(i, x, y, th, type) :
 		<devices>
 			<tags medium="tags">
 				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="{}"
-				     position="0,0.000,0.11" orientation="0,0,0" />
+				     position="0,0,0.101" orientation="0,0,0" />
 			</tags>
 		</devices>
 	</prototype>
@@ -484,12 +505,12 @@ def generate_slave_locations(n, master_locations,
                                 x_min_limit, x_max_limit,
                                 y_min_limit, y_max_limit,
                                 near_limit, far_limit) :
-	generate_slave_locations_with_origin(n,
-	                                     master_locations,
-	                                     None, None,
-	                                     x_min_limit, x_max_limit,
-	                                     y_min_limit, y_max_limit,
-	                                     near_limit, far_limit)
+	return generate_slave_locations_with_origin(n,
+	                                            master_locations,
+	                                            None, None,
+	                                            x_min_limit, x_max_limit,
+	                                            y_min_limit, y_max_limit,
+	                                            near_limit, far_limit)
 
 
 def generate_slave_locations_with_origin(n, master_locations,
