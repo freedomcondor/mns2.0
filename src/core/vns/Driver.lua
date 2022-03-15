@@ -214,12 +214,11 @@ function Driver.adjustHeight(vns)
 		end
 	end
 
-	if average_count == 0 then return end
-
-	average_height = average_height / average_count
-	local altitudeError = vns.api.parameters.droneDefaultHeight - average_height
-
-	vns.setGoal(vns, vns.goal.positionV3 + vector3(0,0,altitudeError):rotate(vns.goal.orientationQ), vns.goal.orientationQ)
+	if average_count ~= 0 then
+		average_height = average_height / average_count
+		local altitudeError = vns.api.parameters.droneDefaultHeight - average_height
+		vns.setGoal(vns, vns.goal.positionV3 + vector3(0,0,altitudeError):rotate(vns.goal.orientationQ), vns.goal.orientationQ)
+	end
 
 	-- signal api to lock z or not
 	if vns.api.droneCheckHeightCountDown > 0 then return end

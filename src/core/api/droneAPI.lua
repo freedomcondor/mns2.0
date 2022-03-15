@@ -277,9 +277,11 @@ function api.droneSetSpeed(x, y, z, th)
 		-- 6 and 0.5 are roughly calibrated for simulation
 	---[[
 	local transScalar = 4
+	local transScalarZ = 4
 	local rotateScalar = 0.5
 	if robot.params.hardware == true then
 		transScalar = 80
+		transScalarZ = 10
 		rotateScalar = 0.1
 	end
 	--]]
@@ -288,7 +290,7 @@ function api.droneSetSpeed(x, y, z, th)
 
 	x = x * transScalar * api.time.period
 	y = y * transScalar * api.time.period
-	z = z * transScalar * api.time.period
+	z = z * transScalarZ * api.time.period
 	th = th * rotateScalar * api.time.period
 
 	api.actuator.setNewLocation(
