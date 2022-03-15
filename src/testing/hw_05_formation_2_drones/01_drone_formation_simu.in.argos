@@ -29,9 +29,13 @@
       </sensors>
       <!--params script="@CMAKE_CURRENT_BINARY_DIR@/drone_navigation.lua" /-->
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_formation.lua"
-              hardware="false"
+
               safezone_drone_drone="3"
               safezone_drone_pipuck="3"
+
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
+              drone_default_height="1.5"
       />
     </lua_controller>
 
@@ -50,8 +54,12 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_pipuck_formation.lua"
+
               safezone_drone_drone="3"
               safezone_drone_pipuck="3"
+
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
       />
     </lua_controller>
   </controllers>
@@ -64,17 +72,17 @@
 
     <!-- add drones -->
     <drone id="drone2" wifi_medium="wifi" tag_medium="tags">
-      <body position="0,0,0" orientation="-45,0,0"/>
+      <body position="0,-2,0" orientation="-45,0,0"/>
       <controller config="drone"/>
     </drone>
 
     <drone id="drone1" wifi_medium="wifi" tag_medium="tags">
-      <body position="0,-2,0" orientation="0,0,0"/>
+      <body position="0,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
 
     <pipuck_ext id="pipuck1"  wifi_medium="wifi" tag_medium="tags">
-      <body position="0.3,0.3,0" orientation="60,0,0"/>
+      <body position="0,0.5,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck_ext>
 
@@ -93,7 +101,7 @@
       <controller config="pipuck"/>
     </pipuck_ext>
 
-    <prototype id="obstacle" movable="true" friction="10">
+    <!--prototype id="obstacle" movable="true" friction="10">
       <body position="0,0,0" orientation="0,0,0"/>
       <links ref="base">
         <link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
@@ -105,7 +113,7 @@
                position="0,0.000,0.11" orientation="0,0,0" />
         </tags>
       </devices>
-    </prototype>
+    </prototype-->
 
     <!--prototype id="box" movable="true" friction="10">
       <body position="-0.15,0,0" orientation="0,00,0"/>

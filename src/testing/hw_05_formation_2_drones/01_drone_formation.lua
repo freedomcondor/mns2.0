@@ -20,7 +20,7 @@ end
 
 function reset()
 	vns.reset(vns)
-	if robot.id == "drone2" then vns.idN = 1 end
+	if robot.id == "drone1" then vns.idN = 1 end
 	vns.setGene(vns, structure)
 	bt = BT.create(VNS.create_vns_node(vns))
 end
@@ -50,7 +50,6 @@ function step()
 	--]]
 
 	vns.postStep(vns)
-	api.droneMaintainHeight(1.2)
 	api.postStep()
 
 	vns.logLoopFunctionInfo(vns)
