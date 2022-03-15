@@ -112,7 +112,7 @@ api.actuator.flight_preparation.run_state = function()
 		if api.actuator.flight_preparation.state == "pre_flight" then
 			api.actuator.newPosition.x = 0
 			api.actuator.newPosition.y = 0
-			api.actuator.newPosition.z = api.parameters.droneDefaultHeight
+			api.actuator.newPosition.z = api.parameters.droneDefaultStartHeight
 			api.actuator.newRad = 0
 			-- if in simulation, the drone shouldn't fly yet
 			if robot.params.hardware ~= true then
@@ -128,7 +128,7 @@ api.actuator.flight_preparation.run_state = function()
 		elseif api.actuator.flight_preparation.state == "armed" then
 			api.actuator.newPosition.x = 0
 			api.actuator.newPosition.y = 0
-			api.actuator.newPosition.z = api.parameters.droneDefaultHeight
+			api.actuator.newPosition.z = api.parameters.droneDefaultStartHeight
 			api.actuator.newRad = 0
 			-- if in simulation, the drone shouldn't fly yet
 			if robot.params.hardware ~= true then
@@ -139,19 +139,21 @@ api.actuator.flight_preparation.run_state = function()
 			robot.flight_system.set_offboard_mode(true)
 			api.actuator.flight_preparation.state = "take_off"
 			api.actuator.flight_preparation.state_count = 0
-			if robot.params.hardware ~= true then
-				api.actuator.newRad = robot.random.uniform() * math.pi * 2
-			end
 		elseif api.actuator.flight_preparation.state == "take_off" then
 			api.actuator.newPosition.x = 0
 			api.actuator.newPosition.y = 0
-			api.actuator.newPosition.z = api.parameters.droneDefaultHeight
+			api.actuator.newPosition.z = api.parameters.droneDefaultStartHeight
 
 			api.actuator.flight_preparation.state_count =
 				api.actuator.flight_preparation.state_count + 1
 			if api.actuator.flight_preparation.state_count >= api.actuator.flight_preparation.state_duration * 2 then
 				api.actuator.flight_preparation.state_count = 0
 				api.actuator.flight_preparation.state = "navigation"
+
+				-- mimic drone random rotate in hardware
+				if robot.params.hardware ~= true then
+					api.actuator.newRad = robot.random.uniform() * math.pi * 2
+				end
 			end
 		elseif api.actuator.flight_preparation.state == "navigation" then
 			--do nothing
