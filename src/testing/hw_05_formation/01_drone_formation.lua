@@ -50,7 +50,6 @@ function step()
 	--]]
 
 	vns.postStep(vns)
-	api.droneMaintainHeight(1.2)
 	api.postStep()
 
 	vns.logLoopFunctionInfo(vns)

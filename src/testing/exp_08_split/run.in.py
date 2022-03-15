@@ -8,24 +8,26 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 
 # drone and pipuck
-drone_locations = generate_random_locations(3,                  # total number
-                                            -4, 0,             # origin location
-                                            -4.5, -3.5,         # random x range
-                                            -2, 2,              # random y range
-                                            1.2, 1.7)             # near limit and far limit
-pipuck_locations = generate_slave_locations_with_origin(
-                                            8,
-                                            drone_locations,
-                                            -4.8, -0.7,
-                                            -4.8, -3,           # random x range
-                                            -1.5, 1.5,          # random y range
-                                            0.5, 0.7)           # near limit and far limit
+drone_locations = []
+matrix = [3, 1]
+start = [1.5, 0]
+step  = [-1.5, 0]
+for i in range(0, matrix[0]) :
+	for j in range(0, matrix[1]) :
+		drone_locations.append([start[0] + step[0] * i, 
+		                        start[1] + step[1] * j])
+
+pipuck_locations = []
+matrix = [4, 2]
+start = [2.2, 0.7]
+step  = [-1.5, -1.4]
+for i in range(0, matrix[0]) :
+	for j in range(0, matrix[1]) :
+		pipuck_locations.append([start[0] + step[0] * i, 
+		                         start[1] + step[1] * j])
+
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
-
-target_xml = generate_target_xml(-2, 0.3, 0,           # x, y, th
-                                 100,                           # payload
-                                 0.3, 0.3)                      # radius and edge
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
@@ -37,7 +39,6 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
-		["TARGET",            target_xml], 
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="pipuck"

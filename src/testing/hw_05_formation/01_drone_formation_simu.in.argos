@@ -30,6 +30,10 @@
       <!--params script="@CMAKE_CURRENT_BINARY_DIR@/drone_navigation.lua" /-->
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_formation.lua"
               hardware="false"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
+              drone_default_height="1.8"
+              drone_default_start_height="1.2"
       />
     </lua_controller>
 
@@ -48,6 +52,8 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_pipuck_formation.lua"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
       />
     </lua_controller>
   </controllers>
@@ -84,7 +90,7 @@
       <controller config="pipuck"/>
     </pipuck_ext>
 
-    <prototype id="obstacle" movable="true" friction="10">
+    <!--prototype id="obstacle" movable="true" friction="10">
       <body position="0,0,0" orientation="0,30,0"/>
       <links ref="base">
         <link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"
@@ -104,7 +110,7 @@
         <link id="base" geometry="box" size="0.2, 0.2, 0.05" mass="0.01"
               position="0,0,0" orientation="0,0,0" />
       </links>
-    </prototype>
+    </prototype-->
 
    <!--distribute>
       <position    method="grid" center="0,0,0" distances="0.5,0.5,0" layout="1,1,1" />

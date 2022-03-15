@@ -25,11 +25,15 @@
         <pipuck_system implementation="default" />
       </sensors>
       <params script="01_pipuck_formation.lua" 
+
               hardware="true"
               connector_waiting_count="5"
               connector_waiting_parent_count="8"
               connector_unseen_count="20"
               connector_heartbeat_count="10"
+
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
       />
     </lua_controller>
   </controllers>

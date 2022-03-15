@@ -299,7 +299,7 @@ def generate_target_xml(x, y, th, type, radius, tag_edge_distance):
 	<prototype id="target" movable="true" friction="2">
 		<body position="{},{},0" orientation="{},0,0" />
 		<links ref="base">
-			<link id="base" geometry="cylinder" radius="{}" height="0.1" mass="0.01"
+			<link id="base" geometry="cylinder" radius="{}" height="0.1" mass="0.10"
 			      position="0,0,0" orientation="0,0,0" />
 		</links>
 		<devices>

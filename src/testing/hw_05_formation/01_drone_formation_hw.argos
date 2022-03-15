@@ -93,11 +93,16 @@
         </drone_cameras_system>
       </sensors>
       <params script="01_drone_formation.lua" 
+
               hardware="true"
               connector_waiting_count="5"
               connector_waiting_parent_count="8"
               connector_unseen_count="20"
               connector_heartbeat_count="10"
+
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
+              drone_default_height="1.8"
       />
     </lua_controller>
   </controllers>

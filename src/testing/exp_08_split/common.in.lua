@@ -19,8 +19,6 @@ local bt
 --local vns
 local structure1 = require("morphologies/morphology1")
 local structure2 = require("morphologies/morphology2")
-local structure3 = require("morphologies/morphology3")
-local structure4 = require("morphologies/morphology4")
 local gene = {
 	robotTypeS = "drone",
 	positionV3 = vector3(),
@@ -28,13 +26,11 @@ local gene = {
 	children = {
 		structure1, 
 		structure2, 
-		structure3,
-		structure4,
 	}
 }
 
 -- VNS option
-VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_vertical -- default is oval
+--VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_vertical -- default is oval
 
 -- called when a child lost its parent
 function VNS.Allocator.resetMorphology(vns)
@@ -88,8 +84,6 @@ function step()
 	if vns.parentR == nil then
 		api.debug.showObstacles(vns)
 	end
-
-	--ExperimentCommon.detectGates(vns, 253, 1.5) -- gate brick id and longest possible gate size
 end
 
 --- destroy
@@ -99,66 +93,47 @@ end
 
 ----------------------------------------------------------------------------------
 function create_head_navigate_node(vns)
-local state = "reach"
+local state = "form"
 local count = 0
+local speed = 0.05
 return function()
-	-- only run for brain
-	if vns.parentR ~= nil then return false, true end
-	if vns.api.stepCount < 250 then return false, true end
-
-	-- detect target
-	local target = nil
-	for i, ob in ipairs(vns.avoider.obstacles) do
-		if ob.type == 100 then
-			target = {
-				positionV3 = ob.positionV3 - vector3(0.8,0,0),
-				orientationQ = ob.orientationQ,
-			}
-		end
-	end
+	-- only run after navigation
+	if vns.api.stepCount < 150 then return false, true end
 
 	-- State
-	if state == "reach" then
-		-- move
-		local speed = 0.03
-		if target == nil then
-			vns.Spreader.emergency_after_core(vns, vector3(speed,0,0), vector3())
-		else
-			vns.setGoal(vns, target.positionV3, target.orientationQ)
-			target.positionV3.z = 0
-		end
-
-		--local disV2 = vector3(target.positionV3)
-		if target ~= nil and target.positionV3:length() < 0.02 then
-			state = "stretch"
-			logger("stretch")
-			count = 0
-			vns.setMorphology(vns, structure2)
-		end
-	elseif state == "stretch" then
+	if state == "form" and 
+	   vns.allocator.target.split == true then
 		count = count + 1
 		if count == 200 then
-			state = "clutch"
-			logger("clutch")
-			count = 0
-			vns.setMorphology(vns, structure3)
-		end
-	elseif state == "clutch" then
-		count = count + 1
-		if count == 100 then
-			state = "retrieve"
-			logger("retrieve")
-			count = 0
-			vns.setMorphology(vns, structure4)
-		end
-	elseif state == "retrieve" then
-		vns.stabilizer.force_pipuck_reference = true
+			-- rebellion
+			if vns.parentR ~= nil then
+				vns.Msg.send(vns.parentR.idS, "dismiss")
+				vns.deleteParent(vns)
+			end
+			vns.setMorphology(vns, structure2)
+			vns.Connector.newVnsID(vns, nil, 200)
 
+			state = "split"
+			logger("split")
+			count = 0
+		end
+	elseif state == "split" and 
+	       vns.allocator.target.ranger == true then
+		vns.Spreader.emergency_after_core(vns, vector3(-speed,0,0), vector3())
 		count = count + 1
-		if count == 250 then
+		if count == 200 then
+			state = "go_back"
+			logger("go_back")
+			count = 0
+		end
+	elseif state == "go_back" and 
+	       vns.allocator.target.ranger == true then
+		vns.Spreader.emergency_after_core(vns, vector3(speed,0,0), vector3())
+		count = count + 1
+		if count == 200 then
 			state = "end"
 			logger("end")
-			vns.setMorphology(vns, structure1)
+			count = 0
 		end
 	end
 
