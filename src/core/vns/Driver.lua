@@ -218,7 +218,12 @@ function Driver.adjustHeight(vns)
 
 	average_height = average_height / average_count
 	local altitudeError = vns.api.parameters.droneDefaultHeight - average_height
+
 	vns.setGoal(vns, vns.goal.positionV3 + vector3(0,0,altitudeError):rotate(vns.goal.orientationQ), vns.goal.orientationQ)
+
+	-- signal api to lock z or not
+	if vns.api.droneCheckHeightCountDown > 0 then return end
+	if -0.1 < vns.goal.positionV3.z and vns.goal.positionV3.z < 0.1 then vns.api.droneCheckHeightCountDown = 150 end
 end
 
 function Driver.create_driver_node(vns, option)

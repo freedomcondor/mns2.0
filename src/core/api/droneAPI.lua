@@ -79,7 +79,7 @@ api.actuator.altitude_bias = {
 }
 
 api.actuator.altitude_bias.changeSensorZ = function()
-	if hardware ~= true then
+	if robot.params.hardware ~= true then
 		robot.flight_system.position.z = robot.flight_system.position.z * api.actuator.altitude_bias.biasScalar
 		robot.flight_system.position.z = robot.flight_system.position.z + robot.random.uniform(
 			-api.parameters.droneAltitudeNoise,
@@ -89,7 +89,7 @@ api.actuator.altitude_bias.changeSensorZ = function()
 end
 
 api.actuator.altitude_bias.changeActuatorZ = function()
-	if hardware ~= true then
+	if robot.params.hardware ~= true then
 		api.actuator.newPosition.z = api.actuator.newPosition.z / api.actuator.altitude_bias.biasScalar
 		api.actuator.newPosition.z = api.actuator.newPosition.z + robot.random.uniform(
 			-api.parameters.droneAltitudeNoise,
@@ -217,6 +217,7 @@ end
 
 api.commonPostStep = api.postStep
 function api.postStep()
+	api.droneAdjustHeight()
 	api.actuator.flight_preparation.run_state()
 	if robot.flight_system ~= nil then
 		api.actuator.altitude_bias.changeActuatorZ()
@@ -226,6 +227,19 @@ function api.postStep()
 end
 
 ---- Height control --------------------
+api.droneCheckHeightCountDown = api.actuator.flight_preparation.state_duration * 3
+api.droneLastHeight = api.parameters.droneDefaultStartHeight
+
+function api.droneAdjustHeight(z)
+	if api.droneCheckHeightCountDown > 0 then
+		api.actuator.newPosition.z = api.droneLastHeight
+		api.droneCheckHeightCountDown = api.droneCheckHeightCountDown - 1
+	elseif api.droneCheckHeightCountDown <= 0 then
+		api.droneLastHeight = api.actuator.newPosition.z
+	end
+end
+
+--[[
 function api.droneCheckHeight(z)
 	if robot.flight_system == nil then return true end
 
@@ -248,6 +262,7 @@ function api.droneMaintainHeight(z)
 		api.droneSetHeight(z)
 	end
 end
+--]]
 
 ---- speed control --------------------
 -- everything in robot hardware's coordinate frame
