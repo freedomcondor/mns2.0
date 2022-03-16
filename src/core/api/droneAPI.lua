@@ -222,6 +222,15 @@ function api.postStep()
 	if robot.flight_system ~= nil then
 		api.actuator.altitude_bias.changeActuatorZ()
 		robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
+		api.updateLastSpeed()
+		logger("just = ", api.actuator.justSetSpeed.x,
+		                  api.actuator.justSetSpeed.y,
+		                  api.actuator.justSetSpeed.z,
+		                  api.actuator.justSetSpeed.th)
+		logger("old = ",  api.actuator.lastSetSpeed.x,
+		                  api.actuator.lastSetSpeed.y,
+		                  api.actuator.lastSetSpeed.z,
+		                  api.actuator.lastSetSpeed.th)
 	end
 	api.commonPostStep()
 end
@@ -266,7 +275,23 @@ end
 
 ---- speed control --------------------
 -- everything in robot hardware's coordinate frame
+function api.rememberLastSpeed(x,y,z,th)
+	api.actuator.justSetSpeed = {
+		x = x, y = y, z = z, th = th,
+	}
+end
+
+function api.updateLastSpeed()
+	api.actuator.lastSetSpeed = {
+		x = api.actuator.justSetSpeed.x,
+		y = api.actuator.justSetSpeed.y,
+		z = api.actuator.justSetSpeed.z,
+		th = api.actuator.justSetSpeed.th,
+	}
+end
+
 function api.droneSetSpeed(x, y, z, th)
+	logger("set point speed = ", x, y, z, th)
 	if robot.flight_system == nil then return end
 	-- x, y, z in m/s, x front, z up, y left
 	-- th in rad/s, counter-clockwise positive
@@ -275,7 +300,7 @@ function api.droneSetSpeed(x, y, z, th)
 
 	-- tune these scalars to make x,y,z,th match m/s and rad/s
 		-- 6 and 0.5 are roughly calibrated for simulation
-	---[[
+	--[[
 	local transScalar = 4
 	local transScalarZ = 4
 	local rotateScalar = 0.5
@@ -288,10 +313,25 @@ function api.droneSetSpeed(x, y, z, th)
 	--transScalar = 1
 	--rotateScalar = 1
 
+	api.rememberLastSpeed(x, y, z, th)
+
+	if api.actuator.lastSetSpeed ~= nil then
+		x = (x + api.actuator.lastSetSpeed.x) / 2
+		y = (y + api.actuator.lastSetSpeed.y) / 2
+		z = (z + api.actuator.lastSetSpeed.z) / 2
+		th = (th + api.actuator.lastSetSpeed.th) / 2
+	end
+
+	x = x * api.time.period
+	y = y * api.time.period
+	z = z * api.time.period
+	th = th * api.time.period
+	--[[
 	x = x * transScalar * api.time.period
 	y = y * transScalar * api.time.period
 	z = z * transScalarZ * api.time.period
 	th = th * rotateScalar * api.time.period
+	--]]
 
 	api.actuator.setNewLocation(
 		vector3(x,y,z):rotate(q) + robot.flight_system.position,

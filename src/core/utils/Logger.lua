@@ -2,17 +2,8 @@ local DebugMessage = {}
 DebugMessage.mt = {}
 setmetatable(DebugMessage, DebugMessage.mt)
 
-function log_print(a, ...)
-	if DebugMessage.filelog == nil then
-		print(a, ...)
-	else
-		DebugMessage.filelog:write(tostring(a))
-		arg = {...}
-		for i, v in ipairs(arg) do
-			DebugMessage.filelog:write(" " .. tostring(v))
-		end
-		DebugMessage.filelog:write("\n")
-	end
+function DebugMessage.log_print(a, ...)
+	print(a, ...)
 end
 
 -- call DebugMessage(...)
@@ -26,7 +17,7 @@ function DebugMessage.mt:__call(a, ...)
 		if type(a) == "table" then
 			DebugMessage.ShowTable(a, ...)
 		else
-			log_print("DebugMSG:\t", a, ...)
+			DebugMessage.log_print("DebugMSG:\t", a, ...)
 		end
 	end
 end
@@ -37,13 +28,25 @@ DebugMessage.switches["nil"] = false
 DebugMessage.filelog = nil
 
 function DebugMessage.enableFileLog(fileName)
-	if fileName == nil then
-		fileName = robot.id .. ".filelog"
-		if robot.params.hardware == true or robot.params.hardware == "true" then
-			fileName = "/home/root/" .. fileName
+	function DebugMessage.create_file_log_print(fileName)
+		if fileName == nil then
+			fileName = robot.id .. ".filelog"
+			if robot.params.hardware == true or robot.params.hardware == "true" then
+				fileName = "/home/root/" .. fileName
+			end
+		end
+		local file = io.open(fileName, "w")
+		return function(a, ...)
+			file:write(tostring(a))
+			arg = {...}
+			for i, v in ipairs(arg) do
+				file:write(" " .. tostring(v))
+			end
+			file:write("\n")
 		end
 	end
-	DebugMessage.filelog = io.open(fileName, "w")
+
+	DebugMessage.log_print = DebugMessage.create_file_log_print(fileName)
 end
 
 function DebugMessage.closeFileLog()
@@ -95,14 +98,14 @@ function DebugMessage.ShowTable(table, number, skipindex)
 		str = str .. tostring(i) .. "\t"
 
 		if i == skipindex then
-			log_print(str .. "SKIPPED")
+			DebugMessage.log_print(str .. "SKIPPED")
 		else
 			if type(v) == "table" then
-				log_print(str)
+				DebugMessage.log_print(str)
 				DebugMessage.ShowTable(v, number + 1, skipindex)
 			else
 				str = str .. tostring(v)
-				log_print(str)
+				DebugMessage.log_print(str)
 			end
 		end
 	end
