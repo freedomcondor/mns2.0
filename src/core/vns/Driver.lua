@@ -95,7 +95,8 @@ function Driver.step(vns, waiting)
 
 	-- calc transV3
 	local dV3 = vector3(vns.goal.positionV3)
-	--dV3.z = 0
+	local Z = dV3.z
+	dV3.z = 0
 	local d = dV3:length()
 	if d > threshold then
 		transV3 = dV3:normalize() * speed
@@ -104,6 +105,15 @@ function Driver.step(vns, waiting)
 	else
 		transV3 = dV3:normalize() * speed * (d / threshold)
 	end
+	---[[
+	if math.abs(Z) > threshold then
+		transV3.z = Z * speed
+	elseif math.abs(Z) < reach_threshold then
+		transV3.z = 0
+	else
+		transV3.z = Z * speed * (Z / threshold)
+	end
+	--]]
 
 	-- calc rotateV3
 	local angle, axis = vns.goal.orientationQ:toangleaxis()

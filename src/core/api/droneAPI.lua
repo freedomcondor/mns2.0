@@ -3,59 +3,7 @@
 --]]
 
 local api = require("commonAPI")
-
----- Sensor Filter --------------------------
---[[
-api.dronePositionSensorFilter = {
-	bufferLength = tonumber(robot.params.drone_position_sensor_buffer_length or 10),
-	buffer = {},
-	pointer = 1,
-	postionSum = vector3(),
-	orientationSum = vector3(),
-}
-for i = 1, api.dronePositionSensorFilter.bufferLength do
-	api.dronePositionSensorFilter.buffer[i] = {
-		position = vector3(),
-		orientation = vector3(),
-	}
-end
-api.droneFilter = function()
-	local i = api.dronePositionSensorFilter.pointer
-	api.dronePositionSensorFilter.postionSum =
-		api.dronePositionSensorFilter.postionSum -
-		api.dronePositionSensorFilter.buffer[i].position
-
-	api.dronePositionSensorFilter.orientationSum =
-		api.dronePositionSensorFilter.orientationSum -
-		api.dronePositionSensorFilter.buffer[i].orientation
-
-	if robot.flight_system ~= nil then
-		api.dronePositionSensorFilter.buffer[i].position = robot.flight_system.position
-		api.dronePositionSensorFilter.buffer[i].orientation = robot.flight_system.orientation
-	else
-		api.dronePositionSensorFilter.buffer[i].position = vector3()
-		api.dronePositionSensorFilter.buffer[i].orientation = vector3()
-	end
-
-	api.dronePositionSensorFilter.postionSum =
-		api.dronePositionSensorFilter.postionSum +
-		api.dronePositionSensorFilter.buffer[i].position
-
-	api.dronePositionSensorFilter.orientationSum =
-		api.dronePositionSensorFilter.orientationSum +
-		api.dronePositionSensorFilter.buffer[i].orientation
-
-	if api.dronePositionSensorFilter.pointer == api.dronePositionSensorFilter.bufferLength then
-		api.dronePositionSensorFilter.pointer = 0
-	end
-	api.dronePositionSensorFilter.pointer =
-		api.dronePositionSensorFilter.pointer + 1
-
-	robot.flight_system.position = api.dronePositionSensorFilter.postionSum * (1/api.dronePositionSensorFilter.bufferLength)
-	robot.flight_system.orientation = api.dronePositionSensorFilter.orientationSum * (1/api.dronePositionSensorFilter.bufferLength)
-end
---]]
--- Sensor Filter
+require("DroneRealistSimulator")
 
 ---- actuator --------------------------
 -- Idealy, I would like to use robot.flight_system.set_targets only once per step
@@ -298,6 +246,15 @@ function api.droneSetSpeed(x, y, z, th)
 	local rad = robot.flight_system.orientation.z
 	local q = quaternion(rad, vector3(0,0,1))
 
+	api.rememberLastSpeed(x, y, z, th)
+
+	if api.actuator.lastSetSpeed ~= nil then
+		x = (x + api.actuator.lastSetSpeed.x) / 2
+		y = (y + api.actuator.lastSetSpeed.y) / 2
+		z = (z + api.actuator.lastSetSpeed.z) / 2
+		th = (th + api.actuator.lastSetSpeed.th) / 2
+	end
+
 	-- tune these scalars to make x,y,z,th match m/s and rad/s
 		-- 6 and 0.5 are roughly calibrated for simulation
 	--[[
@@ -312,20 +269,12 @@ function api.droneSetSpeed(x, y, z, th)
 	--]]
 	--transScalar = 1
 	--rotateScalar = 1
+	local scalar = 10
+	x = x * api.time.period * scalar
+	y = y * api.time.period * scalar
+	z = z * api.time.period * scalar
+	th = th * api.time.period * scalar
 
-	api.rememberLastSpeed(x, y, z, th)
-
-	if api.actuator.lastSetSpeed ~= nil then
-		x = (x + api.actuator.lastSetSpeed.x) / 2
-		y = (y + api.actuator.lastSetSpeed.y) / 2
-		z = (z + api.actuator.lastSetSpeed.z) / 2
-		th = (th + api.actuator.lastSetSpeed.th) / 2
-	end
-
-	x = x * api.time.period
-	y = y * api.time.period
-	z = z * api.time.period
-	th = th * api.time.period
 	--[[
 	x = x * transScalar * api.time.period
 	y = y * transScalar * api.time.period
