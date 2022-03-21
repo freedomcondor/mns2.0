@@ -14,10 +14,8 @@ api.parameters.pipuckRotationScalar = tonumber(robot.params.pipuck_rotation_scal
 
 api.parameters.obstacle_match_distance = tonumber(robot.params.obstacle_match_distance or 0.18)
 api.parameters.obstacle_unseen_count = tonumber(robot.params.obstacle_unseen_count or 3)
-if robot.params.hardware == "true" then
-	robot.params.hardware = true
-	api.parameters.droneTagDetectionRate = 1
-end
+
+if robot.params.hardware == "true" then robot.params.hardware = true end
 if robot.params.simulation == "true" then robot.params.simulation = true end
 
 ---- Time -------------------------------------
@@ -134,7 +132,6 @@ function api.debug.drawArrow(color, begin, finish)
 		                       tonumber(colorArray[3])
 	                          )
 	end
-
 end
 
 function api.debug.drawRing(color, middle, radius)

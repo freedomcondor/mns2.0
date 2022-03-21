@@ -60,7 +60,7 @@ def generate_drone_controller(params) :
         <drone_flight_system implementation="default" />
         <radios implementation="default" />
       </sensors>
-      <params {} />
+      <params simulation="true" {} />
     </lua_controller>
     '''.format(params)
 
@@ -80,7 +80,7 @@ def generate_pipuck_controller(params) :
         <pipuck_system implementation="default" />
         <radios implementation="default" />
       </sensors>
-      <params {} />
+      <params simulation="true" {} />
     </lua_controller>
     '''.format(params)
 

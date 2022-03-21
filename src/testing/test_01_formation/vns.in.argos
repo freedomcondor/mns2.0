@@ -26,6 +26,7 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/pipuck.lua"
+              simulation="true"
               connector_waiting_count="5"
               connector_waiting_parent_count="7"
               connector_unseen_count="20"
@@ -51,6 +52,7 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua"
+              simulation="true"
               drone_tag_detection_rate="1"
               connector_waiting_count="5"
               connector_waiting_parent_count="7"
