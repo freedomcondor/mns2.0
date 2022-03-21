@@ -68,6 +68,7 @@ api.actuator.flight_preparation.run_state = function()
 				api.actuator.flight_preparation.state = "navigation"
 			end
 		elseif api.actuator.flight_preparation.state == "navigation" then
+			-- TODO: there may be a jump after navigation mode
 			--do nothing
 		end
 	end
@@ -160,6 +161,8 @@ function api.droneAdjustHeight(z)
 		if heightError > speed_limit then heightError = speed_limit end
 		if heightError < -speed_limit then heightError = -speed_limit end
 		local ZScalar = 5
+		if robot.params.hardware == true then ZScalar = 5 end
+		-- TODO: there may be a jump here
 		api.actuator.newPosition.z = robot.flight_system.position.z + heightError * api.time.period * ZScalar
 		api.droneLastHeight = api.actuator.newPosition.z
 		if math.abs(heightError) < 0.1 then

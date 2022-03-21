@@ -14,12 +14,7 @@ local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
 logger.disable("Allocator")
-
--- parameters ----------------
-local obstacle_type = 255
-local wall_brick_type = 254
-local gate_brick_type = 253
-local target_type = 252
+logger.disable("droneAPI")
 
 -- datas ----------------
 local bt
@@ -42,7 +37,7 @@ end
 function reset()
 	vns.reset(vns)
 	--if vns.idS == "pipuck1" then vns.idN = 1 end
-	if vns.idS == "drone1" then vns.idN = 1 end
+	if vns.idS == robot.params.stabilizer_preference_brain then vns.idN = 1 end
 	vns.setGene(vns, gene)
 	vns.setMorphology(vns, gene)
 
