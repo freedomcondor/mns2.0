@@ -29,6 +29,7 @@
       </sensors>
       <!--params script="@CMAKE_CURRENT_BINARY_DIR@/drone_navigation.lua" /-->
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_formation.lua"
+              simulation="true"
 
               safezone_drone_drone="3"
               safezone_drone_pipuck="3"
@@ -54,6 +55,7 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_pipuck_formation.lua"
+              simulation="true"
 
               safezone_drone_drone="3"
               safezone_drone_pipuck="3"

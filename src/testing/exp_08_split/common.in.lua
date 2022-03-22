@@ -50,7 +50,7 @@ end
 function reset()
 	vns.reset(vns)
 	--if vns.idS == "pipuck1" then vns.idN = 1 end
-	if vns.idS == "drone1" then vns.idN = 1 end
+	if vns.idS == robot.params.stabilizer_preference_brain then vns.idN = 1 end
 	vns.setGene(vns, gene)
 	vns.setMorphology(vns, structure1)
 

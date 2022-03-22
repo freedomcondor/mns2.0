@@ -29,7 +29,7 @@
       </sensors>
       <!--params script="@CMAKE_CURRENT_BINARY_DIR@/drone_navigation.lua" /-->
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_drone_formation.lua"
-              hardware="false"
+              simulation="true"
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
               drone_default_height="1.5"
@@ -52,6 +52,7 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/files/01_pipuck_formation.lua"
+              simulation="true"
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
       />
@@ -65,7 +66,7 @@
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- add drones -->
-    <drone id="drone2" wifi_medium="wifi" tag_medium="tags">
+    <drone id="drone1" wifi_medium="wifi" tag_medium="tags">
       <body position="0,0,0" orientation="0,0,0"/>
       <controller config="drone"/>
     </drone>
