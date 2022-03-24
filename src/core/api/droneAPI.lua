@@ -123,9 +123,11 @@ end
 
 api.commonPreStep = api.preStep
 function api.preStep()
+	logger("droneAPI: position sensor = ", robot.flight_system.position, robot.flight_system.orientation)
 	api.commonPreStep()
 	api.droneTags = nil
 	if robot.params.simulation == true then DroneRealistSimulator.changeSensors(api) end
+	logger("droneAPI: after real sim  = ", robot.flight_system.position, robot.flight_system.orientation)
 	api.droneTiltVirtualFrame()
 end
 
@@ -136,9 +138,9 @@ function api.postStep()
 		api.droneAdjustHeight(api.parameters.droneDefaultHeight)
 		logger("droneAPI: set_target_pose = ", api.actuator.newPosition, api.actuator.newRad)
 		if robot.params.simulation == true then DroneRealistSimulator.changeActuators(api) end
-		logger("droneAPI: set_target_pose = ", api.actuator.newPosition, api.actuator.newRad)
+		logger("droneAPI: after real simu = ", api.actuator.newPosition, api.actuator.newRad)
 		robot.flight_system.set_target_pose(api.actuator.newPosition, api.actuator.newRad)
-		--api.updateLastSpeed()
+		api.updateLastSpeed()
 	end
 	api.commonPostStep()
 end
@@ -148,23 +150,30 @@ api.droneCheckHeightCountDown = api.actuator.flight_preparation.state_duration *
 api.droneLastHeight = api.parameters.droneDefaultStartHeight
 
 function api.droneAdjustHeight(z)
+	--[[
 	if api.droneCheckHeightCountDown > 0 then
 		api.actuator.newPosition.z = api.droneLastHeight
 		api.droneCheckHeightCountDown = api.droneCheckHeightCountDown - 1
 	elseif api.droneCheckHeightCountDown <= 0 then
+	--]]
+	if true then
 		local currentHeight = api.droneEstimateHeight()
+		logger("checking height, current height = ", currentHeight)
 		if currentHeight == nil then
 			api.actuator.newPosition.z = api.droneLastHeight
 			return
 		end
 		local heightError = z - currentHeight
-		local speed_limit = 0.1
+		local speed_limit = 0.3
 		if heightError > speed_limit then heightError = speed_limit end
 		if heightError < -speed_limit then heightError = -speed_limit end
 		local ZScalar = 5
 		if robot.params.hardware == true then ZScalar = 5 end
 		-- TODO: there may be a jump here
 		api.actuator.newPosition.z = robot.flight_system.position.z + heightError * api.time.period * ZScalar
+		logger("heightError = ", heightError)
+		logger("robot.flight_system.position.z = ", robot.flight_system.position.z)
+		logger("api.actuator.newPosition.z = ", api.actuator.newPosition.z)
 		api.droneLastHeight = api.actuator.newPosition.z
 		if math.abs(heightError) < 0.1 then
 			api.droneCheckHeightCountDown = api.actuator.flight_preparation.state_duration * 3
@@ -195,7 +204,7 @@ end
 
 ---- speed control --------------------
 -- everything in robot hardware's coordinate frame
---[[
+-- Speed maybe set multiple times in a step, remember it in justSetSpeed, and push to lastSetSpeed in postStep
 function api.rememberLastSpeed(x,y,z,th)
 	api.actuator.justSetSpeed = {
 		x = x, y = y, z = z, th = th,
@@ -210,26 +219,27 @@ function api.updateLastSpeed()
 		th = api.actuator.justSetSpeed.th,
 	}
 end
---]]
 
 function api.droneSetSpeed(x, y, z, th)
-	logger("set point speed = ", x, y, z, th)
+	logger("droneSetSpeed = ", x, y, z, th)
 	if robot.flight_system == nil then return end
 	-- x, y, z in m/s, x front, z up, y left
 	-- th in rad/s, counter-clockwise positive
 	local rad = robot.flight_system.orientation.z
 	local q = quaternion(rad, vector3(0,0,1))
 
-	--[[
 	api.rememberLastSpeed(x, y, z, th)
 
 	if api.actuator.lastSetSpeed ~= nil then
+		logger(" last speed = ", api.actuator.lastSetSpeed.x, 
+		                         api.actuator.lastSetSpeed.y,
+		                         api.actuator.lastSetSpeed.z,
+		                         api.actuator.lastSetSpeed.th)
 		x = (x + api.actuator.lastSetSpeed.x) / 2
 		y = (y + api.actuator.lastSetSpeed.y) / 2
 		z = (z + api.actuator.lastSetSpeed.z) / 2
 		th = (th + api.actuator.lastSetSpeed.th) / 2
 	end
-	--]]
 
 	-- tune these scalars to make x,y,z,th match m/s and rad/s
 		-- 6 and 0.5 are roughly calibrated for simulation
@@ -246,6 +256,9 @@ function api.droneSetSpeed(x, y, z, th)
 	y = y * transScalar * api.time.period
 	z = z * transScalarZ * api.time.period
 	th = th * rotateScalar * api.time.period
+
+	logger("time = ", api.time.period)
+	logger("inc = ", x, y, z, th)
 
 	api.actuator.setNewLocation(
 		vector3(x,y,z):rotate(q) + robot.flight_system.position,
@@ -300,6 +313,7 @@ end
 
 
 function api.droneDetectTags()
+	-- droneDetectTags maybe called multiple times by dronePreconnector and adjustheight in postStep
 	if api.droneTags ~= nil then return api.droneTags end
 	-- This function returns a tags table, in real robot coordinate frame
 	api.droneDetectLeds()
