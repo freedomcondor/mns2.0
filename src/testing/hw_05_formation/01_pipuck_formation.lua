@@ -50,7 +50,7 @@ function step()
 
 	vns.logLoopFunctionInfo(vns)
 
---[[
+---[[
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,

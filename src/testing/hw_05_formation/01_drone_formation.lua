@@ -22,7 +22,14 @@ function reset()
 	vns.reset(vns)
 	if vns.idS == robot.params.stabilizer_preference_brain then vns.idN = 1 end
 	vns.setGene(vns, structure)
-	bt = BT.create(VNS.create_vns_node(vns))
+	--bt = BT.create(VNS.create_vns_node(vns))
+	bt = BT.create
+	{ type = "sequence", children = {
+		vns.create_preconnector_node(vns),
+		vns.create_vns_core_node(vns),
+		--create_head_navigate_node(vns),
+		vns.Driver.create_driver_node(vns, {waiting = false}),
+	}}
 end
 
 function step()
@@ -54,7 +61,7 @@ function step()
 
 	vns.logLoopFunctionInfo(vns)
 
---[[
+---[[
 	vns.debug.logInfo(vns, {
 		idN = true,
 		idS = true,
@@ -141,4 +148,32 @@ function signal_led_seenRobots(vns)
 		end
 	end
 	--]]
+end
+
+
+function create_head_navigate_node(vns)
+	return function()
+		--[[
+		if #vns.avoider.obstacles ~= 0 then
+			local orientationAcc = Transform.createAccumulator()
+			for id, ob in ipairs(vns.avoider.obstacles) do
+				Transform.addAccumulator(orientationAcc, {positionV3 = vector3(), orientationQ = ob.orientationQ})
+			end
+			local averageOri = Transform.averageAccumulator(orientationAcc).orientationQ
+			vns.setGoal(vns, vns.goal.positionV3, averageOri)
+		end
+		--]]
+
+		if vns.api.stepCount < 200 then return false, true end
+		if vns.parentR ~= nil or vns.robotTypeS == "pipuck" then return false, true end
+
+		---[[
+		local speed = 0.05
+		local speedx = speed
+		--local speedy = speed * math.cos(math.pi * api.stepCount/500)
+		local speedy = 0
+		vns.Spreader.emergency_after_core(vns, vector3(speedx,speedy,0), vector3(), nil, true)
+		--]]
+		return false, true
+	end
 end
