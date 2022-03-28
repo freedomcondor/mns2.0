@@ -134,8 +134,8 @@ end
 api.commonPostStep = api.postStep
 function api.postStep()
 	if robot.flight_system ~= nil then
-		api.actuator.flight_preparation.run_state()
 		api.droneAdjustHeight(api.parameters.droneDefaultHeight)
+		api.actuator.flight_preparation.run_state()
 		logger("droneAPI: set_target_pose = ", api.actuator.newPosition, api.actuator.newRad)
 		if robot.params.simulation == true then DroneRealistSimulator.changeActuators(api) end
 		logger("droneAPI: after real simu = ", api.actuator.newPosition, api.actuator.newRad)
