@@ -266,8 +266,10 @@ function Stabilizer.robotReference(vns)
 	                        vns.api.virtualFrame.V3_VtoR(refRobot.positionV3)
 	                       )
 
+	logger("try referencing", refRobot.idS)
 	vns.Msg.send(refRobot.idS, "stabilizer_request")
 	for _, msgM in ipairs(vns.Msg.getAM(refRobot.idS, "stabilizer_reply")) do
+		logger("get referencing reply from", refRobot.idS)
 		local offset = msgM.dataT.parentTransform
 		Transform.AxBisC(refRobot, offset, offset)
 		-- TODO: check?
