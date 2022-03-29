@@ -1,7 +1,6 @@
 -- Driver -----------------------------------------
 ------------------------------------------------------
 local Driver = {}
-local Transform = require("Transform")
 
 function Driver.create(vns)
 	vns.goal = {
