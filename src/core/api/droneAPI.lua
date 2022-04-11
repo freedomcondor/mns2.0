@@ -335,18 +335,21 @@ function api.droneDetectTags()
 			-- check existed
 			local flag = 0
 			for i, existTag in ipairs(tags) do
-				if (existTag.positionV3 - positionV3):length() < 0.02 then
+				if (existTag.positionV3 - positionV3):length() < api.parameters.obstacle_match_distance and
+				   existTag.id == newTag.id then
 					flag = 1
 					break
 				end
 			end
 
-			tags[#tags + 1] = {
-				id = newTag.id,
-				type = newTag.type,
-				positionV3 = positionV3,
-				orientationQ = orientationQ
-			}
+			if flag == 0 then
+				tags[#tags + 1] = {
+					id = newTag.id,
+					type = newTag.type,
+					positionV3 = positionV3,
+					orientationQ = orientationQ
+				}
+			end
 		end
 	end
 

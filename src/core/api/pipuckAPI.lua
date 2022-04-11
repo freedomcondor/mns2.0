@@ -42,11 +42,35 @@ function api.pipuckSetWheelSpeed(x, y)
 	-- x, y in m/s
 	-- the scalar is to make x,y match m/s
 	local limit = api.parameters.pipuckWheelSpeedLimit
-	if x > limit then x = limit end
-	if x < -limit then x = -limit end
-	if y > limit then y = limit end
-	if y < -limit then y = -limit end
+	if x > limit then
+		y = y * (limit / x)
+		x = limit
+	end
+	if x < -limit then
+		y = y * (-limit / x)
+		x = -limit
+	end
+	if y > limit then
+		x = x * (limit / y)
+		y = limit
+	end
+	if y < -limit then
+		x = x * (-limit / y)
+		y = -limit
+	end
 	api.actuator.setNewWheelSpeed(x, y)
+
+	--if robot.id == "pipuck35" then
+		local color = "128,0,128,0"
+		api.debug.drawArrow(color,
+								vector3(0,0.1,0.3),
+								vector3(x,0,0)*3 + vector3(0,0.1,0.3)
+							   )
+		api.debug.drawArrow(color,
+								vector3(0,-0.1,0.3),
+								vector3(y,0,0)*3 + vector3(0,-0.1,0.3)
+							   )
+	--end
 
 	local virtual_frame_scalar = 0.0535
 	local th = (y - x) / virtual_frame_scalar

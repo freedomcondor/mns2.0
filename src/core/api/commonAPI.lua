@@ -10,9 +10,9 @@ api.parameters.droneDefaultHeight = tonumber(robot.params.drone_default_height o
 api.parameters.droneDefaultStartHeight = tonumber(robot.params.drone_default_start_height or 1.2)
 
 api.parameters.pipuckWheelSpeedLimit = tonumber(robot.params.pipuck_wheel_speed_limit or 0.1)
-api.parameters.pipuckRotationScalar = tonumber(robot.params.pipuck_rotation_scalar or 0.01)
+api.parameters.pipuckRotationScalar = tonumber(robot.params.pipuck_rotation_scalar or 0.10)
 
-api.parameters.obstacle_match_distance = tonumber(robot.params.obstacle_match_distance or 0.18)
+api.parameters.obstacle_match_distance = tonumber(robot.params.obstacle_match_distance or 0.10)
 api.parameters.obstacle_unseen_count = tonumber(robot.params.obstacle_unseen_count or 3)
 
 if robot.params.hardware == "true" then robot.params.hardware = true end
@@ -211,8 +211,13 @@ end
 
 function api.debug.showObstacles(vns)
 	for i, obstacle in ipairs(vns.avoider.obstacles) do
-		api.debug.drawArrow("red", vector3(), 
-		api.virtualFrame.V3_VtoR(vector3(obstacle.positionV3)))
+		api.debug.drawArrow("red", vector3(),
+		                           api.virtualFrame.V3_VtoR(vector3(obstacle.positionV3))
+		                   )
+		api.debug.drawArrow("red",
+		                    api.virtualFrame.V3_VtoR(vector3(obstacle.positionV3)),
+		                    api.virtualFrame.V3_VtoR(obstacle.positionV3 + vector3(0.1, 0, 0):rotate(obstacle.orientationQ))
+		                   )
 		--obstacle.positionV3)
 	end
 end
