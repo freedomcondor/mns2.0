@@ -105,6 +105,14 @@ function Avoider.step(vns)
 	-- add the speed to goal -- the brain can't be influended
 	vns.goal.transV3 = vns.goal.transV3 + avoid_speed.positionV3
 	vns.goal.rotateV3 = vns.goal.rotateV3 + avoid_speed.orientationV3
+
+	if robot.id == "pipuck16" then
+		local color = "255,0,0,0"
+		vns.api.debug.drawArrow(color,
+								vector3(0,0,1.3),
+								vns.api.virtualFrame.V3_VtoR(avoid_speed.positionV3 * 3 + vector3(0,0,1.3))
+							   )
+	end
 end
 
 function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)

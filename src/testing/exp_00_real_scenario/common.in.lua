@@ -12,19 +12,15 @@ local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
 logger.disable("Allocator")
-
--- parameters ----------------
-local obstacle_type = 255
-local wall_brick_type = 254
-local gate_brick_type = 253
-local target_type = 252
+logger.disable("Stabilizer")
+logger.disable("droneAPI")
 
 -- datas ----------------
 local bt
 --local vns
-local structure1 = require("morphology1")
-local structure2 = require("morphology2")
-local structure3 = require("morphology3")
+local structure1 = require("morphologies/morphology1")
+local structure2 = require("morphologies/morphology2")
+local structure3 = require("morphologies/morphology3")
 local gene = {
 	robotTypeS = "drone",
 	positionV3 = vector3(),
@@ -56,8 +52,7 @@ end
 --- reset
 function reset()
 	vns.reset(vns)
-	--if vns.idS == "pipuck1" then vns.idN = 1 end
-	if vns.idS == "drone1" then vns.idN = 1 end
+	if vns.idS == robot.params.stabilizer_preference_brain then vns.idN = 1 end
 	vns.setGene(vns, gene)
 
 	vns.setMorphology(vns, structure1)
@@ -88,7 +83,6 @@ function step()
 
 	-- poststep
 	vns.postStep(vns)
-	if myType == "drone" then api.droneMaintainHeight(1.8) end
 	api.postStep()
 
 	vns.logLoopFunctionInfo(vns)
@@ -108,6 +102,13 @@ end
 function create_reaction_node(vns)
 	local state = "waiting"
 	local stateCount = 0
+
+	-- parameters ----------------
+	local obstacle_type = 255
+	local wall_brick_type = 254
+	local gate_brick_type = 253
+	local target_type = 252
+
 	return function()
 		-------------------------------------------------------------
 		-- waiting for sometime for the 1st formation
@@ -117,6 +118,7 @@ function create_reaction_node(vns)
 			--if stateCount == nil then
 				stateCount = 0
 				state = "move_forward"
+				logger("move forward")
 			end
 
 		-------------------------------------------------------------
@@ -133,12 +135,7 @@ function create_reaction_node(vns)
 				vns.api.debug.drawArrow("red", vector3(),
 					vns.api.virtualFrame.V3_VtoR(ob.positionV3)
 				)
-				vns.goal.orientationQ = ob.orientationQ
-				-- tell adjust stablizer based on the orientation
-				if vns.stabilizer.reference ~= nil then
-					vns.stabilizer.reference_offset.orientationQ = vns.stabilizer.reference.orientationQ:inverse() *
-					                                               vns.goal.orientationQ
-				end
+				vns.setGoal(vns, vns.goal.positionV3, ob.orientationQ)
 				break
 			end
 
@@ -146,6 +143,7 @@ function create_reaction_node(vns)
 			local wall_brick = ExperimentCommon.detectWall(vns, wall_brick_type)
 			if wall_brick ~= nil then
 				state = "stay_in_front_of_the_wall"
+				logger("stay in front of the wall")
 			end
 
 		-- move_forward : body
@@ -157,6 +155,7 @@ function create_reaction_node(vns)
 			local wall_brick = ExperimentCommon.detectWall(vns, wall_brick_type)
 			if wall_brick ~= nil then
 				state = "stay_in_front_of_the_wall"
+				logger("stay in front of the wall")
 			end
 			-- if I see a wall, I adjust my distance and orientation
 			--[[
@@ -182,11 +181,13 @@ function create_reaction_node(vns)
 				-- if I'm the brain
 				-- anchor position
 				if vns.parentR == nil then
+					local newOri = wall_brick.orientationQ
 					vns.goal.orientationQ = wall_brick.orientationQ
 					-- distance to the wall
 					local distance = (wall_brick.positionV3 - vns.goal.positionV3):dot(vector3(1,0,0):rotate(wall_brick.orientationQ))
-					vns.goal.positionV3 = vns.goal.positionV3 + 
+					local newPos = vns.goal.positionV3 + 
 						vector3(1,0,0):rotate(wall_brick.orientationQ) * (distance - 0.4)
+					vns.setGoal(vns, newPos, newOri)
 				end
 				-- eliminate vertical component in transV3
 				--[[
@@ -226,6 +227,7 @@ function create_reaction_node(vns)
 			--]]
 
 				state = "switch_to_structure2"
+				logger("switch to structure 2")
 
 				stateCount = 0
 			end
@@ -238,17 +240,10 @@ function create_reaction_node(vns)
 				-- move towards the gate
 				local gateList, gate = ExperimentCommon.detectGates(vns, gate_brick_type, 1.5)
 				if gate ~= nil then
-					vns.goal.positionV3 = gate.positionV3 + vector3(-0.4, 0, 0):rotate(gate.orientationQ)
-					vns.goal.orientationQ = gate.orientationQ
-					-- tell adjust stablizer based on the orientation
-					if vns.stabilizer.reference ~= nil then
-						vns.stabilizer.reference_offset.positionV3 = 
-							(vns.goal.positionV3 - vns.stabilizer.reference.positionV3):rotate(
-								vns.stabilizer.reference.orientationQ:inverse()
-							)
-						vns.stabilizer.reference_offset.orientationQ = vns.stabilizer.reference.orientationQ:inverse() *
-						                                               vns.goal.orientationQ
-					end
+					vns.setGoal(vns,
+					            gate.positionV3 + vector3(-0.4, 0, 0):rotate(gate.orientationQ),
+					            gate.orientationQ
+					           )
 				end
 
 				-- tell everyone that we should switch to new state
@@ -262,9 +257,9 @@ function create_reaction_node(vns)
 				--if stateCount == nil then
 					stateCount = 0
 					state = "move_forward_again"
+					logger("move forward again")
 				end
 			end
-
 		-------------------------------------------------------------
 		elseif state == "move_forward_again" and vns.parentR == nil then
 			vns.Spreader.emergency_after_core(vns, vector3(0.03,0,0), vector3())
@@ -273,6 +268,7 @@ function create_reaction_node(vns)
 			local target = ExperimentCommon.detectTarget(vns, target_type)
 			if target ~= nil then
 				state = "switch_to_structure3"
+				logger("switch to structure3")
 				vns.setMorphology(vns, structure3)
 			end
 
@@ -286,19 +282,6 @@ function create_reaction_node(vns)
 					            target.positionV3 + vector3(-0.8, 0, 0):rotate(target.orientationQ),
 					            target.orientationQ
 					)
-					--[[
-					vns.goal.positionV3 = target.positionV3 + vector3(-0.8, 0, 0):rotate(target.orientationQ)
-					vns.goal.orientationQ = target.orientationQ
-					-- tell adjust stablizer based on the orientation
-					if vns.stabilizer.reference ~= nil then
-						vns.stabilizer.reference_offset.positionV3 = 
-							(vns.goal.positionV3 - vns.stabilizer.reference.positionV3):rotate(
-								vns.stabilizer.reference.orientationQ:inverse()
-							)
-						vns.stabilizer.reference_offset.orientationQ = vns.stabilizer.reference.orientationQ:inverse() *
-						                                               vns.goal.orientationQ
-					end
-					--]]
 				end
 			end
 
@@ -312,7 +295,8 @@ function create_reaction_node(vns)
 			end
 		end end
 
-		vns.state = state
+		-- for debug
+		vns.debugstate = state
 		return false, true
 	end
 end

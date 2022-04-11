@@ -1,0 +1,34 @@
+package.path = package.path .. ";@CMAKE_SOURCE_DIR@/scripts/logReader/?.lua"
+package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/utils/?.lua"
+package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/../?.lua"
+
+logger = require("Logger")
+logReader = require("logReader")
+logger.enable()
+
+local gene = {
+	robotTypeS = "drone",
+	positionV3 = vector3(),
+	orientationQ = quaternion(),
+	children = {
+		require("morphology1"),
+		require("morphology2"),
+		require("morphology3"),
+	}
+}
+local geneIndex = logReader.calcMorphID(gene)
+
+local robotsData = logReader.loadData("./logs")
+
+logReader.calcSegmentData(robotsData, geneIndex)
+logReader.calcSegmentLowerBound(robotsData, geneIndex, 
+	{
+		time_period = 0.2;
+		default_speed = 0.03;
+		slowdown_dis = 0.35;
+		stop_dis = 0.01;
+	}
+)
+
+logReader.saveData(robotsData, "result_data.txt")
+logReader.saveData(robotsData, "result_lowerbound.txt", "lowerBoundError")

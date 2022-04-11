@@ -1,6 +1,7 @@
 import random
 import sys
 import getopt
+import time
 
 #----------------------------------------------------------------------------------------------
 # usage message 
@@ -15,7 +16,7 @@ except:
 	print(usage)
 	sys.exit(0)
 
-Inputseed = 0
+Inputseed = None
 Experiment_length = None
 Visualization = True
 VisualizationArgosFlag = ""
@@ -34,6 +35,10 @@ for opt, value in optlist:
 	elif opt == "-h":
 		print(usage)
 		exit()
+
+if Inputseed == None :
+	Inputseed = int(time.time())
+	print("Inputseed not provided, using:", Inputseed)
 
 if Visualization == False :
 	VisualizationArgosFlag = " -z"
@@ -324,6 +329,7 @@ def generate_target_xml(x, y, th, type, radius, tag_edge_distance):
 #	and the middle of the largest gate
 attempt_count_down_default = 500
 def generate_gate_locations(gate_number, left_end, right_end, small_limit, large_limit) :
+	margin = 0.4
 	a = []
 	largest_length = 0
 	largest_loc = 0
@@ -347,15 +353,15 @@ def generate_gate_locations(gate_number, left_end, right_end, small_limit, large
 			right = loc + size/2 
 
 			# valid check
-			if left < left_end or right > right_end :
+			if left - margin < left_end or right + margin > right_end :
 				valid_position = False
 				continue
 
 			valid_position = True
 			for item in a:
-				if (item[0] < left and right < item[1] or
-				    left < item[0] and item[0] < right or
-				    left < item[1] and item[1] < right
+				if (item[0] < left - margin and right + margin < item[1] or
+				    left - margin < item[0] and item[0] < right + margin or
+				    left - margin < item[1] and item[1] < right + margin
 				   ) :
 					valid_position = False
 					break

@@ -36,8 +36,6 @@ obstacle_locations = generate_random_locations(10,               # total number
                                                -2.5, -0.5,      # x range
                                                -2.0, 2.0,       # y range
                                                0.5, 3.0)        # near and far limit
-mark_locations = generate_line_locations(2, 1, largest_loc, 2.5, largest_loc)
-obstacle_locations += mark_locations
 obstacle_xml = generate_obstacles(obstacle_locations, 100, 255) # start id and payload
 
 # target
@@ -50,7 +48,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "@CMAKE_CURRENT_BINARY_DIR@/vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],
-		["TOTALLENGTH",       str((Experiment_length or 1000)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 5000)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 

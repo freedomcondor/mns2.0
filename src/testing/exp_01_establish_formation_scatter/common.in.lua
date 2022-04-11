@@ -14,6 +14,7 @@ local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
 logger.disable("Allocator")
+logger.disable("Stabilizer")
 logger.disable("droneAPI")
 
 -- datas ----------------
@@ -36,7 +37,6 @@ end
 --- reset
 function reset()
 	vns.reset(vns)
-	--if vns.idS == "pipuck1" then vns.idN = 1 end
 	if vns.idS == robot.params.stabilizer_preference_brain then vns.idN = 1 end
 	vns.setGene(vns, gene)
 	vns.setMorphology(vns, gene)

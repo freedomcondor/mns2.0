@@ -71,6 +71,12 @@ function CollectiveSensor.step(vns)
 					end
 				end
 
+				--[[
+				-- check existed
+				local flag = 0
+				for 
+				--]]
+
 				table.insert(vns.collectivesensor.receiveList, object)
 			end
 		end

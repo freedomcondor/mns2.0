@@ -16,6 +16,7 @@ end
 function Stabilizer.preStep(vns)
 	vns.stabilizer.referencing_robot = nil
 	vns.stabilizer.referencing_me = nil
+	vns.stabilizer.stationary_referencing = nil
 end
 
 function Stabilizer.addParent(vns)
@@ -65,8 +66,16 @@ function Stabilizer.setGoal(vns, positionV3, orientationQ)
 end
 
 function Stabilizer.step(vns)
-	-- If I'm not the brain, don't do anything
-	if vns.parentR ~= nil then
+	if vns.allocator.mode_switch ~= "stationary" then
+		-- clear stationary_stabilizer information
+		for idS, robotR in pairs(vns.childrenRT) do 
+			if robotR.stationary_stabilizer ~= nil then
+				robotR.stationary_stabilizer = nil
+			end
+		end
+	end
+	-- If I'm not the brain, and it is stationary mode don't do anything
+	if vns.parentR ~= nil and vns.allocator.mode_switch ~= "stationary" then
 		if vns.robotTypeS == "pipuck" then
 			Stabilizer.pipuckListenRequest(vns)
 		end
@@ -95,6 +104,28 @@ function Stabilizer.step(vns)
 		end
 	end
 
+	-- if stationary mode then also count pipucks as reference
+	if vns.allocator.mode_switch == "stationary" and flag == false then
+		for idS, robotR in pairs(vns.childrenRT) do if robotR.robotTypeS == "pipuck" then
+			if robotR.stationary_stabilizer ~= nil and robotR.connector.unseen_count == vns.Parameters.connector_unseen_count then
+				flag = true
+				-- add offset (choose the nearest)
+				local offset = {positionV3 = vector3(), orientationQ = quaternion()}
+				-- I see ob, I should see ob at ob.stabilizer, I should be at X, X x ob.stablizer = ob
+				Transform.CxBisA(robotR, robotR.stationary_stabilizer, offset)
+				-- add offset into offsetAcc
+				Transform.addAccumulator(offsetAcc, offset)
+				robotR.stationary_stabilizer.offset = offset
+			end
+		end end
+	elseif vns.allocator.mode_switch == "stationary" and flag == true then
+		for idS, robotR in pairs(vns.childrenRT) do if robotR.robotTypeS == "pipuck" then
+			if robotR.stationary_stabilizer ~= nil then
+				robotR.stationary_stabilizer = nil
+			end
+		end end
+	end
+
 	-- filter wrong case (sometimes obstacles are too close, they may be messed up with each other)
 	-- check with average and subtrack from acc
 	flag = false -- flag for valid reference obstacles
@@ -109,6 +140,16 @@ function Stabilizer.step(vns)
 			end
 			ob.offset = nil
 		end
+	end
+
+	-- check if there are pipucks as a valid reference and mark flag
+	if vns.allocator.mode_switch == "stationary" then
+		for idS, robotR in pairs(vns.childrenRT) do if robotR.robotTypeS == "pipuck" then
+			if robotR.stationary_stabilizer ~= nil and robotR.connector.unseen_count == vns.Parameters.connector_unseen_count then
+				flag = true
+				break
+			end
+		end end
 	end
 
 	local obstacle_flag = false
@@ -128,6 +169,9 @@ function Stabilizer.step(vns)
 		colorflag = true
 		--vns.allocator.keepBrainGoal = true
 		vns.stabilizer.lastReference = nil
+		if vns.allocator.mode_switch == "stationary" then
+			vns.stabilizer.stationary_referencing = true
+		end
 	---[[
 	elseif obstacle_flag == true and vns.stabilizer.force_pipuck_reference == nil then
 		-- There are obstacles, I just don't see them, wait to see them, set offset as the current goal
@@ -156,6 +200,16 @@ function Stabilizer.step(vns)
 			ob.stabilizer = {}
 			Transform.AxCisB(offset, ob, ob.stabilizer)
 		end
+	end
+
+	-- if stationary mode then also count pipucks as reference
+	if vns.allocator.mode_switch == "stationary" then
+		for idS, robotR in pairs(vns.childrenRT) do if robotR.robotTypeS == "pipuck" then
+			if robotR.stationary_stabilizer == nil then
+				robotR.stationary_stabilizer = {}
+				Transform.AxCisB(offset, robotR, robotR.stationary_stabilizer)
+			end
+		end end
 	end
 
 	---[[
@@ -233,7 +287,18 @@ function Stabilizer.pipuckListenRequest(vns)
 			--parentTransform.positionV3 = vector3()
 			--parentTransform.orientationQ = quaternion()
 		else
-			Transform.AxCis0(vns.allocator.target, parentTransform)
+			if vns.stabilizer.referencing_me_goal_overwrite ~= nil then
+				local myGoal = {positionV3 = vector3(), orientationQ = quaternion()}
+				if vns.stabilizer.referencing_me_goal_overwrite.positionV3 ~= nil then
+					myGoal.positionV3 = vns.stabilizer.referencing_me_goal_overwrite.positionV3
+				end
+				if vns.stabilizer.referencing_me_goal_overwrite.orientationQ ~= nil then
+					myGoal.orientationQ = vns.stabilizer.referencing_me_goal_overwrite.orientationQ
+				end
+				Transform.AxCisB(vns.allocator.target, myGoal, parentTransform)
+			else
+				Transform.AxCis0(vns.allocator.target, parentTransform)
+			end
 		end
 
 		vns.Msg.send(vns.parentR.idS, "stabilizer_reply", {
@@ -243,8 +308,19 @@ function Stabilizer.pipuckListenRequest(vns)
 			},
 		})
 
+		-- The goal of referencing pipuck will be over written in Allocator
 		vns.goal.positionV3 = vector3()
 		vns.goal.orientationQ = quaternion()
+
+		if vns.stabilizer.referencing_me_goal_overwrite ~= nil then
+			if vns.stabilizer.referencing_me_goal_overwrite.positionV3 ~= nil then
+				vns.goal.positionV3 = vns.stabilizer.referencing_me_goal_overwrite.positionV3
+			end
+			if vns.stabilizer.referencing_me_goal_overwrite.orientationQ ~= nil then
+				vns.goal.orientationQ = vns.stabilizer.referencing_me_goal_overwrite.orientationQ
+			end
+			--vns.stabilizer.referencing_me_goal_overwrite = nil
+		end
 
 		local color = "255,0,255,0"
 		vns.api.debug.drawRing(color,

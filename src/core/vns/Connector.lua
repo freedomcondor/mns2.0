@@ -355,7 +355,7 @@ function Connector.ackSpecific(vns, specific_name, option)
 		   msgM.fromS == vns.connector.greenLight
 		   -- greenLight comes from intersection detector
 		   --(vns.parentR == nil or
-			--vns.connector.lastid[msgM.dataT.idS] == nil
+		   --vns.connector.lastid[msgM.dataT.idS] == nil
 		   --) 
 		   then
 			if vns.connector.waitingParents[msgM.fromS] ~= nil then
@@ -395,6 +395,7 @@ function Connector.ackSpecific(vns, specific_name, option)
 					waiting_count = vns.Parameters.connector_waiting_parent_count,
 					distance = positionV2:length(),
 					idS = msgM.fromS,
+					robotTypeS = msgM.dataT.fromTypeS,
 				}
 			end
 		else
@@ -406,11 +407,23 @@ function Connector.ackSpecific(vns, specific_name, option)
 
 	local MinDis = math.huge
 	local MinId = nil
-	-- mark the nearest waiting parents
+	-- mark the nearest waiting parents, drone priority
+	-- if there are drones, mark nearest drone as nearest
+	---[[
+	local drone_flag = false
 	for idS, parent in pairs(vns.connector.waitingParents) do
-		if parent.distance < MinDis then
-			MinDis = parent.distance
-			MinId = idS
+		if parent.robotTypeS == "drone" then
+			drone_flag = true
+			break
+		end
+	end
+	--]]
+	for idS, parent in pairs(vns.connector.waitingParents) do
+		if (drone_flag == true and parent.robotTypeS == "drone") or drone_flag == false then
+			if parent.distance < MinDis then
+				MinDis = parent.distance
+				MinId = idS
+			end
 		end
 	end
 	-- old grand parent has priority

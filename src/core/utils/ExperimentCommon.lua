@@ -15,23 +15,44 @@ ExperimentCommon.detectWall = function(vns, wall_brick_type)
 	return nearest
 end
 
-ExperimentCommon.detectGates = function(vns, gate_brick_type, max_gate_size)
-	-- mark the gates from obstacles with gateV3
+ExperimentCommon.detectAndReportGates = function(vns, gate_brick_type, max_gate_size)
+	if vns.robotTypeS ~= "drone" then return {}, nil end
+
+	-- add vns.avoider.obstacles and vns.collectivesensor.receiveList together
+	local totalGateSideList = {}
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		if ob.type == gate_brick_type then
-			ob.gateV3 = vector3(max_gate_size,0,0):rotate(ob.orientationQ)
+			totalGateSideList[#totalGateSideList + 1] = ob
+		end
+	end
+	for i, ob in ipairs(vns.collectivesensor.receiveList) do
+		if ob.type == gate_brick_type then
+			totalGateSideList[#totalGateSideList + 1] = ob
 		end
 	end
 
-	-- for each gate find the nearest opposite gate
-	for i, ob in ipairs(vns.avoider.obstacles) do if ob.gateV3 ~= nil and ob.paired == nil then
-		-- find the nearest opposite gate_brick
+	-- mark the gates from obstacles with gateV3
+	--for i, ob in ipairs(vns.avoider.obstacles) do
+	for i, ob in ipairs(totalGateSideList) do
+		ob.gateDetection = {
+			gateV3 = vector3(max_gate_size,0,0):rotate(ob.orientationQ)
+		}
+	end
 
+	-- for each gate find the nearest opposite gate
+	--for i, ob in ipairs(vns.avoider.obstacles) do if ob.gateV3 ~= nil and ob.paired == nil then
+	for i, ob in ipairs(totalGateSideList) do if ob.gateDetection.paired == nil then
+		-- find the nearest gate_brick towards my direction
+		-- and then check if that gate_brick is towards me 
+		--     because sometimes there may be conditions like 
+		--                -> (missing one <-)   ->  <-
 		local pair = nil
-		local dis = ob.gateV3:length()
-		for i, ob2 in ipairs(vns.avoider.obstacles) do if ob2.gateV3 ~= nil then
-			-- if opposite
-			if ob.gateV3:dot(ob2.gateV3) < 0 then
+		--local dis = ob.gateV3:length()
+		local dis = max_gate_size
+		--for i, ob2 in ipairs(vns.avoider.obstacles) do if ob2.gateV3 ~= nil then
+		for i, ob2 in ipairs(totalGateSideList) do if ob2.gateDetection.paired == nil then
+			-- if it is in my direction
+			if ob.gateDetection.gateV3:dot(ob2.positionV3 - ob.positionV3) > 0 then
 				-- if nearer
 				if (ob2.positionV3 - ob.positionV3):length() < dis then
 					pair = ob2
@@ -39,10 +60,16 @@ ExperimentCommon.detectGates = function(vns, gate_brick_type, max_gate_size)
 				end
 			end
 		end end
-		ob.gateV3 = ob.gateV3:normalize() * dis
-		if pair ~= nil then
-			pair.gateV3 = pair.gateV3:normalize() * dis
-			pair.paired = true
+		-- if the nearest is opposite towards me, then we find an effect gate
+		if pair ~= nil and 
+		   pair.gateDetection.gateV3:dot(ob.gateDetection.gateV3) < 0 then
+			ob.gateDetection.gateV3 = ob.gateDetection.gateV3:normalize() * dis
+			pair.gateDetection.gateV3 = pair.gateDetection.gateV3:normalize() * dis
+			pair.gateDetection.paired = true
+		else
+			-- unpaired wall side, I report it
+			vns.CollectiveSensor.addToSendList(vns, ob)
+			ob.gateDetection.single = true
 		end
 	end end
 
@@ -50,13 +77,14 @@ ExperimentCommon.detectGates = function(vns, gate_brick_type, max_gate_size)
 	local gates = {}
 	local largest = nil
 	local largest_length = 0
-	for i, ob in ipairs(vns.avoider.obstacles) do if ob.gateV3 ~= nil and ob.paired == nil then
-		local positionV3 = ob.positionV3 + ob.gateV3 * 0.5
+	--for i, ob in ipairs(vns.avoider.obstacles) do if ob.gateV3 ~= nil and ob.paired == nil then
+	for i, ob in ipairs(totalGateSideList) do if ob.gateDetection.single == nil and ob.gateDetection.paired == nil then
+		local positionV3 = ob.positionV3 + ob.gateDetection.gateV3 * 0.5
 		local orientationQ = ob.orientationQ * quaternion(math.pi/2, vector3(0,0,1))
 		if vector3(1,0,0):rotate(orientationQ):dot(positionV3) < 0 then
 			orientationQ = orientationQ * quaternion(math.pi, vector3(0,0,1))
 		end
-		local length = ob.gateV3:length()
+		local length = ob.gateDetection.gateV3:length()
 		gates[#gates+1] = {
 			positionV3 = positionV3,
 			orientationQ = orientationQ,
@@ -71,12 +99,27 @@ ExperimentCommon.detectGates = function(vns, gate_brick_type, max_gate_size)
 
 	for i, gate in ipairs(gates) do
 		vns.api.debug.drawArrow("red", 
+			vns.api.virtualFrame.V3_VtoR(vector3()),
+			vns.api.virtualFrame.V3_VtoR(vector3(gate.positionV3))
+		)
+		vns.api.debug.drawArrow("red", 
 			vns.api.virtualFrame.V3_VtoR(vector3(gate.positionV3)),
 			vns.api.virtualFrame.V3_VtoR(vector3(gate.positionV3 + vector3(0.1,0,0):rotate(gate.orientationQ)))
 		)
 	end
 
-	return gates, largest
+	-- calculate gateNumber
+	local gateNumber = #gates
+	for idS, robotR in pairs(vns.childrenRT) do
+		for _, msgM in ipairs(vns.Msg.getAM(idS, "gateReport")) do
+			gateNumber = gateNumber + msgM.dataT.gateNumber
+		end
+	end
+	if vns.parentR ~= nil then
+		vns.msgM.send(vns.parentR.idS, "gateReport", {gateNumber = gateNumber})
+	end
+
+	return gates, largest, gateNumber
 end
 
 ExperimentCommon.detectTarget = function(vns, target_type)
@@ -106,8 +149,10 @@ ExperimentCommon.reportWall = function(vns, wall_brick_type)
 	else
 		-- I see nothing, I report one of what I received
 		for i, ob in pairs(vns.collectivesensor.receiveList) do
-			vns.CollectiveSensor.addToSendList(vns, ob)
-			break
+			if ob.type == wall_brick_type then
+				vns.CollectiveSensor.addToSendList(vns, ob)
+				break
+			end
 		end
 	end
 end

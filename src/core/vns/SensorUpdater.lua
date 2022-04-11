@@ -3,6 +3,7 @@ local Transform = require("Transform")
 local SensorUpdater = {}
 
 function SensorUpdater.updateObstacles(vns, seenObstacles, memObstacles)
+	vns.avoider.seenObstacles = seenObstacles
 	local offset = {positionV3 = vns.api.estimateLocation.positionV3, orientationQ = vns.api.estimateLocation.orientationQ}
 	-- match seenObstacles TODO: hungarian
 	for i, seenOb in ipairs(seenObstacles) do
@@ -12,7 +13,7 @@ function SensorUpdater.updateObstacles(vns, seenObstacles, memObstacles)
 			-- I used to see memOb, I now should be offset(estimated), I should see memOb at X.   offset x X = memOb
 			local estimate_memOb = Transform.AxCisB(offset, memOb)
 			local dis = (estimate_memOb.positionV3 - seenOb.positionV3):length()
-			if dis < nearestDis and dis < vns.api.parameters.obstacle_match_distance and memOb.matched == nil then
+			if dis < nearestDis and dis < vns.api.parameters.obstacle_match_distance and memOb.type == seenOb.type and memOb.matched == nil then
 				nearestDis = dis
 				nearestOb = memOb
 			end

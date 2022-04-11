@@ -13,6 +13,8 @@ local api = require(myType .. "API")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
+logger.disable("Stabilizer")
+logger.disable("droneAPI")
 
 -- datas ----------------
 local bt
@@ -128,7 +130,9 @@ return function()
 		end
 	elseif state == "go_back" and 
 	       vns.allocator.target.ranger == true then
-		vns.Spreader.emergency_after_core(vns, vector3(speed,0,0), vector3())
+		if vns.parentR == nil then
+			vns.Spreader.emergency_after_core(vns, vector3(speed,0,0), vector3())
+		end
 		count = count + 1
 		if count == 200 then
 			state = "end"

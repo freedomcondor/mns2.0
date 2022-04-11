@@ -14,6 +14,10 @@ function Driver.create(vns)
 		}
 		--]]
 	}
+	vns.driver = {
+		all_arrive = false,
+		drone_arrive = false,
+	}
 end
 
 function Driver.addChild(vns, robotR)
@@ -27,6 +31,10 @@ function Driver.addChild(vns, robotR)
 		--rotateV3 = vector3(),
 	}
 	--]]
+	robotR.driver = {
+		all_arrive = false,
+		drone_arrive = false,
+	}
 end
 
 function Driver.preStep(vns)
@@ -65,22 +73,6 @@ function Driver.step(vns, waiting)
 		end
 	end
 
-	local color = "0,255,255,0"
-	--[[
-	vns.api.debug.drawArrow(color, 
-	                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
-	                        vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3 + vector3(0.1,0,0):rotate(vns.goal.orientationQ))
-	                       )
-	vns.api.debug.drawRing(color, 
-	                       vns.api.virtualFrame.V3_VtoR(vns.goal.positionV3),
-	                       0.05
-	                      )
-	--]]
-	vns.api.debug.drawArrow(color,
-	                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0)),
-	                        vns.api.virtualFrame.V3_VtoR(vector3(vns.goal.positionV3 + vector3(0,0,0.1)))
-	                       )
-	--]]
 
 	-- calculate transV3 and rotateV3 from goal.positionV3 and orientation
 	local transV3 = vector3()
@@ -170,11 +162,66 @@ function Driver.step(vns, waiting)
 				transV3 = vector3()
 				vns.goal.transV3 = vector3()
 
-				vns.api.debug.drawArrow("255, 255, 0",
+				vns.api.debug.drawArrow("255, 0, 255",
 					vns.api.virtualFrame.V3_VtoR(vector3()),
 					vns.api.virtualFrame.V3_VtoR(robotR.positionV3)
 				)
 			end
+		end
+	elseif waiting == "spring" and vns.stabilizer.referencing_me ~= true then
+		-- create neighbour table
+		local neighbours = {}
+		if vns.parentR ~= nil then neighbours[#neighbours + 1] = vns.parentR end
+		for idS, robotR in pairs(vns.childrenRT) do neighbours[#neighbours + 1] = robotR end
+		-- iterate all the neighbours
+		for _, robotR in ipairs(neighbours) do
+			-- get safezone and critical zone
+			local safezone_half
+			if vns.robotTypeS == "drone" and robotR.robotTypeS == "drone" then
+				safezone_half = vns.Parameters.safezone_drone_drone
+			elseif vns.robotTypeS == "drone" and robotR.robotTypeS == "pipuck" or
+			       vns.robotTypeS == "pipuck" and robotR.robotTypeS == "drone" then
+				safezone_half = vns.Parameters.safezone_drone_pipuck
+			elseif vns.robotTypeS == "pipuck" and robotR.robotTypeS == "pipuck" then
+				safezone_half = vns.Parameters.safezone_pipuck_pipuck
+			end
+			local criticalzone_half = safezone_half + 0.1
+
+			-- calc spring speed vector
+			local default_speed = vns.Parameters.driver_default_speed * 2
+			local disV2 = vector3(robotR.positionV3)
+			disV2.z = 0
+			local dis = disV2:length()
+			local speed
+			if dis > criticalzone_half then
+				speed = default_speed
+			elseif safezone_half < dis and dis < criticalzone_half then
+				speed = default_speed * (dis - safezone_half) / (criticalzone_half - safezone_half)
+			elseif dis < safezone_half then
+				speed = 0
+			end
+			local speedV3 = speed * disV2:normalize()
+			transV3 = transV3 + speedV3
+			if dis > safezone_half then
+				vns.api.debug.drawArrow("255, 0, 255",
+					vns.api.virtualFrame.V3_VtoR(vector3()),
+					vns.api.virtualFrame.V3_VtoR(robotR.positionV3)
+				)
+			end
+
+	if robot.id == "pipuck16" then
+		local color = "255,0,0,0"
+		vns.api.debug.drawArrow(color,
+								vector3(0,0,1.3),
+								vns.api.virtualFrame.V3_VtoR(speedV3) * 3 + vector3(0,0,1.3)
+							   )
+		local color = "255,0,128,0"
+		vns.api.debug.drawArrow(color,
+								vector3(0,0,1.3),
+								vns.api.virtualFrame.V3_VtoR(transV3) * 3 + vector3(0,0,1.3)
+							   )
+	end
+
 		end
 	end
 
@@ -189,6 +236,62 @@ function Driver.step(vns, waiting)
 				orientationQ = vns.api.virtualFrame.Q_VtoR(childR.goal.orientationQ),
 			})
 		end
+	end
+
+	-- arrive signal
+	for idS, robotR in pairs(vns.childrenRT) do
+		for _, msgM in ipairs(vns.Msg.getAM(idS, "arrive_signal")) do
+			if msgM.dataT.all_arrive == true then robotR.driver.all_arrive = true end
+			if msgM.dataT.all_arrive == false then robotR.driver.all_arrive = false end
+			if msgM.dataT.drone_arrive == true then robotR.driver.drone_arrive = true end
+			if msgM.dataT.drone_arrive == false then robotR.driver.drone_arrive = false end
+		end
+	end
+
+	local all_arrive_flag = true
+	local drone_arrive_flag = true
+	-- check myself
+	local goalV2 = vector3(vns.goal.positionV3)
+	goalV2.z = 0
+	if goalV2:length() > 0.3 then
+		-- not arrive
+		all_arrive_flag = false
+		if vns.robotTypeS == "drone" then drone_arrive_flag = false end
+	else
+		for idS, robotR in pairs(vns.childrenRT) do
+			if robotR.driver.all_arrive ~= true then
+				all_arrive_flag = false
+			end
+			if robotR.driver.drone_arrive ~= true then
+				drone_arrive_flag = false
+			end
+		end
+	end
+
+	if drone_arrive_flag == true then
+		vns.driver.drone_arrive = true
+	else
+		vns.driver.drone_arrive = false
+	end
+	if all_arrive_flag == true then
+		vns.driver.all_arrive = true
+
+		local color = "0,255,0,0"
+		vns.api.debug.drawArrow(color,
+		                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0)),
+		                        vns.api.virtualFrame.V3_VtoR(vector3(vns.goal.positionV3 + vector3(0,0,0.1)))
+		                       )
+	else
+		vns.driver.all_arrive = false
+		local color = "0,255,255,0"
+		vns.api.debug.drawArrow(color,
+		                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0)),
+		                        vns.api.virtualFrame.V3_VtoR(vector3(vns.goal.positionV3 + vector3(0,0,0.1)))
+		                       )
+	end
+	if vns.parentR ~= nil then
+		vns.Msg.send(vns.parentR.idS, "arrive_signal", {all_arrive = all_arrive_flag,
+	                                                    drone_arrive = drone_arrive_flag,})
 	end
 end
 

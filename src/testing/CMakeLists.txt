@@ -26,6 +26,7 @@ add_subdirectory(exp_05_switch_line)
 #add_subdirectory(exp_06_switch_curve)
 add_subdirectory(exp_07_switch_grab)
 add_subdirectory(exp_08_split)
+add_subdirectory(exp_09_scalability)
 
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)

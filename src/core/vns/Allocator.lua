@@ -123,6 +123,12 @@ function Allocator.sendStationary(vns)
 	end
 end
 
+function Allocator.sendAllocate(vns)
+	for idS, robotR in pairs(vns.childrenRT) do
+		vns.Msg.send(idS, "allocator_allocate")
+	end
+end
+
 function Allocator.sendKeep(vns)
 	for idS, robotR in pairs(vns.childrenRT) do
 		vns.Msg.send(idS, "allocator_keep")
@@ -142,35 +148,40 @@ function Allocator.step(vns)
 		vns.allocator.parentGoal.orientationQ = vns.parentR.orientationQ * msgM.dataT.orientationQ 
 	end end
 
-	-- stationary mode
+	-- receive mode switch command
 	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "allocator_stationary")) do
-		vns.goal.positionV3 = vector3()
-		vns.goal.orientationQ = quaternion()
-		Allocator.sendStationary(vns)
-		return 
+		vns.allocator.mode_switch = "stationary"
 	end end
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "allocator_keep")) do
+		vns.allocator.mode_switch = "keep"
+	end end
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "allocator_allocate")) do
+		vns.allocator.mode_switch = "allocate"
+	end end
+
+	-- stationary mode
 	if vns.allocator.mode_switch == "stationary" then
 		-- vns.goal.positionV3 and orientationQ remain nil
-		vns.goal.positionV3 = vector3()
-		vns.goal.orientationQ = quaternion()
+		if vns.stabilizer.stationary_referencing ~= true then
+			vns.goal.positionV3 = vector3()
+			vns.goal.orientationQ = quaternion()
+		end
 		Allocator.sendStationary(vns)
 		return 
 	end
 
 	-- keep mode
-	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "allocator_keep")) do
-		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3 +
-			vector3(vns.allocator.target.positionV3):rotate(vns.allocator.parentGoal.orientationQ)
-		vns.goal.orientationQ = vns.allocator.parentGoal.orientationQ * vns.allocator.target.orientationQ
-		Allocator.sendKeep(vns)
-		return 
-	end end
 	if vns.allocator.mode_switch == "keep" then
 		vns.goal.positionV3 = vns.allocator.parentGoal.positionV3 +
 			vector3(vns.allocator.target.positionV3):rotate(vns.allocator.parentGoal.orientationQ)
 		vns.goal.orientationQ = vns.allocator.parentGoal.orientationQ * vns.allocator.target.orientationQ
 		Allocator.sendKeep(vns)
 		return 
+	end
+
+	-- allocate mode
+	if vns.allocator.mode_switch == "allocate" then
+		Allocator.sendAllocate(vns)
 	end
 
 	-- if I just handovered a child to parent, then I will receive an outdated allocate command, ignore this cmd
@@ -180,8 +191,7 @@ function Allocator.step(vns)
 		end
 	end
 
-	-- allocate mode
-		-- update my target based on parent's cmd
+	-- update my target based on parent's cmd
 	local flag
 	local second_level
 	local self_align
@@ -390,6 +400,55 @@ function Allocator.step(vns)
 	end
 	-- end Stabilizer hack ------------------------------------------------------
 
+	-- hack branch position to save far away drone
+	local goalPositionV2 = vns.goal.positionV3
+	goalPositionV2.z = 0
+	if vns.robotTypeS == "drone" and
+	   --goalPositionV2:length() > 0.5 then
+	   vns.driver.drone_arrive == false then
+		local neighbours = {}
+		if vns.parentR ~= nil and vns.parentR.robotTypeS == "drone" then
+			neighbours[#neighbours + 1] = vns.parentR
+			vns.parentR.parent = true
+		end
+		---[[
+		for idS, robotR in pairs(vns.childrenRT) do
+			if robotR.robotTypeS == "drone" then
+				neighbours[#neighbours + 1] = robotR
+			end
+		end
+		--]]
+		--for idS, robotR in pairs(vns.childrenRT) do
+		for idS, robotR in ipairs(neighbours) do
+			--local disV2 = vector3(robotR.positionV3)
+			--disV2.z = 0
+			--if robotR.robotTypeS == "drone" and
+			--   disV2:length() > vns.Parameters.safezone_drone_drone then
+			--if robotR.robotTypeS == "drone" then
+				-- this drone needs a pipuck in the middle
+				-- get the nearest pipuck
+				local dis = math.huge
+				local nearestBranch = nil
+				for _, branch in ipairs(branches) do
+					if branch.robotTypeS == "pipuck" and
+					   branch.reference ~= true and
+					   (branch.positionV3 - robotR.positionV3):length() < dis and
+					   branch.drone_bridge_hack == nil then
+						dis = (branch.positionV3 - robotR.positionV3):length()
+						nearestBranch = branch
+					end
+				end
+				if nearestBranch ~= nil then
+					nearestBranch.positionV3 = robotR.positionV3 * 0.5
+					local offset = vector3(robotR.positionV3):normalize():rotate(quaternion(math.pi/2, vector3(0,0,1)))
+					               * vns.Parameters.dangerzone_pipuck
+					nearestBranch.positionV3 = nearestBranch.positionV3 + offset
+					nearestBranch.drone_bridge_hack = true
+				end
+			--end
+		end
+	end
+
 	Allocator.allocate(vns, branches)
 
 	-- Stabilizer hack ------------------------------------------------------
@@ -409,6 +468,15 @@ function Allocator.step(vns)
 	if vns.stabilizer.referencing_me == true then
 		vns.goal.positionV3 = vector3()
 		vns.goal.orientationQ = quaternion()
+		if vns.stabilizer.referencing_me_goal_overwrite ~= nil then
+			if vns.stabilizer.referencing_me_goal_overwrite.positionV3 ~= nil then
+				vns.goal.positionV3 = vns.stabilizer.referencing_me_goal_overwrite.positionV3
+			end
+			if vns.stabilizer.referencing_me_goal_overwrite.orientationQ ~= nil then
+				vns.goal.orientationQ = vns.stabilizer.referencing_me_goal_overwrite.orientationQ
+			end
+			vns.stabilizer.referencing_me_goal_overwrite = nil
+		end
 	end
 	-- end Stabilizer hack ------------------------------------------------------
 

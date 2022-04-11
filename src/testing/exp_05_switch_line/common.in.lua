@@ -13,6 +13,8 @@ local api = require(myType .. "API")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
+logger.disable("Stabilizer")
+logger.disable("droneAPI")
 
 -- datas ----------------
 local bt
