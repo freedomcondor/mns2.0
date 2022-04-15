@@ -5,7 +5,7 @@ local node =
 	positionV3 = position,
 	orientationQ = orientationQ,
 	children = {
-	--[[
+	---[[
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(0, 0, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
@@ -19,7 +19,7 @@ local node =
 		positionV3 = vector3(-pipuckDis/2, pipuckDis/2 * math.sqrt(3), -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
-	--[[
+	---[[
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(-pipuckDis/2, -pipuckDis/2 * math.sqrt(3), -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
@@ -42,7 +42,8 @@ table.insert(node.children,
 		quaternion()
 	)
 )
-elseif left_or_right ~= "left" then
+end
+if left_or_right ~= "left" then
 table.insert(node.children,
 	create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
 		vector3(-droneDis/2, -droneDis/2*math.sqrt(3), 0),
@@ -119,12 +120,12 @@ return
 	positionV3 = vector3(),
 	orientationQ = quaternion(),
 	children = {
+	---[[
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(pipuckDis/2*math.sqrt(3), pipuckDis/2, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 		reference = true,
 	},
-	--[[
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(-pipuckDis/2*math.sqrt(3), pipuckDis/2, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
@@ -134,12 +135,10 @@ return
 		positionV3 = vector3(pipuckDis/2*math.sqrt(3), -pipuckDis/2, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
-	--[[
 	{	robotTypeS = "pipuck",
 		positionV3 = vector3(-pipuckDis/2*math.sqrt(3), -pipuckDis/2, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
-	--]]
 	create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
 		vector3(droneDis/2*math.sqrt(3), droneDis/2, 0),
 		quaternion(-math.pi/2, vector3(0,0,1))
@@ -160,11 +159,13 @@ return
 		quaternion(math.pi/2, vector3(0,0,1))
 	),
 	--]]
+	---[[
 	create_3drone_12pipuck_children_chain(scale, droneDis, pipuckDis, height, 
 		vector3(0, droneDis, 0), 
 		quaternion(-math.pi/2, vector3(0,0,1)),
 		"left"
 	),
+	--]]
 	create_3drone_12pipuck_children_chain(scale, droneDis, pipuckDis, height, 
 		vector3(0, -droneDis, 0), 
 		quaternion(math.pi/2, vector3(0,0,1)),
@@ -173,29 +174,45 @@ return
 }}
 end
 
-function create_back_line_morphology(scale, droneDis, pipuckDis, height)
-return 
+function create_left_right_line_morphology_debug(scale, droneDis, pipuckDis, height)
+local node = 
 {	robotTypeS = "drone",
 	positionV3 = vector3(),
 	orientationQ = quaternion(),
 	children = {
 	{	robotTypeS = "pipuck",
-		positionV3 = vector3(-pipuckDis, -pipuckDis, -height),
-		orientationQ = quaternion(0, vector3(0,0,1)),
-	},
-	{	robotTypeS = "pipuck",
-		positionV3 = vector3(-pipuckDis, pipuckDis, -height),
-		orientationQ = quaternion(0, vector3(0,0,1)),
-	},
-	{	robotTypeS = "pipuck",
-		positionV3 = vector3(pipuckDis, pipuckDis, -height),
+		positionV3 = vector3(pipuckDis/2*math.sqrt(3), pipuckDis/2, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 		reference = true,
 	},
 	{	robotTypeS = "pipuck",
-		positionV3 = vector3(pipuckDis, -pipuckDis, -height),
+		positionV3 = vector3(pipuckDis/2*math.sqrt(3), -pipuckDis/2, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
-	create_children_node(scale * 2, 0, droneDis, pipuckDis, height),
+	create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
+		vector3(droneDis/2*math.sqrt(3), -droneDis/2, 0),
+		quaternion(math.pi/2, vector3(0,0,1)),
+		true
+	),
 }}
+table.insert(node.children[3].children, 
+	create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
+		vector3(-droneDis, 0, 0),
+		quaternion(),
+		true
+	)
+)
+
+return node
+end
+
+function create_back_line_morphology(scale, droneDis, pipuckDis, height)
+	local node = create_3drone_12pipuck_children_node(droneDis, pipuckDis, height, vector3(), quaternion())
+	table.insert(node.children,
+		create_3drone_12pipuck_children_chain(scale, droneDis, pipuckDis, height, 
+			vector3(-droneDis, 0, 0), 
+			quaternion()
+		)
+	)
+	return node
 end

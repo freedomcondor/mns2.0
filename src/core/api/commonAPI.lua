@@ -10,7 +10,8 @@ api.parameters.droneDefaultHeight = tonumber(robot.params.drone_default_height o
 api.parameters.droneDefaultStartHeight = tonumber(robot.params.drone_default_start_height or 1.2)
 
 api.parameters.pipuckWheelSpeedLimit = tonumber(robot.params.pipuck_wheel_speed_limit or 0.1)
-api.parameters.pipuckRotationScalar = tonumber(robot.params.pipuck_rotation_scalar or 0.10)
+--api.parameters.pipuckRotationScalar = tonumber(robot.params.pipuck_rotation_scalar or 0.05)
+api.parameters.pipuckRotationScalar = tonumber(robot.params.pipuck_rotation_scalar or 0.3)
 
 api.parameters.obstacle_match_distance = tonumber(robot.params.obstacle_match_distance or 0.10)
 api.parameters.obstacle_unseen_count = tonumber(robot.params.obstacle_unseen_count or 3)

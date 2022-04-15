@@ -67,9 +67,10 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
               pipuck_wheel_speed_limit="0.2"
-              pipuck_rotation_scalar="0.03"
               safezone_drone_pipuck="1.0"
+              obstacle_match_distance="0.05"
         ''')],
+              #pipuck_rotation_scalar="0.03"
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="drone"
@@ -77,6 +78,8 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_brain="drone1"
               drone_default_height="1.8"
               safezone_drone_pipuck="1.0"
+              obstacle_match_distance="0.08"
+              drone_tag_detection_rate="1"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
 	]

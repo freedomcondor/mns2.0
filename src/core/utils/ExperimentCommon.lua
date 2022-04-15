@@ -15,7 +15,22 @@ ExperimentCommon.detectWall = function(vns, wall_brick_type)
 	return nearest
 end
 
-ExperimentCommon.detectAndReportGates = function(vns, gate_brick_type, max_gate_size)
+ExperimentCommon.detectWallFromReceives = function(vns, wall_brick_type)
+	--return the nearest wall brick from vns.avoider.obstacles
+	local nearest = nil
+	local dis = math.huge
+	for i, ob in ipairs(vns.collectivesensor.receiveList) do
+		if ob.type == wall_brick_type and
+		   ob.positionV3:length() < dis then
+			dis = ob.positionV3:length()
+			nearest = ob
+		end
+	end
+	
+	return nearest
+end
+
+ExperimentCommon.detectAndReportGates = function(vns, gate_brick_type, max_gate_size, report_all)
 	if vns.robotTypeS ~= "drone" then return {}, nil end
 
 	-- add vns.avoider.obstacles and vns.collectivesensor.receiveList together
@@ -66,6 +81,11 @@ ExperimentCommon.detectAndReportGates = function(vns, gate_brick_type, max_gate_
 			ob.gateDetection.gateV3 = ob.gateDetection.gateV3:normalize() * dis
 			pair.gateDetection.gateV3 = pair.gateDetection.gateV3:normalize() * dis
 			pair.gateDetection.paired = true
+
+			-- if report_all flag is set, report this gate brick anyway
+			if report_all == true then
+				vns.CollectiveSensor.addToSendList(vns, ob)
+			end
 		else
 			-- unpaired wall side, I report it
 			vns.CollectiveSensor.addToSendList(vns, ob)
@@ -116,7 +136,7 @@ ExperimentCommon.detectAndReportGates = function(vns, gate_brick_type, max_gate_
 		end
 	end
 	if vns.parentR ~= nil then
-		vns.msgM.send(vns.parentR.idS, "gateReport", {gateNumber = gateNumber})
+		vns.Msg.send(vns.parentR.idS, "gateReport", {gateNumber = gateNumber})
 	end
 
 	return gates, largest, gateNumber

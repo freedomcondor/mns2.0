@@ -74,6 +74,11 @@ function api.pipuckSetWheelSpeed(x, y)
 
 	local virtual_frame_scalar = 0.0535
 	local th = (y - x) / virtual_frame_scalar
+	if th > math.pi / 4 then
+		th = math.pi / 4
+	elseif th < -math.pi / 4 then
+		th = -math.pi / 4
+	end
 	api.virtualFrame.rotateInSpeed(vector3(0,0,1) * (-th))
 end
 
@@ -81,17 +86,21 @@ function api.pipuckSetRotationSpeed(x, th)
 	-- x, in m/s, x front,
 	-- th in rad/s, counter-clockwise positive
 	local scalar = api.parameters.pipuckRotationScalar
-	local aug = scalar * th
+	local aug = scalar * th * x
 	api.pipuckSetWheelSpeed(x - aug, x + aug)
 end
 
 function api.pipuckSetSpeed(x, y)
 	local th = math.atan(y/x)
-	if x == 0 and y == 0 then th = 0 end
 	--local limit = math.pi / 3 * 2
 	--if th > limit then th = limit
 	--elseif th < -limit then th = -limit end
-	api.pipuckSetRotationSpeed(x, th)
+	--api.pipuckSetRotationSpeed(x, th)
+	
+	local scalar = api.parameters.pipuckRotationScalar
+	y = y * scalar
+
+	api.pipuckSetWheelSpeed(x - y, x + y)
 end
 
 api.setSpeed = api.pipuckSetSpeed

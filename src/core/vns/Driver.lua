@@ -208,24 +208,18 @@ function Driver.step(vns, waiting)
 					vns.api.virtualFrame.V3_VtoR(robotR.positionV3)
 				)
 			end
-
-	if robot.id == "pipuck16" then
-		local color = "255,0,0,0"
-		vns.api.debug.drawArrow(color,
-								vector3(0,0,1.3),
-								vns.api.virtualFrame.V3_VtoR(speedV3) * 3 + vector3(0,0,1.3)
-							   )
-		local color = "255,0,128,0"
-		vns.api.debug.drawArrow(color,
-								vector3(0,0,1.3),
-								vns.api.virtualFrame.V3_VtoR(transV3) * 3 + vector3(0,0,1.3)
-							   )
-	end
-
 		end
 	end
 
 	Driver.move(transV3, rotateV3)
+
+	if robot.id == "pipuck6" then
+		local color = "0,0,0,0"
+		vns.api.debug.drawArrow(color,
+		                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0.1)),
+		                        vns.api.virtualFrame.V3_VtoR(transV3 * 10 + vector3(0,0,0.1))
+		                       )
+	end
 
 	-- send drive to children
 	for _, childR in pairs(vns.childrenRT) do
