@@ -8,3 +8,11 @@ configure_file( morphologiesGenerator.in.lua
                 morphologiesGenerator.lua)
                 
 add_subdirectory(scripts)
+
+configure_file( run_debug_choose_gate.in.py        run_debug_choose_gate.py)
+configure_file( morphologiesGenerator_choose_gate.in.lua 
+                morphologiesGenerator_choose_gate.lua)
+
+configure_file( run_debug_forward_again.in.py        run_debug_forward_again.py)
+configure_file( morphologiesGenerator_forward_again.in.lua 
+                morphologiesGenerator_forward_again.lua)

@@ -29,6 +29,12 @@ function Allocator.create(vns)
 			orientationQ = quaternion(),
 		},
 		mode_switch = "allocate",
+		goal_overwrite = nil,
+		-- goal overwrite is a hack to let after_core nodes change goal regardless of the parent's command
+		-- it will take effective before children allocation, and then set back to nil in step after overwrite goal
+		--	{
+		--		positionV3.x/y/z, orientationQ               target to change
+		--	}
 	}
 end
 
@@ -45,6 +51,7 @@ function Allocator.reset(vns)
 			orientationQ = quaternion(),
 		},
 		mode_switch = "allocate",
+		goal_overwrite = nil,
 	}
 end
 
@@ -249,6 +256,50 @@ function Allocator.step(vns)
 
 		Allocator.multi_branch_allocate(vns, msgM.dataT.branches)
 	end end end
+
+	-- I should have a target (either updated or not), 
+	-- a goal for this step
+	-- a group of children with match = nil
+
+	-- check vns.allocator.goal_overwrite
+	if vns.allocator.goal_overwrite ~= nil then
+		local newPositionV3 = vns.goal.positionV3
+		local newOrientationQ = vns.goal.orientationQ
+		if vns.allocator.goal_overwrite.positionV3.x ~= nil then
+			newPositionV3.x = vns.allocator.goal_overwrite.positionV3.x
+		end
+		if vns.allocator.goal_overwrite.positionV3.y ~= nil then
+			logger(robot.id, "positionV3.y", vns.allocator.goal_overwrite.positionV3.y)
+			newPositionV3.y = vns.allocator.goal_overwrite.positionV3.y
+		end
+		if vns.allocator.goal_overwrite.positionV3.z ~= nil then
+			newPositionV3.z = vns.allocator.goal_overwrite.positionV3.z
+		end
+		if vns.allocator.goal_overwrite.orientationQ ~= nil then
+			newOrientationQ = vns.allocator.goal_overwrite.orientationQ
+		end
+		vns.setGoal(vns, newPositionV3, newOrientationQ)
+		vns.allocator.goal_overwrite = nil
+	end
+
+	--if I'm brain, if no stabilizer than stay still
+	--[[
+	if vns.parentR == nil and
+	   vns.stabilizer ~= nil and
+	   vns.stabilizer.allocator_signal == nil and
+	   vns.allocator.keepBrainGoal == nil then
+		vns.goal.positionV3 = vector3()
+		vns.goal.orientationQ = quaternion()
+	end
+	--]]
+	--[[
+	if vns.parentR == nil and vns.allocator.keepBrainGoal == nil then
+		vns.goal.positionV3 = vector3()
+		vns.goal.orientationQ = quaternion()
+	end
+	--]]
+
+	-- tell my children my goal
 	if flag ~= true and vns.parentR ~= nil then
 		local color = "yellow"
 		vns.lastcolor = color
@@ -272,26 +323,6 @@ function Allocator.step(vns)
 		end
 		return
 	end
-	--if I'm brain, if no stabilizer than stay still
-	--[[
-	if vns.parentR == nil and
-	   vns.stabilizer ~= nil and
-	   vns.stabilizer.allocator_signal == nil and
-	   vns.allocator.keepBrainGoal == nil then
-		vns.goal.positionV3 = vector3()
-		vns.goal.orientationQ = quaternion()
-	end
-	--]]
-	--[[
-	if vns.parentR == nil and vns.allocator.keepBrainGoal == nil then
-		vns.goal.positionV3 = vector3()
-		vns.goal.orientationQ = quaternion()
-	end
-	--]]
-
-	-- I should have a target (either updated or not), 
-	-- a goal for this step
-	-- a group of children with match = nil
 
 	-- if my target is -1, I'm in the process of handing up to grandparent, stop children assign
 	-- TODO: what if I'm already in the brain and I have more children 
@@ -464,7 +495,7 @@ function Allocator.step(vns)
 	-- end Stabilizer hack ------------------------------------------------------
 
 	-- Stabilizer hack ------------------------------------------------------
-	-- stop moving is I'm referenced
+	-- stop moving is I'm referenced  TODO: combine with goal_overwrite
 	if vns.stabilizer.referencing_me == true then
 		vns.goal.positionV3 = vector3()
 		vns.goal.orientationQ = quaternion()

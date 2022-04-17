@@ -107,6 +107,7 @@ function Avoider.step(vns)
 	vns.goal.rotateV3 = vns.goal.rotateV3 + avoid_speed.orientationV3
 
 
+	--[[
 	if robot.id == "pipuck6" then
 		local color = "255,0,0,0"
 		vns.api.debug.drawArrow(color,
@@ -114,6 +115,7 @@ function Avoider.step(vns)
 		                        vns.api.virtualFrame.V3_VtoR(vns.goal.transV3 * 10 + vector3(0,0,0.1))
 		                       )
 	end
+	--]]
 end
 
 function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)

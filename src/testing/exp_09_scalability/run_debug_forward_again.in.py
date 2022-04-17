@@ -5,16 +5,11 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 import math
 
-#exp_scale = 4
-exp_scale = 4
-#n_drone = exp_scale * 2 + 1
-#n_pipuck = n_drone * 4 + 0
+exp_scale = 2
 
-#n_drone = exp_scale * 4 + 1
-n_drone = exp_scale * 2 + 1
-#n_pipuck = n_drone * 4
-n_pipuck = n_drone * 4
-#arena_size = exp_scale * 5 + 8 + (n_drone)/math.pi
+n_drone = exp_scale * 2 * 3 + 1
+n_pipuck = n_drone * 2
+
 arena_size = exp_scale * 10 + 8 + (n_drone)/math.pi
 
 '''
@@ -49,55 +44,38 @@ for i in range(1, exp_scale + 1):
     pipuck_locations.append([x - 0.5, 1.5 * i+0.5])
     pipuck_locations.append([x - 0.5, -1.5 *i-0.5])
 '''
-x = -4
-drone_locations = []
-pipuck_locations = []
-drone_locations.append([x, 0])
-pipuck_locations.append([x - 0.5, +0.5])
-pipuck_locations.append([x + 0.5, +0.5])
-pipuck_locations.append([x - 0.5, -0.5])
-pipuck_locations.append([x + 0.5, -0.5])
-
-for i in range(1, exp_scale + 1):
-    drone_locations.append([x, 1.5 * i])
-    drone_locations.append([x, -1.5 * i])
-    pipuck_locations.append([x + 0.5, 1.5 * i+0.5])
-    pipuck_locations.append([x + 0.5, -1.5 *i-0.5])
-    pipuck_locations.append([x - 0.5, 1.5 * i+0.5])
-    pipuck_locations.append([x - 0.5, -1.5 *i-0.5])
-
-    pipuck_locations.append([x + 0.5, 1.5 * i+1.0])
-    pipuck_locations.append([x + 0.5, -1.5 *i-1.0])
-    pipuck_locations.append([x - 0.5, 1.5 * i+1.0])
-    pipuck_locations.append([x - 0.5, -1.5 *i-1.0])
-
-    drone_locations.append([x + 1.0, 1.5 * i])
-    drone_locations.append([x + 1.0, -1.5 * i + 1.5])
-    pipuck_locations.append([x + 0.7 + 0.5, 1.5 * i+0.5])
-    pipuck_locations.append([x + 0.7 + 0.5, -1.5 *i-0.5 + 1.5])
-    pipuck_locations.append([x + 0.7 - 0.5, 1.5 * i+0.5])
-    pipuck_locations.append([x + 0.7 - 0.5, -1.5 *i-0.5 + 1.5])
-
-    pipuck_locations.append([x + 0.7 + 0.5, 1.5 * i+1.0])
-    pipuck_locations.append([x + 0.7 + 0.5, -1.5 *i-1.0 + 1.5])
-    pipuck_locations.append([x + 0.7 - 0.5, 1.5 * i+1.0])
-    pipuck_locations.append([x + 0.7 - 0.5, -1.5 *i-1.0 + 1.5])
-
-
-drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
-pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 # wall
-wall_xml, largest_loc = generate_wall(2,                        # number of gates
+wall_xml, largest_loc = generate_wall(1,                        # number of gates
                                       0,                        # x location of the wall
                                       -exp_scale*1.5-2, 
                                       exp_scale*1.5+2,          # y range of the wall
-                                      #0,
-                                      #-exp_scale*3.0-2, 
-                                      #2,          # y range of the wall
                                       1.5, 4.0,                 # size range of the gate
                                       0.25,                     # block distance to fill the wall
                                       253, 254)                 # gate_brick_type, and wall_brick_type
+
+x = 0 
+drone_locations = []
+pipuck_locations = []
+drone_locations.append([x, largest_loc])
+pipuck_locations.append([x + 0.5, largest_loc+0.5])
+pipuck_locations.append([x - 0.5, largest_loc+0.5])
+
+for i in range(1, exp_scale * 2 + 1):
+    drone_locations.append([x - 1.5 * i,        largest_loc])
+    pipuck_locations.append([x - 1.5 * i + 0.5, largest_loc + 0.5])
+    pipuck_locations.append([x - 1.5 * i - 0.5, largest_loc - 0.5])
+
+    drone_locations.append([x - 1.5 * i + 1.5,         largest_loc + 1.5])
+    pipuck_locations.append([x - 1.5 * i + 1.5, largest_loc + 1.5 + 0.3])
+    pipuck_locations.append([x - 1.5 * i + 0.5, largest_loc + 1.5 - 0.5])
+
+    drone_locations.append([x - 1.5 * i + 1.5,         largest_loc - 1.5])
+    pipuck_locations.append([x - 1.5 * i + 1.5, largest_loc - 1.5 + 0.5])
+    pipuck_locations.append([x - 1.5 * i + 0.5, largest_loc - 1.5 - 0.5])
+
+drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
+pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 # obstacles
 '''
@@ -110,7 +88,7 @@ obstacle_xml = generate_obstacles(obstacle_locations, 100, 255) # start id and p
 '''
 
 # target
-target_xml = generate_target_xml(3.5, largest_loc, 0,           # x, y, th
+target_xml = generate_target_xml(5.5, largest_loc, 0,           # x, y, th
                                  252,                           # payload
                                  0.3, 0.3)                      # radius and edge
 
@@ -127,7 +105,8 @@ params = '''
               drone_default_start_height="1.8"
               dangerzone_drone="1.3"
               obstacle_unseen_count="0"
-              morphologiesGenerator="morphologiesGenerator"
+              morphologiesGenerator="morphologiesGenerator_forward_again"
+              start_state="break_and_recruit"
 '''.format(exp_scale, n_drone)
 
 # generate argos file

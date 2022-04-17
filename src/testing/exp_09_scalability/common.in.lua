@@ -7,10 +7,12 @@ package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 
 -- get scalability scale
 local expScale = tonumber(robot.params.exp_scale or 0)
+local n_drone = tonumber(robot.params.n_drone or 1)
+local morphologiesGenerator = robot.params.morphologiesGenerator
 
 pairs = require("AlphaPairs")
 ExperimentCommon = require("ExperimentCommon")
-require("morphologiesGenerator")
+require(morphologiesGenerator)
 local Transform = require("Transform")
 
 -- includes -------------
@@ -33,8 +35,7 @@ local pipuckDis = 0.7
 local height = api.parameters.droneDefaultHeight
 local structure1 = create_left_right_line_morphology(expScale, droneDis, pipuckDis, height)
 --local structure1 = create_3drone_12pipuck_children_chain(1, droneDis, pipuckDis, height, vector3(), quaternion())
---local structure2 = create_back_line_morphology(expScale * 2, droneDis, pipuckDis, height, vector3(), quaternion())
-local structure2 = create_back_line_morphology(6, droneDis, pipuckDis, height, vector3(), quaternion())
+local structure2 = create_back_line_morphology(expScale * 2, droneDis, pipuckDis, height, vector3(), quaternion())
 --local structure2 = create_back_line_morphology(expScale, droneDis, pipuckDis, height)
 local structure3 = create_left_right_line_morphology(expScale, droneDis, pipuckDis, height)
 local gene = {
@@ -114,7 +115,7 @@ end
 
 -- Strategy -----------------------------------------------
 function create_reaction_node(vns)
-	local state = "waiting"
+	local state = robot.params.start_state or "waiting"
 	--local state = "allocate_test"
 	local stateCount = 0
 
@@ -229,8 +230,7 @@ function create_reaction_node(vns)
 		elseif state == "break_and_recruit" then
 			stateCount = stateCount + 1
 
-			if vns.parentR == nil and vns.scalemanager.scale["drone"] == expScale * 4 + 1 and stateCount >= expScale * 3 then
-			--if vns.parentR == nil and vns.scalemanager.scale["drone"] == expScale * 2 + 1 and stateCount >= expScale * 3 then
+			if vns.parentR == nil and vns.scalemanager.scale["drone"] == n_drone and stateCount >= expScale * 3 then
 				logger(robot.id, "I got everyone, switch to structure2")
 				switchAndSendNewState(vns, "switch_to_structure2")
 				vns.setMorphology(vns, structure2)
@@ -331,7 +331,7 @@ function create_reaction_node(vns)
 
 			-- everyone reports wall and gates
 			ExperimentCommon.reportWall(vns, wall_brick_type)
-			local _, _, gateNumber = ExperimentCommon.detectAndReportGates(vns, gate_brick_type, max_gate_length)
+			local _, gate, gateNumber = ExperimentCommon.detectAndReportGates(vns, gate_brick_type, max_gate_length)
 			--logger(robot.id, "gateNumber = ", gateNumber)
 
 			-- referencing pipuck gives the moving forward command
@@ -363,7 +363,43 @@ function create_reaction_node(vns)
 					)
 
 					-- brain checks target 
-					-- TODO
+					local target = ExperimentCommon.detectTarget(vns, target_type)
+					if target ~= nil then
+						local disV2 = target.positionV3
+						disV2.z = 0
+						logger("disV2 = ", disV2:length())
+						if disV2:length() < 1.5 then
+							vns.target = target
+							vns.stabilizer.force_pipuck_reference = nil
+							switchAndSendNewState(vns, "structure3")
+							logger(robot.id, "structure3")
+							vns.setMorphology(vns, structure3)
+						end
+					end
+				end
+			end
+
+			-- other drones that is not the brain checks the gate and try to stay middle of the gate
+			if vns.robotTypeS == "drone" and vns.parentR ~= nil then
+				if gate ~= nil then
+					if vns.allocator.goal_overwrite == nil then
+						vns.allocator.goal_overwrite = {
+							positionV3 = {
+								y = gate.positionV3.y
+							}
+						}
+					end
+				end
+			end
+
+		elseif state == "structure3" then
+			if vns.parentR == nil then
+				local target = ExperimentCommon.detectTarget(vns, target_type)
+				if target ~= nil then
+					vns.target = target
+					vns.setGoal(vns, target.positionV3, target.orientationQ)
+				else
+					-- TODO: move towards remembered target
 				end
 			end
 		end
