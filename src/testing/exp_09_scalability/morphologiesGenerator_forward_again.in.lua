@@ -53,6 +53,29 @@ local function create_3drone_12pipuck_children_node(droneDis, pipuckDis, height,
 	return node
 end
 
+local function create_3drone_12pipuck_children_back_line_node(droneDis, pipuckDis, height, position, orientationQ)
+	local node = create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, position, orientationQ)
+	local second_node = 
+		create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
+			vector3(-droneDis, 0, 0),
+			quaternion()
+		)
+
+		--[[
+		table.insert(second_node.children,
+			create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
+				vector3(-droneDis, 0, 0),
+				quaternion()
+			)
+		)
+		--]]
+
+	table.insert(node.children,
+		second_node
+	)
+	return node
+end
+
 function create_3drone_12pipuck_children_chain(n, droneDis, pipuckDis, height, position, orientationQ, left_or_right)
 	if n == 0 then return nil end
 	if n == 1 then 
@@ -65,6 +88,40 @@ function create_3drone_12pipuck_children_chain(n, droneDis, pipuckDis, height, p
 			vector3(-droneDis, 0, 0),
 			quaternion(),
 			left_or_right
+		)
+	)
+	return node
+end
+
+function create_3drone_12pipuck_children_back_line_chain(n, droneDis, pipuckDis, height, position, orientationQ)
+	if n == 0 then return nil end
+	local node = create_3drone_12pipuck_children_back_line_node(droneDis, pipuckDis, height, position, orientationQ)
+	table.insert(node.children,
+		create_3drone_12pipuck_children_back_line_chain(n-1, droneDis, pipuckDis, height, 
+			position, orientationQ
+		)
+	)
+	return node
+end
+
+function create_left_right_back_line_morphology(scale, droneDis, pipuckDis, height)
+	local n = scale * 2 + 2
+	local alpha = math.pi * 2 / n
+	local th = (math.pi - alpha) / 2
+	local x = droneDis * math.cos(th)
+	local y = droneDis * math.sin(th)
+
+	local node = create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, position, orientationQ)
+	table.insert(node.children,
+		create_3drone_12pipuck_children_back_line_chain(scale, droneDis, pipuckDis, height, 
+			vector3(x, -y, 0),
+			quaternion(alpha, vector3(0,0,1))
+		)
+	)
+	table.insert(node.children,
+		create_3drone_12pipuck_children_back_line_chain(scale, droneDis, pipuckDis, height, 
+			vector3(x, y, 0),
+			quaternion(-alpha, vector3(0,0,1))
 		)
 	)
 	return node

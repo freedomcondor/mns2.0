@@ -16,3 +16,5 @@ configure_file( morphologiesGenerator_choose_gate.in.lua
 configure_file( run_debug_forward_again.in.py        run_debug_forward_again.py)
 configure_file( morphologiesGenerator_forward_again.in.lua 
                 morphologiesGenerator_forward_again.lua)
+
+configure_file( run_debug_structure3.in.py        run_debug_structure3.py)

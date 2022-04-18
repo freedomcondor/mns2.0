@@ -9,6 +9,7 @@ package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 local expScale = tonumber(robot.params.exp_scale or 0)
 local n_drone = tonumber(robot.params.n_drone or 1)
 local morphologiesGenerator = robot.params.morphologiesGenerator
+local totalGateNumber = tonumber(robot.params.gate_number or 1)
 
 pairs = require("AlphaPairs")
 ExperimentCommon = require("ExperimentCommon")
@@ -37,7 +38,7 @@ local structure1 = create_left_right_line_morphology(expScale, droneDis, pipuckD
 --local structure1 = create_3drone_12pipuck_children_chain(1, droneDis, pipuckDis, height, vector3(), quaternion())
 local structure2 = create_back_line_morphology(expScale * 2, droneDis, pipuckDis, height, vector3(), quaternion())
 --local structure2 = create_back_line_morphology(expScale, droneDis, pipuckDis, height)
-local structure3 = create_left_right_line_morphology(expScale, droneDis, pipuckDis, height)
+local structure3 = create_left_right_back_line_morphology(expScale, droneDis, pipuckDis, height)
 local gene = {
 	robotTypeS = "drone",
 	positionV3 = vector3(),
@@ -200,7 +201,7 @@ function create_reaction_node(vns)
 					-- brain checks gate and go to next state
 					local disToTheWall = receiveWall.positionV3:dot(vector3(1,0,0):rotate(receiveWall.orientationQ))
 					logger("disToTheWall = ", disToTheWall)
-					if gateNumber == 2 and disToTheWall < 2 then
+					if gateNumber == totalGateNumber and disToTheWall < 2 then
 						switchAndSendNewState(vns, "check_gate")
 						logger(robot.id, "check_gate")
 					end
@@ -395,11 +396,15 @@ function create_reaction_node(vns)
 		elseif state == "structure3" then
 			if vns.parentR == nil then
 				local target = ExperimentCommon.detectTarget(vns, target_type)
+				-- update vns.target
 				if target ~= nil then
 					vns.target = target
-					vns.setGoal(vns, target.positionV3, target.orientationQ)
-				else
-					-- TODO: move towards remembered target
+				end
+
+				-- move towards remembered vns.target
+				if vns.target ~= nil then
+					local new_target = Transform.AxBisC(vns.target, {positionV3 = vector3(-1.0,0,0), orientationQ = quaternion()})
+					vns.setGoal(vns, new_target.positionV3, new_target.orientationQ)
 				end
 			end
 		end
