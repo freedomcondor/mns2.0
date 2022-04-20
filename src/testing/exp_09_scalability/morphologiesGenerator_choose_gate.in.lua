@@ -97,10 +97,12 @@ return
 		orientationQ = quaternion(0, vector3(0,0,1)),
 	},
 	--]]
+	--[[
 	create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
 		vector3(droneDis/2*math.sqrt(3), droneDis/2, 0),
 		quaternion(-math.pi/2, vector3(0,0,1))
 	),
+	--]]
 	create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
 		vector3(droneDis/2*math.sqrt(3), -droneDis/2, 0),
 		quaternion(math.pi/2, vector3(0,0,1)),
@@ -117,11 +119,13 @@ return
 		quaternion(math.pi/2, vector3(0,0,1))
 	),
 	--]]
+	--[[
 	create_3drone_12pipuck_children_chain(scale, droneDis, pipuckDis, height, 
 		vector3(0, droneDis, 0), 
 		quaternion(-math.pi/2, vector3(0,0,1)),
 		"left"
 	),
+	--]]
 	create_3drone_12pipuck_children_chain(scale, droneDis, pipuckDis, height, 
 		vector3(0, -droneDis, 0), 
 		quaternion(math.pi/2, vector3(0,0,1)),
@@ -139,4 +143,8 @@ function create_back_line_morphology(scale, droneDis, pipuckDis, height)
 		)
 	)
 	return node
+end
+
+function create_left_right_back_line_morphology(scale, droneDis, pipuckDis, height)
+	return create_left_right_line_morphology(scale, droneDis, pipuckDis, height)
 end

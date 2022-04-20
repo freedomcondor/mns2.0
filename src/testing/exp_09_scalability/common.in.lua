@@ -200,7 +200,7 @@ function create_reaction_node(vns)
 
 					-- brain checks gate and go to next state
 					local disToTheWall = receiveWall.positionV3:dot(vector3(1,0,0):rotate(receiveWall.orientationQ))
-					logger("disToTheWall = ", disToTheWall)
+					logger("disToTheWall = ", disToTheWall, "gateNumber = ", gateNumber)
 					if gateNumber == totalGateNumber and disToTheWall < 2 then
 						switchAndSendNewState(vns, "check_gate")
 						logger(robot.id, "check_gate")
@@ -254,6 +254,10 @@ function create_reaction_node(vns)
 				vns.stabilizer.force_pipuck_reference = true
 				-- send both gate and wall
 				local sendingGate, sendingWall
+				-- if gate is already missing at the start of this state, send vns.gate to make sure reference robot has a direction to move
+				if gate == nil and stateCount < 10 then
+					gate = vns.gate
+				end
 				if gate ~= nil then
 					sendingGate = {
 						positionV3 = vns.api.virtualFrame.V3_VtoR(gate.positionV3),

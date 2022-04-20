@@ -61,7 +61,7 @@ local function create_3drone_12pipuck_children_back_line_node(droneDis, pipuckDi
 			quaternion()
 		)
 
-		--[[
+		---[[
 		table.insert(second_node.children,
 			create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
 				vector3(-droneDis, 0, 0),

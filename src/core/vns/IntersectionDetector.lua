@@ -25,6 +25,10 @@ end
 
 function IntersectionDetector.step(vns)
 	vns.connector.greenLight = nil
+
+	-- stabilizer hack
+	if vns.stabilizer.referencing_me == true then return end
+
 	-- create foreign robot list
 	for idS, robotR in pairs(vns.connector.seenRobots) do
 		if (vns.parentR == nil or vns.parentR.idS ~= idS) and

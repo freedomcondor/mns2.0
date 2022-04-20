@@ -5,7 +5,7 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 import math
 
-exp_scale = 1
+exp_scale = 3
 
 n_drone = exp_scale * 6 + 1
 n_pipuck = n_drone * 4
@@ -19,20 +19,20 @@ drone_locations = generate_random_locations(n_drone,                        # to
                                             1.3, 1.7)                       # near limit and far limit
 pipuck_locations = generate_slave_locations_with_origin(n_pipuck,
                                             drone_locations,
-                                            -exp_scale-2+0.8, 0.4,          # origin
-                                            -exp_scale*2-2, -1,             # random x range
-                                            -exp_scale*2,exp_scale*2,       # random y range
+                                            -exp_scale-3+0.8, 0.4,          # origin
+                                            -exp_scale*3-2, -1,             # random x range
+                                            -exp_scale*3,exp_scale*3,       # random y range
                                             0.5, 1.0)                       # near limit and far limit
 
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 # wall
-gate_number = 1
+gate_number = 2
 wall_xml, largest_loc = generate_wall(gate_number,              # number of gates
                                       0,                        # x location of the wall
-                                      -exp_scale*1.5-2, 
-                                      exp_scale*1.5+2,          # y range of the wall
+                                      -exp_scale*1.5-1, 
+                                      exp_scale*1.5+1,          # y range of the wall
                                       #0,
                                       #-exp_scale*3.0-2, 
                                       #2,          # y range of the wall
@@ -57,9 +57,9 @@ alpha = math.pi * 2 / n
 th = (math.pi - alpha) / 2
 radius = droneDis / 2 / math.cos(th) - 1.0
 
-target_xml = generate_target_xml(1, largest_loc, 0,           # x, y, th
-                                 252,                           # payload
-                                 radius, 0.1)                      # radius and edge
+target_xml = generate_target_xml(exp_scale * 2, largest_loc, 0,      # x, y, th
+                                 252, 255,                           # payload
+                                 radius, 0.1, 0.2)                   # radius and edge and tag distance
 
 params = '''
               exp_scale="{}"
@@ -93,7 +93,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="pipuck"
-              avoid_speed_scalar="0.7"
+              avoid_speed_scalar="1.0"
         ''' + params)],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"

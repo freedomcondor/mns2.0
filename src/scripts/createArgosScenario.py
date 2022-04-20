@@ -299,7 +299,32 @@ def generate_pipuck_xml(i, x, y, th) :
 	'''.format(i, x, y, th)
 	return tag
 
-def generate_target_xml(x, y, th, type, radius, tag_edge_distance):
+########## target ##############################################################
+def generate_target_tag_xml(x, y, payload):
+	tag = '''
+		<tag anchor="base" observable_angle="75" side_length="0.1078" payload="{}"
+		     position="{},{},0.11" orientation="0,0,0" />
+	'''.format(payload, x, y)
+	return tag
+
+def generate_target_tags_xml(r, l, mark_payload, obstacle_payload):
+	tags = generate_target_tag_xml(-r, 0, mark_payload)
+
+	if l > r * 2 :
+		return tags
+
+	th = math.asin(l/2/r) * 2
+	alpha = 0
+	while alpha < math.pi * 2 - th :
+		tags = tags + generate_target_tag_xml(r * math.cos(alpha + math.pi), 
+		                                      r * math.sin(alpha + math.pi),
+		                                      obstacle_payload
+		)
+		alpha = alpha + th
+
+	return tags
+
+def generate_target_xml(x, y, th, mark_type, obstacle_type, radius, tag_edge_distance, tag_distance):
 	tag = '''
 	<prototype id="target" movable="true" friction="2">
 		<body position="{},{},0" orientation="{},0,0" />
@@ -309,12 +334,11 @@ def generate_target_xml(x, y, th, type, radius, tag_edge_distance):
 		</links>
 		<devices>
 			<tags medium="tags">
-				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="{}"
-				     position="{},0.000,0.11" orientation="0,0,0" />
+				{}
 			</tags>
 		</devices>
     </prototype>
-	'''.format(x, y, th, radius, type, tag_edge_distance-radius)
+	'''.format(x, y, th, radius, generate_target_tags_xml(radius-tag_edge_distance, tag_distance, mark_type, obstacle_type))
 	return tag
 
 #######################################################################
