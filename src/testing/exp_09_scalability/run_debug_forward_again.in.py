@@ -88,9 +88,15 @@ obstacle_xml = generate_obstacles(obstacle_locations, 100, 255) # start id and p
 '''
 
 # target
-target_xml = generate_target_xml(5.5, largest_loc, 0,           # x, y, th
-                                 252,                           # payload
-                                 0.3, 0.3)                      # radius and edge
+droneDis = 1.5
+n = exp_scale * 2 + 2
+alpha = math.pi * 2 / n
+th = (math.pi - alpha) / 2
+radius = droneDis / 2 / math.cos(th) - 1.0
+
+target_xml = generate_target_xml(exp_scale * 2, largest_loc, 0,      # x, y, th
+                                 252, 255,                           # payload
+                                 radius, 0.1, 0.2)                   # radius and edge and tag distance
 
 params = '''
               exp_scale="{}"

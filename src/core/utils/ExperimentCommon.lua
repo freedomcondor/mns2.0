@@ -95,8 +95,7 @@ ExperimentCommon.detectAndReportGates = function(vns, gate_brick_type, max_gate_
 
 	-- generate a list of gates
 	local gates = {}
-	local largest = nil
-	local largest_length = 0
+	-- add gates from obstacles
 	--for i, ob in ipairs(vns.avoider.obstacles) do if ob.gateV3 ~= nil and ob.paired == nil then
 	for i, ob in ipairs(totalGateSideList) do if ob.gateDetection.single == nil and ob.gateDetection.paired == nil then
 		local positionV3 = ob.positionV3 + ob.gateDetection.gateV3 * 0.5
@@ -105,17 +104,42 @@ ExperimentCommon.detectAndReportGates = function(vns, gate_brick_type, max_gate_
 			orientationQ = orientationQ * quaternion(math.pi, vector3(0,0,1))
 		end
 		local length = ob.gateDetection.gateV3:length()
-		gates[#gates+1] = {
-			positionV3 = positionV3,
-			orientationQ = orientationQ,
-			length = length,
-		}
 
-		if length > largest_length then
+		-- check if this gate already exists in receiveList
+		local flag = true
+		for i, existingGate in ipairs(vns.collectivesensor.receiveList) do if existingGate.type == "gate" then
+			if (existingGate.positionV3 - positionV3):length() < (existingGate.length + length) / 2 then
+				flag = false
+				break
+			end
+		end end
+		-- check if this gate already exists in gates
+		for i, existingGate in ipairs(gates) do
+			if (existingGate.positionV3 - positionV3):length() < (existingGate.length + length) / 2 then
+				flag = false
+				break
+			end
+		end
+
+		if flag == true then
+			gates[#gates+1] = {
+				positionV3 = positionV3,
+				orientationQ = orientationQ,
+				length = length,
+				type = "gate",
+			}
+		end
+	end end
+
+	-- find the largest gate
+	local largest = nil
+	local largest_length = 0
+	for i, gate in ipairs(gates) do
+		if gate.length > largest_length then
 			largest = gates[#gates]
 			largest_length = length
 		end
-	end end
+	end
 
 	for i, gate in ipairs(gates) do
 		vns.api.debug.drawArrow("red", 
@@ -129,7 +153,16 @@ ExperimentCommon.detectAndReportGates = function(vns, gate_brick_type, max_gate_
 	end
 
 	-- calculate gateNumber
+
+	-- send gate list
 	local gateNumber = #gates
+	for i, gate in ipairs(gates) do
+		vns.CollectiveSensor.addToSendList(vns, gate)
+	end
+	for i, ob in ipairs(vns.collectivesensor.receiveList) do if ob.type == "gate" then
+		vns.CollectiveSensor.addToSendList(vns, ob)
+	end end
+	-- get and report gate number
 	for idS, robotR in pairs(vns.childrenRT) do
 		for _, msgM in ipairs(vns.Msg.getAM(idS, "gateReport")) do
 			gateNumber = gateNumber + msgM.dataT.gateNumber

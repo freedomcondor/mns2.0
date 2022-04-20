@@ -5,9 +5,9 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 import math
 
-exp_scale = 2
+exp_scale = 4
 
-n_drone = exp_scale * 4 + 1
+n_drone = exp_scale * 2 + 2
 n_pipuck = n_drone * 2
 
 arena_size = exp_scale * 10 + 8 + (n_drone)/math.pi
@@ -52,20 +52,20 @@ pipuck_locations.append([x - 0.5, +0.5])
 pipuck_locations.append([x + 0.5, +0.5])
 
 for i in range(1, exp_scale + 1):
-    drone_locations.append([x, 1.5 * i])
+    #drone_locations.append([x, 1.5 * i])
     drone_locations.append([x, -1.5 * i])
-    pipuck_locations.append([x + 0.5, 1.5 * i+0.5])
+    #pipuck_locations.append([x + 0.5, 1.5 * i+0.5])
     pipuck_locations.append([x - 0.5, -1.5 *i-0.5])
 
-    pipuck_locations.append([x + 0.5, 1.5 * i+1.0])
+    #pipuck_locations.append([x + 0.5, 1.5 * i+1.0])
     pipuck_locations.append([x - 0.5, -1.5 *i-1.0])
 
-    drone_locations.append([x + 1.0, 1.5 * i])
+    #drone_locations.append([x + 1.0, 1.5 * i])
     drone_locations.append([x + 1.0, -1.5 * i + 1.5])
-    pipuck_locations.append([x + 0.7 + 0.5, 1.5 * i+0.5])
+    #pipuck_locations.append([x + 0.7 + 0.5, 1.5 * i+0.5])
     pipuck_locations.append([x + 0.7 - 0.5, -1.5 *i-0.5 + 1.5])
 
-    pipuck_locations.append([x + 0.7 + 0.5, 1.5 * i+1.0])
+    #pipuck_locations.append([x + 0.7 + 0.5, 1.5 * i+1.0])
     pipuck_locations.append([x + 0.7 - 0.5, -1.5 *i-1.0 + 1.5])
 
 
@@ -73,10 +73,12 @@ drone_xml = generate_drones(drone_locations, 1)                 # from label 1 g
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 # wall
-wall_xml, largest_loc = generate_wall(2,                        # number of gates
+gate_number = 1
+wall_xml, largest_loc = generate_wall(gate_number,              # number of gates
                                       0,                        # x location of the wall
                                       -exp_scale*1.5-2, 
-                                      exp_scale*1.5+2,          # y range of the wall
+                                      #exp_scale*1.5+2,          # y range of the wall
+                                      0,          # y range of the wall
                                       1.5, 4.0,                 # size range of the gate
                                       0.25,                     # block distance to fill the wall
                                       253, 254)                 # gate_brick_type, and wall_brick_type
@@ -93,8 +95,8 @@ obstacle_xml = generate_obstacles(obstacle_locations, 100, 255) # start id and p
 
 # target
 target_xml = generate_target_xml(3.5, largest_loc, 0,           # x, y, th
-                                 252,                           # payload
-                                 0.3, 0.3)                      # radius and edge
+                                 252, 255,                      # mark payload, obstacle payload
+                                 0.3, 0.3, 0.2)                 # radius and edge and tag_distance
 
 params = '''
               exp_scale="{}"
@@ -110,7 +112,8 @@ params = '''
               dangerzone_drone="1.3"
               obstacle_unseen_count="0"
               morphologiesGenerator="morphologiesGenerator_choose_gate"
-'''.format(exp_scale, n_drone)
+              gate_number="{}"
+'''.format(exp_scale, n_drone, gate_number)
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
