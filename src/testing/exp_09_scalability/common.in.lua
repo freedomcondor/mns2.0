@@ -177,6 +177,14 @@ function create_reaction_node(vns)
 				for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "new_heading")) do
 					vns.stabilizer.referencing_me_goal_overwrite = {orientationQ = vns.parentR.orientationQ * msgM.dataT.heading}
 				end
+				-- stop moving forward if other pipucks are in the way
+				for idS, robotR in pairs(vns.connector.seenRobots) do
+					if robotR.robotTypeS == "pipuck" and
+					   robotR.positionV3.x > 0 and robotR.positionV3.x < 0.25 and
+					   robotR.positionV3.y > -0.25 and robotR.positionV3.y < 0.25 then
+						vns.goal.transV3.x = 0
+					end
+				end
 			end
 
 			-- brain checks the wall and adjust heading

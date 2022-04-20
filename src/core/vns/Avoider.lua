@@ -37,7 +37,9 @@ function Avoider.step(vns)
 					Avoider.add(vector3(), robotR.positionV3,
 					            avoid_speed.positionV3,
 					            vns.Parameters.dangerzone_pipuck,
-					            vns.goal.positionV3)
+					            vns.goal.positionV3,
+					            0.25 -- deadzone
+					           )
 			end
 		end
 	end
@@ -107,31 +109,31 @@ function Avoider.step(vns)
 	vns.goal.rotateV3 = vns.goal.rotateV3 + avoid_speed.orientationV3
 
 
-	--[[
-	if robot.id == "pipuck6" then
+	---[[
+	--if robot.id == "pipuck6" then
 		local color = "255,0,0,0"
 		vns.api.debug.drawArrow(color,
 		                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0.1)),
-		                        vns.api.virtualFrame.V3_VtoR(vns.goal.transV3 * 10 + vector3(0,0,0.1))
+		                        vns.api.virtualFrame.V3_VtoR(vns.goal.transV3 * 1 + vector3(0,0,0.1))
 		                       )
-	end
+	--end
 	--]]
 end
 
-function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
+function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex, deadzone)
 	-- calculate the avoid speed from obLoc to myLoc,
 	-- add the result into accumulator
 	--[[
-	        |   |
-	        |   |
-	speed   |    |  -log(d/dangerzone) * scalar
-	        |     |
-	        |      \  
-	        |       -\
-	        |         --\ 
+	        |  ||
+	        |  ||
+	speed   |  | |  -log(d/dangerzone) * scalar
+	        |  |  |
+	        |  |   \  
+	        |  |    -\
+	        |  |      --\ 
 	        |------------+------------------------
-	                     |
-	                 threshold
+	           |         |
+	        deadzone   threshold
 	--]]
 	-- if vortex is true, rotate the speed to create a vortex
 	--[[
@@ -147,15 +149,16 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex)
 	   movedown \    \      * goal(vortex)
 	--]]
 
+	if deadzone == nil then deadzone = 0 end
 	local dV3 = myLocV3 - obLocV3
 	dV3.z = 0
-	local d = dV3:length()
-	if d == 0 then return accumulatorV3 end
+	local d = dV3:length() - deadzone
+	if d <= 0 then d = 0.000000000000001 end -- TODO: maximum
 	local ans = accumulatorV3
-	if d < threshold then
+	if d < threshold - deadzone then
 		dV3:normalize()
 		local transV3 = - vns.Parameters.avoid_speed_scalar 
-		                * math.log(d/threshold) 
+		                * math.log(d/(threshold-deadzone)) 
 		                * dV3:normalize()
 		if type(vortex) == "bool" and vortex == true then
 			ans = ans + transV3:rotate(quaternion(math.pi/4, vector3(0,0,1)))
