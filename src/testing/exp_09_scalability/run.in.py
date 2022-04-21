@@ -5,7 +5,7 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 import math
 
-exp_scale = 3
+exp_scale = 4
 
 n_drone = exp_scale * 6 + 1
 n_pipuck = n_drone * 4
@@ -29,6 +29,8 @@ pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 g
 
 # wall
 gate_number = 2
+if exp_scale == 1 :
+    gate_number = 1
 wall_xml, largest_loc = generate_wall(gate_number,              # number of gates
                                       0,                        # x location of the wall
                                       -exp_scale*1.5-1, 
@@ -36,7 +38,7 @@ wall_xml, largest_loc = generate_wall(gate_number,              # number of gate
                                       #0,
                                       #-exp_scale*3.0-2, 
                                       #2,          # y range of the wall
-                                      1.5, 4.0,                 # size range of the gate
+                                      0.8, 3.8, 4.0,                 # size range and max of the gate
                                       0.25,                     # block distance to fill the wall
                                       253, 254)                 # gate_brick_type, and wall_brick_type
 
@@ -57,7 +59,7 @@ alpha = math.pi * 2 / n
 th = (math.pi - alpha) / 2
 radius = droneDis / 2 / math.cos(th) - 1.0
 
-target_xml = generate_target_xml(exp_scale * 2, largest_loc, 0,      # x, y, th
+target_xml = generate_target_xml(exp_scale * 3, largest_loc, 0,      # x, y, th
                                  252, 255,                           # payload
                                  radius, 0.1, 0.2)                   # radius and edge and tag distance
 

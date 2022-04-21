@@ -157,7 +157,7 @@ function create_reaction_node(vns)
 			-- brain wait for sometime and say move_forward
 			if vns.parentR == nil then
 				--if stateCount > 75 and vns.driver.all_arrive == true then
-				if stateCount > 250 then
+				if (stateCount > 150 * expScale) then
 					switchAndSendNewState(vns, "move_forward")
 				end
 			end

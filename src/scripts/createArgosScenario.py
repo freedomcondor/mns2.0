@@ -352,7 +352,7 @@ def generate_target_xml(x, y, th, mark_type, obstacle_type, radius, tag_edge_dis
 #	]
 #	and the middle of the largest gate
 attempt_count_down_default = 500
-def generate_gate_locations(gate_number, left_end, right_end, small_limit, large_limit) :
+def generate_gate_locations(gate_number, left_end, right_end, small_limit, large_limit, max_size) :
 	margin = 0.4
 	a = []
 	largest_length = 0
@@ -372,7 +372,7 @@ def generate_gate_locations(gate_number, left_end, right_end, small_limit, large
 			loc = left_end + random.random() * (right_end - left_end)
 			size = small_limit + random.random() * (large_limit - small_limit)
 			if i == 1 :
-				size = large_limit
+				size = max_size 
 			left = loc - size/2 
 			right = loc + size/2 
 
@@ -419,13 +419,13 @@ def generate_gate_locations(gate_number, left_end, right_end, small_limit, large
 def generate_block_locations(gate_number, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) :
 	return generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, 0.055, gate_brick_type, wall_brick_type)
 
-def generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) :
-	return generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, 0.10, gate_brick_type, wall_brick_type) # 254 gate, 255 wall brick
+def generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, max_size, step, gate_brick_type, wall_brick_type) :
+	return generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, max_size, step, 0.10, gate_brick_type, wall_brick_type) # 254 gate, 255 wall brick
 
-def generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, step, brick_size, gate_brick_type, wall_brick_type) :
+def generate_wall_brick_locations(gate_number, left_end, right_end, small_limit, large_limit, max_size, step, brick_size, gate_brick_type, wall_brick_type) :
 	block_locations = []
 	margin = 0.10
-	gate_locations, largest_loc = generate_gate_locations(gate_number, left_end + margin, right_end - margin, small_limit, large_limit)
+	gate_locations, largest_loc = generate_gate_locations(gate_number, left_end + margin, right_end - margin, small_limit, large_limit, max_size)
 	for i in range(0, gate_number + 1) :
 		# get interval of gates
 		left = left_end
@@ -456,10 +456,10 @@ def generate_wall_brick_locations(gate_number, left_end, right_end, small_limit,
 #		[1D-location, type],
 #	]
 #	and the middle of the largest gate
-def generate_wall(gate_number, wall_x, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) :
+def generate_wall(gate_number, wall_x, left_end, right_end, small_limit, large_limit, max_size, step, gate_brick_type, wall_brick_type) :
 	tagstr = ""
 	#block_locations, largest_loc = generate_block_locations(gate_number, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) 
-	block_locations, largest_loc = generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, step, gate_brick_type, wall_brick_type) 
+	block_locations, largest_loc = generate_obstacle_locations(gate_number, left_end, right_end, small_limit, large_limit, max_size, step, gate_brick_type, wall_brick_type) 
 	i = 0
 	for loc in block_locations :
 		i = i + 1

@@ -136,8 +136,8 @@ ExperimentCommon.detectAndReportGates = function(vns, gate_brick_type, max_gate_
 	local largest_length = 0
 	for i, gate in ipairs(gates) do
 		if gate.length > largest_length then
-			largest = gates[#gates]
-			largest_length = length
+			largest = gate
+			largest_length = gate.length
 		end
 	end
 
