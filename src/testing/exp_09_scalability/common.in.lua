@@ -340,11 +340,31 @@ function create_reaction_node(vns)
 				end
 			end
 
+			-- other robot try not exceed wall
+			if vns.parentR ~= nil and vns.stabilizer.referencing_me ~= true then
+				if wall ~= nil then
+					local disV2 = vector3(wall.positionV3)
+					disV2.z = 0
+					local baseNormalV2 = vector3(1,0,0):rotate(wall.orientationQ)
+					dis = disV2:dot(baseNormalV2)
+
+					local color = "128,128,0,0"
+					vns.api.debug.drawArrow(color,
+					                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0.1)),
+					                        vns.api.virtualFrame.V3_VtoR(baseNormalV2 * dis + vector3(0,0,0.1))
+					                       )
+
+					if dis < 0.2 then
+						vns.goal.transV3 = vns.goal.transV3 + baseNormalV2 * (dis - 0.2)
+					end
+				end
+			end
+
 		elseif state == "wait_forward_again" then
 			stateCount = stateCount + 1
 
 			if vns.parentR == nil then
-				if stateCount > 50 * expScale then
+				if stateCount > 75 * expScale then
 					switchAndSendNewState(vns, "forward_again")
 					logger(robot.id, "forward_again")
 				end
