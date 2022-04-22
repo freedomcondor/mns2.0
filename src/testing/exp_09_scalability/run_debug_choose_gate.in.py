@@ -7,7 +7,7 @@ import math
 
 exp_scale = 4
 
-n_drone = exp_scale * 2 + 2
+n_drone = exp_scale * 2 + 1
 n_pipuck = n_drone * 2
 
 arena_size = exp_scale * 10 + 8 + (n_drone)/math.pi
@@ -73,13 +73,13 @@ drone_xml = generate_drones(drone_locations, 1)                 # from label 1 g
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 # wall
-gate_number = 1
+gate_number = 2
 wall_xml, largest_loc = generate_wall(gate_number,              # number of gates
                                       0,                        # x location of the wall
                                       -exp_scale*1.5-2, 
                                       #exp_scale*1.5+2,          # y range of the wall
                                       0,          # y range of the wall
-                                      0.8, 3.8, 4.0,                 # size range and max of the gate
+                                      0.8, 2.8, 3.0,                 # size range and max of the gate
                                       0.25,                     # block distance to fill the wall
                                       253, 254)                 # gate_brick_type, and wall_brick_type
 

@@ -157,7 +157,7 @@ function create_reaction_node(vns)
 			-- brain wait for sometime and say move_forward
 			if vns.parentR == nil then
 				--if stateCount > 75 and vns.driver.all_arrive == true then
-				if (stateCount > 150 * expScale) then
+				if (stateCount > 200 * expScale) then
 					switchAndSendNewState(vns, "move_forward")
 				end
 			end
@@ -218,6 +218,7 @@ function create_reaction_node(vns)
 
 		elseif state == "check_gate" then
 			stateCount = stateCount + 1
+			vns.Parameters.stabilizer_preference_robot = nil
 
 			-- If I see the gate and I'm a drone
 			local gateList, gate = ExperimentCommon.detectAndReportGates(vns, gate_brick_type, max_gate_length)
@@ -287,8 +288,8 @@ function create_reaction_node(vns)
 					})
 
 					for _, msgM in ipairs(vns.Msg.getAM(vns.stabilizer.referencing_robot.idS, "structure2_reach")) do
-						switchAndSendNewState(vns, "forward_again")
-						logger(robot.id, "forward_again")
+						switchAndSendNewState(vns, "wait_forward_again")
+						logger(robot.id, "wait_forward_again")
 					end
 				end
 			end
@@ -336,6 +337,16 @@ function create_reaction_node(vns)
 				local headingDis = (vector3(1,0,0) - vector3(1,0,0):rotate(myGoal.orientationQ)):length()
 				if vns.gate ~= nil and disV2:length() < 0.2 and headingDis < 0.1 then
 					vns.Msg.send(vns.parentR.idS, "structure2_reach")
+				end
+			end
+
+		elseif state == "wait_forward_again" then
+			stateCount = stateCount + 1
+
+			if vns.parentR == nil then
+				if stateCount > 50 * expScale then
+					switchAndSendNewState(vns, "forward_again")
+					logger(robot.id, "forward_again")
 				end
 			end
 
