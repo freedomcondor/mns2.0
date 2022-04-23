@@ -38,7 +38,7 @@ function Avoider.step(vns)
 					            avoid_speed.positionV3,
 					            vns.Parameters.dangerzone_pipuck,
 					            vns.goal.positionV3,
-					            0.25 -- deadzone
+					            0.20 -- deadzone
 					           )
 			end
 		end
