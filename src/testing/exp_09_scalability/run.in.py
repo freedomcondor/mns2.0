@@ -5,7 +5,7 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 import math
 
-exp_scale = 4
+exp_scale = 1
 
 n_drone = exp_scale * 6 + 1
 n_pipuck = n_drone * 4
@@ -29,12 +29,21 @@ pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 g
 
 # wall
 gate_number = 2
+
 if exp_scale == 1 :
     gate_number = 1
+
+y_range_from = -exp_scale*1.5-1
+y_range_to   =  exp_scale*1.5+1
+
+if exp_scale == 1 :
+    y_range_from = -exp_scale*1.5-2
+    y_range_to   =  exp_scale*1.5+2
+
 wall_xml, largest_loc = generate_wall(gate_number,              # number of gates
                                       0,                        # x location of the wall
-                                      -exp_scale*1.5-1, 
-                                      exp_scale*1.5+1,          # y range of the wall
+                                      y_range_from, 
+                                      y_range_to,               # y range of the wall
                                       #0,
                                       #-exp_scale*3.0-2, 
                                       #2,          # y range of the wall
