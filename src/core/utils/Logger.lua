@@ -30,9 +30,13 @@ DebugMessage.filelog = nil
 function DebugMessage.enableFileLog(fileName)
 	function DebugMessage.create_file_log_print(fileName)
 		if fileName == nil then
-			fileName = robot.id .. ".filelog"
-			if robot.params.hardware == true or robot.params.hardware == "true" then
-				fileName = "/home/root/" .. fileName
+			if robot ~= nil then
+				fileName = robot.id .. ".filelog"
+				if robot.params.hardware == true or robot.params.hardware == "true" then
+					fileName = "/home/root/" .. fileName
+				end
+			else
+				fileName = "noRobot" .. ".filelog"
 			end
 		end
 		local file = io.open(fileName, "w")
