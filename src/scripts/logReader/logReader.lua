@@ -265,6 +265,25 @@ function logReader.calcMorphChildrenID(morph, globalContainer, geneIndex)
 		end
 	end
 end
+
+function logReader.checkIDFirstAppearStep(robotsData, ID)
+	-- get end step
+	local length
+	for robotName, stepTable in pairs(robotsData) do
+		length = #stepTable
+		break
+	end
+
+	for i = 1, length do
+		for robotName, robotData in pairs(robotsData) do
+			if robotData[i].targetID == ID then
+				return i, robotName
+			end
+		end
+	end
+
+	return length
+end
 ------------------------------------------------------------------------
 
 return logReader
