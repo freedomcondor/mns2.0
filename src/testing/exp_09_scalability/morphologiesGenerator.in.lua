@@ -169,7 +169,7 @@ function create_left_right_back_line_morphology(scale, droneDis, pipuckDis, heig
 	local x = droneDis * math.cos(th)
 	local y = droneDis * math.sin(th)
 
-	local node = create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, position, orientationQ)
+	local node = create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, vector3(), quaternion())
 	table.insert(node.children,
 		create_3drone_12pipuck_children_back_line_chain(scale, droneDis, pipuckDis, height, 
 			vector3(x, -y, 0),
