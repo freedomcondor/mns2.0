@@ -93,6 +93,13 @@ function Quaternion:create(x,y,z,th)	-- create from rotation
 		return self:createFromHardValue(v * math.sin(halfth),math.cos(halfth))
 	end
 	if type(x) == "number" and
+	   type(y) == "table" and y.CLASSVECTOR3 == true then
+		halfth = x / 2
+		v = y / y:len()
+		v = y:nor()
+		return self:createFromHardValue(v * math.sin(halfth),math.cos(halfth))
+	end
+	if type(x) == "number" and
 	   type(y) == "number" and
 	   type(z) == "number" and
 	   type(th) == "number" and
