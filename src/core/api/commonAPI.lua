@@ -7,7 +7,7 @@ api.parameters.droneTagDetectionRate = tonumber(robot.params.drone_tag_detection
 api.parameters.droneAltitudeBias = tonumber(robot.params.drone_altitude_bias or 0.2)
 api.parameters.droneAltitudeNoise = tonumber(robot.params.drone_altitude_noise or 0.1)
 api.parameters.droneDefaultHeight = tonumber(robot.params.drone_default_height or 1.5)
-api.parameters.droneDefaultStartHeight = tonumber(robot.params.drone_default_start_height or 1.2)
+api.parameters.droneDefaultStartHeight = tonumber(robot.params.drone_default_start_height or 1.5)
 
 api.parameters.pipuckWheelSpeedLimit = tonumber(robot.params.pipuck_wheel_speed_limit or 0.1)
 --api.parameters.pipuckRotationScalar = tonumber(robot.params.pipuck_rotation_scalar or 0.05)

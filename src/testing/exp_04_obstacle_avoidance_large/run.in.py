@@ -78,7 +78,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_brain="drone1"
               drone_default_height="1.8"
               safezone_drone_pipuck="1.0"
-              obstacle_match_distance="0.08"
+              obstacle_match_distance="0.10"
               drone_tag_detection_rate="1"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],

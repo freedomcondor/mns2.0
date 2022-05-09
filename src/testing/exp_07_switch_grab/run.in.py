@@ -24,8 +24,12 @@ drone_xml = generate_drones(drone_locations, 1)                 # from label 1 g
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 target_xml = generate_target_xml(-2, 0.3, 0,           # x, y, th
-                                 100,                           # payload
-                                 0.3, 0.3)                      # radius and edge
+                                 100, 0,                       # payload
+                                 0.3, 0.3, 0.3)                      # radius and edge
+
+#target_xml = generate_target_xml(exp_scale * 3, largest_loc, 0,      # x, y, th
+#                                 252, 255,                           # payload
+#                                 radius, 0.1, 0.2)                   # radius and edge and tag distance
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
