@@ -48,8 +48,6 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
               dangerzone_pipuck="0.30"
-              pipuck_wheel_speed_limit="0.2"
-              pipuck_rotation_scalar="0.03"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"

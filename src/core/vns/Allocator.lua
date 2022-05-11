@@ -436,7 +436,8 @@ function Allocator.step(vns)
 	goalPositionV2.z = 0
 	if vns.robotTypeS == "drone" and
 	   --goalPositionV2:length() > 0.5 then
-	   vns.driver.drone_arrive == false then
+	   vns.driver.drone_arrive == false and
+	   vns.allocator.pipuck_bridge_switch == true then
 		local neighbours = {}
 		if vns.parentR ~= nil and vns.parentR.robotTypeS == "drone" then
 			neighbours[#neighbours + 1] = vns.parentR
