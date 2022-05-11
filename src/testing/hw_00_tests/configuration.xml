@@ -57,7 +57,27 @@
                 apriltag_id="20" />
         <pipuck id="pipuck11"
                 rpi_macaddr="B8:27:EB:86:A7:01"
-                optitrack_id="0"
+                optitrack_id="11"
+                apriltag_id="20" />
+        <pipuck id="pipuck12"
+                rpi_macaddr="B8:27:EB:98:46:F8"
+                optitrack_id="12"
+                apriltag_id="20" />
+        <pipuck id="pipuck13"
+                rpi_macaddr="B8:27:EB:BB:3E:9B"
+                optitrack_id="13"
+                apriltag_id="20" />
+        <pipuck id="pipuck14"
+                rpi_macaddr="B8:27:EB:1F:61:60"
+                optitrack_id="14"
+                apriltag_id="20" />
+        <pipuck id="pipuck15"
+                rpi_macaddr="B8:27:EB:41:9B:F1"
+                optitrack_id="15"
+                apriltag_id="20" />
+        <pipuck id="pipuck16"
+                rpi_macaddr="B8:27:EB:E6:CA:C8"
+                optitrack_id="16"
                 apriltag_id="20" />
     </robots>
 </configuration>
