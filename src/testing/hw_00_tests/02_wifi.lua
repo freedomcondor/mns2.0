@@ -35,14 +35,27 @@ function step()
    print("--------------------")
    print("I am " .. robot.id)
 
+   local toS = "ALLMSG"
+
+   if robot.id == "pipuck11" then toS = "pipuck12" end
+   if robot.id == "pipuck12" then toS = "pipuck13" end
+   if robot.id == "pipuck13" then toS = "pipuck14" end
+   if robot.id == "pipuck14" then toS = "pipuck15" end
+   if robot.id == "pipuck15" then toS = "pipuck16" end
+   if robot.id == "pipuck16" then toS = "pipuck11" end
+
    data1 = {
       vec = vector3(-1.111, 2.222, -3.333),
       str = robot.id,
       num = count,
+	  fromS = robot.id,
+	  toS = toS,
    }
 
    data2 = {
-      str = "data2"
+      str = "data2",
+	  fromS = robot.id,
+	  toS = "ALLMSG",
    }
 
    robot.radios.wifi.send(data1)

@@ -7,3 +7,5 @@ file(COPY        ${CMAKE_CURRENT_SOURCE_DIR}/pipucks
 configure_file( 02_wifi.argos            02_wifi.argos)
 configure_file( 02_wifi.lua              02_wifi.lua)
 configure_file( 03_led_simu.in.argos     03_led_simu.argos)
+
+configure_file( configuration.xml        configuration.xml)
