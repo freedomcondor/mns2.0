@@ -212,6 +212,10 @@ function api.rememberLastSpeed(x,y,z,th)
 end
 
 function api.updateLastSpeed()
+	if api.actuator.justSetSpeed == nil then
+		api.rememberLastSpeed(0,0,0,0)
+	end
+
 	api.actuator.lastSetSpeed = {
 		x = api.actuator.justSetSpeed.x,
 		y = api.actuator.justSetSpeed.y,
