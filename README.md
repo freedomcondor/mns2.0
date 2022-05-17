@@ -50,7 +50,16 @@
 	```
 	NOTE: consider using `cmake -DARGOS_BREW_QT_CELLAR=$(brew --cellar qt@5) ../src` if you are using mac with qt5.
 	If everything is right, you should be able to see a group of drones and pipucks forming formations.
-	
+
+3. For hareware experiments, you need https://github.com/iridia-ulb/supervisor to manage all the robots. The tested version is
+	```bash
+	commit 68db21e732a95f5645fe0c51195bf24acc0f9f5e (HEAD -> master, origin/master, origin/HEAD)
+	Author: Michael Allwright <allsey87@gmail.com>
+	Date:   Fri Mar 4 15:41:23 2022 +0100
+	    Update README.md
+	```
+	The patch, `mns2.0/argos3-patch/supervisor-router.patch` is also recommended, which would significantly reduce the amount of wifi messages.
+
 ## Folder Explanation
 0. **argos3 and cmake :** `src/cmake` contains necessary cmake files to find argos3. `src/argos3` is a simbolic link to the parent folder, it is needed for loop function to compile. Usually you wouldn't need to touch these.
 
