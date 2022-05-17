@@ -93,11 +93,11 @@ return function()
 	local locations = {}
 	-- pipucks
 	local dis = 0.3 
-	local row = 2
-	local col = 3
+	local row = 4
+	local col = 4
 	for i = 1, row do
 		for j = 1, col do
-			local id = (i-1) * col + j + 10
+			local id = (i-1) * col + j
 			local robotID = "pipuck" .. id
 			locations[robotID] = vector3(- j * dis, - i * dis, 0)
 		end
@@ -120,11 +120,11 @@ return function()
 	vns.connector.seenRobots = {}
 
 	-- see pipucks
-	local row = 2
-	local col = 3
+	local row = 4
+	local col = 4
 	for i = 1, row do
 		for j = 1, col do
-			local id = (i-1) * col + j + 10
+			local id = (i-1) * col + j
 			local robotID = "pipuck" .. id
 			if robotID ~= robot.id then
 				local relative_location = locations[robotID] - locations[robot.id]
