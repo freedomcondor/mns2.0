@@ -83,3 +83,8 @@ I have already created several scenarios to play with.
 ## Data
 
 `scripts/logReader.lua` is used to read logs, but it needs lua to read you file system, which needs: `luarocks install luafilesystem` -- Warn: this is not needed anymore in the new version
+
+## other notes
+
+On the cluster, ARGOS_CMAKE_DIR is not found, cmake like the following will work
+`cmake ../src/ -DARGOS_CMAKE_DIR=/home/wzhu/Programs/argos3/install/share/argos3/cmake`
