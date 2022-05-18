@@ -15,13 +15,14 @@
 
 ## Module dependencies
 #export MODULEPATH=$HOME/Software/modulefiles:$MODULEPATH
-module load lua5.3-dev.mod
 module load argos3.mod
+module load lua5.3-dev.mod
+module load readline-8.1.mod
 
 
 # job id
 #JOB_ID=1
-JOB_ID=${SLURM_ARRAY_TASK_ID}
+JOB_ID=$SLURM_ARRAY_TASK_ID
 
 #srun my_program   # run your program here 
 DATADIR=@CMAKE_CURRENT_SOURCE_DIR@/../data
