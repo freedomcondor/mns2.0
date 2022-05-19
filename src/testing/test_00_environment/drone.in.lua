@@ -90,11 +90,14 @@ function step()
 	-- debug
 	for i, tag in ipairs(api.droneDetectTags()) do
 		api.debug.drawArrow("blue", vector3(), tag.positionV3)
+		logger("a tag")
+		logger(tag)
 	end
 
 	-- wifi debug
 	robot.radios.wifi.send({a=1, b=2})
 
+	logger("wifi")
 	logger(robot.radios.wifi.recv)
 end
 

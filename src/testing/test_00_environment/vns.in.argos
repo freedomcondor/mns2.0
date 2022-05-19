@@ -45,8 +45,6 @@
         <radios implementation="default" />
       </sensors>
       <params script="@CMAKE_CURRENT_BINARY_DIR@/drone.lua" 
-              drone_default_height="3.0"
-              drone_default_start_height="3.0"
       />
     </lua_controller>
 
@@ -80,12 +78,10 @@
     <floor id="floor" source="loop_functions" pixels_per_meter="1" />
 
     <!-- add builderbots -->
-    <!--
     <builderbot id="builderbot2">
       <body position="-0.5,1,0" orientation="0,0,0"/>
       <controller config="builderbot"/>
     </builderbot>
-    -->
 
     <!-- add drones -->
     <drone id="drone1" wifi_medium="wifi" tag_medium="tags">
@@ -94,7 +90,6 @@
     </drone>
 
     <!-- add pipucks -->
-    <!--
     <pipuck id="pipuck1" wifi_medium="wifi" tag_medium="tags">
       <body position="-0.3,1,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
@@ -104,7 +99,6 @@
       <body position="-0.3,0.7,0" orientation="0,0,0"/>
       <controller config="pipuck"/>
     </pipuck_ext>
-    -->
 
     <!--distribute>
       <position method="uniform" min="-4.5,-4.5,0" max="4.5,4.5,0" />
