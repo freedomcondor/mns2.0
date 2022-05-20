@@ -19,18 +19,20 @@ module load argos3.mod
 module load lua5.3-dev.mod
 module load readline-8.1.mod
 
+#srun my_program   # run your program here 
+DATADIR=@CMAKE_CURRENT_SOURCE_DIR@/../data
+TMPDIR=/tmp/mns_exp_01
 
 # job id
 #JOB_ID=1
 JOB_ID=$SLURM_ARRAY_TASK_ID
 
-#srun my_program   # run your program here 
-DATADIR=@CMAKE_CURRENT_SOURCE_DIR@/../data
-mkdir -p $DATADIR/run$JOB_ID
-
-TMPDIR=/tmp/mns_exp_01
+# TODO check exist
+mkdir -p $DATADIR
 
 mkdir -p $TMPDIR/run$JOB_ID
+rm -rf $TMPDIR/run$JOB_ID/*
+
 cd $TMPDIR/run$JOB_ID
 mkdir logs
 python3 @CMAKE_CURRENT_BINARY_DIR@/../run.py -r $JOB_ID -v false
