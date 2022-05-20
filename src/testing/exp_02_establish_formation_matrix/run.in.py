@@ -7,21 +7,25 @@ import os
 # drone and pipuck
 drone_locations = []
 matrix = [2, 2]
-start = [1, 1]
-step  = [-2, -2]
+start = [1, 0]
+step_left = [-1.5, 1.5]
+step_down = [-1.5, -1.5]
 for i in range(0, matrix[0]) :
 	for j in range(0, matrix[1]) :
-		drone_locations.append([start[0] + step[0] * i, 
-		                        start[1] + step[1] * j])
+		drone_locations.append([start[0] + step_left[0] * i + step_down[0] * j, 
+		                        start[1] + step_left[1] * i + step_down[1] * j
+		                      ])
 
-pipuck_locations = [[0.7, 0.7]]
-matrix = [3, 3]
-start = [-0.4, 0.4]
-step  = [0.4, -0.4]
+pipuck_locations = []
+matrix = [4, 4]
+start = [0.5, 0.0]
+step_left  = [-0.3, 0.3]
+step_down = [-0.3, -0.3]
 for i in range(0, matrix[0]) :
 	for j in range(0, matrix[1]) :
-		pipuck_locations.append([start[0] + step[0] * i, 
-		                         start[1] + step[1] * j])
+		pipuck_locations.append([start[0] + step_left[0] * i + step_down[0] * j, 
+		                         start[1] + step_left[1] * i + step_down[1] * j
+		                       ])
 
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags

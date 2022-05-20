@@ -11,13 +11,13 @@ import math
 # drone and pipuck
 drone_locations = generate_random_locations(2,                  # total number
                                             -4, -0.7,           # origin location
-                                            -4.5, -3.5,         # random x range
+                                            -4.5, -3.8,         # random x range
                                             -0.7, 2,            # random y range
                                             1.2, 2)             # near limit and far limit
 pipuck_locations = generate_slave_locations_with_origin(
-                                            6,
+                                            8,
                                             drone_locations,
-                                            -3.3, 0,
+                                            -4, 0.7,
                                             -4.8, -3,           # random x range
                                             -1.5, 1.5,          # random y range
                                             0.5, 0.7)           # near limit and far limit
@@ -30,13 +30,17 @@ large_obstacle_locations = generate_random_locations(80,               # total n
                                                      -3.2, 3,      # x range
                                                      -2.5, 2.5,       # y range
                                                      1.2, 3.0)        # near and far limit
-obstacle_locations = []
+obstacle1_locations = []
+obstacle2_locations = []
+obstacle3_locations = []
 #d = 0.10 * math.sqrt(2)
 d = 0.06
 for loc in large_obstacle_locations :
-    obstacle_locations.append([loc[0] - d, loc[1]])
-    obstacle_locations.append([loc[0] + d, loc[1] + d])
-    obstacle_locations.append([loc[0] + d, loc[1] - d])
+    obstacle1_locations.append([loc[0] - d, loc[1]])
+for loc in large_obstacle_locations :
+    obstacle2_locations.append([loc[0] + d, loc[1] + d])
+for loc in large_obstacle_locations :
+    obstacle3_locations.append([loc[0] + d, loc[1] - d])
     '''
     obstacle_locations.append([loc[0]-d, loc[1]-d])
     obstacle_locations.append([loc[0]+d, loc[1]-d])
@@ -48,7 +52,9 @@ for loc in large_obstacle_locations :
     obstacle_locations.append([loc[0], loc[1]+d])
     '''
 
-obstacle_xml = generate_obstacles(obstacle_locations, 100, 0) # start id and payload
+obstacle_xml = generate_obstacles(obstacle1_locations, 100, 255) # start id and payload
+obstacle_xml = obstacle_xml + generate_obstacles(obstacle2_locations, 180, 254) # start id and payload
+obstacle_xml = obstacle_xml + generate_obstacles(obstacle3_locations, 260, 253) # start id and payload
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
@@ -56,7 +62,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],  # Inputseed is inherit from createArgosScenario.py
-		["TOTALLENGTH",       str((Experiment_length or 3700)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 2000)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
@@ -68,7 +74,6 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_brain="drone1"
               pipuck_wheel_speed_limit="0.2"
               safezone_drone_pipuck="1.0"
-              obstacle_match_distance="0.05"
         ''')],
               #pipuck_rotation_scalar="0.03"
 		["DRONE_CONTROLLER", generate_drone_controller('''
@@ -78,8 +83,8 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_brain="drone1"
               drone_default_height="1.8"
               safezone_drone_pipuck="1.0"
-              obstacle_match_distance="0.10"
-              drone_tag_detection_rate="1"
+              block_label_from="250"
+              block_label_to="255"
         ''')],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
 	]

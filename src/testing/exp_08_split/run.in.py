@@ -18,9 +18,9 @@ for i in range(0, matrix[0]) :
 		                        start[1] + step[1] * j])
 
 pipuck_locations = []
-matrix = [4, 2]
+matrix = [4, 3]
 start = [2.2, 0.7]
-step  = [-1.5, -1.4]
+step  = [-1.5, -0.7]
 for i in range(0, matrix[0]) :
 	for j in range(0, matrix[1]) :
 		pipuck_locations.append([start[0] + step[0] * i, 
@@ -42,17 +42,17 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="pipuck"
-              stabilizer_preference_robot="pipuck1"
-              stabilizer_preference_brain="drone1"
+              stabilizer_preference_robot="pipuck5"
+              stabilizer_preference_brain="drone2"
               dangerzone_pipuck="0.30"
-              pipuck_wheel_speed_limit="0.2"
-              pipuck_rotation_scalar="0.03"
         ''')],
+              #pipuck_wheel_speed_limit="0.2"
+              #pipuck_rotation_scalar="0.03"
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
               my_type="drone"
-              stabilizer_preference_robot="pipuck1"
-              stabilizer_preference_brain="drone1"
+              stabilizer_preference_robot="pipuck5"
+              stabilizer_preference_brain="drone2"
               drone_default_height="1.8"
               block_label_from="100"
               block_label_to="101"

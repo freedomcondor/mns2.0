@@ -10,13 +10,13 @@ import os
 # drone and pipuck
 drone_locations = generate_random_locations(2,                  # total number
                                             -4, -0.7,           # origin location
-                                            -4.5, -3.5,         # random x range
+                                            -4.5, -3.8,         # random x range
                                             -0.7, 2,            # random y range
                                             1.2, 2)             # near limit and far limit
 pipuck_locations = generate_slave_locations_with_origin(
-                                            6,
+                                            8,
                                             drone_locations,
-                                            -3.3, 0,
+                                            -4, 0.7,
                                             -4.8, -3,           # random x range
                                             -1.5, 1.5,          # random y range
                                             0.5, 0.7)           # near limit and far limit
@@ -38,7 +38,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],  # Inputseed is inherit from createArgosScenario.py
-		["TOTALLENGTH",       str((Experiment_length or 2200)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 2000)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 

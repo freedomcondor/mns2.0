@@ -15,12 +15,12 @@ drone_locations = generate_random_locations(3,                  # total number
                                             1.2, 1.7)             # near limit and far limit
 
 pipuck_locations = generate_slave_locations_with_origin(
-                                            8,
+                                            12,
                                             drone_locations,
-                                            -3.3, 0.7,
+                                            -4, 0,
                                             -4.8, -3,           # random x range
                                             -1.5, 1.5,          # random y range
-                                            0.5, 0.7)           # near limit and far limit
+                                            0.4, 0.7)           # near limit and far limit
 
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
@@ -43,7 +43,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],  # Inputseed is inherit from createArgosScenario.py
-		["TOTALLENGTH",       str((Experiment_length or 0)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 2000)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 

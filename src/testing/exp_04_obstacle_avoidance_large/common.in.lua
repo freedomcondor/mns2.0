@@ -69,7 +69,7 @@ function step()
 	-- debug
 	api.debug.showChildren(vns)
 	if robot.id == "drone1" then
-		--api.debug.showObstacles(vns)
+		api.debug.showObstacles(vns)
 	end
 
 	vns.api.debug.drawRing("255, 255, 0",
@@ -100,7 +100,7 @@ return function()
 	if vns.parentR ~= nil or vns.robotTypeS == "pipuck" then return false, true end
 	local speed = 0.02
 	local speedx = speed
-	local speedy = speed * math.cos(math.pi * api.stepCount/500)
+	local speedy = speed * 0.3 * math.cos(math.pi * api.stepCount/500)
 	vns.Spreader.emergency_after_core(vns, vector3(speedx,speedy,0), vector3(), nil, true)
 	--]]
 	return false, true
