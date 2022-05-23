@@ -21,7 +21,7 @@ module load readline-8.1.mod
 
 #srun my_program   # run your program here 
 DATADIR=@CMAKE_CURRENT_BINARY_DIR@/../data
-TMPDIR=/tmp/mns_exp_03
+TMPDIR=/tmp/mns_exp_04
 
 # job id
 #JOB_ID=1
