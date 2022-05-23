@@ -27,8 +27,8 @@ TMPDIR=/tmp/mns_exp_01
 #JOB_ID=1
 JOB_ID=$SLURM_ARRAY_TASK_ID
 
-# TODO check exist
 mkdir -p $DATADIR
+rm -rf $TMPDIR/run$JOB_ID
 
 mkdir -p $TMPDIR/run$JOB_ID
 rm -rf $TMPDIR/run$JOB_ID/*
