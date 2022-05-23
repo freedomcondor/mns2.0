@@ -1,0 +1,818 @@
+<?xml version="1.0" ?>
+<argos-configuration>
+
+  <!-- ************************* -->
+  <!-- * General configuration * -->
+  <!-- ************************* -->
+  <framework>
+    <system threads="0" />
+    <experiment length="400.0" ticks_per_second="5" random_seed="19" />
+  </framework>
+  
+  <!-- *************** -->
+  <!-- * Controllers * -->
+  <!-- *************** -->
+  <controllers>
+    
+    <!-- Pi-Puck Controller -->
+    <lua_controller id="pipuck">
+      <actuators>
+        <pipuck_differential_drive implementation="default" />
+        <pipuck_leds implementation="default" />
+        <debug implementation="default" />
+        <radios implementation="default" />
+      </actuators>
+      <sensors>
+        <pipuck_system implementation="default" />
+        <radios implementation="default" />
+      </sensors>
+      <params simulation="true" 
+              script="/home/wzhu/mns2.0/build/testing/exp_03_obstacle_avoidance_small/common.lua"
+              my_type="pipuck"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
+              pipuck_wheel_speed_limit="0.2"
+              safezone_drone_pipuck="1.0"
+         />
+    </lua_controller>
+    
+    
+    <!-- Drone Controller -->
+    <lua_controller id="drone">
+      <actuators>
+        <debug implementation="default" />
+        <drone_flight_system implementation="default" />
+        <drone_leds implementation="default" />
+        <radios implementation="default" />
+      </actuators>
+      <sensors>
+        <drone_system implementation="default" />
+        <drone_cameras_system implementation="default" show_frustum="false" show_tag_rays="false" />
+        <drone_flight_system implementation="default" />
+        <radios implementation="default" />
+      </sensors>
+      <params simulation="true" 
+              script="/home/wzhu/mns2.0/build/testing/exp_03_obstacle_avoidance_small/common.lua"
+              my_type="drone"
+              stabilizer_preference_robot="pipuck1"
+              stabilizer_preference_brain="drone1"
+              drone_default_height="1.8"
+              safezone_drone_pipuck="1.0"
+         />
+    </lua_controller>
+    
+  </controllers>
+
+  <!-- *********************** -->
+  <!-- * Arena configuration * -->
+  <!-- *********************** -->
+  <arena size="15, 12, 3.5" center="0, 0, 1">
+    <floor id="floor" source="loop_functions" pixels_per_meter="1" />
+    <!-- real scenario -->
+    
+
+    <!-- drones -->
+    
+	<drone id="drone1" wifi_medium="wifi" >
+		<body position="-4,-0.7,0" orientation="-45,0,0"/>
+		<controller config="drone"/>
+	</drone>
+	
+	<drone id="drone2" wifi_medium="wifi" >
+		<body position="-4.135673689957843,0.6810275967318025,0" orientation="-45,0,0"/>
+		<controller config="drone"/>
+	</drone>
+	
+    <!-- pipucks -->
+    
+	<pipuck_ext id="pipuck1" wifi_medium="wifi" tag_medium="tags" debug="true">
+		<body position="-4,0.7,0" orientation="0,0,0"/>
+		<controller config="pipuck"/>
+	</pipuck_ext>
+	
+	<pipuck_ext id="pipuck2" wifi_medium="wifi" tag_medium="tags" debug="true">
+		<body position="-4.279143097605773,-1.0552206204459162,0" orientation="0,0,0"/>
+		<controller config="pipuck"/>
+	</pipuck_ext>
+	
+	<pipuck_ext id="pipuck3" wifi_medium="wifi" tag_medium="tags" debug="true">
+		<body position="-4.606240911841837,-0.5235007726281561,0" orientation="0,0,0"/>
+		<controller config="pipuck"/>
+	</pipuck_ext>
+	
+	<pipuck_ext id="pipuck4" wifi_medium="wifi" tag_medium="tags" debug="true">
+		<body position="-4.240082873097441,0.20772004762895824,0" orientation="0,0,0"/>
+		<controller config="pipuck"/>
+	</pipuck_ext>
+	
+	<pipuck_ext id="pipuck5" wifi_medium="wifi" tag_medium="tags" debug="true">
+		<body position="-4.621154854875988,0.6839846541698247,0" orientation="0,0,0"/>
+		<controller config="pipuck"/>
+	</pipuck_ext>
+	
+	<pipuck_ext id="pipuck6" wifi_medium="wifi" tag_medium="tags" debug="true">
+		<body position="-3.4398063470793234,-0.31181000679057824,0" orientation="0,0,0"/>
+		<controller config="pipuck"/>
+	</pipuck_ext>
+	
+	<pipuck_ext id="pipuck7" wifi_medium="wifi" tag_medium="tags" debug="true">
+		<body position="-3.4835209727742367,0.9044227124898074,0" orientation="0,0,0"/>
+		<controller config="pipuck"/>
+	</pipuck_ext>
+	
+	<pipuck_ext id="pipuck8" wifi_medium="wifi" tag_medium="tags" debug="true">
+		<body position="-3.6726288401488585,-1.1860744234796874,0" orientation="0,0,0"/>
+		<controller config="pipuck"/>
+	</pipuck_ext>
+	
+    <!-- walls -->
+    WALL 
+    <!-- target -->
+    TARGET
+    <!-- random obstacles-->
+    
+	<prototype id="obstacle100" movable="true" friction="10">
+		<body position="1.0848390719104621,-2.465225497000936,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle101" movable="true" friction="10">
+		<body position="-0.5457508944838367,-0.10122766367596547,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle102" movable="true" friction="10">
+		<body position="-2.721308198711745,-0.09903290031151268,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle103" movable="true" friction="10">
+		<body position="2.2884756886857334,-1.2755822356219921,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle104" movable="true" friction="10">
+		<body position="-3.331764664285972,-0.6169418077244793,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle105" movable="true" friction="10">
+		<body position="-2.7612218790297787,1.0261545945865063,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle106" movable="true" friction="10">
+		<body position="-1.7909047932912419,-1.858083625300873,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle107" movable="true" friction="10">
+		<body position="-1.6558988100281895,-0.48288340519683404,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle108" movable="true" friction="10">
+		<body position="1.280097384838732,-0.1948005542638369,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle109" movable="true" friction="10">
+		<body position="-1.542346611588987,0.8868503483199359,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle110" movable="true" friction="10">
+		<body position="-3.2053765281862088,-1.4539696905285564,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle111" movable="true" friction="10">
+		<body position="0.9685556052072215,1.2602347292230167,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle112" movable="true" friction="10">
+		<body position="-2.84149200089788,-2.1676603157550915,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle113" movable="true" friction="10">
+		<body position="-0.21232350593058058,0.7822504623420281,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle114" movable="true" friction="10">
+		<body position="-2.3875956438800676,-1.070797000710415,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle115" movable="true" friction="10">
+		<body position="-0.464240235047944,-1.9388873799596902,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle116" movable="true" friction="10">
+		<body position="0.5322324265006699,1.893774047424051,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle117" movable="true" friction="10">
+		<body position="2.538198711391698,0.34765711224329365,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle118" movable="true" friction="10">
+		<body position="0.7486961823750509,-1.4470816752253812,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle119" movable="true" friction="10">
+		<body position="1.3860625123151769,-1.8205618862863238,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle120" movable="true" friction="10">
+		<body position="-1.8022053751809648,1.9223901151369462,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle121" movable="true" friction="10">
+		<body position="1.2127368136975534,2.277010206357833,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle122" movable="true" friction="10">
+		<body position="-3.093948031470052,1.7483872258528175,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle123" movable="true" friction="10">
+		<body position="-0.6059134297819475,1.7088277761515887,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle124" movable="true" friction="10">
+		<body position="2.8112212358509945,-2.0269754292098225,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle125" movable="true" friction="10">
+		<body position="-1.1138311081218766,-1.0211309320475697,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle126" movable="true" friction="10">
+		<body position="-0.9529522232228644,2.3643728409110096,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle127" movable="true" friction="10">
+		<body position="0.3191367151866751,-2.266777168368037,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle128" movable="true" friction="10">
+		<body position="0.33167126391118185,-0.2793298241377853,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle129" movable="true" friction="10">
+		<body position="2.749519359417823,1.1925992459812984,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle130" movable="true" friction="10">
+		<body position="1.9690427332182505,2.1959598021182973,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle131" movable="true" friction="10">
+		<body position="2.784245040425265,-0.3836700765632459,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle132" movable="true" friction="10">
+		<body position="-2.5349611246794277,2.3313285637272916,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle133" movable="true" friction="10">
+		<body position="-0.3227761291853657,-1.2396915735067187,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle134" movable="true" friction="10">
+		<body position="-2.1430897286301613,0.47981087756063,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle135" movable="true" friction="10">
+		<body position="1.9705512340643798,-0.3717081074326094,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle136" movable="true" friction="10">
+		<body position="-3.3423405691838153,0.3437611319154419,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle137" movable="true" friction="10">
+		<body position="2.879328116778261,2.1316060573182405,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle138" movable="true" friction="10">
+		<body position="1.8557398866375365,0.8675204947108872,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle139" movable="true" friction="10">
+		<body position="1.3668792305864663,-0.9567147128591595,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle140" movable="true" friction="10">
+		<body position="-1.3932503228282522,0.19004426542109432,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle141" movable="true" friction="10">
+		<body position="0.6206451417564853,0.40594192818814934,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle142" movable="true" friction="10">
+		<body position="2.0637612996079238,-2.4477112154500706,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle143" movable="true" friction="10">
+		<body position="-1.2005726179245402,-2.3003747543633946,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+	<prototype id="obstacle144" movable="true" friction="10">
+		<body position="2.9990772698860795,-1.2822599124104128,0" orientation="0,0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
+			      position="0,0,0" orientation="0,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+				<tag anchor="base" observable_angle="75" side_length="0.1078" payload="0"
+				     position="0,0,0.101" orientation="0,0,0" />
+			</tags>
+		</devices>
+	</prototype>
+	
+  </arena>
+
+  <!-- Physics engines, Media, Loop functions and visualization -->
+  
+  <!-- ******************* -->
+  <!-- * Physics engines * -->
+  <!-- ******************* -->
+  <physics_engines>
+    <pointmass3d id="pm3d" iterations="10" />
+    <dynamics3d id="dyn3d" iterations="25">
+      <gravity g="9.8" />
+      <floor />
+    </dynamics3d>
+  </physics_engines>
+
+  <!-- ********* -->
+  <!-- * Media * -->
+  <!-- ********* -->
+  <media>
+    <directional_led id="directional_leds" index="grid" grid_size="20,20,20"/>
+    <tag id="tags" index="grid" grid_size="20,20,20" />
+    <radio id="wifi" index="grid" grid_size="20,20,20" />
+  </media>
+
+  <!-- ****************** -->
+  <!-- * Loop functions * -->
+  <!-- ****************** -->
+  <loop_functions library="/home/wzhu/mns2.0/build/libmy_extensions"
+                  label="my_loop_functions" />
+
+  <!-- ****************** -->
+  <!-- * Visualization  * -->
+  <!-- ****************** -->
+  <visualization>
+    <qt-opengl lua_editor="true" show_boundary="false">
+      <user_functions library="/home/wzhu/mns2.0/build/libmy_qtopengl_extensions"
+                      label="my_qtopengl_user_functions" />
+      <camera>
+        <placements>
+          <placement index="0" position="0.0122872,0.0534732,25.7009" look_at="0.0122872,0.0534732,24.7009" up="-0.00187965,0.999998,0" lens_focal_length="90" />
+          <placement index="1" position="-6.01698,3.45411,1.68985" look_at="-5.13495,3.03202,1.48039" up="0.188941,-0.0904165,0.977817" lens_focal_length="30" />
+          <placement index="2" position="6.24865,-4.76935,2.71261" look_at="5.52826,-4.16628,2.37006" up="-0.262661,0.219888,0.939499" lens_focal_length="30" />
+          <placement index="3" position="-6.25183,-4.76287,2.69551" look_at="-5.59804,-4.13326,2.27582" up="0.302308,0.291125,0.907665" lens_focal_length="30" />
+          <placement index="4" position="-6.2675,4.75161,2.71277" look_at="-5.59966,4.11924,2.32022" up="0.285045,-0.269901,0.91973" lens_focal_length="30" />
+          <placement index="5" position="  0, 15, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="6" position="-15, 15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+          <placement index="7" position="-15,  0, 7.5" look_at="0,0,0.25" lens_focal_length="60" />
+          <placement index="8" position="-15,-15, 10"  look_at="0,0,0.25" lens_focal_length="90" />
+        </placements>
+      </camera>
+    </qt-opengl>
+  </visualization>
+    
+
+</argos-configuration>
