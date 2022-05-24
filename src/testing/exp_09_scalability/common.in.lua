@@ -152,6 +152,7 @@ function create_reaction_node(vns)
 
 		-- waiting for sometime for the 1st formation
 		if state == "waiting" then
+			vns.allocator.pipuck_bridge_switch = true
 			stateCount = stateCount + 1
 			--if stateCount == 150 + expScale * 50 then
 			-- brain wait for sometime and say move_forward
@@ -163,6 +164,7 @@ function create_reaction_node(vns)
 			end
 
 		elseif state == "move_forward" then
+			vns.allocator.pipuck_bridge_switch = nil
 			stateCount = stateCount + 1
 
 			-- everyone reports wall and gates
@@ -248,6 +250,7 @@ function create_reaction_node(vns)
 				--vns.Allocator.sendAllocate(vns) -- necessary ?
 			end
 		elseif state == "switch_to_structure2" then
+			vns.allocator.pipuck_bridge_switch = true
 			stateCount = stateCount + 1
 			-- If I see the gate and I'm a drone
 
@@ -371,6 +374,7 @@ function create_reaction_node(vns)
 			end
 
 		elseif state == "forward_again" then
+			vns.allocator.pipuck_bridge_switch = nil
 			stateCount = stateCount + 1
 
 			-- everyone reports wall and gates
