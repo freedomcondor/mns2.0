@@ -5,7 +5,7 @@
 #SBATCH --output=mns_exp01_%A_%a.stdout   # name of the output file, %j will be replaced by the Job ID
 #SBATCH --error=mns_exp01_%A_%a.stderr    # name of the error file, %j will be replaced by the Job ID
 #SBATCH --partition=Epyc7452           # the hardware that you want to run on
-#SBATCH --qos=short                    # the queue that you want to run on (short, long)
+#SBATCH --qos=long                    # the queue that you want to run on (short, long)
 #SBATCH --ntasks=1                     # the job will launch a single task, set higher for MPI programs
 #SBATCH --cpus-per-task=1              # each task will require 1 core on the same machine, set higher for OpenMP programs
 #SBATCH --mail-user=weixu.zhu@ulb.be   # your email to receive emails about the state of your job
