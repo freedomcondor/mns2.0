@@ -118,16 +118,20 @@ function logReader.loadData(dir, typelist)
 	return robotsData
 end
 
+function logReader.getEndStep(robotsData)
+	local length
+	for robotName, stepTable in pairs(robotsData) do
+		length = #stepTable
+		break
+	end
+	return length
+end
+
 function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
 	-- fill start and end if not provided
 	if startStep == nil then startStep = 1 end
 	if endStep == nil then 
-		local length
-		for robotName, stepTable in pairs(robotsData) do
-			length = #stepTable
-			break
-		end
-		endStep = length
+		endStep = logReader.getEndStep(robotsData)
 	end
 
 	for step = startStep, endStep do
