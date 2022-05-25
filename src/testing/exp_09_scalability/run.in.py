@@ -91,7 +91,7 @@ params = '''
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
-                    "@CMAKE_CURRENT_BINARY_DIR@/vns.argos",
+                    "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],
 		["TOTALLENGTH",       str((Experiment_length or 6000)/5)],

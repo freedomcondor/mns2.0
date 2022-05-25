@@ -6,7 +6,7 @@ package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/vns/?.lua"
 package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
 
 pairs = require("AlphaPairs")
-local Transform = require("Transform")
+ExperimentCommon = require("ExperimentCommon")
 -- includes -------------
 logger = require("Logger")
 local api = require(myType .. "API")
@@ -46,7 +46,6 @@ function reset()
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
 		vns.create_vns_core_node(vns),
-		create_head_navigate_node(vns),
 		vns.Driver.create_driver_node(vns, {waiting = true}),
 	}}
 end
@@ -75,56 +74,3 @@ end
 function destroy()
 	api.destroy()
 end
-
-function create_head_navigate_node(vns)
-return function()
-	-- form the formation for 150 steps
-	if vns.api.stepCount < 150 then 
-		vns.stabilizer.force_pipuck_reference = true
-		return false, true 
-	end
-
-	vns.stabilizer.force_pipuck_reference = nil
-
-	-- check end
-	local target_type = 254
-	local target = nil
-	if #vns.avoider.obstacles ~= 0 then
-		for id, ob in ipairs(vns.avoider.obstacles) do
-			if ob.type == target_type then
-				target = ob
-			end
-		end
-	end
-	if target ~= nil and vns.parentR == nil then
-		local target_vec = vector3(target.positionV3)
-		local n_vec = vector3(1,0,0):rotate(target.orientationQ)
-		target_vec.z = 0
-		n_vec.z = 0
-		local dis = target_vec:dot(n_vec)
-		if dis < 0.6 then
-			vns.setGoal(vns, target.positionV3 - vector3(0.5, 0, 0):rotate(target.orientationQ), target.orientationQ)
-			return false, true
-		end
-	end
-
-	-- adjust orientation
-	if #vns.avoider.obstacles ~= 0 then
-		local orientationAcc = Transform.createAccumulator()
-		for id, ob in ipairs(vns.avoider.obstacles) do
-			Transform.addAccumulator(orientationAcc, {positionV3 = vector3(), orientationQ = ob.orientationQ})
-		end
-		local averageOri = Transform.averageAccumulator(orientationAcc).orientationQ
-		vns.setGoal(vns, vns.goal.positionV3, averageOri)
-	end
-
-	-- drone move forward
-	if vns.parentR == nil and vns.robotTypeS == "drone" then 
-		local speed = 0.02
-		local speedx = speed
-		local speedy = speed * 0.3 * math.cos(math.pi * api.stepCount/500)
-		vns.Spreader.emergency_after_core(vns, vector3(speedx,speedy,0), vector3(), nil, true)
-	end
-
-	return false, true
-end end

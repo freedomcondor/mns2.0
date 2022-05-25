@@ -5,10 +5,10 @@ def setAxParameters(ax):
 	ax.set_xlabel("x")
 	ax.set_ylabel("y")
 	ax.set_zlabel("z")
-	ax.set_xlim([-5, 5])
-	ax.set_ylim([-3, 3])
+	ax.set_xlim([-20, 20])
+	ax.set_ylim([-10, 10])
 	ax.set_zlim([-1.0, 2.0])
-	ax.view_init(30, 60)
+	ax.view_init(90, 00)
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
@@ -17,13 +17,14 @@ ax = fig.add_subplot(projection='3d')
 setAxParameters(ax)
 #plt.show()
 
-RobotLogNames = findRobotLogs("logs")
+RobotLogNames = findRobotLogs(input_file)
 print(RobotLogNames)
 RobotLogs = openRobotLogs(RobotLogNames)
 
 while True:
 	for robotLog in RobotLogs :
-		step = readNextLine(robotLog)
+		for i in range(0, 10):
+			step = readNextLine(robotLog)
 		drawRobot(ax, step['position'], step['virtual_orientation'])
 		#drawRobot(ax, step['position'], step['orientation'])
 

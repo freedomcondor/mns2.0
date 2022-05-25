@@ -4,9 +4,45 @@ import numpy as np
 import math
 import os 
 import shutil
+# shutil is for removing a dir
+
+import getopt
+import sys
 
 import string
-# shutil is for removing a dir
+
+#----------------------------------------------------------------------------------------------
+# usage message 
+usage="[usage] example: python3 replay.py -i xx/logs (default logs)"
+
+#----------------------------------------------------------------------------------------------
+# parse opts
+try:
+	optlist, args = getopt.getopt(sys.argv[1:], "i:")
+except:
+	print("[error] unexpected opts")
+	print(usage)
+	sys.exit(0)
+
+input_file = ""
+output_file = ""
+
+for opt, value in optlist:
+	if opt == "-i":
+		input_file = value
+		print("input_path provided:", input_file)
+	elif opt == "-h":
+		print(usage)
+		exit()
+
+#----------------------------------------------------------------------------------------------
+# default value
+if input_file == "":
+	input_file = "logs"
+	print("input_path not provided, use default:", input_file)
+
+
+
 
 #-------------------------------------------------------------------
 # draw

@@ -161,7 +161,7 @@ function Stabilizer.step(vns)
 	-- check
 	local colorflag = false -- flag for whether to show circle or not
 	local offset = {positionV3 = vector3(), orientationQ = quaternion()}
-	if flag == true and vns.stabilizer.force_pipuck_reference == nil then
+	if flag == true and vns.stabilizer.force_pipuck_reference ~= true then
 		-- average offsetAcc into offset
 		Transform.averageAccumulator(offsetAcc, offset)
 		vns.goal.positionV3 = offset.positionV3
@@ -173,7 +173,7 @@ function Stabilizer.step(vns)
 			vns.stabilizer.stationary_referencing = true
 		end
 	---[[
-	elseif obstacle_flag == true and vns.stabilizer.force_pipuck_reference == nil then
+	elseif obstacle_flag == true and vns.stabilizer.force_pipuck_reference ~= true then
 		-- There are obstacles, I just don't see them, wait to see them, set offset as the current goal
 		offset.positionV3 = vns.goal.positionV3 
 		offset.orientationQ = vns.goal.orientationQ
