@@ -211,8 +211,6 @@ function Driver.step(vns, waiting)
 		end
 	end
 
-	Driver.move(transV3, rotateV3)
-
 	---[[ for debug
 	--if robot.id == "pipuck6" then
 		local color = "0,0,0,0"
@@ -222,6 +220,8 @@ function Driver.step(vns, waiting)
 		                       )
 	--end
 	--]]
+
+	Driver.move(transV3, rotateV3)
 
 	-- send drive to children
 	for _, childR in pairs(vns.childrenRT) do

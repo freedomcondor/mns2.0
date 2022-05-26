@@ -12,6 +12,7 @@ return {
 	dangerzone_pipuck = tonumber(robot.params.dangerzone_pipuck or 0.40),
 	dangerzone_block = tonumber(robot.params.dangerzone_block or 0.40),
 	dangerzone_predator = tonumber(robot.params.dangerzone_predator or 0.50),
+	deadzone_pipuck = tonumber(robot.params.deadzone_pipuck or 0.20),
 
 	-- avoid speed
 	--[[

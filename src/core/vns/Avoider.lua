@@ -17,6 +17,9 @@ end
 
 function Avoider.step(vns)
 	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
+
+	local backup_avoid_speed_scalar = vns.Parameters.avoid_speed_scalar
+
 	-- avoid seen robots
 	-- the brain is not influenced by other robots
 	if vns.parentR ~= nil and vns.stabilizer.referencing_me ~= true then
@@ -33,13 +36,21 @@ function Avoider.step(vns)
 			-- avoid pipuck
 			if robotR.robotTypeS == vns.robotTypeS and
 			   robotR.robotTypeS == "pipuck" then
+				local dangerzone = vns.Parameters.dangerzone_pipuck
+				local deadzone = vns.Parameters.deadzone_pipuck
+				-- avoid referenced pipuck 10 times harder
+				if idS == vns.stabilizer.referencing_pipuck_neighbour then
+					vns.Parameters.avoid_speed_scalar = vns.Parameters.avoid_speed_scalar * 10
+				end
 				avoid_speed.positionV3 =
 					Avoider.add(vector3(), robotR.positionV3,
 					            avoid_speed.positionV3,
 					            vns.Parameters.dangerzone_pipuck,
 					            vns.goal.positionV3,
-					            0.20 -- deadzone
+					            deadzone
 					           )
+				-- resume
+				vns.Parameters.avoid_speed_scalar = backup_avoid_speed_scalar
 			end
 		end
 	end

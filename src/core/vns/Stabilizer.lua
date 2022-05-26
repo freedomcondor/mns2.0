@@ -278,8 +278,21 @@ function Stabilizer.getReferenceChild(vns)
 end
 
 function Stabilizer.pipuckListenRequest(vns)
+	-- listen to referencing pipuck, avoid it harder in avoider
+	vns.stabilizer.referencing_pipuck_neighbour = nil
+	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "I_am_referenced_pipuck")) do
+		vns.stabilizer.referencing_pipuck_neighbour = msgM.fromS
+	end
+
 	for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "stabilizer_request")) do
 		vns.stabilizer.referencing_me = true
+		-- tell other pipuck I'm referenced, so that they know to avoid me harder
+		for idS, robotR in pairs(vns.connector.seenRobots) do
+			if robotR.robotTypeS == "pipuck" then
+				vns.Msg.send(idS, "I_am_referenced_pipuck")
+			end
+		end
+
 		-- calculate where my parent should be related to me
 		local parentTransform = {}
 		if vns.allocator.target == nil or vns.allocator.target.idN == -1 then
