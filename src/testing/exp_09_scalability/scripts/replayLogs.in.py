@@ -25,7 +25,7 @@ while True:
 	for robotLog in RobotLogs :
 		for i in range(0, 10):
 			step = readNextLine(robotLog)
-		drawRobot(ax, step['position'], step['virtual_orientation'])
+		drawRobot(ax, step['position'], step['orientation'])
 		#drawRobot(ax, step['position'], step['orientation'])
 
 	plt.pause(0.01)
@@ -33,4 +33,4 @@ while True:
 	setAxParameters(ax)
 	plt.draw()
 
-	temp = input()
+	#temp = input()
