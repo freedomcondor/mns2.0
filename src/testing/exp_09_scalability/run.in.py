@@ -114,4 +114,4 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 	]
 )
 
-os.system("argos3 -c @CMAKE_CURRENT_BINARY_DIR@/vns.argos" + VisualizationArgosFlag)
+os.system("argos3 -c vns.argos" + VisualizationArgosFlag)
