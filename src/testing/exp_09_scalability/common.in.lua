@@ -158,13 +158,13 @@ function create_reaction_node(vns)
 			-- brain wait for sometime and say move_forward
 			if vns.parentR == nil then
 				--if stateCount > 75 and vns.driver.all_arrive == true then
-				if (stateCount > 200 * expScale) then
+				if (stateCount > 250 * expScale) then
 					switchAndSendNewState(vns, "move_forward")
 				end
 			end
 
 		elseif state == "move_forward" then
-			vns.allocator.pipuck_bridge_switch = nil
+			--vns.allocator.pipuck_bridge_switch = nil
 			stateCount = stateCount + 1
 
 			-- everyone reports wall and gates
@@ -211,7 +211,7 @@ function create_reaction_node(vns)
 					-- brain checks gate and go to next state
 					local disToTheWall = receiveWall.positionV3:dot(vector3(1,0,0):rotate(receiveWall.orientationQ))
 					logger("disToTheWall = ", disToTheWall, "gateNumber = ", gateNumber)
-					if gateNumber == totalGateNumber and disToTheWall < 2 then
+					if gateNumber == totalGateNumber and disToTheWall < 1.8 then
 						switchAndSendNewState(vns, "check_gate")
 						logger(robot.id, "check_gate")
 					end
@@ -235,6 +235,7 @@ function create_reaction_node(vns)
 				vns.Connector.newVnsID(vns, 1 + gate.length, 1)
 				vns.BrainKeeper.reset(vns)
 				vns.allocator.mode_switch = "stationary"
+				vns.setMorphology(vns, structure2)
 
 				newState(vns, "break_and_recruit")
 				logger(robot.id, "I have a gate, breaking and recruiting")
@@ -374,7 +375,7 @@ function create_reaction_node(vns)
 			end
 
 		elseif state == "forward_again" then
-			vns.allocator.pipuck_bridge_switch = nil
+			--vns.allocator.pipuck_bridge_switch = nil
 			stateCount = stateCount + 1
 
 			-- everyone reports wall and gates

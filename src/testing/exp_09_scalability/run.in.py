@@ -94,7 +94,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],
-		["TOTALLENGTH",       str((Experiment_length or 6000)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 7000)/5)],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
 		["WALL",              wall_xml], 
