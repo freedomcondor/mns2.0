@@ -368,7 +368,7 @@ function create_reaction_node(vns)
 			stateCount = stateCount + 1
 
 			if vns.parentR == nil then
-				if stateCount > 150 * expScale then
+				if stateCount > 175 * expScale then
 					switchAndSendNewState(vns, "forward_again")
 					logger(robot.id, "forward_again")
 				end
