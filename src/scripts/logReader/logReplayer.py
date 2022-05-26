@@ -71,7 +71,8 @@ def findRobotLogs(path) :
 				name = file.split(".",2)[0]
 				ext  = file.split(".",2)[1]
 				name_head = name.rstrip(string.digits)
-				if name_head == "drone" or name_head == "pipuck" :
+				#if name_head == "drone" or name_head == "pipuck" or name_head == "obstacle":
+				if name_head == "pipuck":
 					robotLogNames.append(path + "/" + file)
 	
 	return robotLogNames
@@ -100,6 +101,9 @@ def readNextLine(file) :
 		"orientation" : Quaternion(axis=[1, 0, 0], angle=math.pi / 180 * float(lineList[5])) *
 		                Quaternion(axis=[0, 1, 0], angle=math.pi / 180 * float(lineList[4])) *
 		                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[3])),
+	}
+
+	'''
 		"virtual_orientation" : 
 		               (Quaternion(axis=[1, 0, 0], angle=math.pi / 180 * float(lineList[5])) *
 		                Quaternion(axis=[0, 1, 0], angle=math.pi / 180 * float(lineList[4])) *
@@ -109,6 +113,6 @@ def readNextLine(file) :
 		                Quaternion(axis=[0, 1, 0], angle=math.pi / 180 * float(lineList[7])) *
 		                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[6]))
 		               )
-	}
+	'''
 
 	return step
