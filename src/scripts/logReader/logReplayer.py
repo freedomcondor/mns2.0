@@ -71,8 +71,8 @@ def findRobotLogs(path) :
 				name = file.split(".",2)[0]
 				ext  = file.split(".",2)[1]
 				name_head = name.rstrip(string.digits)
-				#if name_head == "drone" or name_head == "pipuck" or name_head == "obstacle":
-				if name_head == "pipuck":
+				if name_head == "drone" or name_head == "pipuck" or name_head == "obstacle" or name_head == "target":
+				#if name_head == "pipuck":
 					robotLogNames.append(path + "/" + file)
 	
 	return robotLogNames
