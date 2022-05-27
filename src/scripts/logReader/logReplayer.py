@@ -63,7 +63,7 @@ def drawRobot(ax, positionV3, orientationQ, color='blue', size=0.05):
 #-------------------------------------------------------------------
 # files
 
-def findRobotLogs(path) :
+def findRobotLogs(path, robotType) :
 	robotLogNames = []
 	for folder in os.walk(path) :
 		if folder[0] == path :
@@ -71,9 +71,12 @@ def findRobotLogs(path) :
 				name = file.split(".",2)[0]
 				ext  = file.split(".",2)[1]
 				name_head = name.rstrip(string.digits)
-				if name_head == "drone" or name_head == "pipuck" or name_head == "obstacle" or name_head == "target":
-				#if name_head == "pipuck":
-					robotLogNames.append(path + "/" + file)
+				if robotType == "ALL" :
+					if name_head == "drone" or name_head == "pipuck" or name_head == "obstacle" or name_head == "target":
+						robotLogNames.append(path + "/" + file)
+				else :
+					if name_head == robotType :
+						robotLogNames.append(path + "/" + file)
 	
 	return robotLogNames
 

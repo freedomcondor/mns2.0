@@ -17,20 +17,42 @@ ax = fig.add_subplot(projection='3d')
 setAxParameters(ax)
 #plt.show()
 
-RobotLogNames = findRobotLogs(input_file)
-print(RobotLogNames)
-RobotLogs = openRobotLogs(RobotLogNames)
+pipuckLogNames = findRobotLogs(input_file, "pipuck")
+pipuckLogs = openRobotLogs(pipuckLogNames)
+
+droneLogNames = findRobotLogs(input_file, "drone")
+droneLogs = openRobotLogs(droneLogNames)
+
+targetLogNames = findRobotLogs(input_file, "target")
+targetLogs = openRobotLogs(targetLogNames)
+
+obstacleLogNames = findRobotLogs(input_file, "obstacle")
+obstacleLogs = openRobotLogs(obstacleLogNames)
 
 while True:
-	for robotLog in RobotLogs :
+	for pipuckLog in pipuckLogs :
 		for i in range(0, 10):
-			step = readNextLine(robotLog)
-		drawRobot(ax, step['position'], step['orientation'])
-		#drawRobot(ax, step['position'], step['orientation'])
+			step = readNextLine(pipuckLog)
+		drawRobot(ax, step['position'], step['orientation'], "blue")
+
+	for droneLog in droneLogs :
+		for i in range(0, 10):
+			step = readNextLine(droneLog)
+		drawRobot(ax, step['position'], step['orientation'], "red")
+
+	for obstacleLog in obstacleLogs :
+		for i in range(0, 10):
+			step = readNextLine(obstacleLog)
+		drawRobot(ax, step['position'], step['orientation'], "black")
+
+	for targetLog in targetLogs:
+		for i in range(0, 10):
+			step = readNextLine(targetLog)
+		drawRobot(ax, step['position'], step['orientation'], "black")
 
 	plt.pause(0.01)
 	ax.clear()
 	setAxParameters(ax)
 	plt.draw()
 
-	#temp = input()
+	temp = input()
