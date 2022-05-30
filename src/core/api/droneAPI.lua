@@ -123,11 +123,11 @@ end
 
 api.commonPreStep = api.preStep
 function api.preStep()
-	logger("droneAPI: position sensor = ", robot.flight_system.position, robot.flight_system.orientation)
+	if robot.flight_system ~= nil then logger("droneAPI: position sensor = ", robot.flight_system.position, robot.flight_system.orientation) end
 	api.commonPreStep()
 	api.droneTags = nil
 	if robot.params.simulation == true then DroneRealistSimulator.changeSensors(api) end
-	logger("droneAPI: after real sim  = ", robot.flight_system.position, robot.flight_system.orientation)
+	if robot.flight_system ~= nil then logger("droneAPI: after real sim  = ", robot.flight_system.position, robot.flight_system.orientation) end
 	api.droneTiltVirtualFrame()
 end
 
