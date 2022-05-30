@@ -30,6 +30,9 @@ obstacleLogNames = findRobotLogs(input_file, "obstacle")
 obstacleLogs = openRobotLogs(obstacleLogNames)
 
 while True:
+	plt.pause(0.01)
+	ax.clear()
+
 	for pipuckLog in pipuckLogs :
 		for i in range(0, 10):
 			step = readNextLine(pipuckLog)
@@ -50,8 +53,6 @@ while True:
 			step = readNextLine(targetLog)
 		drawRobot(ax, step['position'], step['orientation'], "black")
 
-	plt.pause(0.01)
-	ax.clear()
 	setAxParameters(ax)
 	plt.draw()
 
