@@ -81,7 +81,7 @@
     <distribute>
       <position method="uniform" min="-1,-1,0" max="1,1,0" />
       <orientation method="uniform" min="0,0,0" max="360,0,0" />
-      <entity quantity="8" base_num="2" max_trials="100">
+      <entity quantity="15" base_num="2" max_trials="100">
         <pipuck_ext id="pipuck"  wifi_medium="wifi" tag_medium="tags">
           <controller config="pipuck"/>
         </pipuck_ext>
