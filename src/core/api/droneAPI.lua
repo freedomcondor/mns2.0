@@ -162,7 +162,13 @@ function api.droneAdjustHeight(z)
 		if currentHeight == nil then
 			api.actuator.newPosition.z = api.droneLastHeight
 			if z == 0 then
-				api.actuator.newPosition.z = 0
+				local threshold = 0
+				if robot.params.hardware == true then threshold = -1 end
+				if api.actuator.newPosition.z > threshold then
+					api.actuator.newPosition.z =
+						api.actuator.newPosition.z - 0.02 * api.time.period
+				end
+				api.droneLastHeight = api.actuator.newPosition.z
 			end
 			return
 		end

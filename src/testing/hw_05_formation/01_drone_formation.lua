@@ -1,5 +1,5 @@
 logger = require("Logger")
-local api = require("droneAPI")
+api = require("droneAPI")
 local VNS = require("VNS")
 local BT = require("BehaviorTree")
 logger.enable()
@@ -168,7 +168,7 @@ function create_head_navigate_node(vns)
 		robot.leds.set_leds(200,200,200)
 		if vns.parentR ~= nil or vns.robotTypeS == "pipuck" then return false, true end
 
-		if vns.api.stepCount > 400 then 
+		if vns.api.stepCount > 300 then
 			api.parameters.droneDefaultHeight = 0
 			robot.leds.set_leds(200,0,0)
 			
