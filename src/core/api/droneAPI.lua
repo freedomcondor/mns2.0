@@ -161,6 +161,9 @@ function api.droneAdjustHeight(z)
 		logger("checking height, current height = ", currentHeight)
 		if currentHeight == nil then
 			api.actuator.newPosition.z = api.droneLastHeight
+			if z == 0 then
+				api.actuator.newPosition.z = 0
+			end
 			return
 		end
 		local heightError = z - currentHeight

@@ -75,7 +75,7 @@ function step()
 	logger("                        Y = ", vector3(0,1,0):rotate(vns.api.virtualFrame.orientationQ)) 
 	logger("                        Z = ", vector3(0,0,1):rotate(vns.api.virtualFrame.orientationQ)) 
 --]]
-	signal_led_seenRobots(vns)
+	--signal_led_seenRobots(vns)
 --[[
 	logger("wifi")
 	logger(robot.radios.wifi.recv)
@@ -165,7 +165,15 @@ function create_head_navigate_node(vns)
 		--]]
 
 		if vns.api.stepCount < 200 then return false, true end
+		robot.leds.set_leds(200,200,200)
 		if vns.parentR ~= nil or vns.robotTypeS == "pipuck" then return false, true end
+
+		if vns.api.stepCount > 400 then 
+			api.parameters.droneDefaultHeight = 0
+			robot.leds.set_leds(200,0,0)
+			
+			return false, true 
+		end
 
 		---[[
 		local speed = 0.05
