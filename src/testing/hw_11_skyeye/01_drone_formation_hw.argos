@@ -14,12 +14,12 @@
   <controllers>
     <lua_controller id="drone">
       <actuators>
-        <drone_flight_system implementation="default" />
+        <!--drone_flight_system implementation="default" /-->
         <drone_leds implementation="default" />
         <radios implementation="default" />
       </actuators>
       <sensors>
-        <drone_flight_system implementation="default" />
+        <!--drone_flight_system implementation="default" /-->
         <drone_system implementation="default" /> 
         <radios implementation="default" />
         <drone_cameras_system implementation="default">
