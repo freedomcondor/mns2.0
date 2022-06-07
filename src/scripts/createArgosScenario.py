@@ -215,8 +215,83 @@ def generate_real_scenario_object() :
 	  <body position="-6, 3.2, 0.65"  orientation="0,0,0" />
 	</cylinder>
 
+	<!-- boundary markers -->
+	<box id="marker1" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="1.2,-2.4,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker2" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="2.0,-2.0,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker3" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="3.4,-2.4,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker4" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="5.0,-1.1,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker5" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="4.7,1.3,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker6" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="3.6,2.4,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker7" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="2.3,2.6,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker8" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="1.0,3.0,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker9" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="-1.2,2.8,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker10" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="-3.1,3.2,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker11" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="-4.3,2.5,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker12" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="-5.1,1.3,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker13" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="-4.6,-1.3,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker14" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="-3.6,-2.1,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker15" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="-3.0,-2.7,0"  orientation="0,0,0" />
+	</box>
+	<box id="marker16" size="0.20,0.20,0.20" movable="false" mass="10">
+	  <body position="-1.0,-3.1,0"  orientation="0,0,0" />
+	</box>
+
 	<!-- arena -->
-	<box id="south_arena" size="0.02,6.04,0.10" movable="false" mass="10">
+	<box id="south_arena_inner" size="0.02,2.84,0.10" movable="false" mass="10">
+	  <body position="-4.31,0,0"  orientation="0,0,0" />
+	</box>
+	<box id="north_arena_inner" size="0.02,2.84,0.10" movable="false" mass="10">
+	  <body position="4.31,0,0"  orientation="0,0,0" />
+	</box>
+	<box id="west_arena_inner" size="6.90,0.02,0.10" movable="false" mass="10">
+	  <body position="0, -2.31,0"  orientation="0,0,0" />
+	</box>
+	<box id="east_arena_inner" size="6.90,0.02,0.10" movable="false" mass="10">
+	  <body position="-, 2.31,0"  orientation="0,0,0" />
+	</box>
+	<box id="south_west_arena_inner" size="0.02,1.34,0.10" movable="false" mass="10">
+	  <body position="-3.81,-1.81,0"  orientation="45,0,0" />
+	</box>
+	<box id="south_east_arena_inner" size="0.02,1.34,0.10" movable="false" mass="10">
+	  <body position="3.81,-1.81,0"  orientation="-45,0,0" />
+	</box>
+	<box id="north_east_arena_inner" size="0.02,1.34,0.10" movable="false" mass="10">
+	  <body position="3.81,1.81,0"  orientation="45,0,0" />
+	</box>
+	<box id="north_west_arena_inner" size="0.02,1.34,0.10" movable="false" mass="10">
+	  <body position="-3.81,1.81,0"  orientation="-45,0,0" />
+	</box>
+
+	<!--box id="south_arena" size="0.02,6.04,0.10" movable="false" mass="10">
 	  <body position="-5.01,0,0"  orientation="0,0,0" />
 	</box>
 	<box id="north_arena" size="0.02,6.04,0.10" movable="false" mass="10">
@@ -227,7 +302,9 @@ def generate_real_scenario_object() :
 	</box>
 	<box id="east_arena" size="10.00,0.02,0.10" movable="false" mass="10">
 	  <body position="-, 3.01,0"  orientation="0,0,0" />
-	</box>
+	</box-->
+
+
 	'''
 	return text
 

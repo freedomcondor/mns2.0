@@ -1,6 +1,6 @@
 MorphologyGenerator = {}
 
-function MorphologyGenerator.create_1drone_4pipuck_tri_arm_node(droneDis, pipuckDis, height, position, orientationQ)
+function MorphologyGenerator.create_1drone_4pipuck_tri_arm_node(droneDis, pipuckDis, height, position, orientationQ, reverse)
 	if orientationQ == nil then orientationQ = quaternion() end
 	local node =
 	{ 	robotTypeS = "drone",
@@ -24,8 +24,10 @@ function MorphologyGenerator.create_1drone_4pipuck_tri_arm_node(droneDis, pipuck
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 	}}
-	if tilt_nose == true then
-		node.children[2].positionV3 = vector3(pipuckDis/2, -pipuckDis/2 * math.sqrt(3), -height)
+	if reverse == true then
+		for id, child in ipairs(node.children) do
+			child.positionV3.x = -child.positionV3.x
+		end
 	end
 	return node
 end

@@ -9,16 +9,16 @@ import os
 
 # drone and pipuck
 drone_locations = generate_random_locations(3,                  # total number
-                                            -4, -0,             # origin location
-                                            -4.5, -3.5,         # random x range
+                                            -3.3, -0,             # origin location
+                                            -3.5, -2.5,         # random x range
                                             -2, 2,              # random y range
                                             1.2, 1.7)             # near limit and far limit
 
 pipuck_locations = generate_slave_locations_with_origin(
                                             12,
                                             drone_locations,
-                                            -4, 0,
-                                            -4.8, -3,           # random x range
+                                            -3.3, 0,
+                                            -3.5, -2.5,           # random x range
                                             -1.5, 1.5,          # random y range
                                             0.4, 0.7)           # near limit and far limit
 
@@ -26,16 +26,16 @@ drone_xml = generate_drones(drone_locations, 1)                 # from label 1 g
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
 
 obstacle_locations = generate_line_locations(10,               # number of obstacles
-                                              -3.0, 2.8,        # begin x and y
+                                              -1.5, 2.2,        # begin x and y
                                               0.0, 1.0)         # end x and y
 obstacle_locations2 = generate_line_locations(10,               # number of obstacles
-                                              -3.0, -2.8,       # begin x and y
+                                              -1.5, -2.2,       # begin x and y
                                               0.0, -1.0)        # end x and y
 
 obstacle_locations += obstacle_locations2
 
 obstacle_xml = generate_obstacles(obstacle_locations, 100, 100) # start id and payload
-obstacle_xml += generate_obstacle_box_xml(121, 4.5, 0, 0, 101)
+obstacle_xml += generate_obstacle_box_xml(121, 3.5, 0, 0, 101)
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 

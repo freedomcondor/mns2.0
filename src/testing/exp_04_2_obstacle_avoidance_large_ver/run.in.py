@@ -10,16 +10,16 @@ import math
 
 # drone and pipuck
 drone_locations = generate_random_locations(2,                  # total number
-                                            -3, 0,           # origin location
-                                            -4.5, -3.8,         # random x range
-                                            -0.7, 2,            # random y range
-                                            1.2, 2)             # near limit and far limit
+                                            -2.5, 0,            # origin location
+                                            -4.0, -2.0,         # random x range
+                                            -2, 2,              # random y range
+                                            1.5, 1.7)             # near limit and far limit
 pipuck_locations = generate_slave_locations_with_origin(
                                             8,
                                             drone_locations,
-                                            -3, 0,
-                                            -4.8, -3,           # random x range
-                                            -1.5, 1.5,          # random y range
+                                            -2.0, 0,
+                                            -4.0, -2,           # random x range
+                                            -2, 2,              # random y range
                                             0.5, 0.7)           # near limit and far limit
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
@@ -27,8 +27,8 @@ pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 g
 # obstacles
 large_obstacle_locations = generate_random_locations(80,              # total number
                                                      None, None,      # origin location
-                                                     -2.5, 2.5,       # x range
-                                                     -2.5, 2.5,       # y range
+                                                     -2.3, 2.3,       # x range
+                                                     -2.2, 2.2,       # y range
                                                      1.2, 3.0)        # near and far limit
 obstacle1_locations = []
 obstacle2_locations = []
@@ -56,7 +56,7 @@ obstacle_xml = generate_obstacles(obstacle1_locations, 100, 255) # start id and 
 obstacle_xml = obstacle_xml + generate_obstacles(obstacle2_locations, 180, 254) # start id and payload
 obstacle_xml = obstacle_xml + generate_obstacles(obstacle3_locations, 260, 253) # start id and payload
 
-obstacle_xml += generate_obstacle_box_xml(200, 4.5, 0.5, 0, 252)  # start id, location x, y, th, and payload
+obstacle_xml += generate_obstacle_box_xml(200, 4.0, 0.5, 0, 252)  # start id, location x, y, th, and payload
 
 # generate argos file
 params = '''

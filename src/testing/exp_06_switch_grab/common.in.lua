@@ -57,6 +57,7 @@ function reset()
 	vns.reset(vns)
 	--if vns.idS == "pipuck1" then vns.idN = 1 end
 	if vns.idS == robot.params.stabilizer_preference_brain then vns.idN = 1 end
+	if vns.idS == robot.params.stabilizer_preference_robot then vns.api.virtualFrame.orientationQ = quaternion(-math.pi/2, vector3(0,0,1)) end
 	vns.setGene(vns, gene)
 	vns.setMorphology(vns, structure1)
 
