@@ -36,12 +36,12 @@ while True:
 	for pipuckLog in pipuckLogs :
 		for i in range(0, 10):
 			step = readNextLine(pipuckLog)
-		drawRobot(ax, step['position'], step['orientation'], "blue")
+		drawRobot(ax, step['position'], step['virtual_orientation'], "blue")
 
 	for droneLog in droneLogs :
 		for i in range(0, 10):
 			step = readNextLine(droneLog)
-		drawRobot(ax, step['position'], step['orientation'], "red")
+		drawRobot(ax, step['position'], step['virtual_orientation'], "red")
 
 	for obstacleLog in obstacleLogs :
 		for i in range(0, 10):
@@ -56,4 +56,4 @@ while True:
 	setAxParameters(ax)
 	plt.draw()
 
-	temp = input()
+	#temp = input()

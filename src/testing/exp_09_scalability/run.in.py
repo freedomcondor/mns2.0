@@ -16,13 +16,13 @@ drone_locations = generate_random_locations(n_drone,                        # to
                                             -exp_scale - 3, 0,              # origin location
                                             -exp_scale*3-2, -1,             # random x range
                                             -exp_scale*3,exp_scale*3,       # random y range
-                                            1.3, 1.7)                       # near limit and far limit
+                                            1.3, 1.5)                       # near limit and far limit
 pipuck_locations = generate_slave_locations_with_origin(n_pipuck,
                                             drone_locations,
                                             -exp_scale-3+0.8, 0.4,          # origin
                                             -exp_scale*3-2, -1,             # random x range
                                             -exp_scale*3,exp_scale*3,       # random y range
-                                            0.5, 1.0)                       # near limit and far limit
+                                            0.5, 0.9)                       # near limit and far limit
 
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
@@ -68,7 +68,7 @@ alpha = math.pi * 2 / n
 th = (math.pi - alpha) / 2
 radius = droneDis / 2 / math.cos(th) - 1.0
 
-target_xml = generate_target_xml(exp_scale * 3, largest_loc, 0,      # x, y, th
+target_xml = generate_target_xml(exp_scale * 2.9 + 0.5, largest_loc, 0,      # x, y, th
                                  252, 255,                           # payload
                                  radius, 0.1, 0.2)                   # radius and edge and tag distance
 

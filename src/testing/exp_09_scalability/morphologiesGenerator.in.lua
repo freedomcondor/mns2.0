@@ -120,6 +120,7 @@ end
 -- structure 2 -----------------------------------------------------
 function create_back_line_morphology(scale, droneDis, pipuckDis, height)
 	local node = create_3drone_12pipuck_children_node(droneDis, pipuckDis, height, vector3(), quaternion())
+	node.children[3].reference = true
 	table.insert(node.children,
 		create_3drone_12pipuck_children_chain(scale, droneDis, pipuckDis, height, 
 			vector3(-droneDis, 0, 0), 

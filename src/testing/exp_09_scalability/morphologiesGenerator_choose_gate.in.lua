@@ -15,16 +15,16 @@ local function create_1drone_4pipuck_children_node(droneDis, pipuckDis, height, 
 			positionV3 = vector3(pipuckDis, 0, -height),
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
-		--[[
 		{	robotTypeS = "pipuck",
 			positionV3 = vector3(-pipuckDis/2, pipuckDis/2 * math.sqrt(3), -height),
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
-		--]]
+		--[[
 		{	robotTypeS = "pipuck",
 			positionV3 = vector3(-pipuckDis/2, -pipuckDis/2 * math.sqrt(3), -height),
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
+		--]]
 	}}
 	if tilt_nose == true then
 		node.children[2].positionV3 = vector3(pipuckDis/2, -pipuckDis/2 * math.sqrt(3), -height)
@@ -136,6 +136,7 @@ end
 
 function create_back_line_morphology(scale, droneDis, pipuckDis, height)
 	local node = create_3drone_12pipuck_children_node(droneDis, pipuckDis, height, vector3(), quaternion())
+	node.children[2].reference = true
 	table.insert(node.children,
 		create_3drone_12pipuck_children_chain(scale, droneDis, pipuckDis, height, 
 			vector3(-droneDis, 0, 0), 

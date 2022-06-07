@@ -106,16 +106,15 @@ def readNextLine(file) :
 		                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[3])),
 	}
 
-	'''
-		"virtual_orientation" : 
+	if len(lineList) > 6:
+		step["virtual_orientation"] = \
 		               (Quaternion(axis=[1, 0, 0], angle=math.pi / 180 * float(lineList[5])) *
 		                Quaternion(axis=[0, 1, 0], angle=math.pi / 180 * float(lineList[4])) *
 		                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[3]))
-		               ) *
+		               ) * \
 		               (Quaternion(axis=[1, 0, 0], angle=math.pi / 180 * float(lineList[8])) *
 		                Quaternion(axis=[0, 1, 0], angle=math.pi / 180 * float(lineList[7])) *
 		                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[6]))
 		               )
-	'''
 
 	return step

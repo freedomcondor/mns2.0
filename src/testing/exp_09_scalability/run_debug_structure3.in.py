@@ -97,8 +97,8 @@ th = (math.pi - alpha) / 2
 radius = droneDis / 2 / math.cos(th) - 1.0
 
 target_xml = generate_target_xml(1, largest_loc, 0,           # x, y, th
-                                 252,                           # payload
-                                 radius, 0.1)                      # radius and edge
+                                 252, 255,                           # payload
+                                 radius, 0.1, 0.2)                      # radius and edge
 
 params = '''
               exp_scale="{}"

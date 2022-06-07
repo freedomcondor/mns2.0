@@ -11,7 +11,7 @@
 #SBATCH --mail-user=weixu.zhu@ulb.be   # your email to receive emails about the state of your job
 #SBATCH --mail-type=END,FAIL           # when to send emails, choices are BEGIN, END, FAIL, ARRAY_TASKS
 
-#SBATCH --array=1-2                    # job array
+#SBATCH --array=1-50                    # job array
 
 ## Module dependencies
 #export MODULEPATH=$HOME/Software/modulefiles:$MODULEPATH
@@ -20,7 +20,8 @@ module load lua5.3-dev.mod
 module load readline-8.1.mod
 
 #srun my_program   # run your program here 
-DATADIR=@CMAKE_CURRENT_BINARY_DIR@/../data
+#DATADIR=@CMAKE_CURRENT_BINARY_DIR@/../data
+DATADIR=@CMAKE_SOURCE_DIR@/data_exp_09
 TMPDIR=@CMAKE_BINARY_DIR@/tmp/mns_exp_09
 
 # job id

@@ -119,6 +119,7 @@ function create_reaction_node(vns)
 	local state = robot.params.start_state or "waiting"
 	--local state = "allocate_test"
 	local stateCount = 0
+	local stateCountMark = nil
 
 	-- parameters ----------------
 	local obstacle_type = 255
@@ -211,7 +212,7 @@ function create_reaction_node(vns)
 					-- brain checks gate and go to next state
 					local disToTheWall = receiveWall.positionV3:dot(vector3(1,0,0):rotate(receiveWall.orientationQ))
 					logger("disToTheWall = ", disToTheWall, "gateNumber = ", gateNumber)
-					if gateNumber == totalGateNumber and disToTheWall < 1.8 then
+					if gateNumber == totalGateNumber and disToTheWall < 1.75 then
 						switchAndSendNewState(vns, "check_gate")
 						logger(robot.id, "check_gate")
 					end
@@ -292,8 +293,17 @@ function create_reaction_node(vns)
 					})
 
 					for _, msgM in ipairs(vns.Msg.getAM(vns.stabilizer.referencing_robot.idS, "structure2_reach")) do
-						switchAndSendNewState(vns, "wait_forward_again")
-						logger(robot.id, "wait_forward_again")
+						if stateCountMark == nil then
+							stateCountMark = stateCount
+							logger(robot.id, "reach gate, start counting")
+						else
+							if stateCount - stateCountMark > 175 * expScale then
+								switchAndSendNewState(vns, "forward_again")
+								logger(robot.id, "forward_again")
+							end
+							--switchAndSendNewState(vns, "wait_forward_again")
+							--logger(robot.id, "wait_forward_again")
+						end
 					end
 				end
 			end
@@ -364,6 +374,7 @@ function create_reaction_node(vns)
 				end
 			end
 
+		--[[
 		elseif state == "wait_forward_again" then
 			stateCount = stateCount + 1
 
@@ -373,6 +384,7 @@ function create_reaction_node(vns)
 					logger(robot.id, "forward_again")
 				end
 			end
+		--]]
 
 		elseif state == "forward_again" then
 			--vns.allocator.pipuck_bridge_switch = nil
@@ -410,20 +422,20 @@ function create_reaction_node(vns)
 						api.virtualFrame.V3_VtoR(vector3(receiveWall.positionV3)),
 						api.virtualFrame.V3_VtoR(vector3(receiveWall.positionV3) + vector3(0.2, 0, 0):rotate(receiveWall.orientationQ))
 					)
+				end
 
-					-- brain checks target 
-					local target = ExperimentCommon.detectTarget(vns, target_type)
-					if target ~= nil then
-						local disV2 = target.positionV3
-						disV2.z = 0
-						logger("disV2 = ", disV2:length())
-						if disV2:length() < 1.5 then
-							vns.target = target
-							vns.stabilizer.force_pipuck_reference = nil
-							switchAndSendNewState(vns, "structure3")
-							logger(robot.id, "structure3")
-							vns.setMorphology(vns, structure3)
-						end
+				-- brain checks target
+				local target = ExperimentCommon.detectTarget(vns, target_type)
+				if target ~= nil then
+					local disV2 = target.positionV3
+					disV2.z = 0
+					logger("disV2 = ", disV2:length())
+					if disV2:length() < 1.6 then
+						vns.target = target
+						vns.stabilizer.force_pipuck_reference = nil
+						switchAndSendNewState(vns, "structure3")
+						logger(robot.id, "structure3")
+						vns.setMorphology(vns, structure3)
 					end
 				end
 			end
