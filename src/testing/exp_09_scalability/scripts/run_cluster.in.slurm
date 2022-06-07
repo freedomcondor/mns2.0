@@ -1,9 +1,9 @@
 #!/bin/bash
 
 ## Resource Request
-#SBATCH --job-name=mns_exp01           # name of your job, will be shown when running squeue
-#SBATCH --output=mns_exp01_%A_%a.stdout   # name of the output file, %j will be replaced by the Job ID
-#SBATCH --error=mns_exp01_%A_%a.stderr    # name of the error file, %j will be replaced by the Job ID
+#SBATCH --job-name=mns_exp09           # name of your job, will be shown when running squeue
+#SBATCH --output=mns_exp09_%A_%a.stdout   # name of the output file, %j will be replaced by the Job ID
+#SBATCH --error=mns_exp09_%A_%a.stderr    # name of the error file, %j will be replaced by the Job ID
 #SBATCH --partition=Epyc7452           # the hardware that you want to run on
 #SBATCH --qos=long                    # the queue that you want to run on (short, long)
 #SBATCH --ntasks=1                     # the job will launch a single task, set higher for MPI programs
