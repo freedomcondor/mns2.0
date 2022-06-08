@@ -428,7 +428,7 @@ def generate_target_xml(x, y, th, mark_type, obstacle_type, radius, tag_edge_dis
 #		[left2, right2],
 #	]
 #	and the middle of the largest gate
-attempt_count_down_default = 500
+attempt_count_down_default = 1000
 def generate_gate_locations(gate_number, left_end, right_end, small_limit, large_limit, max_size) :
 	margin = 0.4
 	a = []
