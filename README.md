@@ -1,4 +1,10 @@
 ## Guidelines
+0. Clone this repo and checkout `scalability_with_three_lines` branch.
+	```bash
+	git clone https://github.com/freedomcondor/mns2.0.git
+	cd mns2.0
+	git checkout scalability_with_three_lines
+	```
 1. This project requires the latest versions of argos3 (https://github.com/ilpincy/argos3) to be installed.
 	"Latest version" is only relative. The current version to work with is:
 	```bash
@@ -15,12 +21,13 @@
 	git checkout c04be869311801976a83613552e111b2eef4dd45
 	```
 
-2. Before compiling and installing argos, you may want to apply some patch for argos3 from folder `argos3-patch`, depends on what do you need:
-	* `drone-sight-2.5m.patch` is essential, it makes drone cameras look farther than default, so that it works with pipuck-extension with larger tag. To apply the patch, go to argos3 folder and :
+2. Before compiling and installing argos, you may want to apply some patch for argos3 from folder `argos3-patch`, depends on what do you need. For our mns experiments, two essential patches are applied, which are the first two described below:
+	* `new-camera-positions.patch` is essential, it makes drone cameras look farther than default, so that it works with pipuck-extension with larger tag. To apply the patch, go to argos3 folder and :
 		```bash
-		git apply ../mns2.0/argos3-patch/argos3-sight_2.5m.patch
+		cd argos3
+		git apply ../mns2.0/argos3-patch/new-camera-positions.patch
 		```
-	* `unstable-drone.patch` is to make drone gyro and accelero meters more noisy so that the stablebility of the drone matches reality. 
+	* `unstable-drone.patch` is essential, it makes drone gyro and accelero meters more noisy so that the stablebility of the drone matches reality. 
 		```bash
 		git apply ../mns2.0/argos3-patch/unstable-drone.patch
 		```
@@ -78,13 +85,20 @@
 
 I have already created several scenarios to play with. 
 1. A simple one is `testing/test_01_formation/` where a group of drones and pipucks form a plane shape.
-2. In `testing/exp_01_real_scenario`, there is a scenario where a swarm forms, moves forward, changes the formation to move through the gate and push an object. Everything is automatic, you can just hit the play button and watch and change cameras while the robots are running.
 
-## Data
+In `testing` folder, there are several types of scenarios: `exp`, `hw`, `test`. All the mns experiment scenarios start with `exp`, for example `testing/exp_01_1_establish_formation_scatter_line`. For These each of these exp_*, there is a `run.py` (run.in.py in src and run.py in build) file. This py file is used to manage expeirment parameters like robots inital positions and random seeds. It generates a `vns.argos` file and run argos3 with it. Therefore, to run exp_* scenario, do:
 
-`scripts/logReader.lua` is used to read logs, but it needs lua to read you file system, which needs: `luarocks install luafilesystem` -- Warn: this is not needed anymore in the new version
+```bash
+cd mns2.0/build
+python3 testing/exp_01_1_establish_formation_scatter_line/run.py -r 1
+```
+where `-r 1` at the end means randomseed 1. If there are no `-r 1` specified, a randomseed based on the current time will be automatically used.
+
+Traverse all `exp_*` and you will see all the mns experiments. 
 
 ## other notes
 
-On the cluster, ARGOS_CMAKE_DIR is not found, cmake like the following will work
+1. `scripts/logReader.lua` is used to read logs, but it needs lua to read you file system, which needs: `luarocks install luafilesystem` -- Warn: this is not needed anymore in the current version
+
+2. On the cluster, ARGOS_CMAKE_DIR is not found, cmake like the following will work
 `cmake ../src/ -DARGOS_CMAKE_DIR=/home/wzhu/Programs/argos3/install/share/argos3/cmake`
