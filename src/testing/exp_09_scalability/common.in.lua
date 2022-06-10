@@ -160,6 +160,7 @@ function create_reaction_node(vns)
 			if vns.parentR == nil then
 				--if stateCount > 75 and vns.driver.all_arrive == true then
 				if (stateCount > 250 * expScale) then
+					logger(robot.id, "move_forward")
 					switchAndSendNewState(vns, "move_forward")
 				end
 			end
