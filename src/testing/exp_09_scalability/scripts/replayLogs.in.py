@@ -5,10 +5,10 @@ def setAxParameters(ax):
 	ax.set_xlabel("x")
 	ax.set_ylabel("y")
 	ax.set_zlabel("z")
-	#ax.set_xlim([-20, 20])
-	#ax.set_ylim([-10, 10])
-	ax.set_xlim([-10, 0])
-	ax.set_ylim([0, 5])
+	ax.set_xlim([-20, 20])
+	ax.set_ylim([-10, 10])
+	#ax.set_xlim([-10, 0])
+	#ax.set_ylim([0, 5])
 	ax.set_zlim([-1.0, 2.0])
 	ax.view_init(90, 00)
 
@@ -44,7 +44,8 @@ while True:
 	for droneLog in droneLogs :
 		for i in range(0, 10):
 			step = readNextLine(droneLog)
-		drawRobot(ax, step['position'], step['virtual_orientation'], "red")
+		drawRobot(ax, step['position'], step['virtual_orientation'], "green")
+		drawRobot(ax, step['position'], step['orientation'], "red")
 
 	for obstacleLog in obstacleLogs :
 		for i in range(0, 10):

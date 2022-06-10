@@ -40,12 +40,14 @@ function Avoider.step(vns)
 				local deadzone = vns.Parameters.deadzone_pipuck
 				-- avoid referenced pipuck 10 times harder
 				if idS == vns.stabilizer.referencing_pipuck_neighbour then
-					vns.Parameters.avoid_speed_scalar = vns.Parameters.avoid_speed_scalar * 10
+					vns.Parameters.avoid_speed_scalar = vns.Parameters.avoid_speed_scalar * 15
+					dangerzone = dangerzone * 1.3
+					deadzone = deadzone * 2
 				end
 				avoid_speed.positionV3 =
 					Avoider.add(vector3(), robotR.positionV3,
 					            avoid_speed.positionV3,
-					            vns.Parameters.dangerzone_pipuck,
+					            dangerzone,
 					            vns.goal.positionV3,
 					            deadzone
 					           )

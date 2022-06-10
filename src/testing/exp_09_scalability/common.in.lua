@@ -348,6 +348,17 @@ function create_reaction_node(vns)
 				-- adjust my direction
 				vns.stabilizer.referencing_me_goal_overwrite = {positionV3 = vns.goal.positionV3, orientationQ = myGoal.orientationQ}
 
+				-- check interfering pipucks
+				local frontPoint = vector3(vns.goal.transV3):normalize() * 0.15
+				frontPoint.z = 0
+				for idS, robotR in pairs(vns.connector.seenRobots) do
+					if robotR.robotTypeS == "pipuck" and
+					   (robotR.positionV3 - frontPoint):length() < 0.15 then
+						vns.goal.transV3 = vector3()
+					end
+				end
+
+				-- check reach
 				local headingDis = (vector3(1,0,0) - vector3(1,0,0):rotate(myGoal.orientationQ)):length()
 				if vns.gate ~= nil and disV2:length() < 0.2 and headingDis < 0.1 then
 					vns.Msg.send(vns.parentR.idS, "structure2_reach")
