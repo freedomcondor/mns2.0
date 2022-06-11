@@ -9,9 +9,9 @@ def setAxParameters(ax):
 	ax.set_xlabel("x")
 	ax.set_ylabel("y")
 	ax.set_zlabel("z")
-	ax.set_xlim([1, 3.0])
-	ax.set_ylim([-2.0, 0.0])
-	ax.set_zlim([-1.0, 1.0])
+	ax.set_xlim([-5, 5])
+	ax.set_ylim([-3, 3])
+	ax.set_zlim([-1.0, 2.0])
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
