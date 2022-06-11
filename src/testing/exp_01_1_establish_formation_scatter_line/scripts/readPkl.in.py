@@ -13,6 +13,8 @@ def setAxParameters(ax):
 	ax.set_ylim([-3, 3])
 	ax.set_zlim([-1.0, 2.0])
 
+	ax.view_init(90, 00)
+
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
