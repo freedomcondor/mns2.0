@@ -8,7 +8,7 @@ function MorphologyGenerator.create_1drone_4pipuck_tri_arm_node(droneDis, pipuck
 		orientationQ = orientationQ,
 		children = {
 		{	robotTypeS = "pipuck",
-			positionV3 = vector3(0, 0, -height),
+			positionV3 = vector3(pipuckDis/2, 0, -height),
 			orientationQ = quaternion(0, vector3(0,0,1)),
 		},
 		{	robotTypeS = "pipuck",
