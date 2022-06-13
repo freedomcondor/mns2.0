@@ -7,7 +7,7 @@ import os
 # drone and pipuck
 drone_locations = []
 matrix = [2, 2]
-start = [1, 0]
+start = [1.7, 0.23]
 step_left = [-1.5, 1.5]
 step_down = [-1.5, -1.5]
 for i in range(0, matrix[0]) :
@@ -18,7 +18,7 @@ for i in range(0, matrix[0]) :
 
 pipuck_locations = []
 matrix = [4, 4]
-start = [0.5, 0.0]
+start = [1.2, 0.23]
 step_left  = [-0.3, 0.3]
 step_down = [-0.3, -0.3]
 for i in range(0, matrix[0]) :

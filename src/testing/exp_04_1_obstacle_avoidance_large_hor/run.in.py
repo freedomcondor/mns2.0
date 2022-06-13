@@ -17,7 +17,7 @@ drone_locations = generate_random_locations(2,                  # total number
 pipuck_locations = generate_slave_locations_with_origin(
                                             8,
                                             drone_locations,
-                                            -3.3, -0.7,
+                                            -2.6, -0.47,
                                             -4.0, -2.3,         # random x range
                                             -1.5, 1.5,          # random y range
                                             0.5, 0.7)           # near limit and far limit
