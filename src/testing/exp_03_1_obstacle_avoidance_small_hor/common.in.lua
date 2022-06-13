@@ -88,7 +88,7 @@ return function()
 	vns.stabilizer.force_pipuck_reference = nil
 
 	-- check end
-	local target_type = 254
+	local target_type = 34
 	local target = nil
 	if #vns.avoider.obstacles ~= 0 then
 		for id, ob in ipairs(vns.avoider.obstacles) do

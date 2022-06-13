@@ -30,8 +30,8 @@ obstacle_locations = generate_random_locations(80,              # total number
                                                -2.2, 2.2,       # y range
                                                0.7, 3.0)        # near and far limit
 
-obstacle_xml = generate_obstacles(obstacle_locations, 100, 255)   # start id and payload
-obstacle_xml += generate_obstacle_box_xml(200, 4.0, 0, 0, 254)  # start id, location x, y, th, and payload
+obstacle_xml = generate_obstacles(obstacle_locations, 100, 35)   # start id and payload
+obstacle_xml += generate_obstacle_box_xml(200, 4.0, 0, 0, 34)  # start id, location x, y, th, and payload
 
 # generate argos file
 params = '''
@@ -39,8 +39,11 @@ params = '''
       stabilizer_preference_brain="drone1"
       pipuck_wheel_speed_limit="0.2"
       drone_default_height="1.8"
-      block_label_from="254"
-      block_label_to="255"
+
+      pipuck_label_from="1"
+      pipuck_label_to="20"
+      block_label_from="30"
+      block_label_to="35"
 '''
 
 #safezone_drone_pipuck="1.0"
