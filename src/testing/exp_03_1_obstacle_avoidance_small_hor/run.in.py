@@ -30,8 +30,8 @@ obstacle_locations = generate_random_locations(80,              # total number
                                                -2.2, 2.2,       # y range
                                                0.7, 3.0)        # near and far limit
 
-obstacle_xml = generate_obstacles(obstacle_locations, 100, 35)   # start id and payload
-obstacle_xml += generate_obstacle_box_xml(200, 4.0, 0, 0, 34)  # start id, location x, y, th, and payload
+obstacle_xml = generate_obstacles(obstacle_locations, 100, 34)   # start id and payload
+obstacle_xml += generate_obstacle_box_xml(200, 4.0, 0, 0, 33)  # start id, location x, y, th, and payload
 
 # generate argos file
 params = '''
