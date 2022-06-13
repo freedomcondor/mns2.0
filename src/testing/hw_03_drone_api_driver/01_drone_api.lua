@@ -51,7 +51,7 @@ function step()
 	api.droneSetSpeed(speed.x, speed.y, 0, 0)
 	--api.move(vector3(0.1, 0, 0), vector3())
 
-	api.droneMaintainHeight(1.8)
+	--api.droneMaintainHeight(1.8)
 
 	api.postStep()
 end
