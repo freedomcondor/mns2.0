@@ -128,7 +128,6 @@ def logStepLine(file, optitrack_step_data, message_step_data):
 	                                               optitrack_step_data['orientation'][1],
 	                                               optitrack_step_data['orientation'][2],
 	                                               optitrack_step_data['orientation'][3])
-	'''
 	file.write(str(yaw_z)   + ',' +
 	           str(pitch_y) + ',' +
 	           str(roll_x)  + ','   )
@@ -136,13 +135,13 @@ def logStepLine(file, optitrack_step_data, message_step_data):
 	file.write(str(roll_x)   + ',' +
 	           str(pitch_y) + ',' +
 	           str(yaw_z)  + ','   )
+	'''
 	# virtualOrientation 
 	virtualFrameQTuple = getTupleListByFirstElement(message_step_data, 'virtualFrameQ')
 	roll_x, pitch_y, yaw_z = euler_from_quaternion(virtualFrameQTuple[1],
 	                                               virtualFrameQTuple[2],
 	                                               virtualFrameQTuple[3],
 	                                               virtualFrameQTuple[0])
-	'''
 	file.write(str(yaw_z)   + ',' +
 	           str(pitch_y) + ',' +
 	           str(roll_x)  + ','   )
@@ -150,6 +149,7 @@ def logStepLine(file, optitrack_step_data, message_step_data):
 	file.write(str(roll_x)   + ',' +
 	           str(pitch_y) + ',' +
 	           str(yaw_z)  + ','   )
+	'''
 	# goal position 
 	goalPositionV3Tuple = getTupleListByFirstElement(message_step_data, 'goalPositionV3')
 	file.write(str(goalPositionV3Tuple[0]) + ',' +
@@ -161,7 +161,6 @@ def logStepLine(file, optitrack_step_data, message_step_data):
 	                                               goalOrientationQTuple[2],
 	                                               goalOrientationQTuple[3],
 	                                               goalOrientationQTuple[0])
-	'''
 	file.write(str(yaw_z)   + ',' +
 	           str(pitch_y) + ',' +
 	           str(roll_x)  + ','   )
@@ -169,6 +168,7 @@ def logStepLine(file, optitrack_step_data, message_step_data):
 	file.write(str(roll_x)   + ',' +
 	           str(pitch_y) + ',' +
 	           str(yaw_z)  + ','   )
+	'''
 	# targetID
 	file.write(str(getTupleListByFirstElement(message_step_data, 'targetID')) + ',')
 	# vnsID(brainName)

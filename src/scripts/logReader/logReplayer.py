@@ -106,15 +106,31 @@ def readNextLine(file) :
 		                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[3])),
 	}
 
+	'''
+	               (Quaternion(axis=[1, 0, 0], angle=math.pi / 180 * float(lineList[5])) *
+	                Quaternion(axis=[0, 1, 0], angle=math.pi / 180 * float(lineList[4])) *
+	                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[3]))
+	               ) * \
+	'''
+
 	if len(lineList) > 6:
 		step["virtual_orientation"] = \
-		               (Quaternion(axis=[1, 0, 0], angle=math.pi / 180 * float(lineList[5])) *
-		                Quaternion(axis=[0, 1, 0], angle=math.pi / 180 * float(lineList[4])) *
-		                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[3]))
-		               ) * \
+		               step["orientation"] * \
 		               (Quaternion(axis=[1, 0, 0], angle=math.pi / 180 * float(lineList[8])) *
 		                Quaternion(axis=[0, 1, 0], angle=math.pi / 180 * float(lineList[7])) *
 		                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[6]))
 		               )
+		step["goal_position"] = [float(lineList[9]),
+		                         float(lineList[10]),
+		                         float(lineList[11])
+		                        ]
+		step["goal_orientation"] = \
+		               (Quaternion(axis=[1, 0, 0], angle=math.pi / 180 * float(lineList[14])) *
+		                Quaternion(axis=[0, 1, 0], angle=math.pi / 180 * float(lineList[13])) *
+		                Quaternion(axis=[0, 0, 1], angle=math.pi / 180 * float(lineList[12]))
+		               )
+
+		step["goal_position_global"] = step["virtual_orientation"].rotate(np.array(step["goal_position"])) + step["position"]
+		step["goal_orientation_global"] = step["virtual_orientation"] * step["goal_orientation"]
 
 	return step
