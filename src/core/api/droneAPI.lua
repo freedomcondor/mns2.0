@@ -355,6 +355,17 @@ function api.droneDetectTags()
 				end
 			end
 
+			-- check orientation Z up
+			if (vector3(0,0,1):rotate(orientationQ) - vector3(0,0,1)):length() > 0.3 then
+				logger("bad tag orientation, ignore tag", newTag.id)
+				logger("                     positionV3", positionV3)
+				logger("                     orientationQ", orientationQ)
+				logger("                             X = ", vector3(1,0,0):rotate(orientationQ))
+				logger("                             Y = ", vector3(0,1,0):rotate(orientationQ))
+				logger("                             Z = ", vector3(0,0,1):rotate(orientationQ))
+				flag = 1
+			end
+
 			if flag == 0 then
 				tags[#tags + 1] = {
 					id = newTag.id,
