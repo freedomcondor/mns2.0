@@ -47,7 +47,7 @@ wall_xml, largest_loc = generate_wall(gate_number,              # number of gate
                                       #0,
                                       #-exp_scale*3.0-2, 
                                       #2,          # y range of the wall
-                                      0.8, 3.8, 4.0,                 # size range and max of the gate
+                                      0.8, 3.3, 4.0,                 # size range and max of the gate
                                       0.25,                     # block distance to fill the wall
                                       253, 254)                 # gate_brick_type, and wall_brick_type
 

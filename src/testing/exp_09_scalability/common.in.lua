@@ -90,6 +90,13 @@ end
 --- step
 function step()
 	-- prestep
+	-- log step
+	if robot.id == "drone1" then
+		if api.stepCount % 100 == 0 then
+			logger("---- step ", api.stepCount, "-------------")
+		end
+	end
+
 	--logger(robot.id, api.stepCount, "-----------------------")
 	api.preStep()
 	vns.preStep(vns)
@@ -257,6 +264,8 @@ function create_reaction_node(vns)
 			stateCount = stateCount + 1
 			-- If I see the gate and I'm a drone
 
+			gate_difference_threshold = 0.5
+
 			-- everyone reports wall and gates
 			ExperimentCommon.reportWall(vns, wall_brick_type)
 			local gateList, gate = ExperimentCommon.detectAndReportGates(vns, gate_brick_type, max_gate_length, true) -- true means all report
@@ -268,17 +277,34 @@ function create_reaction_node(vns)
 			if vns.parentR == nil then
 				vns.stabilizer.force_pipuck_reference = true
 				-- send both gate and wall
-				local sendingGate, sendingWall
-				-- if gate is already missing at the start of this state, send vns.gate to make sure reference robot has a direction to move
-				if gate == nil and stateCount < 10 then
-					gate = vns.gate
-				end
+				local sendingGate, sendingWall, memoryGate
+
+				-- if I see a gate, check if it is the same gate, otherwise do nothing
 				if gate ~= nil then
-					sendingGate = {
-						positionV3 = vns.api.virtualFrame.V3_VtoR(gate.positionV3),
-						orientationQ = vns.api.virtualFrame.Q_VtoR(gate.orientationQ),
-						length = gate.length,
+					if vns.gate ~= nil and math.abs(vns.gate.length - gate.length) > gate_difference_threshold then
+						-- not the same gate, do nothing
+						logger(robot.id, "Not the same gate, remember gate length = ", vns.gate.length, "seeing gate length = ", gate.length)
+					else
+						-- I see the target gate, update vns.gate, and prepare to send this gate
+						vns.gate = gate
+
+						if gate ~= nil then
+							sendingGate = {
+								positionV3 = vns.api.virtualFrame.V3_VtoR(gate.positionV3),
+								orientationQ = vns.api.virtualFrame.Q_VtoR(gate.orientationQ),
+								length = gate.length,
+							}
+						end
+					end
+				end
+				if vns.gate ~= nil then
+					memoryGate = {
+						positionV3 = vns.api.virtualFrame.V3_VtoR(vns.gate.positionV3),
+						orientationQ = vns.api.virtualFrame.Q_VtoR(vns.gate.orientationQ),
+						length = vns.gate.length,
 					}
+				else
+					logger(robot.id, "warning, for brain, vns.gate is nil, while there should always be one")
 				end
 				if wall ~= nil then
 					sendingWall = {
@@ -290,7 +316,7 @@ function create_reaction_node(vns)
 				--send to referencing robot
 				if vns.stabilizer.referencing_robot ~= nil then
 					vns.Msg.send(vns.stabilizer.referencing_robot.idS, "wall_and_gate", {
-						gate = sendingGate, wall = sendingWall
+						gate = sendingGate, wall = sendingWall, memoryGate = memoryGate,
 					})
 
 					for _, msgM in ipairs(vns.Msg.getAM(vns.stabilizer.referencing_robot.idS, "structure2_reach")) do
@@ -314,12 +340,22 @@ function create_reaction_node(vns)
 				-- if get gate update vns.gate
 				for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "wall_and_gate")) do
 					if msgM.dataT.gate ~= nil then
-						if vns.gate ~= nil and math.abs(vns.gate.length - msgM.dataT.gate.length) > 0.2 then
-							-- not the same gate, do nothing
-						else
-							vns.gate = Transform.AxBisC(vns.parentR, msgM.dataT.gate)
-							vns.gate.length = msgM.dataT.gate.length
+						-- The brain sees a gate, update my vns.gate
+						vns.gate = Transform.AxBisC(vns.parentR, msgM.dataT.gate)
+						vns.gate.length = msgM.dataT.gate.length
+					else
+						-- The brain doesn't see a gate, use my vns.gate
+						-- if I don't have a vns.gate, use brain's memory
+						if vns.gate == nil then 
+							if msgM.dataT.memoryGate ~= nil then
+								vns.gate = Transform.AxBisC(vns.parentR, msgM.dataT.memoryGate)
+								vns.gate.length = msgM.dataT.memoryGate.length
+							else
+								logger(robot.id, "warning, for reference pipuck, vns.gate is nil, and brain isn't sending one")
+							end
 						end
+						-- otherwise
+						-- I have vns.gate, use vns.gate
 					end
 					if msgM.dataT.wall ~= nil then
 						vns.wall = Transform.AxBisC(vns.parentR, msgM.dataT.wall)
@@ -332,6 +368,17 @@ function create_reaction_node(vns)
 				local myGoal = {positionV3 = vector3(), orientationQ = quaternion()}
 				if vns.gate ~= nil then
 					brainGoal.positionV3 = vns.gate.positionV3
+
+					local color = "128,128,128,0"
+					vns.api.debug.drawArrow(color,
+					                        vns.api.virtualFrame.V3_VtoR(vns.gate.positionV3),
+					                        vns.api.virtualFrame.V3_VtoR(vns.gate.positionV3 + vector3(0.2,0,0):rotate(vns.gate.orientationQ))
+					                       )
+					local color = "128,128,128,0"
+					vns.api.debug.drawArrow(color,
+					                        vns.api.virtualFrame.V3_VtoR(vector3()),
+					                        vns.api.virtualFrame.V3_VtoR(vns.gate.positionV3)
+					                       )
 				end
 				if vns.wall ~= nil then
 					brainGoal.orientationQ = vns.wall.orientationQ
@@ -339,6 +386,16 @@ function create_reaction_node(vns)
 				if vns.allocator.target ~= nil and vns.allocator.target.idN ~= -1 then
 					Transform.AxBisC(brainGoal, vns.allocator.target, myGoal)
 				end
+
+				local color = "128,128,128,0"
+				vns.api.debug.drawArrow(color,
+				                        vns.api.virtualFrame.V3_VtoR(vector3()),
+				                        vns.api.virtualFrame.V3_VtoR(myGoal.positionV3)
+				                       )
+				vns.api.debug.drawArrow(color,
+				                        vns.api.virtualFrame.V3_VtoR(myGoal.positionV3),
+				                        vns.api.virtualFrame.V3_VtoR(myGoal.positionV3 + vector3(0.2,0,0):rotate(myGoal.orientationQ))
+				                       )
 
 				-- move to myGoal
 				local disV2 = vector3(myGoal.positionV3)
@@ -463,6 +520,23 @@ function create_reaction_node(vns)
 						}
 					end
 				end
+			end
+
+			-- other pipucks try to go middle of the gate
+			if vns.robotTypeS == "pipuck" and vns.stabilizer.referencing_me ~= true then 
+				-- check obstacle for side of the gate
+				for i, ob in ipairs(vns.avoider.obstacles) do
+					if ob.type == gate_brick_type and ob.positionV3:length() < 0.3 then
+						vns.goal.transV3 = vns.goal.transV3 + vector3(1,0,0):rotate(ob.orientationQ) * 0.1
+					end
+
+					local color = "255,0,0,0"
+					vns.api.debug.drawArrow(color,
+											vns.api.virtualFrame.V3_VtoR(vector3(0,0,0.1)),
+											vns.api.virtualFrame.V3_VtoR(vns.goal.transV3 * 1 + vector3(0,0,0.1))
+										   )
+				end
+
 			end
 
 		elseif state == "structure3" then
