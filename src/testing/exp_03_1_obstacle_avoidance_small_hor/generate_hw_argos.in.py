@@ -16,7 +16,21 @@ params = '''
     pipuck_label_to="20"
     block_label_from="30"
     block_label_to="35"
+
+    obstacle_match_distance="0.30"
+    obstacle_unseen_count="10"
+
+    safezone_drone_drone="2.5"
+
+    dangerzone_pipuck="0.35"
+    dangerzone_block="0.35"
+
+    pipuck_wheel_speed_limit="0.15"
+    pipuck_rotation_scalar="0.25"
+
 '''
+#    safezone_drone_pipuck="1.1"
+#    drone_default_height="1.50"
 
 # generate argos file
 generate_argos_file("@CMAKE_SOURCE_DIR@/scripts/argos_templates/drone_hw.argos", 

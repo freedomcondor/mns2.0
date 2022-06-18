@@ -41,6 +41,8 @@ while True:
 			step = readNextLine(pipuckLog)
 		drawRobot(ax, step['position'], step['virtual_orientation'], "green")
 		drawRobot(ax, step['position'], step['orientation'], "blue")
+		drawRobot(ax, step['goal_position_global'], step['goal_orientation_global'], "black")
+		drawVector3(ax, step['position'], step['goal_position_global'], color='black')
 
 	for droneLog in droneLogs :
 		for i in range(0, steps):
@@ -48,6 +50,7 @@ while True:
 		drawRobot(ax, step['position'], step['virtual_orientation'], "green")
 		drawRobot(ax, step['position'], step['orientation'], "red")
 		drawRobot(ax, step['goal_position_global'], step['goal_orientation_global'], "black")
+		drawVector3(ax, step['position'], step['goal_position_global'], color='black')
 
 	for obstacleLog in obstacleLogs :
 		for i in range(0, steps):
