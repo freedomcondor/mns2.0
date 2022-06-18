@@ -38,7 +38,7 @@ params = '''
       stabilizer_preference_robot="pipuck1"
       stabilizer_preference_brain="drone1"
       pipuck_wheel_speed_limit="0.2"
-      drone_default_height="1.8"
+      drone_default_height="1.7"
 
       pipuck_label_from="1"
       pipuck_label_to="20"

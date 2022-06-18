@@ -47,7 +47,7 @@ function reset()
 		vns.create_preconnector_node(vns),
 		vns.create_vns_core_node(vns),
 		create_head_navigate_node(vns),
-		vns.Driver.create_driver_node(vns, {waiting = true}),
+		vns.Driver.create_driver_node(vns, {waiting = "spring"}),
 	}}
 end
 
@@ -127,9 +127,9 @@ return function()
 
 	-- drone move forward
 	if vns.parentR == nil and vns.robotTypeS == "drone" then 
-		local speed = 0.02
+		local speed = 0.03
 		local speedx = speed
-		local speedy = speed * 0.3 * math.cos(math.pi * api.stepCount/500)
+		local speedy = speed * 0.1 * math.cos(math.pi * api.stepCount/500)
 		vns.Spreader.emergency_after_core(vns, vector3(speedx,speedy,0), vector3(), nil, true)
 	end
 
