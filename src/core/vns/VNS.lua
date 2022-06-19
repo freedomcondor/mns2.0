@@ -364,7 +364,9 @@ function VNS.create_vns_core_node(vns, option)
 		vns.Stabilizer.create_stabilizer_node(vns),
 		vns.Allocator.create_allocator_node(vns),
 		vns.IntersectionDetector.create_intersectiondetector_node(vns),
-		vns.Avoider.create_avoider_node(vns),
+		vns.Avoider.create_avoider_node(vns, {
+			drone_pipuck_avoidance = option.drone_pipuck_avoidance
+		}),
 		vns.Spreader.create_spreader_node(vns),
 		vns.BrainKeeper.create_brainkeeper_node(vns),
 		--vns.CollectiveSensor.create_collectivesensor_node(vns),

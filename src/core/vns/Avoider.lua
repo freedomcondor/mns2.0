@@ -15,7 +15,7 @@ end
 function Avoider.preStep(vns)
 end
 
-function Avoider.step(vns)
+function Avoider.step(vns, drone_pipuck_avoidance)
 	local avoid_speed = {positionV3 = vector3(), orientationV3 = vector3()}
 
 	local backup_avoid_speed_scalar = vns.Parameters.avoid_speed_scalar
@@ -53,6 +53,19 @@ function Avoider.step(vns)
 					           )
 				-- resume
 				vns.Parameters.avoid_speed_scalar = backup_avoid_speed_scalar
+			end
+			-- avoidance between drone and pipuck
+			if drone_pipuck_avoidance == true and
+			   robotR.robotTypeS ~= vns.robotTypeS then
+				local dangerzone = vns.Parameters.dangerzone_pipuck
+				local deadzone = vns.Parameters.deadzone_pipuck
+				avoid_speed.positionV3 =
+					Avoider.add(vector3(), robotR.positionV3,
+					            avoid_speed.positionV3,
+					            dangerzone,
+					            vns.goal.positionV3,
+					            deadzone
+					           )
 			end
 		end
 	end
@@ -195,9 +208,9 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex, deadzon
 	return ans
 end
 
-function Avoider.create_avoider_node(vns)
+function Avoider.create_avoider_node(vns, option)
 	return function()
-		Avoider.step(vns)
+		Avoider.step(vns, option.drone_pipuck_avoidance)
 	end
 end
 

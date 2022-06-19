@@ -44,7 +44,7 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
-		vns.create_vns_core_node(vns),
+		vns.create_vns_core_node(vns, {drone_pipuck_avoidance = true}),
 		vns.Driver.create_driver_node(vns, {waiting = "spring"}),
 	}}
 end
