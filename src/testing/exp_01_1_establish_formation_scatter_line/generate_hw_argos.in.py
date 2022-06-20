@@ -11,6 +11,15 @@ params = '''
     connector_waiting_parent_count="8"
     connector_unseen_count="20"
     connector_heartbeat_count="10"
+    
+    pipuck_label_from="1"
+    pipuck_label_to="20"
+    block_label_from="25"
+    block_label_to="35"
+
+    obstacle_match_distance="0.30"
+    obstacle_unseen_count="10"
+
 '''
 
 # generate argos file
