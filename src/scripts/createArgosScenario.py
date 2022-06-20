@@ -315,7 +315,7 @@ def generate_obstacle_xml(i, x, y, th, type) :
 
 def generate_obstacle_box_xml(i, x, y, th, type) :
 	tag = '''
-	<prototype id="obstacle{}" movable="true" friction="10">
+	<prototype id="obstacle{}" movable="false" friction="10">
 		<body position="{},{},0" orientation="{},0,0" />
 		<links ref="base">
 			<link id="base" geometry="box" size="0.12, 0.12, 0.1" mass="0.01"
@@ -333,7 +333,7 @@ def generate_obstacle_box_xml(i, x, y, th, type) :
 
 def generate_obstacle_cylinder_xml(i, x, y, th, type) :
 	tag = '''
-	<prototype id="obstacle{}" movable="true" friction="10">
+	<prototype id="obstacle{}" movable="false" friction="10">
 		<body position="{},{},0" orientation="{},0,0" />
 		<links ref="base">
 			<link id="base" geometry="cylinder" radius="0.10" height="0.1" mass="0.01"

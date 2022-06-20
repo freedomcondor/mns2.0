@@ -247,7 +247,7 @@ function create_reaction_node(vns)
 				vns.setMorphology(vns, structure2)
 
 				newState(vns, "break_and_recruit")
-				logger(robot.id, "I have a gate, breaking and recruiting")
+				logger(robot.id, "I have a gate, breaking and recruiting, gate length = ", vns.gate.length)
 			end
 		elseif state == "break_and_recruit" then
 			stateCount = stateCount + 1
@@ -281,7 +281,8 @@ function create_reaction_node(vns)
 
 				-- if I see a gate, check if it is the same gate, otherwise do nothing
 				if gate ~= nil then
-					if vns.gate ~= nil and math.abs(vns.gate.length - gate.length) > gate_difference_threshold then
+					--if vns.gate ~= nil and math.abs(vns.gate.length - gate.length) > gate_difference_threshold then
+					if vns.gate ~= nil and gate.length - vns.gate.length < -gate_difference_threshold then
 						-- not the same gate, do nothing
 						logger(robot.id, "Not the same gate, remember gate length = ", vns.gate.length, "seeing gate length = ", gate.length)
 					else
@@ -382,9 +383,13 @@ function create_reaction_node(vns)
 				end
 				if vns.wall ~= nil then
 					brainGoal.orientationQ = vns.wall.orientationQ
+					brainGoal.positionV3 = brainGoal.positionV3 + vector3(0.3, 0, 0):rotate(vns.wall.orientationQ)
 				end
 				if vns.allocator.target ~= nil and vns.allocator.target.idN ~= -1 then
 					Transform.AxBisC(brainGoal, vns.allocator.target, myGoal)
+					myGoal.positionV3.z = 0
+				else
+					logger(robot.id, "referencing robot doesn't have a target")
 				end
 
 				local color = "128,128,128,0"
@@ -424,7 +429,8 @@ function create_reaction_node(vns)
 			end
 
 			-- other robot try not exceed wall
-			if vns.parentR ~= nil and vns.stabilizer.referencing_me ~= true then
+			if vns.parentR ~= nil and vns.stabilizer.referencing_me ~= true and
+			   vns.parentR.idS ~= vns.idS then
 				if wall ~= nil then
 					local disV2 = vector3(wall.positionV3)
 					disV2.z = 0
