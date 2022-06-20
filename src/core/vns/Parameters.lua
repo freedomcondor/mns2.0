@@ -29,6 +29,16 @@ return {
 	        |---------------+------------------------ d
 	                        |
 	                    dangerzone
+	        |  ||
+	        |  ||
+	speed   |  | |  -log(d/dangerzone) * scalar
+	        |  |  |
+	        |  |   \  
+	        |  |    -\
+	        |  |      --\ 
+	        |------------+------------------------
+	           |         |
+	        deadzone   dangerzone
 	--]]
 	avoid_speed_scalar = tonumber(robot.params.avoid_speed_scalar or 0.5),
 
