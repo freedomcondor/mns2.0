@@ -16,6 +16,7 @@ return {
 	dangerzone_reference_pipuck_scalar = tonumber(robot.params.dangerzone_reference_pipuck_scalar or 1),
 	deadzone_reference_pipuck_scalar = tonumber(robot.params.deadzone_reference_pipuck_scalar or 1),
 
+	reference_count_down = tonumber(robot.params.reference_count_down or 5),
 	-- avoid speed
 	--[[
 	        |   |

@@ -27,11 +27,17 @@ function Avoider.step(vns, drone_pipuck_avoidance)
 			-- avoid drone
 			if robotR.robotTypeS == vns.robotTypeS and
 			   robotR.robotTypeS == "drone" then
+				if robot.params.hardware == true then
+					vns.Parameters.avoid_speed_scalar = vns.Parameters.avoid_speed_scalar * 15
+				end
 				avoid_speed.positionV3 =
 					Avoider.add(vector3(), robotR.positionV3,
 					            avoid_speed.positionV3,
 					            vns.Parameters.dangerzone_drone,
 					            vns.goal.positionV3)
+				if robot.params.hardware == true then
+					vns.Parameters.avoid_speed_scalar = backup_avoid_speed_scalar
+				end
 			end
 			-- avoid pipuck
 			if robotR.robotTypeS == vns.robotTypeS and
