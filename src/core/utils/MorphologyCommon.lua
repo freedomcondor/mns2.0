@@ -72,8 +72,20 @@ function MorphologyGenerator.create_1drone_4pipuck_front_back_hex_node(droneDis,
 	}}
 	if end_flag == "front_end" then
 		node.children[1].positionV3 = vector3(pipuckDis, 0, -height)
+	elseif end_flag == "front_double_end" then
+		node.children[5] =
+			{	robotTypeS = "pipuck",
+				positionV3 = vector3(droneDis/2, -pipuckDis/2, -height),
+				orientationQ = quaternion(0, vector3(0,0,1)),
+			}
 	elseif end_flag == "back_end" then
 		node.children[3].positionV3 = vector3(-pipuckDis, 0, -height)
+	elseif end_flag == "back_double_end" then
+		node.children[5] =
+			{	robotTypeS = "pipuck",
+				positionV3 = vector3(-droneDis/2, pipuckDis/2, -height),
+				orientationQ = quaternion(0, vector3(0,0,1)),
+			}
 	end
 	return node
 end
@@ -104,8 +116,20 @@ function MorphologyGenerator.create_1drone_4pipuck_left_right_hex_node(droneDis,
 	}}
 	if end_flag == "left_end" then
 		node.children[3].positionV3 = vector3(0, pipuckDis, -height)
+	elseif end_flag == "left_double_end" then
+		node.children[5] =
+			{	robotTypeS = "pipuck",
+				positionV3 = vector3(pipuckDis/2, droneDis/2, -height),
+				orientationQ = quaternion(0, vector3(0,0,1)),
+			}
 	elseif end_flag == "right_end" then
 		node.children[4].positionV3 = vector3(0, -pipuckDis, -height)
+	elseif end_flag == "right_double_end" then
+		node.children[5] =
+			{	robotTypeS = "pipuck",
+				positionV3 = vector3(-pipuckDis/2, -droneDis/2, -height),
+				orientationQ = quaternion(0, vector3(0,0,1)),
+			}
 	end
 	return node
 end
