@@ -44,6 +44,7 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
+		create_led_node(vns),
 		vns.create_vns_core_node(vns, {drone_pipuck_avoidance = true}),
 		vns.Driver.create_driver_node(vns, {waiting = "spring"}),
 	}}
@@ -72,4 +73,24 @@ end
 --- destroy
 function destroy()
 	api.destroy()
+end
+
+function create_led_node(vns)
+	return function()
+		-- signal led
+		if vns.robotTypeS == "drone" then
+			local flag = false
+			for idS, robotR in pairs(vns.connector.seenRobots) do
+				if robotR.robotTypeS == "drone" then
+					flag = true
+				end
+			end
+			if flag == true then
+				robot.leds.set_leds("green")
+			else
+				robot.leds.set_leds("red")
+			end
+		end
+		return false, true
+	end
 end
