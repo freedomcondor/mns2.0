@@ -177,7 +177,7 @@ function api.droneAdjustHeight(z)
 		if heightError > speed_limit then heightError = speed_limit end
 		if heightError < -speed_limit then heightError = -speed_limit end
 		local ZScalar = 5
-		if robot.params.hardware == true then ZScalar = 5 end
+		if robot.params.hardware == true then ZScalar = 3 end
 		-- TODO: there may be a jump here
 		api.actuator.newPosition.z = robot.flight_system.position.z + heightError * api.time.period * ZScalar
 		logger("heightError = ", heightError)
@@ -260,8 +260,8 @@ function api.droneSetSpeed(x, y, z, th)
 	local transScalarZ = 4
 	local rotateScalar = 0.5
 	if robot.params.hardware == true then
-		transScalar = 20
-		transScalarZ = 10
+		transScalar = 10
+		transScalarZ = 5
 		rotateScalar = 0.1
 	end
 

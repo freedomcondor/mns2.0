@@ -259,6 +259,9 @@ function Stabilizer.getReferenceChild(vns)
 				end
 			end
 		end
+
+		if reference_position == nil then return end
+
 		local nearestDis = math.huge
 		local ref = nil
 		for idS, robotR in pairs(vns.childrenRT) do
@@ -284,21 +287,22 @@ function Stabilizer.pipuckListenRequest(vns)
 		vns.stabilizer.referencing_pipuck_neighbour = msgM.fromS
 	end
 
-	if robot.params.hardware == true then
-		if vns.stabilizer.referencing_me_count_down ~= nil then
-			if vns.stabilizer.referencing_me_count_down > 0 then
-				vns.stabilizer.referencing_me_count_down =
-					vns.stabilizer.referencing_me_count_down - 1
-				vns.stabilizer.referencing_me = true
-			end
+	for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "stabilizer_request")) do
+		vns.stabilizer.referencing_me = true
+		vns.stabilizer.referencing_me_count_down = vns.Parameters.reference_count_down
+	end
+
+	if vns.stabilizer.referencing_me_count_down ~= nil then
+		if vns.stabilizer.referencing_me_count_down > 0 then
+			vns.stabilizer.referencing_me_count_down =
+				vns.stabilizer.referencing_me_count_down - 1
+			vns.stabilizer.referencing_me = true
+		else
+			vns.stabilizer.referencing_me = nil
 		end
 	end
 
-	for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "stabilizer_request")) do
-		vns.stabilizer.referencing_me = true
-		if robot.params.hardware == true then
-			vns.stabilizer.referencing_me_count_down = vns.Parameters.reference_count_down
-		end
+	if vns.stabilizer.referencing_me == true then
 		-- tell other pipuck I'm referenced, so that they know to avoid me harder
 		for idS, robotR in pairs(vns.connector.seenRobots) do
 			if robotR.robotTypeS == "pipuck" then

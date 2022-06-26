@@ -12,11 +12,15 @@ return {
 	dangerzone_pipuck = tonumber(robot.params.dangerzone_pipuck or 0.40),
 	dangerzone_block = tonumber(robot.params.dangerzone_block or 0.40),
 	dangerzone_predator = tonumber(robot.params.dangerzone_predator or 0.50),
+
 	deadzone_pipuck = tonumber(robot.params.deadzone_pipuck or 0.10),
+	deadzone_drone = tonumber(robot.params.deadzone_pipuck or 0),
+	deadzone_block = tonumber(robot.params.deadzone_pipuck or 0),
+
 	dangerzone_reference_pipuck_scalar = tonumber(robot.params.dangerzone_reference_pipuck_scalar or 1),
 	deadzone_reference_pipuck_scalar = tonumber(robot.params.deadzone_reference_pipuck_scalar or 1),
 
-	reference_count_down = tonumber(robot.params.reference_count_down or 5),
+	reference_count_down = tonumber(robot.params.reference_count_down or 1),
 	-- avoid speed
 	--[[
 	        |   |
@@ -42,6 +46,9 @@ return {
 	        deadzone   dangerzone
 	--]]
 	avoid_speed_scalar = tonumber(robot.params.avoid_speed_scalar or 0.5),
+	avoid_drone_vortex = robot.params.avoid_drone_vortex or "goal",
+	avoid_pipuck_vortex = robot.params.avoid_pipuck_vortex or "goal",
+	avoid_block_vortex = robot.params.avoid_block_vortex or "goal",
 
 	-- driver --------------------------------------------------------
 	--[[
@@ -57,6 +64,7 @@ return {
 	driver_slowdown_zone = tonumber(robot.params.driver_slowdown_zone or 0.10),
 	driver_stop_zone = tonumber(robot.params.driver_stop_zone or 0.01),
 	driver_default_rotate_scalar = tonumber(robot.params.driver_default_rotate_scalar or 0.5),
+	driver_spring_default_speed_scalar = tonumber(robot.params.driver_spring_default_speed_scalar or 2),
 
 	-- time out
 	connector_waiting_count = tonumber(robot.params.connector_waiting_count or 7),

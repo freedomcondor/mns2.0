@@ -188,7 +188,7 @@ function Driver.step(vns, waiting)
 			local criticalzone_half = safezone_half + 0.1
 
 			-- calc spring speed vector
-			local default_speed = vns.Parameters.driver_default_speed * 2
+			local default_speed = vns.Parameters.driver_default_speed * vns.Parameters.driver_spring_default_speed_scalar
 			local disV2 = vector3(robotR.positionV3)
 			disV2.z = 0
 			local dis = disV2:length()
