@@ -5,7 +5,7 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 import math
 
-exp_scale = 1
+exp_scale = 4
 
 n_drone = exp_scale * 6 + 1
 n_pipuck = n_drone * 4
