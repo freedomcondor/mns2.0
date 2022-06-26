@@ -5,7 +5,7 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 import math
 
-exp_scale = 4
+exp_scale = 1
 
 n_drone = exp_scale * 6 + 1
 n_pipuck = n_drone * 4
@@ -89,6 +89,10 @@ params = '''
               obstacle_unseen_count="0"
               morphologiesGenerator="morphologiesGenerator"
               gate_number="{}"
+
+              avoid_block_vortex="nil"
+              deadzone_block="0.2"
+              driver_spring_default_speed_scalar="5"
 '''.format(exp_scale, n_drone, gate_number)
 
 # generate argos file

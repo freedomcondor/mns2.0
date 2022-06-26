@@ -36,6 +36,7 @@ add_subdirectory(exp_0_hw_01_formation_1_2d_10p)
 add_subdirectory(exp_0_hw_02_obstacle_avoidance_small)
 add_subdirectory(exp_0_hw_03_obstacle_avoidance_large)
 add_subdirectory(exp_0_hw_04_switch_line)
+add_subdirectory(exp_0_hw_05_gate_switch)
 
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)

@@ -54,6 +54,7 @@ params = '''
               drone_default_start_height="1.8"
               dangerzone_drone="1.3"
               obstacle_unseen_count="0"
+              avoid_block_vortex="nil"
 '''
 
 # generate argos file

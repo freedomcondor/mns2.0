@@ -444,7 +444,7 @@ function create_reaction_node(vns)
 					                       )
 
 					if dis < 0.2 then
-						vns.goal.transV3 = vns.goal.transV3 + baseNormalV2 * (dis - 0.2)
+						vns.goal.transV3 = vns.goal.transV3 + baseNormalV2 * (dis - 0.2) * 5
 					end
 				end
 			end
