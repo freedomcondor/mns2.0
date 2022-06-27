@@ -18,13 +18,14 @@ params = '''
     block_label_to="35"
 
     obstacle_match_distance="0.30"
-    obstacle_unseen_count="1"
+    obstacle_unseen_count="0"
 
     safezone_drone_drone="3.0"
     dangerzone_drone="2.0"
     deadzone_drone="1.0"
 
     safezone_drone_pipuck="1.5"
+    safezone_pipuck_pipuck="1.5"
     dangerzone_pipuck="0.35"
     dangerzone_block="0.35"
 
