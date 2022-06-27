@@ -135,13 +135,13 @@ return function()
 
 	-- State
 	if state == 1 then
-		if width < 5.0 then
+		if width < 4.0 then
 			state = 2
 			vns.setMorphology(vns, structure2)
 			logger("state2")
 		end
 	elseif state == 2 then
-		if width < 2.0 then
+		if width < 1.0 then
 			state = 3
 			vns.setMorphology(vns, structure3)
 			logger("state3")
@@ -157,9 +157,15 @@ return function()
 		for id, ob in ipairs(vns.avoider.obstacles) do
 			if ob.type == target_type then
 				vns.setGoal(vns, ob.positionV3 - vector3(0.5, 0, 0), ob.orientationQ)
+				if vns.goal.positionV3:length() < 0.3 then
+					state = 5
+				end
 				return false, true
 			end
 		end
+	elseif state == 5 then
+		-- reach do nothing
+		return false, true
 	end
 
 	-- move

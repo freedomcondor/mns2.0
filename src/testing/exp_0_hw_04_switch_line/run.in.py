@@ -49,6 +49,8 @@ params = '''
     block_label_to="35"
 
     obstacle_unseen_count="0"
+
+    safezone_pipuck_pipuck="1.5"
 '''
 
 # generate argos file
