@@ -19,9 +19,9 @@ logger.disable("droneAPI")
 -- datas ----------------
 local bt
 --local vns
-local structure1 = require("morphologies/morphology1")
-local structure2 = require("morphologies/morphology2")
-local structure3 = require("morphologies/morphology3")
+local structure1 = require("morphology1")
+local structure2 = require("morphology2")
+local structure3 = require("morphology3")
 local gene = {
 	robotTypeS = "drone",
 	positionV3 = vector3(),
@@ -132,6 +132,7 @@ return function()
 	end
 
 	local width = left - right
+	logger(robot.id, "width = ", width)
 
 	-- State
 	if state == 1 then
@@ -141,7 +142,7 @@ return function()
 			logger("state2")
 		end
 	elseif state == 2 then
-		if width < 1.0 then
+		if width < 1.5 then
 			state = 3
 			vns.setMorphology(vns, structure3)
 			logger("state3")
