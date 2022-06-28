@@ -31,7 +31,7 @@ function Avoider.step(vns, drone_pipuck_avoidance)
 					vns.Parameters.avoid_speed_scalar = vns.Parameters.avoid_speed_scalar * 15
 				end
 				-- check vortex
-				local drone_vortex = vns.Parameters.avoider_drone_vortex
+				local drone_vortex = vns.Parameters.avoid_drone_vortex
 				if drone_vortex == "goal" then
 					drone_vortex = vns.goal.positionV3
 				elseif drone_vortex == "true" then
@@ -62,7 +62,7 @@ function Avoider.step(vns, drone_pipuck_avoidance)
 					deadzone = deadzone * vns.Parameters.deadzone_reference_pipuck_scalar
 				end
 				-- check vortex
-				local pipuck_vortex = vns.Parameters.avoider_pipuck_vortex
+				local pipuck_vortex = vns.Parameters.avoid_pipuck_vortex
 				if pipuck_vortex == "goal" then
 					pipuck_vortex = vns.goal.positionV3
 				elseif pipuck_vortex == "true" then
@@ -87,20 +87,20 @@ function Avoider.step(vns, drone_pipuck_avoidance)
 				local dangerzone = vns.Parameters.dangerzone_pipuck
 				local deadzone = vns.Parameters.deadzone_pipuck
 				-- check vortex
-				local block_vortex = vns.Parameters.avoider_block_vortex
-				if block_vortex == "goal" then
-					block_vortex = vns.goal.positionV3
-				elseif block_vortex == "true" then
-					block_vortex = true 
-				elseif block_vortex == "nil" then
-					block_vortex = nil
+				local drone_vortex = vns.Parameters.avoid_pipuck_vortex
+				if drone_vortex == "goal" then
+					drone_vortex = vns.goal.positionV3
+				elseif drone_vortex == "true" then
+					drone_vortex = true 
+				elseif drone_vortex == "nil" then
+					drone_vortex = nil
 				end
 				-- add avoid speed
 				avoid_speed.positionV3 =
 					Avoider.add(vector3(), robotR.positionV3,
 					            avoid_speed.positionV3,
 					            dangerzone,
-					            block_vortex,
+					            drone_vortex,
 					            deadzone
 					           )
 			end
@@ -137,12 +137,20 @@ function Avoider.step(vns, drone_pipuck_avoidance)
 			local virtual_danger_zone = vns.Parameters.dangerzone_block + longest
 			                            --vns.api.parameters.obstacle_match_distance * (virtualOb.number - 1) / 2
 			--]]
-
+			-- check vortex
+			local block_vortex = vns.Parameters.avoid_block_vortex
+			if block_vortex == "goal" then
+				block_vortex = vns.goal.positionV3
+			elseif block_vortex == "true" then
+				block_vortex = true 
+			elseif block_vortex == "nil" then
+				block_vortex = nil
+			end
 			avoid_speed.positionV3 = 
 				Avoider.add(vector3(), obstacle.positionV3,
 				            avoid_speed.positionV3,
 				            vns.Parameters.dangerzone_block,
-				            vns.goal.positionV3,
+				            block_vortex,
 				            vns.Parameters.deadzone_block
 				)
 				            --virtual_danger_zone)
