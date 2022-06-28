@@ -9,7 +9,7 @@ import os
 
 # drone and pipuck
 drone_locations = generate_random_locations(2,                  # total number
-                                            None, None,             # origin location
+                                            -3.0, -0.7,             # origin location
                                             -3.5, -2.5,         # random x range
                                             -1.5, 1.5,              # random y range
                                             1.2, 1.7)             # near limit and far limit
@@ -27,10 +27,10 @@ pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 g
 
 obstacle_locations = generate_line_locations(10,               # number of obstacles
                                               -2.0, 2.2,        # begin x and y
-                                              0.5, 0.7)         # end x and y
+                                              1.0, 0.7)         # end x and y
 obstacle_locations2 = generate_line_locations(10,               # number of obstacles
                                               -2.0, -2.2,       # begin x and y
-                                              0.5, -0.7)        # end x and y
+                                              1.0, -0.7)        # end x and y
 
 obstacle_locations += obstacle_locations2
 
@@ -39,7 +39,8 @@ obstacle_xml += generate_obstacle_box_xml(121, 3.5, 0, 0, 33)
 
 # generate argos file
 params = '''
-    stabilizer_preference_brain="pipuck1"
+    stabilizer_preference_robot="pipuck1"
+    stabilizer_preference_brain="drone1"
     avoid_block_vortex="nil"
     drone_default_height="1.5"
 
