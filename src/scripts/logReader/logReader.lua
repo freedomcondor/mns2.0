@@ -270,7 +270,7 @@ function logReader.calcMorphChildrenID(morph, globalContainer, geneIndex)
 	end
 end
 
-function logReader.checkIDFirstAppearStep(robotsData, ID)
+function logReader.checkIDFirstAppearStep(robotsData, ID, startStep, specificRobotName)
 	-- get end step
 	local length
 	for robotName, stepTable in pairs(robotsData) do
@@ -278,10 +278,13 @@ function logReader.checkIDFirstAppearStep(robotsData, ID)
 		break
 	end
 
-	for i = 1, length do
+	if startStep == nil then startStep = 1 end
+	for i = startStep, length do
 		for robotName, robotData in pairs(robotsData) do
 			if robotData[i].targetID == ID then
-				return i, robotName
+				if specificRobotName ~= nil and specificRobotName == robotName then
+					return i, robotName
+				end
 			end
 		end
 	end
