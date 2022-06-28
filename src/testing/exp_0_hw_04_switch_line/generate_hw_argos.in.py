@@ -21,7 +21,7 @@ params = '''
     obstacle_unseen_count="0"
 
     safezone_drone_drone="3.0"
-    dangerzone_drone="2.0"
+    dangerzone_drone="1.8"
     deadzone_drone="1.0"
 
     safezone_drone_pipuck="1.5"
@@ -34,7 +34,7 @@ params = '''
 '''
 
 drone_params = '''
-    driver_default_speed="0.03"
+    driver_default_speed="0.05"
 '''
 
 # generate argos file
