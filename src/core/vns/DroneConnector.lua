@@ -96,10 +96,15 @@ function DroneConnector.step(vns)
 			robotTypeS = v.robotTypeS,
 			positionV3 = vns.api.virtualFrame.V3_RtoV(v.positionV3),
 			orientationQ = vns.api.virtualFrame.Q_RtoV(v.orientationQ),
+			locationInRealFrame = {
+				positionV3 = vector3(v.positionV3),
+				orientationQ = quaternion(v.orientationQ),
+			}
 		}
 	end
 
-	SensorUpdater.updateObstacles(vns, seenObstaclesInVirtualFrame, vns.avoider.obstacles)
+	--SensorUpdater.updateObstacles(vns, seenObstaclesInVirtualFrame, vns.avoider.obstacles)
+	SensorUpdater.updateObstaclesByRealFrame(vns, seenObstaclesInVirtualFrame, vns.avoider.obstacles)
 
 	--[[
 	if vns.parentR == nil then
