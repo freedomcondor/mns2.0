@@ -76,7 +76,6 @@ function SensorUpdater.updateObstaclesByRealFrame(vns, seenObstacles, memObstacl
 			-- I used to see memOb, I now should be offset(estimated), I should see memOb at X.   offset x X = memOb
 			local estimate_memOb_inReal = Transform.AxCisB(offset, memOb.locationInRealFrame)
 			local dis = (estimate_memOb_inReal.positionV3 - seenOb.locationInRealFrame.positionV3):length()
-			logger(robot.id, memOb.type, seenOb.type, dis)
 			if dis < nearestDis and dis < vns.api.parameters.obstacle_match_distance and memOb.type == seenOb.type and memOb.matched == nil then
 				nearestDis = dis
 				nearestOb = memOb
