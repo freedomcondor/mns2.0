@@ -317,6 +317,9 @@ function create_reaction_node(vns)
 				vns.Spreader.emergency_after_core(vns, vector3(0.03,0,0), vector3())
 				for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "new_heading")) do
 					vns.stabilizer.referencing_me_goal_overwrite = {orientationQ = vns.parentR.orientationQ * msgM.dataT.heading}
+					if msgM.dataT.gate ~= nil then
+						vns.Spreader.emergency_after_core(vns, vector3(0,msgM.dataT.gate.positionV3.y * 0.1,0), vector3())
+					end
 				end
 			end
 
@@ -331,7 +334,10 @@ function create_reaction_node(vns)
 					)
 			
 					if vns.stabilizer.referencing_robot ~= nil then
-						vns.Msg.send(vns.stabilizer.referencing_robot.idS, "new_heading", {heading = vns.api.virtualFrame.Q_VtoR(receiveWall.orientationQ)})
+						vns.Msg.send(vns.stabilizer.referencing_robot.idS, "new_heading", {
+							heading = vns.api.virtualFrame.Q_VtoR(receiveWall.orientationQ),
+							gate = gate,
+						})
 					end
 		
 					vns.api.debug.drawArrow("blue",  
