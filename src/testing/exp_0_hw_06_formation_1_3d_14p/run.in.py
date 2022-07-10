@@ -50,7 +50,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               my_type="drone"
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
-              connector_pipuck_children_max_count="3"
+              connector_pipuck_children_max_count="4"
               safezone_pipuck_pipuck="1.5"
               drone_default_height="1.7"
         ''')],

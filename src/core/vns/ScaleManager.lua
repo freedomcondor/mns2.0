@@ -117,7 +117,8 @@ function ScaleManager.step(vns)
 	if vns.parentR ~= nil then
 		toReport = sumScale - vns.parentR.scalemanager.scale
 		if toReport ~= vns.parentR.scalemanager.lastSendScale or
-		   vns.scalemanager.depth ~=  vns.parentR.scalemanager.lastSendDepth then
+		   vns.scalemanager.depth ~= vns.parentR.scalemanager.lastSendDepth or 
+		   vns.api.stepCount % 100 == 0 then
 			vns.Msg.send(vns.parentR.idS, "scale", {scale = toReport, depth = vns.scalemanager.depth})
 			vns.parentR.scalemanager.lastSendScale = toReport
 			vns.parentR.scalemanager.lastSendDepth = vns.scalemanager.depth
@@ -125,7 +126,8 @@ function ScaleManager.step(vns)
 	end
 	for idS, robotR in pairs(vns.childrenRT) do
 		toReport = sumScale - robotR.scalemanager.scale
-		if toReport ~= robotR.scalemanager.lastSendScale then
+		if toReport ~= robotR.scalemanager.lastSendScale or 
+		   vns.api.stepCount % 100 == 0 then
 			vns.Msg.send(idS, "scale", {scale = toReport})
 			robotR.scalemanager.lastSendScale = toReport
 		end
