@@ -1,4 +1,7 @@
 return {
+	connector_pipuck_children_max_count = tonumber(robot.params.connector_pipuck_children_max_count or 0),
+	connector_drone_children_max_count = tonumber(robot.params.connector_drone_children_max_count or 0),
+
 	-- safe zone and danger zone-----------------------------------
 	-- recruit happens only if robots in the safezone
 	-- robots wait if neighbours outside the safezone
@@ -81,4 +84,5 @@ return {
 	stabilizer_preference_robot = robot.params.stabilizer_preference_robot,
 	stabilizer_preference_brain = robot.params.stabilizer_preference_brain,
 	stabilizer_preference_brain_time = tonumber(robot.params.stabilizer_preference_brain_time or 150),
+
 }

@@ -340,11 +340,15 @@ function Allocator.step(vns)
 
 	-- assign better child
 	if vns.parentR ~= nil then
-		local myValue = Allocator.calcBaseValue(vns.allocator.parentGoal.positionV3, vector3(), vns.goal.positionV3)
+		local calcBaseValue = Allocator.calcBaseValue
+		if type(vns.allocator.target.calcBaseValue) == "function" then
+			calcBaseValue = vns.allocator.target.calcBaseValue
+		end
+		local myValue = calcBaseValue(vns.allocator.parentGoal.positionV3, vector3(), vns.goal.positionV3)
 		--local myValue = Allocator.calcBaseValue(vns.parentR.positionV3, vector3(), vns.goal.positionV3)
 		for idS, robotR in pairs(vns.childrenRT) do
 			if robotR.allocator.match == nil then
-				local value = Allocator.calcBaseValue(vns.allocator.parentGoal.positionV3, robotR.positionV3, vns.goal.positionV3)
+				local value = calcBaseValue(vns.allocator.parentGoal.positionV3, robotR.positionV3, vns.goal.positionV3)
 				--local value = Allocator.calcBaseValue(vns.parentR.positionV3, robotR.positionV3, vns.goal.positionV3)
 				if robotR.robotTypeS == vns.robotTypeS and value < myValue then
 					local send_branches = {}
@@ -377,6 +381,8 @@ function Allocator.step(vns)
 					vector3(branch.positionV3):rotate(vns.goal.orientationQ),
 				orientationQ = vns.goal.orientationQ * branch.orientationQ, 
 				robotTypeS = branch.robotTypeS,
+				-- calcBaseValue function
+				calcBaseValue = branch.calcBaseValue,
 				-- Stabilizer hack -----------------------
 				reference = branch.reference
 			}
@@ -708,7 +714,11 @@ function Allocator.multi_branch_allocate(vns, branches)
 			vns.Msg.send(source_child.idS, "branches", {branches = send_branches})
 
 			-- calculate farthest value
-			local value = Allocator.calcBaseValue(vns.allocator.parentGoal.positionV3, source_child.positionV3, target_branch.positionV3)
+			local calcBaseValue = Allocator.calcBaseValue
+			if type(target_branch.calcBaseValue) == "function" then
+				calcBaseValue = target_branch.calcBaseValue
+			end
+			local value = calcBaseValue(vns.allocator.parentGoal.positionV3, source_child.positionV3, target_branch.positionV3)
 			--local value = Allocator.calcBaseValue(vns.parentR.positionV3, source_child.positionV3, target_branch.positionV3)
 			if source_child.robotTypeS == vns.allocator.gene_index[target_branch.idN].robotTypeS and 
 			   value < farthest_value then
@@ -892,7 +902,11 @@ function Allocator.allocate(vns, branches)
 			vns.Msg.send(source_child.idS, "branches", {branches = send_branches})
 
 			-- calculate farthest value
-			local value = Allocator.calcBaseValue(vns.goal.positionV3, source_child.positionV3, target_branch.positionV3)
+			local calcBaseValue = Allocator.calcBaseValue
+			if type(target_branch.calcBaseValue) == "function" then
+				calcBaseValue = target_branch.calcBaseValue
+			end
+			local value = calcBaseValue(vns.goal.positionV3, source_child.positionV3, target_branch.positionV3)
 			--local value = Allocator.calcBaseValue(vector3(), source_child.positionV3, target_branch.positionV3)
 
 			if source_child.robotTypeS == vns.allocator.gene_index[target_branch.idN].robotTypeS and 

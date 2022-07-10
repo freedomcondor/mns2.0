@@ -257,11 +257,42 @@ function Connector.step(vns)
 end
 
 function Connector.recruitAll(vns)
+	-- calculate children robot number
+	-- count pipucks
+	local pipuckChildrenCountN = 0
+	local droneChildrenCountN = 0
+	for idS, robotR in pairs(vns.childrenRT) do
+		if robotR.robotTypeS == "pipuck" then
+			pipuckChildrenCountN = pipuckChildrenCountN + 1
+		elseif robotR.robotTypeS == "drone" then
+			droneChildrenCountN = droneChildrenCountN + 1
+		end
+	end
+	for idS, robotR in pairs(vns.connector.waitingRobots) do
+		if robotR.robotTypeS == "pipuck" then
+			pipuckChildrenCountN = pipuckChildrenCountN + 1
+		elseif robotR.robotTypeS == "drone" then
+			droneChildrenCountN = droneChildrenCountN + 1
+		end
+	end
 	-- recruit new
 	for idS, robotR in pairs(vns.connector.seenRobots) do
+		-- check robot type max children number
+		local goFlag = false
+		if robotR.robotTypeS == "pipuck" then
+			if vns.Parameters.connector_pipuck_children_max_count == 0 or
+			   vns.Parameters.connector_pipuck_children_max_count == nil or
+			   pipuckChildrenCountN < vns.Parameters.connector_pipuck_children_max_count then
+				goFlag = true
+			end
+		else
+			goFlag = true
+		end
+
 		if vns.childrenRT[idS] == nil and 
 		   vns.connector.waitingRobots[idS] == nil and 
-		   (vns.parentR == nil or vns.parentR.idS ~= idS) then
+		   (vns.parentR == nil or vns.parentR.idS ~= idS) and
+		   (goFlag == true or idS == vns.Parameters.stabilizer_preference_robot) then
 			local safezone = vns.Parameters.safezone_default
 			if vns.robotTypeS == "drone" and robotR.robotTypeS == "drone" then
 				safezone = vns.Parameters.safezone_drone_drone
