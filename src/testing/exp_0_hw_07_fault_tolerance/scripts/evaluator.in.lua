@@ -24,9 +24,9 @@ local geneIndex = logReader.calcMorphID(gene)
 
 local robotsData = logReader.loadData("./logs")
 
-local stage2Step = logReader.checkIDFirstAppearStep(robotsData, structure2.idN, nil, "drone4")
-local stage3Step = logReader.checkIDFirstAppearStep(robotsData, structure3.idN, nil, "drone4")
-local stage4Step = logReader.checkIDFirstAppearStep(robotsData, structure1.idN, stage3Step, "drone4")
+local stage2Step = logReader.checkIDFirstAppearStep(robotsData, structure2.idN)
+local stage3Step = logReader.checkIDFirstAppearStep(robotsData, structure3.idN)
+local stage4Step = logReader.checkIDFirstAppearStep(robotsData, structure1.idN)
 
 print("stage2 start at", stage2Step)
 print("stage3 start at", stage3Step)
