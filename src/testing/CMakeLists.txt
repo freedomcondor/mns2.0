@@ -39,6 +39,7 @@ add_subdirectory(exp_0_hw_04_switch_line)
 add_subdirectory(exp_0_hw_05_gate_switch)
 add_subdirectory(exp_0_hw_06_formation_1_3d_14p)
 add_subdirectory(exp_0_hw_07_fault_tolerance)
+add_subdirectory(exp_0_hw_08_split)
 
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)
