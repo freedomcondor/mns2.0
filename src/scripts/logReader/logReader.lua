@@ -282,7 +282,7 @@ function logReader.checkIDFirstAppearStep(robotsData, ID, startStep, specificRob
 	for i = startStep, length do
 		for robotName, robotData in pairs(robotsData) do
 			if robotData[i].targetID == ID then
-				if specificRobotName ~= nil and specificRobotName == robotName then
+				if specificRobotName == nil or specificRobotName == robotName then
 					return i, robotName
 				end
 			end
