@@ -6,7 +6,17 @@ logger = require("Logger")
 logReader = require("logReader")
 logger.enable()
 
-local gene = require("morphology")
+local structure1 = require("morphologies/morphology1")
+local structure2 = require("morphologies/morphology2")
+local gene = {
+	robotTypeS = "drone",
+	positionV3 = vector3(),
+	orientationQ = quaternion(),
+	children = {
+		structure1, 
+		structure2, 
+	}
+}
 local geneIndex = logReader.calcMorphID(gene)
 
 local robotsData = logReader.loadData("./logs")
