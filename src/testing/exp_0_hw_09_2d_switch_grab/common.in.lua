@@ -113,7 +113,7 @@ return function()
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		if ob.type == 100 then
 			target = {
-				positionV3 = ob.positionV3 - vector3(0.8,0,0),
+				positionV3 = ob.positionV3 - vector3(0.65,0,0),
 				orientationQ = ob.orientationQ,
 			}
 		end
@@ -153,6 +153,8 @@ return function()
 		end
 	elseif state == "clutch" then
 		count = count + 1
+
+		vns.Spreader.emergency_after_core(vns, vector3(-0.01,0,0), vector3())
 
 		if target ~= nil then
 			vns.setGoal(vns, target.positionV3, target.orientationQ)

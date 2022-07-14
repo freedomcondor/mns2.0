@@ -9,7 +9,7 @@ import os
 
 # drone and pipuck
 drone_locations = generate_random_locations(2,                  # total number
-                                            0.5, 1.5,         # origin location
+                                            -0.5, 1.5,         # origin location
                                             -2.5, 2.5,         # random x range
                                             -1.5, 1.5,              # random y range
                                             1.2, 1.5)             # near limit and far limit
@@ -27,9 +27,27 @@ pipuck_xml = generate_pipuck_xml(1, 0, 2.0, -90) + \
              generate_pipucks(pipuck_locations, 2)
                           # from label 2 generate pipuck xml tags
 
-target_xml = generate_target_xml(0, -1.0, -90,           # x, y, th
-                                 100, 0,                       # payload
-                                 0.3, 0.3, 0.3)                      # radius and edge
+'''
+target_xml = generate_target_box_xml(0, -1.0, -90,           # x, y, th
+                                     100, 0,                       # payload
+                                     0.6, 0.6, 0.3)                      # radius and edge
+'''
+
+target_xml = '''
+	<prototype id="target" movable="true" friction="2">
+		<body position="{},{},0" orientation="{},0,0" />
+		<links ref="base">
+			<link id="base" geometry="box" size="{}, {}, 0.1" mass="0.10"
+			      position="0,0,0" orientation="45,0,0" />
+		</links>
+		<devices>
+			<tags medium="tags">
+                <tag anchor="base" observable_angle="75" side_length="0.1078" payload="{}"
+                position="0,0,0.11" orientation="-45,0,0" />
+			</tags>
+		</devices>
+    </prototype>
+'''.format(0, -1.0, -90, 0.7, 0.7, 100)
 
 #target_xml = generate_target_xml(exp_scale * 3, largest_loc, 0,      # x, y, th
 #                                 252, 255,                           # payload
@@ -51,7 +69,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               my_type="pipuck"
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
-              dangerzone_pipuck="0.30"
+              dangerzone_pipuck="0.25"
               safezone_pipuck_pipuck="1.5"
               driver_default_speed="0.05"
         ''')],
