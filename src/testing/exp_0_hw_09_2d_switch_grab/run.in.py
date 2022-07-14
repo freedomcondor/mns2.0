@@ -15,7 +15,7 @@ drone_locations = generate_random_locations(2,                  # total number
                                             1.2, 1.5)             # near limit and far limit
 
 pipuck_locations = generate_slave_locations(
-                                            5,
+                                            6,
                                             drone_locations,
                                             -2.5, 2.5,           # random x range
                                             -1.5, 1.5,          # random y range
@@ -53,6 +53,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_brain="drone1"
               dangerzone_pipuck="0.30"
               safezone_pipuck_pipuck="1.5"
+              driver_default_speed="0.05"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
@@ -60,6 +61,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
               drone_default_height="1.8"
+              driver_default_speed="0.1"
               block_label_from="100"
               block_label_to="101"
               safezone_pipuck_pipuck="1.5"

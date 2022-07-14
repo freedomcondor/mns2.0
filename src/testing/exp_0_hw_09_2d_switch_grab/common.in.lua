@@ -131,7 +131,7 @@ return function()
 		end
 
 		--local disV2 = vector3(target.positionV3)
-		if target ~= nil and target.positionV3:length() < 0.02 then
+		if target ~= nil and target.positionV3:length() < 1.00 then
 			state = "stretch"
 			logger("stretch")
 			count = 0
@@ -139,7 +139,13 @@ return function()
 		end
 	elseif state == "stretch" then
 		count = count + 1
-		if count == 200 then
+
+		if target ~= nil then
+			vns.setGoal(vns, target.positionV3, target.orientationQ)
+			target.positionV3.z = 0
+		end
+		
+		if count == 300 then
 			state = "clutch"
 			logger("clutch")
 			count = 0
@@ -147,7 +153,13 @@ return function()
 		end
 	elseif state == "clutch" then
 		count = count + 1
-		if count == 100 then
+
+		if target ~= nil then
+			vns.setGoal(vns, target.positionV3, target.orientationQ)
+			target.positionV3.z = 0
+		end
+
+		if count == 200 then
 			state = "retrieve"
 			logger("retrieve")
 			count = 0
@@ -155,6 +167,9 @@ return function()
 		end
 	elseif state == "retrieve" then
 		vns.stabilizer.force_pipuck_reference = true
+		vns.Parameters.stabilizer_preference_robot = nil
+
+		vns.Spreader.emergency_after_core(vns, vector3(-0.03,0,0), vector3())
 
 		count = count + 1
 		if count == 250 then

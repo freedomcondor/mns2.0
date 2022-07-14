@@ -36,22 +36,13 @@ return
 	}},
 
 	{	robotTypeS = "pipuck",
-		positionV3 = vector3(-pipuckDis, pipuckDis, -height),
-		orientationQ = quaternion(0, vector3(0,0,1)),
-	},
-	{	robotTypeS = "pipuck",
-		positionV3 = vector3(-pipuckDis, -pipuckDis, -height),
+		positionV3 = vector3(-pipuckDis * 0.3, 0, -height),
 		orientationQ = quaternion(0, vector3(0,0,1)),
 		reference = true
 	},
 
 	{	robotTypeS = "drone",
-		positionV3 = vector3(droneDis/math.sqrt(2), -droneDis/math.sqrt(2), 0),
+		positionV3 = vector3(droneDis, 0, 0),
 		orientationQ = quaternion(0, vector3(0,0,1)),
-	},
-	{	robotTypeS = "drone",
-		positionV3 = vector3(droneDis/math.sqrt(2), droneDis/math.sqrt(2), 0),
-		orientationQ = quaternion(0, vector3(0,0,1)),
-
 	},
 }}
