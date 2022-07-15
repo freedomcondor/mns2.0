@@ -113,7 +113,7 @@ return function()
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		if ob.type == 100 then
 			target = {
-				positionV3 = ob.positionV3 - vector3(0.65,0,0),
+				positionV3 = ob.positionV3 - vector3(0,0.75,0),
 				orientationQ = ob.orientationQ,
 			}
 		end
