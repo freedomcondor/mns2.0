@@ -53,6 +53,21 @@ function DebugMessage.enableFileLog(fileName)
 	DebugMessage.log_print = DebugMessage.create_file_log_print(fileName)
 end
 
+function DebugMessage.enableErrorStreamLog()
+	function DebugMessage.create_error_stream_log_print()
+		return function(a, ...)
+			io.stderr:write(tostring(a))
+			arg = {...}
+			for i, v in ipairs(arg) do
+				io.stderr:write(" " .. tostring(v))
+			end
+			io.stderr:write("\n")
+		end
+	end
+
+	DebugMessage.log_print = DebugMessage.create_error_stream_log_print()
+end
+
 function DebugMessage.closeFileLog()
 	if DebugMessage.filelog ~= nil then
 		DebugMessage.filelog:close()
