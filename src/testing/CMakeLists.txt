@@ -43,6 +43,9 @@ add_subdirectory(exp_0_hw_07_fault_tolerance)
 add_subdirectory(exp_0_hw_08_split)
 add_subdirectory(exp_0_hw_09_2d_switch_grab)
 
+add_subdirectory(exp_0_hw_11_hardwareX_tag_tracking)
+add_subdirectory(exp_0_hw_12_hardwareX_arrow)
+
 #add_subdirectory(02_allocate)
 #add_subdirectory(03_avoid)
 #add_subdirectory(04_scenario)
