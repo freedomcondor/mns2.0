@@ -170,6 +170,8 @@ return function()
 	elseif state == "retrieve" then
 		vns.stabilizer.force_pipuck_reference = true
 		vns.Parameters.stabilizer_preference_robot = nil
+		vns.Parameters.dangerzone_pipuck = 0
+		vns.Parameters.deadzone_pipuck = 0
 
 		vns.Spreader.emergency_after_core(vns, vector3(-0.03,0,0), vector3())
 
@@ -177,6 +179,8 @@ return function()
 		if count == 250 then
 			state = "end"
 			logger("end")
+			vns.Parameters.dangerzone_pipuck = 0.4
+			vns.Parameters.deadzone_pipuck = 0.2
 			vns.setMorphology(vns, structure1)
 		end
 	end

@@ -27,13 +27,11 @@ pipuck_xml = generate_pipuck_xml(1, 0, 2.0, -90) + \
              generate_pipucks(pipuck_locations, 2)
                           # from label 2 generate pipuck xml tags
 
-'''
-target_xml = generate_target_box_xml(0, -1.0, -90,           # x, y, th
+target_xml = generate_target_xml(0, -1.0, -90,           # x, y, th
                                      100, 0,                       # payload
-                                     0.6, 0.6, 0.3)                      # radius and edge
-'''
+                                     0.3, 0.3, 0.3)                      # radius and edge
 
-target_xml = '''
+target_xml_backup = '''
 	<prototype id="target" movable="true" friction="2">
 		<body position="{},{},0" orientation="{},0,0" />
 		<links ref="base">
@@ -48,10 +46,6 @@ target_xml = '''
 		</devices>
     </prototype>
 '''.format(0, -1.0, -90, 0.7, 0.7, 100)
-
-#target_xml = generate_target_xml(exp_scale * 3, largest_loc, 0,      # x, y, th
-#                                 252, 255,                           # payload
-#                                 radius, 0.1, 0.2)                   # radius and edge and tag distance
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
