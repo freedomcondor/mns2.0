@@ -8,13 +8,13 @@ return
     orientationQ = quaternion(),
     children = {
     {	robotTypeS = "pipuck",
-        positionV3 = vector3(-pipuckDis, pipuckDis, -height),
+        positionV3 = vector3(-pipuckDis*0.3, pipuckDis, -height),
         orientationQ = quaternion(0, vector3(0,0,1)),
         reference = true,
     },
 
     {	robotTypeS = "pipuck",
-        positionV3 = vector3(pipuckDis*0.5, pipuckDis*0.3, -height),
+        positionV3 = vector3(pipuckDis*0.7, -pipuckDis, -height),
         orientationQ = quaternion(0, vector3(0,0,1)),
         calcBaseValue = function(base, current, target)
             --local base_target_V3 = target - base
@@ -37,14 +37,13 @@ return
         end,
         children = {
         {	robotTypeS = "pipuck",
-            positionV3 = vector3(-pipuckDis * 0.3, pipuckDis * 0.3, -height),
+            positionV3 = vector3(pipuckDis*0.7 - pipuckDis*0.7, 0 - (-pipuckDis), -height),
             orientationQ = quaternion(0, vector3(0,0,1)),
-            children = {
-            {	robotTypeS = "pipuck",
-                positionV3 = vector3(-pipuckDis * 0.3, pipuckDis * 0.3, -height),
-                orientationQ = quaternion(0, vector3(0,0,1)),
-            },
-        }},
+        },
+        {	robotTypeS = "pipuck",
+            positionV3 = vector3(-pipuckDis*0.3 - (pipuckDis*0.7), -pipuckDis - (-pipuckDis), -height),
+            orientationQ = quaternion(0, vector3(0,0,1)),
+        },
     }},
 
     { 	robotTypeS = "drone",
@@ -52,7 +51,7 @@ return
         orientationQ = quaternion(),
         children = {
         {	robotTypeS = "pipuck",
-            positionV3 = vector3(pipuckDis*0.5, -pipuckDis*0.3, -height),
+            positionV3 = vector3(pipuckDis*0.7, pipuckDis, -height),
             orientationQ = quaternion(0, vector3(0,0,1)),
             calcBaseValue = function(base, current, target)
                 --local base_target_V3 = target - base
@@ -75,14 +74,13 @@ return
             end,
             children = {
             {	robotTypeS = "pipuck",
-                positionV3 = vector3(-pipuckDis*0.3, -pipuckDis*0.3, -height),
+                positionV3 = vector3(pipuckDis*0.7 - pipuckDis*0.7, 0 - (pipuckDis), -height),
                 orientationQ = quaternion(0, vector3(0,0,1)),
-                children = {
-                {	robotTypeS = "pipuck",
-                    positionV3 = vector3(-pipuckDis*0.3, -pipuckDis*0.3, -height),
-                    orientationQ = quaternion(0, vector3(0,0,1)),
-                },
-            }},
+            },
+            {	robotTypeS = "pipuck",
+                positionV3 = vector3(-pipuckDis*0.3 - (pipuckDis*0.7), pipuckDis - (pipuckDis), -height),
+                orientationQ = quaternion(0, vector3(0,0,1)),
+            },
         }},
         },
     },

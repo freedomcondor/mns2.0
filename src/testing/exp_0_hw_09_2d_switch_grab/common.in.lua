@@ -113,7 +113,7 @@ return function()
 	for i, ob in ipairs(vns.avoider.obstacles) do
 		if ob.type == 100 then
 			target = {
-				positionV3 = ob.positionV3 - vector3(0,0.75,0),
+				positionV3 = ob.positionV3 - vector3(0.5,0.75,0),
 				orientationQ = ob.orientationQ,
 			}
 		end
@@ -137,6 +137,32 @@ return function()
 			count = 0
 			vns.setMorphology(vns, structure2)
 		end
+	elseif state == "stretch" then
+		count = count + 1
+
+		if target ~= nil then
+			vns.setGoal(vns, target.positionV3, target.orientationQ)
+			target.positionV3.z = 0
+		end
+		
+		if count == 500 then
+			state = "push"
+			logger("push")
+			count = 0
+		end
+
+	elseif state == "push" then
+		count = count + 1
+
+		vns.Spreader.emergency_after_core(vns, vector3(0.03,0,0), vector3())
+
+		if count == 100 then
+			state = "end"
+			logger("end")
+			count = 0
+			vns.setMorphology(vns, structure1)
+		end
+	--[[
 	elseif state == "stretch" then
 		count = count + 1
 
@@ -183,6 +209,7 @@ return function()
 			vns.Parameters.deadzone_pipuck = 0.2
 			vns.setMorphology(vns, structure1)
 		end
+	--]]
 	end
 
 	return false, true
