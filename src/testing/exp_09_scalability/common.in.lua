@@ -533,7 +533,7 @@ function create_reaction_node(vns)
 				-- check obstacle for side of the gate
 				for i, ob in ipairs(vns.avoider.obstacles) do
 					if ob.type == gate_brick_type and ob.positionV3:length() < 0.3 then
-						vns.goal.transV3 = vns.goal.transV3 + vector3(1,0,0):rotate(ob.orientationQ) * 0.1
+						vns.goal.transV3 = vns.goal.transV3 + vector3(1,0,0):rotate(ob.orientationQ) * 0.5
 					end
 
 					local color = "255,0,0,0"

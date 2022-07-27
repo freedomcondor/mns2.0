@@ -92,7 +92,6 @@ params = '''
 
               avoid_block_vortex="nil"
               deadzone_block="0.2"
-              driver_spring_default_speed_scalar="5"
 '''.format(exp_scale, n_drone, gate_number)
 
 # generate argos file
