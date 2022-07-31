@@ -21,7 +21,19 @@
 	git checkout c04be869311801976a83613552e111b2eef4dd45
 	```
 
-2. Before compiling and installing argos, you may want to apply some patch for argos3 from folder `argos3-patch`, depends on what do you need. For our mns experiments, two essential patches are applied, which are the first two described below:
+2. Before compiling and installing argos, it is highly recommended to delete old version of argos from your system. To do that, check /usr/local, which it is the default place when installing argos. To check:
+	```bash
+	cd /usr/local
+	find . -name "*argos*"
+	```
+
+All the files that contains the name argos will be listed. Check carefully to delete only argos files but not other system files. Usually, something like:
+	```bash
+	rm -rf */argos3
+	```
+will do, but again, check carefully.
+
+After removed old version argos, and cloned our version of argos, you may want to apply some patch for argos3 from folder `argos3-patch`, depends on what do you need. For our mns experiments, two essential patches are applied, which are the first two described below:
 	* `new-camera-positions.patch` is essential, it makes drone cameras look farther than default, so that it works with pipuck-extension with larger tag. To apply the patch, go to argos3 folder and :
 		```bash
 		cd argos3
@@ -95,6 +107,8 @@ python3 testing/exp_01_1_establish_formation_scatter_line/run.py -r 1
 where `-r 1` at the end means randomseed 1. If there are no `-r 1` specified, a randomseed based on the current time will be automatically used.
 
 Traverse all `exp_*` and you will see all the mns experiments. 
+
+For detailed information on how python generates argos files, there is a file in `src/scripts/createArgosScenario.py`. It is included by each `run.py` file in each `exp` scenario. It handles -r, -l, -z option, which is for randomseed, experiment length, and visualization, respectively. After getting randomseed and experiment length, python first generates robot initial positions (and other initial setups) and then generate a `.argos` file with the same randomseed, experiment length, and robot initial positions, and call `argos3` with this generated `.argos` file. 
 
 ## other notes
 
