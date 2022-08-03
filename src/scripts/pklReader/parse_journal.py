@@ -265,3 +265,19 @@ def copy_file_logs():
       copy_file_log(robot)
    for robot_name, robot in pipucks.items() :
       copy_file_log(robot)
+
+def write_logs_to_file():
+   for robot_name, robot in drones.items() :
+      with open(robot_name + '.stream_log', 'w') as f:
+         f.write(robot.log_as_utf8())
+         f.close()
+      with open(robot_name + '.stream_error_log', 'w') as f:
+         f.write(robot.logerr_as_utf8())
+         f.close()
+   for robot_name, robot in pipucks.items() :
+      with open(robot_name + '.stream_log', 'w') as f:
+         f.write(robot.log_as_utf8())
+         f.close()
+      with open(robot_name + '.stream_error_log', 'w') as f:
+         f.write(robot.logerr_as_utf8())
+         f.close()
