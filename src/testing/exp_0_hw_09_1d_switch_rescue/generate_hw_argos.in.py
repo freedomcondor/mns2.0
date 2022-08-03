@@ -2,9 +2,9 @@ createArgosFileName = "@CMAKE_SOURCE_DIR@/scripts/createArgosScenario.py"
 #execfile(createArgosFileName)
 exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'))
 
+#stabilizer_preference_robot="pipuck1"
 params = '''
     script="common.lua"
-    stabilizer_preference_robot="pipuck1"
     stabilizer_preference_brain="drone1"
 
     connector_waiting_count="5"
@@ -12,7 +12,6 @@ params = '''
     connector_unseen_count="20"
     connector_heartbeat_count="10"
     
-    pipuck_label_from="1"
     pipuck_label_to="20"
     block_label_from="25"
     block_label_to="35"
@@ -33,8 +32,12 @@ params = '''
     pipuck_rotation_scalar="0.25"
 '''
 
+pipuck_params = '''
+    pipuck_label_from="1"
+'''
 drone_params = '''
     driver_default_speed="0.05"
+    pipuck_label_from="2"
 '''
 
 # generate argos file
@@ -48,6 +51,6 @@ generate_argos_file("@CMAKE_SOURCE_DIR@/scripts/argos_templates/drone_hw.argos",
 generate_argos_file("@CMAKE_SOURCE_DIR@/scripts/argos_templates/pipuck_hw.argos", 
                     "@CMAKE_CURRENT_BINARY_DIR@/hw/01_pipuck.argos",
 	[
-		["PARAMS",       params],  
+		["PARAMS", params + pipuck_params],  
 	]
 )
