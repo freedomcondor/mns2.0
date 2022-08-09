@@ -116,7 +116,8 @@ end
 
 ---- Debug Draw -------------------------------
 api.debug = {}
-function api.debug.drawArrow(color, begin, finish)
+function api.debug.drawArrow(color, begin, finish, essential)
+	if api.debug.show_all ~= true and essential ~= true then return end
 	if robot.debug == nil then return end
 	-- parse color
 	local colorArray = {}
@@ -135,7 +136,8 @@ function api.debug.drawArrow(color, begin, finish)
 	end
 end
 
-function api.debug.drawRing(color, middle, radius)
+function api.debug.drawRing(color, middle, radius, essential)
+	if api.debug.show_all ~= true and essential ~= true then return end
 	if robot.debug == nil then return end
 	-- parse color
 	local colorArray = {}
@@ -183,13 +185,14 @@ end
 function api.debug.showParent(vns)
 	if vns.parentR ~= nil then
 		local robotR = vns.parentR
-		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)))
+		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)), true)
 		api.debug.drawArrow("blue", 
 			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1),
 			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1) +
 			vector3(0.1, 0, 0):rotate(
 				api.virtualFrame.Q_VtoR(quaternion(robotR.orientationQ))
-			)
+			),
+			true  -- essential
 		)
 	end
 end
@@ -197,14 +200,15 @@ end
 function api.debug.showChildren(vns)
 	-- draw children location
 	for i, robotR in pairs(vns.childrenRT) do
-		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)))
+		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)), true)
 		--[[
 		api.debug.drawArrow("blue", 
 			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1),
 			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1) +
 			vector3(0.1, 0, 0):rotate(
 				api.virtualFrame.Q_VtoR(quaternion(robotR.orientationQ))
-			)
+			),
+			true
 		)
 		--]]
 	end
