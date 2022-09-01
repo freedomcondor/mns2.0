@@ -285,8 +285,8 @@ namespace argos {
 
    void CMyQtOpenGLUserFunctions::DrawArrow3(const CVector3& c_from, const CVector3& c_to) {
       const CCachedShapes& cCachedShapes = CCachedShapes::GetCachedShapes();
-      const Real fArrowThickness = 0.015625f;
-      const Real fArrowHead =      0.031250f;
+      const Real fArrowThickness = 0.015625f * 2;
+      const Real fArrowHead =      0.031250f * 2;
       CVector3 cArrow(c_to - c_from);
       CQuaternion cRotation(CVector3::Z, cArrow / cArrow.Length());
       CRadians cZAngle, cYAngle, cXAngle;

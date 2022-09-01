@@ -33,6 +33,7 @@ add_subdirectory(exp_08_full_scenario)
 add_subdirectory(exp_09_scalability)
 add_subdirectory(exp_0_hw_10_formation_1_2d_6p_group_start)
 
+add_subdirectory(exp_0_hw_00_demo_1_2d_4p)
 add_subdirectory(exp_0_hw_01_formation_1_2d_10p)
 add_subdirectory(exp_0_hw_02_obstacle_avoidance_small)
 add_subdirectory(exp_0_hw_03_obstacle_avoidance_large)

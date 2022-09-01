@@ -79,6 +79,7 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
+		create_led_node(vns),
 		vns.create_vns_core_node(vns, option),
 		vns.CollectiveSensor.create_collectivesensor_node(vns),
 		create_reaction_node(vns),
@@ -109,10 +110,30 @@ function step()
 	api.postStep()
 
 	vns.logLoopFunctionInfo(vns)
+
+
+	-- up signal
+	local up_color = "255, 0, 50"
+	local down_color = "255, 0, 255"
+	if robot.id == "pipuck76" and vns.api.stepCount == 100 then 
+		api.debug.showParent(vns, up_color)
+	end 
+
+	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "led_signal_up")) do
+		if vns.parentR ~= nil then 
+			api.debug.showParent(vns, up_color)
+		else
+			api.debug.showChildren(vns, down_color)
+		end
+	end
+
+	if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "led_signal")) do
+		api.debug.showChildren(vns, down_color)
+	end end
+
 	-- debug
 	api.debug.showChildren(vns)
 	if vns.robotTypeS == "drone" then api.debug.showObstacles(vns) end
-
 	--ExperimentCommon.detectGates(vns, 253, 1.5) -- gate brick id and longest possible gate size
 end
 
@@ -160,17 +181,23 @@ function create_reaction_node(vns)
 
 		-- waiting for sometime for the 1st formation
 		if state == "waiting" then
+			vns.allocator.mode_switch = "stationary"
 			vns.allocator.pipuck_bridge_switch = true
 			stateCount = stateCount + 1
 			--if stateCount == 150 + expScale * 50 then
 			-- brain wait for sometime and say move_forward
-			if vns.parentR == nil then
+			if stateCount > 120 then
+				vns.allocator.mode_switch = "allocate"
+			end
+			--if vns.parentR == nil then
 				--if stateCount > 75 and vns.driver.all_arrive == true then
+				--[[
 				if (stateCount > 250 * expScale) then
 					logger(robot.id, "move_forward")
 					switchAndSendNewState(vns, "move_forward")
 				end
-			end
+				--]]
+			--end
 
 		elseif state == "move_forward" then
 			--vns.allocator.pipuck_bridge_switch = nil
@@ -563,6 +590,76 @@ function create_reaction_node(vns)
 
 		-- for debug
 		vns.debugstate = {state = state, stateCount = stateCount}
+		return false, true
+	end
+end
+
+-- drone avoider led node ---------------------
+function create_led_node(vns)
+	return function()
+		if vns.api.stepCount == 100 then
+			if robot.id == "pipuck76" then
+				vns.Msg.send(vns.parentR.idS, "led_signal_up")
+				vns.api.debug.drawRing("255, 0, 50", vector3(0,0,0), 0.15, true)
+			end
+		end
+
+		for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "led_signal_up")) do
+			vns.api.debug.drawRing("255, 0, 50", vector3(0,0,0), 0.15, true)
+			if vns.parentR ~= nil then
+				vns.Msg.send(vns.parentR.idS, "led_signal_up")
+			end
+			if vns.parentR == nil then
+				for idS, childR in pairs(vns.childrenRT) do
+					vns.Msg.send(idS, "led_signal")
+				end
+			end
+		end
+
+		if vns.parentR ~= nil then for _, msgM in ipairs(vns.Msg.getAM(vns.parentR.idS, "led_signal")) do
+			for idS, childR in pairs(vns.childrenRT) do
+				vns.Msg.send(idS, "led_signal")
+				vns.api.debug.drawRing("255, 0, 255", vector3(0,0,0), 0.15, true)
+			end
+		end end
+		-- signal led
+		--[[
+		if vns.robotTypeS == "drone" then
+			local flag = false
+			for idS, robotR in pairs(vns.connector.seenRobots) do
+				if robotR.robotTypeS == "drone" then
+					flag = true
+				end
+			end
+			if flag == true then
+				robot.leds.set_leds("green")
+			else
+				robot.leds.set_leds("red")
+			end
+		end
+		--]]
+
+		--[[
+		if vns.parentR ~= nil then
+			local color = "0,255,255,0"
+			vns.api.debug.drawArrow(color,
+		                        vns.api.virtualFrame.V3_VtoR(vector3(0,0,0.03)),
+		                        vns.api.virtualFrame.V3_VtoR(vector3(vns.goal.positionV3 + vector3(0,0,0.03))),
+								true
+		                       )
+			vns.api.debug.drawRing(color, api.virtualFrame.V3_VtoR(vns.goal.positionV3 + vector3(0,0,0.03)), 0.15, true)
+		end
+		--]]
+
+		if vns.robotTypeS == "drone" then
+			if vns.parentR == nil then
+				robot.leds.set_leds("red")
+				vns.api.debug.drawRing("red", vector3(0,0,0), 0.15, true)
+			else
+				robot.leds.set_leds("black")
+			end
+		end
+
 		return false, true
 	end
 end

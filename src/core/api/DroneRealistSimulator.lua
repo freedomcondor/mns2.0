@@ -16,7 +16,7 @@ end
 function DroneRealistSimulator.changeActuators(api)
 	if robot.params.simulation ~= true then return end
 	DroneRealistSimulator.changeZActuator(api)
-	DroneRealistSimulator.changeRadActuator(api)
+	--DroneRealistSimulator.changeRadActuator(api)
 end
 
 function DroneRealistSimulator.changeZSensor(api)

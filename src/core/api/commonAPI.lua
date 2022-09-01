@@ -182,11 +182,11 @@ function api.debug.showEstimateLocation()
 	)
 end
 
-function api.debug.showParent(vns)
+function api.debug.showParent(vns, color)
 	if vns.parentR ~= nil then
 		local robotR = vns.parentR
-		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)), true)
-		api.debug.drawArrow("blue", 
+		api.debug.drawArrow(color or "blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)), true)
+		api.debug.drawArrow(color or "blue", 
 			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1),
 			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1) +
 			vector3(0.1, 0, 0):rotate(
@@ -197,10 +197,21 @@ function api.debug.showParent(vns)
 	end
 end
 
-function api.debug.showChildren(vns)
+function api.debug.showChildren(vns, color)
 	-- draw children location
 	for i, robotR in pairs(vns.childrenRT) do
-		api.debug.drawArrow("blue", vector3(), api.virtualFrame.V3_VtoR(vector3(robotR.positionV3)), true)
+		api.debug.drawArrow(
+			color or "blue", 
+			vector3(), 
+			api.virtualFrame.V3_VtoR(
+				vector3(
+					robotR.positionV3 * (
+						(robotR.positionV3:length() - 0.20)/robotR.positionV3:length()
+					)
+				)
+			), 
+			true
+		)
 		--[[
 		api.debug.drawArrow("blue", 
 			api.virtualFrame.V3_VtoR(robotR.positionV3) + vector3(0,0,0.1),

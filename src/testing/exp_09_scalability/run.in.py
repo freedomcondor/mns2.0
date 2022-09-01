@@ -5,6 +5,128 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 import math
 
+#------------- over write
+#- random locations ------------------------------------------------------------------------
+def generate_random_locations(n, origin_x,    origin_y, 
+                                 x_min_limit, x_max_limit,
+                                 y_min_limit, y_max_limit, 
+                                 near_limit,  far_limit) :
+	a = [
+            [0, -0.75],
+            [0, 0.75],
+        ]
+
+	# if origin is not None then add origin as the first
+	start = 0
+	if origin_x != None and origin_y != None :
+		#a.append([origin_x, origin_y])
+		start = 2
+
+	# start generating
+	for i in range(start, n) : # 0/1 to n - 1
+		valid = False
+		attempt_count_down = attempt_count_down_default
+		while valid == False :
+			# check attempt
+			if attempt_count_down == 0 :
+				print("[warning] random locations incomplete")
+				break
+			else :
+				attempt_count_down = attempt_count_down - 1
+
+			# generate a random location
+			loc_x = x_min_limit + random.random() * (x_max_limit - x_min_limit)
+			loc_y = y_min_limit + random.random() * (y_max_limit - y_min_limit)
+
+			#check near
+			valid = True
+			for j in range(0, i) :
+				if (loc_x - a[j][0]) ** 2 + (loc_y - a[j][1]) ** 2 < near_limit ** 2 :
+					valid = False
+					break
+			if valid == False :
+				continue
+
+			#check faraway
+			valid = False
+			if i == 0 :
+				valid = True
+			for j in range(0, i) :
+				if (loc_x - a[j][0]) ** 2 + (loc_y - a[j][1]) ** 2 < far_limit ** 2 :
+					valid = True
+					break
+			if valid == True :
+				a.append([loc_x, loc_y])
+		if attempt_count_down == 0 :
+			break
+	return a
+
+def generate_slave_locations(n, master_locations,
+                                x_min_limit, x_max_limit,
+                                y_min_limit, y_max_limit,
+                                near_limit, far_limit) :
+	return generate_slave_locations_with_origin(n,
+	                                            master_locations,
+	                                            None, None,
+	                                            x_min_limit, x_max_limit,
+	                                            y_min_limit, y_max_limit,
+	                                            near_limit, far_limit)
+
+
+def generate_slave_locations_with_origin(n, master_locations,
+                                         origin_x, origin_y,
+                                         x_min_limit, x_max_limit,
+                                         y_min_limit, y_max_limit,
+                                         near_limit, far_limit) :
+	a = [
+            [0.5, 0],
+            [-0.5, 0],
+            [0, 1.5],
+            [0, -1.5],
+        ]
+
+	# if origin is not None then add origin as the first
+	start = 0
+	if origin_x != None and origin_y != None :
+		#a.append([origin_x, origin_y])
+		start = 4
+
+	for i in range(start, n) :
+		valid = False
+		attempt_count_down = attempt_count_down_default
+		while valid == False :
+			# check attempt
+			if attempt_count_down == 0 :
+				print("[warning] slave locations incomplete")
+				break
+			else :
+				attempt_count_down = attempt_count_down - 1
+
+			# generate a random location
+			loc_x = x_min_limit + random.random() * (x_max_limit - x_min_limit)
+			loc_y = y_min_limit + random.random() * (y_max_limit - y_min_limit)
+
+			# check near
+			valid = True
+			for j in range(0, i) :
+				if (loc_x - a[j][0]) ** 2 + (loc_y - a[j][1]) ** 2 < near_limit ** 2 :
+					valid = False
+					break
+			if valid == False :
+				continue
+
+			#check faraway
+			valid = False
+			for drone_loc in master_locations :
+				if (loc_x - drone_loc[0]) ** 2 + (loc_y - drone_loc[1]) ** 2 < far_limit ** 2 :
+					valid = True
+					break
+			if valid == True :
+				a.append([loc_x, loc_y])
+		if attempt_count_down == 0 :
+			break
+	return a
+
 exp_scale = 4
 
 n_drone = exp_scale * 6 + 1
@@ -13,14 +135,14 @@ arena_size = exp_scale * 10 + 8 + (n_drone)/math.pi
 
 # drone and pipuck
 drone_locations = generate_random_locations(n_drone,                        # total number
-                                            -exp_scale - 3, 0,              # origin location
-                                            -exp_scale*3-2, -1,             # random x range
+                                            0, 0,              # origin location
+                                            -exp_scale*3-2, exp_scale*3,             # random x range
                                             -exp_scale*3,exp_scale*3,       # random y range
                                             1.3, 1.5)                       # near limit and far limit
 pipuck_locations = generate_slave_locations_with_origin(n_pipuck,
                                             drone_locations,
-                                            -exp_scale-3+0.8, 0.4,          # origin
-                                            -exp_scale*3-2, -1,             # random x range
+                                            -3+0.8, 0.4,          # origin
+                                            -exp_scale*3-2, exp_scale * 3,             # random x range
                                             -exp_scale*3,exp_scale*3,       # random y range
                                             0.5, 0.9)                       # near limit and far limit
 
