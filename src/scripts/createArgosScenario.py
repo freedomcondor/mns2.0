@@ -216,7 +216,7 @@ def generate_real_scenario_object() :
 	</cylinder>
 
 	<!-- boundary markers -->
-	<box id="marker1" size="0.20,0.20,0.20" movable="false" mass="10">
+	<!--box id="marker1" size="0.20,0.20,0.20" movable="false" mass="10">
 	  <body position="1.2,-2.4,0"  orientation="0,0,0" />
 	</box>
 	<box id="marker2" size="0.20,0.20,0.20" movable="false" mass="10">
@@ -263,7 +263,7 @@ def generate_real_scenario_object() :
 	</box>
 	<box id="marker16" size="0.20,0.20,0.20" movable="false" mass="10">
 	  <body position="-1.0,-3.1,0"  orientation="0,0,0" />
-	</box>
+	</box-->
 
 	<!-- arena -->
 	<box id="south_arena_inner" size="0.02,2.84,0.10" movable="false" mass="10">

@@ -58,3 +58,5 @@ endif(ARGOS_QTOPENGL_FOUND)
 make_directory(logs)
 #add testing sub directory
 add_subdirectory(testing)
+#add experiments sub directory
+add_subdirectory(experiments)

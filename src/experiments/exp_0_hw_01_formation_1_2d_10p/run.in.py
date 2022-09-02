@@ -6,7 +6,7 @@ import os
 
 # drone and pipuck
 drone_locations = generate_random_locations(2,                  # total number
-                                            0.5, 0,               # origin location
+                                            0.5, 0,             # origin location
                                             -3, 3,              # random x range
                                             -2, 2,              # random y range
                                             1.5, 1.7)           # near limit and far limit
@@ -38,13 +38,13 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="pipuck"
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="drone"
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
