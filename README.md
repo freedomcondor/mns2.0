@@ -34,29 +34,29 @@ All the files that contains the name argos will be listed. Check carefully to de
 will do, but again, check carefully.
 
 After removed old version argos, and cloned our version of argos, you may want to apply some patch for argos3 from folder `argos3-patch`, depends on what do you need. For our mns experiments, two essential patches are applied, which are the first two described below:
-	* `new-camera-positions.patch` is essential, it makes drone cameras look farther than default, so that it works with pipuck-extension with larger tag. To apply the patch, go to argos3 folder and :
-		```bash
-		cd argos3
-		git apply ../mns2.0/argos3-patch/new-camera-positions.patch
-		```
-	* `unstable-drone.patch` is essential, it makes drone gyro and accelero meters more noisy so that the stablebility of the drone matches reality. 
-		```bash
-		git apply ../mns2.0/argos3-patch/unstable-drone.patch
-		```
-	* `qtopengl-tweaks.patch` is used for fixing the argos qtopengl resolution to 1920x1080 and make drawings look nicer. WARNING: this patch may be outdated
-	* `babydrone.patch` is for hardware, to compile argos on a "virtual drone" on a PC. WARNING: also may be outdated.
-
-	To compile and install argos, follow the instructions of argos. Here is a guideline, you may need to change some details.
+* `new-camera-positions.patch` is essential, it makes drone cameras look farther than default, so that it works with pipuck-extension with larger tag. To apply the patch, go to argos3 folder and :
 	```bash
 	cd argos3
-	mkdir build
-	cd build
-	cmake -DARGOS_BUILD_NATIVE=ON \
-	      -DARGOS_DOCUMENTATION=OFF \
-	      ../src
-	make -j4
-	sudo make install
+	git apply ../mns2.0/argos3-patch/new-camera-positions.patch
 	```
+* `unstable-drone.patch` is essential, it makes drone gyro and accelero meters more noisy so that the stablebility of the drone matches reality. 
+	```bash
+	git apply ../mns2.0/argos3-patch/unstable-drone.patch
+	```
+* `qtopengl-tweaks.patch` is used for fixing the argos qtopengl resolution to 1920x1080 and make drawings look nicer. WARNING: this patch may be outdated
+* `babydrone.patch` is for hardware, to compile argos on a "virtual drone" on a PC. WARNING: also may be outdated.
+
+To compile and install argos, follow the instructions of argos. Here is a guideline, you may need to change some details.
+```bash
+cd argos3
+mkdir build
+cd build
+cmake -DARGOS_BUILD_NATIVE=ON \
+      -DARGOS_DOCUMENTATION=OFF \
+      ../src
+make -j4
+sudo make install
+```
 
 2. After installing argos3, you are clear to build this repository. Clone the repository and run the following commands.
 	```bash
