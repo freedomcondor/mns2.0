@@ -11,7 +11,7 @@
 #SBATCH --mail-user=weixu.zhu@ulb.be   # your email to receive emails about the state of your job
 #SBATCH --mail-type=END,FAIL           # when to send emails, choices are BEGIN, END, FAIL, ARRAY_TASKS
 
-#SBATCH --array=1-2                    # job array
+#SBATCH --array=1-50                    # job array
 
 ## Module dependencies
 #export MODULEPATH=$HOME/Software/modulefiles:$MODULEPATH
