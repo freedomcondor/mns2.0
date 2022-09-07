@@ -1,1 +1,2 @@
 add_subdirectory(exp_0_hw_01_formation_1_2d_10p)
+add_subdirectory(exp_0_hw_02_obstacle_avoidance_small)
