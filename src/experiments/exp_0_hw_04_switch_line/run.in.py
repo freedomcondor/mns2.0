@@ -52,6 +52,7 @@ params = '''
     obstacle_unseen_count="0"
 
     safezone_pipuck_pipuck="1.5"
+    safezone_drone_pipuck="1.0"
 '''
 
 # generate argos file
