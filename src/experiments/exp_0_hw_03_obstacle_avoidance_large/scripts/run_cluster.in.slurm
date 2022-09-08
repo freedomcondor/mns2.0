@@ -11,7 +11,7 @@
 #SBATCH --mail-user=weixu.zhu@ulb.be   # your email to receive emails about the state of your job
 #SBATCH --mail-type=END,FAIL           # when to send emails, choices are BEGIN, END, FAIL, ARRAY_TASKS
 
-#SBATCH --array=1-2                    # job array
+#SBATCH --array=1-50                    # job array
 
 ## Module dependencies
 #export MODULEPATH=$HOME/Software/modulefiles:$MODULEPATH
@@ -21,7 +21,7 @@ module load readline-8.1.mod
 
 #srun my_program   # run your program here 
 DATADIR=@CMAKE_CURRENT_BINARY_DIR@/../data
-TMPDIR=/tmp/mns_exp_03
+TMPDIR=/tmp/wzhu/mns_exp/exp_0_hw_03_obstacle_avoidance_large
 
 # job id
 #JOB_ID=1
