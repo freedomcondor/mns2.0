@@ -60,9 +60,9 @@ function logReader.readLine(str)
 		                         tonumber(strList[11]),
 		                         tonumber(strList[12])
 		                        ),
-		goalOrientationQ = (quaternion(1,0,0, tonumber(strList[15]) * math.pi / 180) *
-		                    quaternion(0,1,0, tonumber(strList[14]) * math.pi / 180) *
-		                    quaternion(0,0,1, tonumber(strList[13]) * math.pi / 180)
+		goalOrientationQ = (quaternion(1,0,0, (tonumber(strList[15]) or 0) * math.pi / 180) *
+		                    quaternion(0,1,0, (tonumber(strList[14]) or 0) * math.pi / 180) *
+		                    quaternion(0,0,1, (tonumber(strList[13]) or 0) * math.pi / 180)
 		                   ),
 		targetID = tonumber(strList[16]),
 		brainID = strList[17],
@@ -97,7 +97,10 @@ function logReader.loadData(dir, typelist)
 		if f == nil then print("load file " .. filename .. " error") return end
 		-- for each line
 		robotData = {}
+		--count = 0
 		for l in f:lines() do 
+			--count = count + 1
+			--print("reading line", count)
 			table.insert(robotData, logReader.readLine(l)) 
 		end
 		-- close file
