@@ -18,8 +18,8 @@ pipuck_locations = generate_slave_locations_with_origin(
                                             6,
                                             drone_locations,
                                             -2.5, 0,
-                                            -2.5, -2.5,           # random x range
-                                            -1.5, 1.5,          # random y range
+                                            -3.5, -2.5,           # random x range
+                                            -1.4, 1.4,          # random y range
                                             0.4, 0.7)           # near limit and far limit
 
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
