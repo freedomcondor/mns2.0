@@ -33,7 +33,6 @@ add_subdirectory(exp_08_full_scenario)
 add_subdirectory(exp_09_scalability)
 add_subdirectory(exp_0_hw_10_formation_1_2d_6p_group_start)
 
-add_subdirectory(exp_0_hw_04_switch_line)
 add_subdirectory(exp_0_hw_05_gate_switch)
 add_subdirectory(exp_0_hw_06_formation_1_3d_14p)
 add_subdirectory(exp_0_hw_07_fault_tolerance)

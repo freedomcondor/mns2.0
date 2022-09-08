@@ -60,17 +60,17 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],  # Inputseed is inherit from createArgosScenario.py
-		["TOTALLENGTH",       str((Experiment_length or 2000)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 1500)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
 		["OBSTACLES",         obstacle_xml], 
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="pipuck"
         ''' + params)],
 		["DRONE_CONTROLLER", generate_drone_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="drone"
         ''' + params)],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],

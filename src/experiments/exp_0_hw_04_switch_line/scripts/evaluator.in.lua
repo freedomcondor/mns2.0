@@ -1,6 +1,6 @@
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/scripts/logReader/?.lua"
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/utils/?.lua"
-package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/../?.lua"
+package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/../simu/?.lua"
 
 logger = require("Logger")
 logReader = require("logReader")
@@ -24,9 +24,9 @@ local geneIndex = logReader.calcMorphID(gene)
 
 local robotsData = logReader.loadData("./logs")
 
-local stage2Step = logReader.checkIDFirstAppearStep(robotsData, structure2.idN, nil, "drone4")
-local stage3Step = logReader.checkIDFirstAppearStep(robotsData, structure3.idN, nil, "drone4")
-local stage4Step = logReader.checkIDFirstAppearStep(robotsData, structure1.idN, stage3Step, "drone4")
+local stage2Step = logReader.checkIDFirstAppearStep(robotsData, structure2.idN, nil)
+local stage3Step = logReader.checkIDFirstAppearStep(robotsData, structure3.idN, nil)
+local stage4Step = logReader.checkIDFirstAppearStep(robotsData, structure1.idN, stage3Step)
 
 print("stage2 start at", stage2Step)
 print("stage3 start at", stage3Step)
