@@ -39,7 +39,7 @@ obstacle_locations = generate_random_locations(8,               # total number
 obstacle_xml = generate_obstacles(obstacle_locations, 100, 32) # start id and payload
 
 # target
-target_xml = generate_target_xml(3.3, largest_loc, 0,           # x, y, th
+target_xml = generate_target_xml(3.5, largest_loc, 0,           # x, y, th
                                  27, 27,                      # payload
                                  0.3, 0.3, 0.2)                 # radius and edge and tag distance
 
@@ -52,7 +52,6 @@ params = '''
               drone_default_start_height="1.5"
               dangerzone_drone="1.3"
               obstacle_unseen_count="0"
-              driver_default_speed="0.07"
 
     pipuck_label_from="1"
     pipuck_label_to="20"
@@ -74,6 +73,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["TARGET",            target_xml], 
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
+              driver_default_speed="0.07"
               my_type="pipuck"
         ''' + params)],
 		["DRONE_CONTROLLER", generate_drone_controller('''
