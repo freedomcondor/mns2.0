@@ -1,9 +1,14 @@
 local myType = robot.params.my_type
 
+--[[
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/api/?.lua"
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/utils/?.lua"
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/vns/?.lua"
 package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
+--]]
+if robot.params.hardware ~= "true" then
+	package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/simu/?.lua"
+end
 
 pairs = require("AlphaPairs")
 ExperimentCommon = require("ExperimentCommon")
