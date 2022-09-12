@@ -25,7 +25,7 @@ pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 g
 # wall
 wall_xml, largest_loc = generate_wall(2,                        # number of gates
                                       1,                      # x location of the wall
-                                      -2.2, 2.2,                # y range of the wall
+                                      -2.25, 2.25,                # y range of the wall
                                       0.5, 1.3, 1.5,            # size range, and max of the gate
                                       0.25,                     # block distance to fill the wall
                                       33, 34)                 # gate_brick_type, and wall_brick_type
@@ -61,7 +61,7 @@ params = '''
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
-                    "@CMAKE_CURRENT_BINARY_DIR@/vns.argos",
+                    "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],
 		["TOTALLENGTH",       str((Experiment_length or 1500)/5)],
@@ -83,4 +83,4 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 	]
 )
 
-os.system("argos3 -c @CMAKE_CURRENT_BINARY_DIR@/vns.argos" + VisualizationArgosFlag)
+os.system("argos3 -c vns.argos" + VisualizationArgosFlag)

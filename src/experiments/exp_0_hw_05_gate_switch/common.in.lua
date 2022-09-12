@@ -271,9 +271,11 @@ function create_reaction_node(vns)
 					end
 				else
 					-- I don't see gate this step, move towards vns.gate
-					local speed = vector3(vns.gate.positionV3)
-					speed = speed:normalize() * 0.03
-					vns.Spreader.emergency_after_core(vns, speed, vector3())
+					if vns.gate ~= nil then
+						local speed = vector3(vns.gate.positionV3)
+						speed = speed:normalize() * 0.03
+						vns.Spreader.emergency_after_core(vns, speed, vector3())
+					end
 				end
 			end
 
