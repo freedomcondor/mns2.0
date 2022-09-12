@@ -6,16 +6,17 @@ import os
 
 # drone and pipuck
 drone_locations = generate_random_locations(3,                  # total number
-                                            0, 0,               # origin location
+                                            0, 0.5,               # origin location
                                             -3, 3,              # random x range
                                             -2, 2,              # random y range
                                             1.5, 1.7)           # near limit and far limit
-pipuck_locations = generate_slave_locations(
+pipuck_locations = generate_slave_locations_with_origin(
                                             14,
                                             drone_locations,
+                                            0, 0.7,
                                             -4, 4,              # random x range
                                             -2.0, 2.0,          # random y range
-                                            0.5, 1.0)           # near limit and far limit
+                                            0.5, 0.7)           # near limit and far limit
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
 
 pipuck_locations.remove(pipuck_locations[0])
@@ -32,7 +33,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],  # Inputseed is inherit from createArgosScenario.py
-		["TOTALLENGTH",       str((Experiment_length or 0)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 1000)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
@@ -43,6 +44,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               stabilizer_preference_brain="drone1"
               connector_pipuck_children_max_count="5"
               safezone_pipuck_pipuck="1.5"
+              deadzone_reference_pipuck_scalar="1"
         ''')],
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
