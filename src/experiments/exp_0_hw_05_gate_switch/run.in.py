@@ -35,16 +35,16 @@ obstacle_locations = generate_random_locations(8,               # total number
                                                None, None,      # origin location
                                                -1.5, -0.5,      # x range
                                                -1.9, 1.9,       # y range
-                                               0.5, 3.0)        # near and far limit
+                                               0.7, 3.0)        # near and far limit
 obstacle_xml = generate_obstacles(obstacle_locations, 100, 32) # start id and payload
 
 # target
-target_xml = generate_target_xml(3.0, largest_loc, 0,           # x, y, th
+target_xml = generate_target_xml(3.3, largest_loc, 0,           # x, y, th
                                  27, 27,                      # payload
                                  0.3, 0.3, 0.2)                 # radius and edge and tag distance
 
 params = '''
-              dangerzone_block="0.30"
+              dangerzone_block="0.40"
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
               drone_tag_detection_rate="1"
@@ -52,6 +52,7 @@ params = '''
               drone_default_start_height="1.5"
               dangerzone_drone="1.3"
               obstacle_unseen_count="0"
+              driver_default_speed="0.07"
 
     pipuck_label_from="1"
     pipuck_label_to="20"
@@ -64,7 +65,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],
-		["TOTALLENGTH",       str((Experiment_length or 1500)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 2000)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
