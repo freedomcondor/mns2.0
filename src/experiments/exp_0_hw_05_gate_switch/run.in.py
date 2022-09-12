@@ -31,9 +31,9 @@ wall_xml, largest_loc = generate_wall(2,                        # number of gate
                                       33, 34)                 # gate_brick_type, and wall_brick_type
 
 # obstacles
-obstacle_locations = generate_random_locations(10,               # total number
+obstacle_locations = generate_random_locations(8,               # total number
                                                None, None,      # origin location
-                                               -2, -0.5,      # x range
+                                               -1.5, -0.5,      # x range
                                                -1.9, 1.9,       # y range
                                                0.5, 3.0)        # near and far limit
 obstacle_xml = generate_obstacles(obstacle_locations, 100, 32) # start id and payload
@@ -64,7 +64,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "@CMAKE_CURRENT_BINARY_DIR@/vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],
-		["TOTALLENGTH",       str((Experiment_length or 5000)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 1500)/5)],
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
@@ -72,11 +72,11 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["OBSTACLES",         obstacle_xml], 
 		["TARGET",            target_xml], 
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="pipuck"
         ''' + params)],
 		["DRONE_CONTROLLER", generate_drone_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="drone"
         ''' + params)],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
