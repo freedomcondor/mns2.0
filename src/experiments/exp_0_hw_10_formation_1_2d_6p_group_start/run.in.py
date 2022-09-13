@@ -20,50 +20,6 @@ drone_xml = generate_drones(drone_locations, 1)                 # from label 1 g
 
 pipuck_xml = generate_pipucks(pipuck_locations, 2)             # from label 2 generate pipuck xml tags
 
-x_home = 0
-y_home = 0
-type_home = 34
-
-th = 20
-gate_half = 45
-r = 0.5
-obstacle_payload = 34
-obstacle_marker_payload = 33
-
-obstacle_xml = generate_obstacle_box_xml(
-                                         0,
-                                         r * math.cos(gate_half/180*math.pi) + x_home,
-                                         r * math.sin(gate_half/180*math.pi) + y_home,
-                                         90,
-                                         obstacle_marker_payload
-                                        )
-obstacle_xml += generate_obstacle_box_xml(
-                                         1,
-                                         r * math.cos((360-gate_half)/180*math.pi) + x_home,
-                                         r * math.sin((360-gate_half)/180*math.pi) + y_home,
-                                         -90,
-                                         obstacle_payload
-                                        )
-
-alpha = gate_half + th
-number = 2
-while alpha < 360 - gate_half:
-    angle = alpha
-    if alpha < 180 :
-        angle = alpha + 90
-    else :
-        angle = alpha - 90
-    if number != 1 :
-        obstacle_xml = obstacle_xml + generate_obstacle_box_xml(
-                                                     number,
-                                                     r * math.cos(alpha/180*math.pi) + x_home,
-                                                     r * math.sin(alpha/180*math.pi) + y_home,
-                                                     angle,
-                                                     obstacle_payload
-        )
-    alpha = alpha + th
-    number = number + 1
-
 #pipuck_xml = generate_pipuck_xml(1, -3, 0) + \                 # an extra pipuck and pipuck1
 #             generate_pipucks(pipuck_locations, 2)             # from label 2 generate pipuck xml tags
 
@@ -87,17 +43,16 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
     [
         ["RANDOMSEED",        str(Inputseed)],  # Inputseed is inherit from createArgosScenario.py
-        ["TOTALLENGTH",       str((Experiment_length or 1000)/5)],
+        ["TOTALLENGTH",       str((Experiment_length or 500)/5)],
         ["REAL_SCENARIO",     generate_real_scenario_object()],
         ["DRONES",            drone_xml], 
         ["PIPUCKS",           pipuck_xml], 
-		["OBSTACLES",         obstacle_xml], 
         ["PIPUCK_CONTROLLER", generate_pipuck_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="pipuck"
         ''' + params)],
         ["DRONE_CONTROLLER", generate_drone_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="drone"
         ''' + params)],
         ["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
