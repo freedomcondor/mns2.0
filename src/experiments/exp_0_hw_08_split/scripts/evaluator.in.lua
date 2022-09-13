@@ -1,13 +1,13 @@
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/scripts/logReader/?.lua"
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/utils/?.lua"
-package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/../?.lua"
+package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/../simu/?.lua"
 
 logger = require("Logger")
 logReader = require("logReader")
 logger.enable()
 
-local structure1 = require("morphologies/morphology1")
-local structure2 = require("morphologies/morphology2")
+local structure1 = require("morphology1")
+local structure2 = require("morphology2")
 local gene = {
 	robotTypeS = "drone",
 	positionV3 = vector3(),
