@@ -65,11 +65,11 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["PIPUCKS",           pipuck_xml], 
 		["OBSTACLES",         obstacle_xml], 
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="pipuck"
         ''' + params)],
 		["DRONE_CONTROLLER", generate_drone_controller('''
-              script="@CMAKE_CURRENT_BINARY_DIR@/common.lua"
+              script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="drone"
         ''' + params)],
 		["SIMULATION_SETUP",  generate_physics_media_loop_visualization("@CMAKE_BINARY_DIR@")],
