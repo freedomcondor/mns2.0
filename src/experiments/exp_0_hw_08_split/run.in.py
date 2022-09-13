@@ -10,9 +10,9 @@ import os
 # drone and pipuck
 drone_locations = generate_random_locations(2,                  # total number
                                             1, 0,         # origin location
-                                            -2.5, 2.5,         # random x range
-                                            -1.5, 1.5,              # random y range
-                                            1.2, 1.7)             # near limit and far limit
+                                            -2.3, 2.3,         # random x range
+                                            -1.3, 1.3,              # random y range
+                                            1.2, 1.4)             # near limit and far limit
 
 pipuck_locations = generate_slave_locations_with_origin(
                                             5,
@@ -20,7 +20,7 @@ pipuck_locations = generate_slave_locations_with_origin(
                                             1, 0.7,
                                             -2.5, 2.5,           # random x range
                                             -1.5, 1.5,          # random y range
-                                            0.4, 0.7)           # near limit and far limit
+                                            0.4, 0.6)           # near limit and far limit
 
 pipuck_locations.remove(pipuck_locations[0])
 
