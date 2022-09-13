@@ -50,7 +50,7 @@ function VNS.Connector.newVnsID(vns, idN, lastidPeriod)
 	local _idS = vns.Msg.myIDS()
 	local _idN = idN or 0
 
-	Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
+	VNS.Connector.updateVnsID(vns, _idS, _idN, lastidPeriod)
 end
 end
 

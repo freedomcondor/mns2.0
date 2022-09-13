@@ -18,8 +18,8 @@ pipuck_locations = generate_slave_locations_with_origin(
                                             5,
                                             drone_locations,
                                             1, 0.7,
-                                            -2.5, 2.5,           # random x range
-                                            -1.5, 1.5,          # random y range
+                                            -2.3, 2.3,           # random x range
+                                            -1.3, 1.3,          # random y range
                                             0.4, 0.6)           # near limit and far limit
 
 pipuck_locations.remove(pipuck_locations[0])
@@ -53,6 +53,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               single_robot="pipuck6"
               dangerzone_pipuck="0.30"
               safezone_pipuck_pipuck="1.5"
+              deadzone_reference_pipuck_scalar="1.5"
         ''')],
               #pipuck_wheel_speed_limit="0.2"
               #pipuck_rotation_scalar="0.03"
