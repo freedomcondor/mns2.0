@@ -14,12 +14,15 @@ drone_locations = generate_random_locations(2,                  # total number
                                             -1.5, 1.5,              # random y range
                                             1.2, 1.7)             # near limit and far limit
 
-pipuck_locations = generate_slave_locations(
-                                            4,
+pipuck_locations = generate_slave_locations_with_origin(
+                                            5,
                                             drone_locations,
+                                            1, 0.7,
                                             -2.5, 2.5,           # random x range
                                             -1.5, 1.5,          # random y range
                                             0.4, 0.7)           # near limit and far limit
+
+pipuck_locations.remove(pipuck_locations[0])
 
 drone_xml = generate_drones(drone_locations, 1)                 # from label 1 generate drone xml tags
 pipuck_xml = generate_pipucks(pipuck_locations, 1)              # from label 1 generate pipuck xml tags
@@ -28,6 +31,8 @@ pipuck_xml = generate_pipuck_xml(1, 1, 0.7, 90) + \
              generate_pipucks(pipuck_locations, 2) + \
              generate_pipuck_xml(6, -2, 0, 0) 
                           # from label 2 generate pipuck xml tags
+
+obstacle_xml = generate_obstacle_xml(1, -1, 0.35, 90, 100)
 
 # generate argos file
 generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos", 
@@ -39,6 +44,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["REAL_SCENARIO",     generate_real_scenario_object()],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
+		["OBSTACLES",         obstacle_xml], 
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="pipuck"

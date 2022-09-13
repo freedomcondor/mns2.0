@@ -13,6 +13,7 @@ end
 pairs = require("AlphaPairs")
 ExperimentCommon = require("ExperimentCommon")
 -- includes -------------
+local Transform = require("Transform")
 logger = require("Logger")
 local api = require(myType .. "API")
 local VNS = require("VNS")
@@ -127,6 +128,17 @@ return function()
 		end
 	elseif state == "split" and 
 	       vns.allocator.target.ranger == true then
+		
+		-- adjust orientation
+		if #vns.avoider.obstacles ~= 0 then
+			local orientationAcc = Transform.createAccumulator()
+			for id, ob in ipairs(vns.avoider.obstacles) do
+				Transform.addAccumulator(orientationAcc, {positionV3 = vector3(), orientationQ = ob.orientationQ})
+			end
+			local averageOri = Transform.averageAccumulator(orientationAcc).orientationQ
+			vns.setGoal(vns, vns.goal.positionV3, averageOri)
+		end
+
 		vns.Spreader.emergency_after_core(vns, vector3(0, speed, 0), vector3())
 		count = count + 1
 		if count == 200 then
@@ -136,6 +148,17 @@ return function()
 		end
 	elseif state == "go_back" and 
 	       vns.allocator.target.ranger == true then
+
+		-- adjust orientation
+		if #vns.avoider.obstacles ~= 0 then
+			local orientationAcc = Transform.createAccumulator()
+			for id, ob in ipairs(vns.avoider.obstacles) do
+				Transform.addAccumulator(orientationAcc, {positionV3 = vector3(), orientationQ = ob.orientationQ})
+			end
+			local averageOri = Transform.averageAccumulator(orientationAcc).orientationQ
+			vns.setGoal(vns, vns.goal.positionV3, averageOri)
+		end
+
 		if vns.parentR == nil then
 			vns.Spreader.emergency_after_core(vns, vector3(0, -speed, 0), vector3())
 		end
