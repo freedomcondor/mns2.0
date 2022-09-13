@@ -34,7 +34,6 @@ add_subdirectory(exp_09_scalability)
 add_subdirectory(exp_0_hw_10_formation_1_2d_6p_group_start)
 
 add_subdirectory(exp_0_hw_09_2d_switch_grab)
-add_subdirectory(exp_0_hw_09_1d_switch_rescue)
 
 add_subdirectory(exp_0_hw_11_hardwareX_tag_tracking)
 add_subdirectory(exp_0_hw_12_hardwareX_arrow)

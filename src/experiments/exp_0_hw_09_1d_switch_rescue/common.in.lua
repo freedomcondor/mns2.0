@@ -1,9 +1,14 @@
 local myType = robot.params.my_type
 
+--[[
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/api/?.lua"
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/utils/?.lua"
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/vns/?.lua"
 package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/?.lua"
+--]]
+if robot.params.hardware ~= "true" then
+	package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/simu/?.lua"
+end
 
 pairs = require("AlphaPairs")
 ExperimentCommon = require("ExperimentCommon")
@@ -19,10 +24,10 @@ logger.disable("droneAPI")
 -- datas ----------------
 local bt
 --local vns
-local structure1 = require("morphologies/morphology1")
-local structure2 = require("morphologies/morphology2")
-local structure3 = require("morphologies/morphology3")
-local structure4 = require("morphologies/morphology4")
+local structure1 = require("morphology1")
+local structure2 = require("morphology2")
+local structure3 = require("morphology3")
+local structure4 = require("morphology4")
 local gene = {
 	robotTypeS = "drone",
 	positionV3 = vector3(),
