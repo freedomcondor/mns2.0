@@ -6,8 +6,8 @@ legend = []
 for subfolder in getSubfolders("@CMAKE_CURRENT_SOURCE_DIR@/../data") :
 	#legend.append(subfolder)
 	data = readDataFrom(subfolder + "result_data.txt")
-	if data[2430] > 5:
-		print("wrong case: ", subfolder)
+	#if data[2430] > 5:
+	#	print("wrong case: ", subfolder)
 	drawData(data)
 #plt.legend(legend)
 
