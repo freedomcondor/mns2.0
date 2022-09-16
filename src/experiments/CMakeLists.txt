@@ -9,4 +9,6 @@ add_subdirectory(exp_0_hw_08_split)
 add_subdirectory(exp_0_hw_09_1d_switch_rescue)
 add_subdirectory(exp_0_hw_10_formation_1_2d_6p_group_start)
 
+add_subdirectory(exp_1_simu_01_formation_10d)
+
 add_subdirectory(exp_2_simu_scalability)
