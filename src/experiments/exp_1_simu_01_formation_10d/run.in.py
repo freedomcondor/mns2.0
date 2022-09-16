@@ -33,7 +33,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],  # Inputseed is inherit from createArgosScenario.py
-		["TOTALLENGTH",       str((Experiment_length or 500)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 1000)/5)],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
 		["PIPUCK_CONTROLLER", generate_pipuck_controller('''
@@ -45,6 +45,9 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
 		["DRONE_CONTROLLER", generate_drone_controller('''
               script="@CMAKE_CURRENT_BINARY_DIR@/simu/common.lua"
               my_type="drone"
+              drone_tag_detection_rate="1"
+              drone_default_height="1.8"
+              drone_default_start_height="1.8"
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
         ''')],

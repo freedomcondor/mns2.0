@@ -1,4 +1,4 @@
-require("MorphologiesGenerator")
+require("morphologiesGenerator")
 
 local pipuckDis = 0.7
 local droneDis = 1.5

@@ -20,7 +20,7 @@ module load lua5.3-dev.mod
 module load readline-8.1.mod
 
 #srun my_program   # run your program here 
-DATADIR=@CMAKE_CURRENT_BINARY_DIR@/../simu_data
+DATADIR=@CMAKE_CURRENT_BINARY_DIR@/../data_simu
 TMPDIR=/tmp/exp_1_simu_01_formation_10d
 
 # job id
