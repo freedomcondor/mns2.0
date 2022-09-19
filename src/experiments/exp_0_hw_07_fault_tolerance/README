@@ -1,0 +1,6 @@
+In this scenario, the swarm will do the formation switch with the tunnel scenario. However, there will be a certain percentage of the robots fail in the middle.
+The failure happens at step 500.
+
+Video:
+	1. Mostly top down video would be enough
+	2. The failed robots would switch one the red leds. It is not very noticeable in simulation. I'm thinking maybe we can zoom in a bit to show the red leds.

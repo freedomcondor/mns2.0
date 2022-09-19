@@ -1,0 +1,8 @@
+In this case, the swarm is supposed to form a formation with 2 drones and 6 pipucks, and sweep the area from one side to the other.
+1. First they move across some randomly placed obstacles, each robot avoid these obstacles locally.
+2. When they reach the wall, there are two gates in the wall, the swarm senses the gates and choose the larger one to move through.
+3. When they see the target behind the gate, they surround it.
+
+Video:
+	1. I think a top down view most of the time would be OK.
+	2. To make things better, I guess it would be nice to have a 3D top-side down view to show the 3D structure after each formation establishment (a. formation in the beginning, b, formation when moving through the gate, c, formation to surround the target)
