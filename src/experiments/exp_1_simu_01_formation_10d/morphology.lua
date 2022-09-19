@@ -13,7 +13,6 @@ function create_left2_right1_line_morphology(scale, droneDis, pipuckDis, height)
         {	robotTypeS = "pipuck",
             positionV3 = vector3(pipuckDis/2*math.sqrt(3), pipuckDis/2, -height),
             orientationQ = quaternion(0, vector3(0,0,1)),
-            reference = true,
         },
         {	robotTypeS = "pipuck",
             positionV3 = vector3(-pipuckDis/2*math.sqrt(3), pipuckDis/2, -height),
@@ -62,4 +61,3 @@ local morph = create_left2_right1_line_morphology(2, droneDis, pipuckDis, height
 morph.children[1].reference = true
 
 return morph
-

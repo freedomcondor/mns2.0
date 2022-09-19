@@ -47,6 +47,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
               my_type="drone"
               stabilizer_preference_robot="pipuck1"
               stabilizer_preference_brain="drone1"
+              drone_tag_detection_rate="1"
               drone_default_height="1.8"
               drone_default_start_height="1.8"
               dangerzone_drone="1.3"
