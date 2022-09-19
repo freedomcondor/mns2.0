@@ -21,7 +21,7 @@ module load readline-8.1.mod
 
 #srun my_program   # run your program here 
 DATADIR=@CMAKE_CURRENT_BINARY_DIR@/../data_simu
-TMPDIR=/tmp/wzhu/exp_1_simu_02_obstacle_avoidance_small_10d
+TMPDIR=/tmp/wzhu/exp_1_simu_03_obstacle_avoidance_large_10d
 
 # job id
 #JOB_ID=1
