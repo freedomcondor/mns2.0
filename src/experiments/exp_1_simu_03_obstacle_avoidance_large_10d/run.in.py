@@ -4,16 +4,31 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 
 import os
 
+'''
 # drone and pipuck
 drone_locations = generate_random_locations(10,                  # total number
                                             0, -0.5,             # origin location
                                             -3, 3,              # random x range
                                             -5, 5,              # random y range
                                             1.5, 1.6)           # near limit and far limit
+'''
+drone_locations = [
+    [0, 0],
+    [-1, 0],
+    [-1, 1.5],
+    [-1, -1.5],
+    [-2, 0],
+    [-2, 1.5],
+    [-2, -1.5],
+    [-3, 0],
+    [-3, 1.5],
+    [-3, -1.5],
+]
+
 pipuck_locations = generate_slave_locations_with_origin(
                                             40,
                                             drone_locations,
-                                            0.7, -0.3,
+                                            0.7, 0.7,
                                             -3, 3,              # random x range
                                             -5, 5,          # random y range
                                             0.5, 0.8)           # near limit and far limit

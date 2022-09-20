@@ -13,8 +13,8 @@ local robotsData = logReader.loadData("./logs")
 
 local endStep = logReader.getEndStep(robotsData)
 
-logReader.calcSegmentData(robotsData, geneIndex, 1, 400)
-for i = 401, endStep do
+logReader.calcSegmentData(robotsData, geneIndex, 1, 600)
+for i = 601, endStep do
 	logReader.calcSegmentData(robotsData, geneIndex, i, i)
 end
 

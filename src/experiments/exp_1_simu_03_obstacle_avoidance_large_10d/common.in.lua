@@ -107,7 +107,7 @@ function create_head_navigate_node(vns)
 local state = "moving"
 return function()
 	-- form the formation for 150 steps
-	if vns.api.stepCount < 400 then 
+	if vns.api.stepCount < 600 then 
 		vns.stabilizer.force_pipuck_reference = true
 		return false, true 
 	end
