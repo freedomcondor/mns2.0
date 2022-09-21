@@ -214,14 +214,16 @@ function api.debug.showChildren(vns)
 	end
 end
 
-function api.debug.showObstacles(vns)
+function api.debug.showObstacles(vns, essential)
 	for i, obstacle in ipairs(vns.avoider.obstacles) do
 		api.debug.drawArrow("red", vector3(),
-		                           api.virtualFrame.V3_VtoR(vector3(obstacle.positionV3))
+		                           api.virtualFrame.V3_VtoR(vector3(obstacle.positionV3)),
+		                           essential
 		                   )
 		api.debug.drawArrow("red",
 		                    api.virtualFrame.V3_VtoR(vector3(obstacle.positionV3)),
-		                    api.virtualFrame.V3_VtoR(obstacle.positionV3 + vector3(0.1, 0, 0):rotate(obstacle.orientationQ))
+		                    api.virtualFrame.V3_VtoR(obstacle.positionV3 + vector3(0.1, 0, 0):rotate(obstacle.orientationQ)),
+		                    essential
 		                   )
 		--obstacle.positionV3)
 	end
