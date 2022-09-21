@@ -80,6 +80,7 @@ params = '''
     pipuck_label_to="99"
     block_label_from="100"
     block_label_to="105"
+    safezone_drone_drone="2"
 '''
 
 # generate argos file
