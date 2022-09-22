@@ -81,7 +81,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],  # Inputseed is inherit from createArgosScenario.py
-		["TOTALLENGTH",       str((Experiment_length or 3000)/5)],
+		["TOTALLENGTH",       str((Experiment_length or 4000)/5)],
 		#["REAL_SCENARIO",     generate_real_scenario_object()],
 		["ARENA_SIZE",        str(arena_size)], 
 		["DRONES",            drone_xml], 

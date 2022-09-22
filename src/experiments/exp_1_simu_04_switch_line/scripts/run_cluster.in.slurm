@@ -21,7 +21,7 @@ module load readline-8.1.mod
 
 #srun my_program   # run your program here 
 DATADIR=@CMAKE_CURRENT_BINARY_DIR@/../data
-TMPDIR=/tmp/wzhu/mns_exp/exp_0_hw_04_switch_line
+TMPDIR=/tmp/wzhu/mns_exp/exp_1_simu_04_switch_line
 
 # job id
 #JOB_ID=1
