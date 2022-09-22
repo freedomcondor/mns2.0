@@ -84,7 +84,7 @@ end
 
 --- step
 function step()
-	cut_wifi(vns, api)
+	cut_camera(vns, api)
 	-- prestep
 	--logger(robot.id, "-----------------------")
 	api.preStep()
@@ -288,8 +288,12 @@ return function()
 	return false, true
 end end
 
-function cut_wifi(vns, api)
+function cut_camera(vns, api)
 	if 500 < api.stepCount and api.stepCount <= 502 then
-		robot.radios.wifi.recv = {}
+		if robot.cameras_system ~= nil then
+			for id, camera in pairs(robot.cameras_system) do
+				camera.tags = {}
+			end
+		end
 	end
 end
