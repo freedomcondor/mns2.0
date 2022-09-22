@@ -302,7 +302,7 @@ end end
 function create_failure_node(vns)
 	local fail_return = true
 return function()
-	if vns.api.stepCount == 400 and robot.random.uniform() < 0.66 then
+	if vns.api.stepCount == 450 and robot.random.uniform() < 0.66 then
 		vns.reset(vns)
 		fail_return = false
 	end
