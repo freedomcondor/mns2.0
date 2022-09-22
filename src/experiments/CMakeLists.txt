@@ -15,3 +15,5 @@ add_subdirectory(exp_1_simu_03_obstacle_avoidance_large_10d)
 add_subdirectory(exp_1_simu_04_switch_line)
 
 add_subdirectory(exp_2_simu_scalability)
+
+add_subdirectory(exp_3_simu_01_fault_tolerance_66)
