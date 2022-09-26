@@ -1,4 +1,4 @@
-In this scenario, the swarm will do the formation switch with the tunnel scenario. However, there will be a certain percentage of the robots fail in the middle.
+In this scenario, the swarm will do the formation switch with the tunnel scenario (exp_0_hw_04_switch_line). However, there will be a certain percentage of the robots fail in the middle.
 The failure happens at step 500.
 
 Video:

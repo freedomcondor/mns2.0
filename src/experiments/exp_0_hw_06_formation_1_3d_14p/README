@@ -1,0 +1,15 @@
+This scenario is a simple formation case same as exp_0_hw_01_formation_1_2d_10p, but with 3 drones and 14 pipucks.
+robots scatter randomly in the beginning. In the end, the swarm forms the following formation 
+
+(p for pipuck, d for drone)
+
+             p         p         p
+        p         p         p         p
+             d         d         d
+        p         p         p         p
+             p         p         p
+
+Video: 
+ 1. Top down view to show how the topology changes and converge towards the target formation.
+ 2. (Optional) 3D view to show the 3D structure like this:
+
