@@ -1,0 +1,30 @@
+In this scenario, robots scatter randomly in the beginning. In the end, the swarm is supposed to form a formation with 2 drones and 10 pipucks.
+
+The formation look like this:
+
+(p for pipuck, d for drone)
+
+             p         p
+        p         p         p
+             d         d
+        p         p         p
+             p         p
+
+Video: 
+ 1. Top down view to show how the topology changes and converge towards the target formation.
+ 2. (Optional) 3D view to show the 3D structure like this:
+
+                                                                             
+                               dd                                            
+                               dd                                            
+                                                                             
+                  dd                                                         
+                  dd             p                                           
+                       p                p                                    
+                                                                             
+                      p               p                                      
+             p               p                                               
+                                                                             
+           p                p                                                
+                  p                                                          
+                                                                             
