@@ -5,8 +5,8 @@ def setAxParameters(ax):
 	ax.set_xlabel("x")
 	ax.set_ylabel("y")
 	ax.set_zlabel("z")
-	ax.set_xlim([-5, 5])
-	ax.set_ylim([-5, 5])
+	ax.set_xlim([-15, 15])
+	ax.set_ylim([-15, 15])
 	ax.set_zlim([-1.0, 2.0])
 	ax.view_init(90, -90)
 
@@ -30,7 +30,7 @@ obstacleLogNames = findRobotLogs(input_file, "obstacle")
 obstacleLogs = openRobotLogs(obstacleLogNames)
 
 count = 0
-stepLength = 1
+stepLength = 10
 
 while True:
 	count = count + 1
@@ -39,24 +39,24 @@ while True:
 	ax.clear()
 
 	for pipuckLog in pipuckLogs :
-		for i in range(0, stepLength):
+		for i in range(0, 10):
 			step = readNextLine(pipuckLog)
 		drawRobot(ax, step['position'], step['virtual_orientation'], "green")
 		drawRobot(ax, step['position'], step['orientation'], "blue")
 
 	for droneLog in droneLogs :
-		for i in range(0, stepLength):
+		for i in range(0, 10):
 			step = readNextLine(droneLog)
 		drawRobot(ax, step['position'], step['virtual_orientation'], "green")
 		drawRobot(ax, step['position'], step['orientation'], "red")
 
 	for obstacleLog in obstacleLogs :
-		for i in range(0, stepLength):
+		for i in range(0, 10):
 			step = readNextLine(obstacleLog)
 		drawRobot(ax, step['position'], step['orientation'], "black")
 
 	for targetLog in targetLogs:
-		for i in range(0, stepLength):
+		for i in range(0, 10):
 			step = readNextLine(targetLog)
 		drawRobot(ax, step['position'], step['orientation'], "black")
 
@@ -64,6 +64,6 @@ while True:
 	plt.draw()
 
 	# save images
-	plt.savefig("test_" + str(count).zfill(5) + ".png")
+	# plt.savefig("test_" + str(count).zfill(5) + ".png")
 	# waiting for spaces
 	#temp = input()

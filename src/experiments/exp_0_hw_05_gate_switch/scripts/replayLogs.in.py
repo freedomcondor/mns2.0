@@ -64,6 +64,6 @@ while True:
 	plt.draw()
 
 	# save images
-	# plt.savefig("test_" + str(count).zfill(5) + ".png")
+	plt.savefig("test_" + str(count).zfill(5) + ".png")
 	# waiting for spaces
 	#temp = input()

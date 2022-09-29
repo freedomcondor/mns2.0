@@ -30,7 +30,7 @@ obstacleLogNames = findRobotLogs(input_file, "obstacle")
 obstacleLogs = openRobotLogs(obstacleLogNames)
 
 count = 0
-stepLength = 1
+stepLength = 10
 
 while True:
 	count = count + 1

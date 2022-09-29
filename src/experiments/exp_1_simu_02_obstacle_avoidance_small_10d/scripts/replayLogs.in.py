@@ -5,8 +5,8 @@ def setAxParameters(ax):
 	ax.set_xlabel("x")
 	ax.set_ylabel("y")
 	ax.set_zlabel("z")
-	ax.set_xlim([-5, 5])
-	ax.set_ylim([-5, 5])
+	ax.set_xlim([-5, 15])
+	ax.set_ylim([-10, 10])
 	ax.set_zlim([-1.0, 2.0])
 	ax.view_init(90, -90)
 
@@ -30,7 +30,7 @@ obstacleLogNames = findRobotLogs(input_file, "obstacle")
 obstacleLogs = openRobotLogs(obstacleLogNames)
 
 count = 0
-stepLength = 1
+stepLength = 10
 
 while True:
 	count = count + 1
