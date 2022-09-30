@@ -1,0 +1,40 @@
+In this scenario, the swarm is trying to form a formation with 1 drones and 4 pipucks.
+
+         p     p
+            d   
+         p     p
+
+However, when starting, one of the pipucks is trapped by obstacles
+
+
+               p                               o
+            d                               o  p o  
+         p     p                               o
+
+The swarm will switch formations to push the obstacle away to rescue the trapped pipuck out
+
+                                               o
+                                            o  p o
+                               push up     ppp o
+                                            d
+
+
+                                            o  o
+                                           ppp p o
+                                            d  o
+
+
+                                            o  o
+                                      ppp p      o
+                                       d       o
+
+
+                              p   p         o  o
+                                d                o
+                              p   p            o
+
+
+
+Video tip:
+      I think top down would be OK.
+
