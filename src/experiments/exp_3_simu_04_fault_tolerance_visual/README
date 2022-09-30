@@ -1,0 +1,33 @@
+In this scenario, we do the same as exp_1_simu_04_switch_line. (The tunnel one)
+
+But at the 500th step, the drone camera will be blocked for a short period of time. This means all the robot will not be able to detect the location of each other.
+The MNS will restore connection after that and keep going through the tunnel.
+
+We do:
+
+1. A visual cut for 0.5s
+  
+         In this case, 0.5 second is shorter than MNS break tolerance time, so the connections between robots will remain, the mns will go on as if nothing has happened.
+
+2. A visual cut for 1s
+  
+         In this case, 1 second is just longer than MNS break tolerance time. 
+         All the connections between robots will break, the robots will re-recruit each other, but may in a differenct topology because the recruitment is random. 
+         and re-form the formation, and keep going through the tunnel.
+
+3. A visual cut for 30s
+
+         In this case, wifi cut for 30 seconds. The MNS will break and all the robots will drift for 30s, and then restore.
+
+To change the time in the code, change common.in.lua line 292 from :
+
+	if 500 < api.stepCount and api.stepCount <= 502 then
+
+to (0.5s):
+	if 500 < api.stepCount and api.stepCount <= 502 then     (In simulation, 1s = 5 steps)
+
+to (1s):
+	if 500 < api.stepCount and api.stepCount <= 505 then  
+
+to (30s):
+	if 500 < api.stepCount and api.stepCount <= 650 then  

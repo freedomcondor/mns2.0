@@ -1,0 +1,14 @@
+This formation scenario, there are 10 drones and 40 pipucks, the swarm firstly form a formation, then sweep a field scattered with small obstacles, and last stop in front of an end marker.
+
+
+         p     p               o        
+            d             o             
+         p     p   -->      o          e 
+            d            o              
+         p     p               o         (o: obstacles, e: end marker)
+
+
+Video tips:
+
+I think top-down for all the time should be ok.
+If you want to do better, it could be cool to zoom in to show how a pipuck moves around to avoid an obstacle.
