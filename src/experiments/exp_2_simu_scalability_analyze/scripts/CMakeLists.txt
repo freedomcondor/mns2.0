@@ -1,0 +1,5 @@
+configure_file( evaluator.in.lua     evaluator.lua)
+configure_file( drawLine.in.py       drawLine.py)
+configure_file( run_threads.in.sh    run_threads.sh)
+configure_file( run_cluster.in.slurm run_cluster.slurm)
+configure_file( replayLogs.in.py     replayLogs.py)
