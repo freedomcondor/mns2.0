@@ -538,7 +538,7 @@ function create_reaction_node(vns)
 				-- check obstacle for side of the gate
 				for i, ob in ipairs(vns.avoider.obstacles) do
 					if ob.type == gate_brick_type and ob.positionV3:length() < 0.3 then
-						vns.goal.transV3 = vns.goal.transV3 + vector3(1,0,0):rotate(ob.orientationQ) * 0.5
+						vns.goal.transV3 = vns.goal.transV3 + vector3(1,0,0):rotate(ob.orientationQ) * 0.3
 					end
 
 					local color = "255,0,0,0"
@@ -563,6 +563,23 @@ function create_reaction_node(vns)
 					local new_target = Transform.AxBisC(vns.target, {positionV3 = vector3(-1.0,0,0), orientationQ = quaternion()})
 					vns.setGoal(vns, new_target.positionV3, new_target.orientationQ)
 				end
+			end
+
+			-- other pipucks try to go middle of the gate
+			if vns.robotTypeS == "pipuck" and vns.stabilizer.referencing_me ~= true then 
+				-- check obstacle for side of the gate
+				for i, ob in ipairs(vns.avoider.obstacles) do
+					if ob.type == gate_brick_type and ob.positionV3:length() < 0.3 then
+						vns.goal.transV3 = vns.goal.transV3 + vector3(1,0,0):rotate(ob.orientationQ) * 0.3
+					end
+
+					local color = "255,0,0,0"
+					vns.api.debug.drawArrow(color,
+											vns.api.virtualFrame.V3_VtoR(vector3(0,0,0.1)),
+											vns.api.virtualFrame.V3_VtoR(vns.goal.transV3 * 1 + vector3(0,0,0.1))
+										   )
+				end
+
 			end
 		end
 
