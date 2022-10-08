@@ -1,0 +1,26 @@
+In this scenario, we do the same as exp_1_simu_04_switch_line. (The tunnel one)
+
+But we fail 66% of the robots at the 1000th step. The rest of the robots should restore the MNS and the formation and keep move through the tunnel.
+
+We do three sub tasks:
+
+     1. We fail 66% of all the robots
+     2. We fail 66% of only the drones
+     2. We fail 66% of only the pipucks
+
+To change this, change common.lua line 305 from:
+
+	if vns.api.stepCount == 1000 and robot.random.uniform() < 0.66 then
+
+to: 
+
+	if vns.api.stepCount == 1000 and robot.random.uniform() < 0.66 and vns.robotTypeS == "drone" then
+
+or
+
+	if vns.api.stepCount == 1000 and robot.random.uniform() < 0.66 and vns.robotTypeS == "pipuck" then
+
+
+Video:
+	1. Mostly top down video would be enough
+	2. The failed robots would switch one the red leds. It is not very noticeable in simulation. I'm thinking maybe we can zoom in a bit to show the red leds.

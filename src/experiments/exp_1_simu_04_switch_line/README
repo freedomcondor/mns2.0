@@ -1,0 +1,48 @@
+The scenario looks like the same with exp_0_hw_04_switch_line, but with 10 drones and 40 pipucks:
+
+                          ooo                   
+                             ooo                
+                                ooo             
+         p     p                   ooo         
+            d                                  
+         p     p       -->                    e 
+            d                                  
+         p     p                   ooo          (o: obstacles, e: end marker)
+                                ooo             
+                             ooo                
+                          ooo                   
+
+The swarm tries to move through this tunnel which is getting narrower and narrower.
+The swarm switches formation for two times to adapt to the width of the tunnel.
+
+                          ooo                   
+                             ooo                
+                                ooo             
+                                   ooo         
+                   p  d  p                      
+                   p     p                    e 
+                   p  d  p                      
+                                   ooo          (o: obstacles, e: end marker)
+                                ooo             
+                             ooo                
+                          ooo                   
+
+--------------------------------------------------------------------
+
+                          ooo                   
+                             ooo                
+                                ooo             
+                                   ooo         
+                             d                 
+                         p  p  p  p  p  p     e 
+                                     d         
+                                   ooo          (o: obstacles, e: end marker)
+                                ooo             
+                             ooo                
+                          ooo                   
+
+
+Video tips:
+
+     I think top down is ok enough.
+

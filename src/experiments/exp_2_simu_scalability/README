@@ -1,0 +1,11 @@
+ This is scalability case for exp_0_hw_05_gate_switch
+
+ The swarm forms a line, moves in front of a wall with two gates, and chooses the larger one to move through, and at last surrounds a target behind it.
+
+We do this for differenct scales of swarm. We do it with :
+
+scale      drone       pipuck
+  1          7           28
+  2          13          52
+  3          19          76
+  4          25          100

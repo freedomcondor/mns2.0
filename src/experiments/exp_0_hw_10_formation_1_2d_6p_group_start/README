@@ -1,0 +1,26 @@
+In this scenario, the swarm is trying to form a formation with 2 drones and 6 pipucks.
+
+         p     p     p
+            d     d
+         p     p     p
+
+But the inital position of the robots are highly clustered. We want to see that the swarm has the ability to 
+scatter around and form the formation.
+
+
+         pppd
+        dppp
+         
+
+          |
+          |
+          V
+
+
+         p     p     p
+            d     d
+         p     p     p
+
+Video tip:
+      I think top down would be OK.
+
