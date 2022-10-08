@@ -94,6 +94,7 @@ function Driver.step(vns, waiting)
 		transV3 = vector3()
 	else
 		transV3 = dV3:normalize() * speed * (d / threshold)
+		-- TODO: (d-reach) / threshold ??
 	end
 
 	-- calc rotateV3
