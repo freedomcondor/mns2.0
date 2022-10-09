@@ -9,26 +9,15 @@ require("morphologiesGenerator")
 
 logger.enable()
 
+logger("arg:")
+logger(arg)
 ------- formation evaluation -----------------------------------------------------------------------
-local expScale = 4
+local n_drone = tonumber(arg[1]) or 25
 local droneDis = 1.5
 local pipuckDis = 0.7
 local height = 1.8
 
-local structure1 = create_left_right_line_morphology(expScale, droneDis, pipuckDis, height)
-local structure2 = create_back_line_morphology(expScale * 2, droneDis, pipuckDis, height, vector3(), quaternion())
-local structure3 = create_left_right_back_line_morphology(expScale, droneDis, pipuckDis, height)
-
-local gene = {
-	robotTypeS = "drone",
-	positionV3 = vector3(),
-	orientationQ = quaternion(),
-	children = {
-		structure1,
-		structure2,
-		structure3,
-	}
-}
+local gene = create_back_line_morphology_with_drone_number(n_drone, droneDis, pipuckDis, height)
 
 local geneIndex = logReader.calcMorphID(gene)
 
@@ -57,6 +46,15 @@ logReader.saveData(robotsData, "result_data.txt")
 
 ------- error and converge speed measure  -------------------------------------------------------------------
 -- average error from the last 50 steps
+
+function countRobots(data)
+	local count = 0
+	for id, robot in pairs(data) do
+		count = count + 1
+	end
+	return count
+end
+
 function readDataInFile(file)
 	local f = io.open(file, "r")
 	local data = {}
@@ -87,11 +85,12 @@ function findDataStepBelowValue(data, fromStep, value)
 	return i
 end
 
+local robotNumber = countRobots(robotsData)
 local result_data, data_length = readDataInFile("result_data.txt")
 local sum, count = sumDataFromSteps(result_data, data_length - 50, data_length)
 local average_error = sum * 1.0 / count
 local converge_step = findDataStepBelowValue(result_data, 100, average_error)
-os.execute("echo " .. tostring(average_error) .. " " .. tostring(converge_step) .. " > result_formation_data.txt")
+os.execute("echo " .. tostring(robotNumber) .. " " .. tostring(average_error) .. " " .. tostring(converge_step) .. " > result_formation_data.txt")
 
 ------- time and comm measure  ------------------------------------------------------------------------------
 function getDataFileList(dir, data_ext)

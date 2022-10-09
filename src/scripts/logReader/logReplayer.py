@@ -70,6 +70,8 @@ def findRobotLogs(path, robotType) :
 			for file in folder[2] :
 				name = file.split(".",2)[0]
 				ext  = file.split(".",2)[1]
+				if ext != "log" :
+					continue
 				name_head = name.rstrip(string.digits)
 				if robotType == "ALL" :
 					if name_head == "drone" or name_head == "pipuck" or name_head == "obstacle" or name_head == "target":
