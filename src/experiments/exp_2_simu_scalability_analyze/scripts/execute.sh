@@ -8,7 +8,7 @@ run () {
 	cd $run_threads_dir/run$i
 	echo $i > evaluate_output
 	python3 ~/code/mns2.0/build/experiments/exp_2_simu_scalability_analyze/run.py -r $i -v false >> output
-	lua ~/code/mns2.0/build/experiments/exp_2_simu_scalability_analyze/scripts/evaluator.lua >> evaluate_output
+	lua ~/code/mns2.0/build/experiments/exp_2_simu_scalability_analyze/scripts/evaluator.lua $i >> evaluate_output
 }
 
 

@@ -121,8 +121,9 @@ function sumDataInFile(fileName, from, to)
 	local line_count = 0
 	for line in f:lines() do
 		line_count = line_count + 1
-		if from ~= nil and to ~= nil and 
-		   from < line_count and line_count < to then
+		if (from ~= nil and to ~= nil and 
+		   from <= line_count and line_count <= to) or
+		   (from == nil and to == nil) then
 			local number = tonumber(line)
 			sum = sum + number
 			count = count + 1
@@ -145,12 +146,12 @@ end
 
 ----- time -----------
 local time_file_list, robotNumber = getDataFileList("./logs", "time_dat")
-local sum, count = sumDataInFiles("./logs", time_file_list)
+local sum, count = sumDataInFiles("./logs", time_file_list, 1950, 2000)
 local average = sum * 1.0 / count
 os.execute("echo " .. tostring(robotNumber) .. " " .. tostring(average) .. " > result_time_data.txt")
 
 ----- comm -----------
 local comm_file_list, robotNumber = getDataFileList("./logs", "comm_dat")
-local sum, count = sumDataInFiles("./logs", comm_file_list)
+local sum, count = sumDataInFiles("./logs", comm_file_list, 1950, 2000)
 local average = sum * 1.0 / count
 os.execute("echo " .. tostring(robotNumber) .. " " .. tostring(average) .. " > result_comm_data.txt")
