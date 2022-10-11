@@ -246,8 +246,8 @@ namespace argos {
 
    void CMyQtOpenGLUserFunctions::DrawRing3(const CVector3& c_center, Real f_radius) {
       const CCachedShapes& cCachedShapes = CCachedShapes::GetCachedShapes();
-      const Real fRingHeight = 0.015625;
-      const Real fRingThickness = 0.015625;
+      const Real fRingHeight = 0.015625 * 2;
+      const Real fRingThickness = 0.015625 * 2;
       const Real fHalfRingThickness = fRingThickness * 0.5;
       const Real fDiameter = 2.0 * f_radius;
       /* draw inner ring surface */
@@ -285,8 +285,8 @@ namespace argos {
 
    void CMyQtOpenGLUserFunctions::DrawArrow3(const CVector3& c_from, const CVector3& c_to) {
       const CCachedShapes& cCachedShapes = CCachedShapes::GetCachedShapes();
-      const Real fArrowThickness = 0.015625f;
-      const Real fArrowHead =      0.031250f;
+      const Real fArrowThickness = 0.015625f * 2;
+      const Real fArrowHead =      0.031250f * 2.5;
       CVector3 cArrow(c_to - c_from);
       CQuaternion cRotation(CVector3::Z, cArrow / cArrow.Length());
       CRadians cZAngle, cYAngle, cXAngle;

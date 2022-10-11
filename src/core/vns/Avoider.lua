@@ -230,7 +230,7 @@ function Avoider.add(myLocV3, obLocV3, accumulatorV3, threshold, vortex, deadzon
 	if d <= 0 then d = 0.000000000000001 end -- TODO: maximum
 	local ans = accumulatorV3
 	if d < threshold - deadzone then
-		if vns.robotTypeS == "drone" then
+		if vns.robotTypeS == "drone" and robot.params.hardware == true then
 			robot.leds.set_leds("blue")
 		end
 		dV3:normalize()
