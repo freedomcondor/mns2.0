@@ -47,12 +47,13 @@ function DroneConnector.step(vns)
 	---[[
 	-- broadcast my sight so other drones would see me
 	--vns.Msg.send("ALLMSG", "reportSight", {mySight = vns.connector.seenRobots, myObstacles = vns.avoider.obstacles})
-	vns.Msg.send("ALLMSG", "reportSight", {mySight = vns.connector.seenRobots, myObstacles = seenObstacles})
+	local myRobotRT = DeepCopy(vns.connector.seenRobots)
+
+	vns.Msg.send("ALLMSG", "reportSight", {mySight = myRobotRT, myObstacles = seenObstacles})
 	--]]
 
 	-- for sight report, generate quadcopters
 	for _, msgM in ipairs(vns.Msg.getAM("ALLMSG", "reportSight")) do
-		local myRobotRT = DeepCopy(vns.connector.seenRobots)
 		--[[
 		for idS, robotR in pairs(vns.childrenRT) do
 			if myRobotRT[idS] == nil and robotR.robotTypeS == "pipuck" then 
