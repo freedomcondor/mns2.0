@@ -114,24 +114,29 @@ function getDataFileList(dir, data_ext)
 	return robotNameList, robotNumber
 end
 
-function sumDataInFile(fileName)
+function sumDataInFile(fileName, from, to)
 	local f = io.open(fileName, "r")
 	local sum = 0
 	local count = 0
+	local line_count = 0
 	for line in f:lines() do
-		local number = tonumber(line)
-		sum = sum + number
-		count = count + 1
+		line_count = line_count + 1
+		if from ~= nil and to ~= nil and 
+		   from < line_count and line_count < to then
+			local number = tonumber(line)
+			sum = sum + number
+			count = count + 1
+		end
 	end
 	io.close(f)
 	return sum, count
 end
 
-function sumDataInFiles(folder, fileNameList)
+function sumDataInFiles(folder, fileNameList, from, to)
 	local total_sum = 0
 	local total_count = 0
 	for i, fileName in ipairs(fileNameList) do
-		local sum, count = sumDataInFile(folder .. "/" .. fileName)
+		local sum, count = sumDataInFile(folder .. "/" .. fileName, from, to)
 		total_sum = total_sum + sum
 		total_count = total_count + count
 	end
