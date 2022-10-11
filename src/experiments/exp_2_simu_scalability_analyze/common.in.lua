@@ -39,6 +39,8 @@ local pipuckDis = 0.7
 local height = api.parameters.droneDefaultHeight
 local gene = create_back_line_morphology_with_drone_number(n_drone, droneDis, pipuckDis, height)
 
+Message = VNS.Msg
+
 -- VNS option
 VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_vertical
 
@@ -116,6 +118,7 @@ function getCurrentTime()
 	local tmpfile = robot.id .. '_time_tmp.dat'
 
 	os.execute('date +\"%s.%N\" > ' .. tmpfile)
+	--os.execute('gdate +\"%s.%N\" > ' .. tmpfile) -- use gdate in mac
 
 	local time
 	local f = io.open(tmpfile)
