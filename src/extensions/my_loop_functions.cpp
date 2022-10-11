@@ -7,8 +7,8 @@ namespace argos {
    /****************************************/
 
    void CMyLoopFunctions::Init(TConfigurationNode& t_tree) {
+      system("rm -rf logs");
       system("mkdir -p logs");
-      system("rm -rf logs/*.log");
       /* create a vector of tracked entities */
       CEntity::TVector& tRootEntityVector = GetSpace().GetRootEntityVector();
       for(CEntity* pc_entity : tRootEntityVector) {
