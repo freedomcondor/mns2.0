@@ -130,6 +130,50 @@ function logReader.getEndStep(robotsData)
 	return length
 end
 
+function logReader.smoothRobotData(stepTable, window)
+	--stepTable = {
+	--      1 = {positionV3, orientationQ, goalPositionV3, goalOrientationQ}
+	--      2 = {positionV3, orientationQ, goalPositionV3, goalOrientationQ}
+	--}
+	local smoothedData = {}
+	local posAcc = vector3(0,0,0)
+	local posAcc_n = 0
+	local goalAcc = vector3(0,0,0)
+	local goalAcc_n = 0
+	for i, stepData in ipairs(stepTable) do
+		smoothedData[i] = {
+			orientationQ     = quaternion(stepTable[i].orientationQ),
+			goalOrientationQ = quaternion(stepTable[i].goalOrientationQ),
+			targetID = stepTable[i].targetID,
+			brainID  = stepTable[i].brainID,
+		}
+
+		posAcc  = posAcc  + stepTable[i].positionV3
+		goalAcc = goalAcc + stepTable[i].goalPositionV3
+		posAcc_n  = posAcc_n  + 1
+		goalAcc_n = goalAcc_n + 1
+
+		if i - window > 0 then
+			posAcc  = posAcc  - stepTable[i - window].positionV3
+			goalAcc = goalAcc - stepTable[i - window].goalPositionV3
+			posAcc_n  = posAcc_n  - 1
+			goalAcc_n = goalAcc_n - 1
+		end
+
+		smoothedData[i].positionV3     = posAcc  * (1.0 / posAcc_n)
+		smoothedData[i].goalPositionV3 = goalAcc * (1.0 / goalAcc_n)
+	end
+	return smoothedData
+end
+
+function logReader.smoothData(robotsData, window)
+	for robotName, stepTable in pairs(robotsData) do
+		robotsData[robotName] = logReader.smoothRobotData(stepTable, window)
+		logger(robotName)
+		logger(robotsData[robotName][1])
+	end
+end
+
 function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
 	-- fill start and end if not provided
 	if startStep == nil then startStep = 1 end
