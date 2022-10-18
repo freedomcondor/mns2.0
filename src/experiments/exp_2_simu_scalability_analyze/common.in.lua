@@ -44,6 +44,53 @@ Message = VNS.Msg
 -- VNS option
 VNS.Allocator.calcBaseValue = VNS.Allocator.calcBaseValue_vertical
 
+function VNS.create_vns_core_node(vns, option)
+	-- option = {
+	--      connector_no_recruit = true or false or nil,
+	--      connector_no_parent_ack = true or false or nil,
+	--      specific_name = "drone1"
+	--      specific_time = 150
+	--          -- If I am stabilizer_preference_robot then ack to only drone1 for 150 steps
+	-- }
+	if option == nil then option = {} end
+	if robot.id == vns.Parameters.stabilizer_preference_robot then
+		option.specific_name = vns.Parameters.stabilizer_preference_brain
+		option.specific_time = vns.Parameters.stabilizer_preference_brain_time
+	end
+	return 
+	{type = "sequence", children = {
+		--vns.create_preconnector_node(vns),
+		function()           timeCoreStart = getCurrentTime() return false, true end,	
+		vns.Connector.create_connector_node(vns, 
+			{	no_recruit = option.connector_no_recruit,
+				no_parent_ack = option.connector_no_parent_ack,
+				specific_name = option.specific_name,
+				specific_time = option.specific_time,
+			}),
+		function()  timeCoreAfterConnector = getCurrentTime() return false, true end,	
+		vns.Assigner.create_assigner_node(vns),
+		function()  timeCoreAfterAssigner  = getCurrentTime() return false, true end,	
+		vns.ScaleManager.create_scalemanager_node(vns),
+		function()  timeCoreAfterScalemanager  = getCurrentTime() return false, true end,	
+		vns.Stabilizer.create_stabilizer_node(vns),
+		function()  timeCoreAfterStabilizer = getCurrentTime() return false, true end,	
+		vns.Allocator.create_allocator_node(vns),
+		function()  timeCoreAfterAllocator = getCurrentTime() return false, true end,	
+		vns.IntersectionDetector.create_intersectiondetector_node(vns),
+		function()  timeCoreAfterIntersectiondetector = getCurrentTime() return false, true end,	
+		vns.Avoider.create_avoider_node(vns, {
+			drone_pipuck_avoidance = option.drone_pipuck_avoidance
+		}),
+		function()  timeCoreAfterAvoider = getCurrentTime() return false, true end,	
+		vns.Spreader.create_spreader_node(vns),
+		function()  timeCoreAfterSpreader = getCurrentTime() return false, true end,	
+		vns.BrainKeeper.create_brainkeeper_node(vns),
+		function()  timeCoreAfterBrainkeeper = getCurrentTime() return false, true end,	
+		--vns.CollectiveSensor.create_collectivesensor_node(vns),
+		--vns.Driver.create_driver_node(vns),
+	}}
+end
+
 local timeMeasureDataFile = "logs/" .. robot.id .. ".time_dat"
 local commMeasureDataFile = "logs/" .. robot.id .. ".comm_dat"
 
@@ -69,6 +116,7 @@ function reset()
 	bt = BT.create
 	{ type = "sequence", children = {
 		vns.create_preconnector_node(vns),
+		function() timeAfterPre = getCurrentTime() return false, true end,
 		vns.create_vns_core_node(vns, option),
 		vns.CollectiveSensor.create_collectivesensor_node(vns),
 		vns.Driver.create_driver_node(vns, {waiting = "spring"}),
@@ -77,7 +125,7 @@ end
 
 --- step
 function step()
-	local startTime = getCurrentTime()
+	local timeStepStart = getCurrentTime()
 	-- prestep
 	-- log step
 	if robot.id == "drone1" then
@@ -93,17 +141,51 @@ function step()
 	-- step
 	bt()
 
+	local timeAfterBT = getCurrentTime()
+
 	-- poststep
 	vns.postStep(vns)
 	api.postStep()
+
+	local timeAfterPost = getCurrentTime()
 
 	vns.logLoopFunctionInfo(vns)
 	-- debug
 	api.debug.showChildren(vns)
 
-	local endTime = getCurrentTime()
-	local timeMeasure = endTime - startTime
-	os.execute('echo ' .. tostring(timeMeasure) .. ' >> ' .. timeMeasureDataFile)
+	local timeStepEnd = getCurrentTime()
+
+	local timeMeasurePre = timeAfterPre - timeStepStart
+	local timeMeasureBT = timeAfterBT - timeAfterPre 
+	local timeMeasurePost = timeAfterPost - timeAfterBT
+	local timeMeasureEnd = timeStepEnd - timeAfterPost
+
+	local timeMeasureCoreConnector = timeCoreAfterConnector - timeCoreStart
+	local timeMeasureCoreAssigner = timeCoreAfterAssigner - timeCoreAfterConnector
+	local timeMeasureCoreScalemanager = timeCoreAfterScalemanager - timeCoreAfterAssigner
+	local timeMeasureCoreStabilizer = timeCoreAfterStabilizer - timeCoreAfterScalemanager
+	local timeMeasureCoreAllocator = timeCoreAfterAllocator - timeCoreAfterStabilizer
+	local timeMeasureCoreIntersectiondetector = timeCoreAfterIntersectiondetector - timeCoreAfterAllocator
+	local timeMeasureCoreAvoider = timeCoreAfterAvoider - timeCoreAfterIntersectiondetector
+	local timeMeasureCoreSpreader = timeCoreAfterSpreader - timeCoreAfterAvoider
+	local timeMeasureCoreBrainkeeper = timeCoreAfterBrainkeeper- timeCoreAfterSpreader
+
+	os.execute('echo ' .. tostring(timeMeasurePre)  .. ' ' ..
+	                      tostring(timeMeasureBT)   .. ' ' ..
+	                      tostring(timeMeasurePost) .. ' ' ..
+	                      tostring(timeMeasureEnd)  .. ' ' ..
+
+	                      tostring(timeMeasureCoreConnector)  .. ' ' ..
+	                      tostring(timeMeasureCoreAssigner)  .. ' ' ..
+	                      tostring(timeMeasureCoreScalemanager)  .. ' ' ..
+	                      tostring(timeMeasureCoreStabilizer)  .. ' ' ..
+	                      tostring(timeMeasureCoreAllocator)  .. ' ' ..
+	                      tostring(timeMeasureCoreIntersectiondetector)  .. ' ' ..
+	                      tostring(timeMeasureCoreAvoider)  .. ' ' ..
+	                      tostring(timeMeasureCoreSpreader)  .. ' ' ..
+	                      tostring(timeMeasureCoreBrainkeeper)  .. ' ' ..
+	           ' >> ' .. timeMeasureDataFile
+	          )
 	local commMeasure = countMessage(vns.Msg.waitToSend)
 	os.execute('echo ' .. tostring(commMeasure) .. ' >> ' .. commMeasureDataFile)
 end

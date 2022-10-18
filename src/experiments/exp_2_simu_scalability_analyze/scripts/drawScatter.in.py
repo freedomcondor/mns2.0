@@ -16,9 +16,10 @@ def readFormationData(fileName) :
 	file.close()
 	return float(splits[0]), float(splits[1]), float(splits[2])
 
+fig, axs = plt.subplots(2, 2)
 
 folder = "@CMAKE_CURRENT_SOURCE_DIR@/../data"
-folder = "/home/harry/code/mns2.0/build/threads"
+folder = "/home/harry/code/mns2.0/build/threads_finish"
 scales = []
 comms = []
 for subfolder in getSubfolders(folder) :
@@ -26,8 +27,11 @@ for subfolder in getSubfolders(folder) :
 	scales.append(scale)
 	comms.append(comm)
 
-plt.scatter(scales, comms)
-plt.show()
+axs[0, 0].scatter(scales, comms)
+axs[0, 0].set_ylim([0, 1000])
+axs[0, 0].set_title("communication")
+#plt.scatter(scales, comms)
+#plt.show()
 
 scales = []
 times = []
@@ -36,8 +40,11 @@ for subfolder in getSubfolders(folder) :
 	scales.append(scale)
 	times.append(time)
 
-plt.scatter(scales, times)
-plt.show()
+axs[0, 1].scatter(scales, times)
+axs[0, 1].set_ylim([0, 0.3])
+axs[0, 1].set_title("calculation cost")
+#plt.scatter(scales, times)
+#plt.show()
 
 scales = []
 errors = []
@@ -48,8 +55,13 @@ for subfolder in getSubfolders(folder) :
 	errors.append(error)
 	converges.append(converge)
 
-plt.scatter(scales, errors)
-plt.show()
+axs[1, 0].scatter(scales, errors)
+axs[1, 0].set_title("position errors")
+#plt.scatter(scales, errors)
+#plt.show()
 
-plt.scatter(scales, converges)
+axs[1, 1].scatter(scales, converges)
+axs[1, 1].set_title("converge time")
+#plt.scatter(scales, converges)
+#plt.show()
 plt.show()

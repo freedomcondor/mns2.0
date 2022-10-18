@@ -7,7 +7,7 @@ run () {
 	mkdir -p $run_threads_dir/run$i
 	cd $run_threads_dir/run$i
 	echo $i > evaluate_output
-	python3 ~/code/mns2.0/build/experiments/exp_2_simu_scalability_analyze/run.py -r $i -v false >> output
+	#python3 ~/code/mns2.0/build/experiments/exp_2_simu_scalability_analyze/run.py -r $i -v false >> output
 	lua ~/code/mns2.0/build/experiments/exp_2_simu_scalability_analyze/scripts/evaluator.lua $i >> evaluate_output
 }
 
@@ -15,7 +15,7 @@ run () {
 mkdir -p $run_threads_dir
 mkdir -p $done_threads_dir
 
-for i in {1..5}
+for i in {1..25}
 do
 	echo running $i
 	cd $currentDir

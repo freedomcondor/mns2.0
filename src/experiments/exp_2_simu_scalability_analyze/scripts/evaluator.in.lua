@@ -22,15 +22,17 @@ local gene = create_back_line_morphology_with_drone_number(n_drone, droneDis, pi
 local geneIndex = logReader.calcMorphID(gene)
 
 local robotsData = logReader.loadData("./logs")
+logReader.smoothData(robotsData, 200)
 
 logReader.calcSegmentData(robotsData, geneIndex)
 
---local stage2Step = logReader.checkIDFirstAppearStep(robotsData, structure2.idN)
---local stage3Step = logReader.checkIDFirstAppearStep(robotsData, structure3.idN)
---logReader.calcSegmentData(robotsData, geneIndex, 1, stage2Step - 1)
---logReader.calcSegmentData(robotsData, geneIndex, stage2Step, stage3Step - 1)
---logReader.calcSegmentData(robotsData, geneIndex, stage3Step, nil)
 --[[
+local stage2Step = logReader.checkIDFirstAppearStep(robotsData, structure2.idN)
+local stage3Step = logReader.checkIDFirstAppearStep(robotsData, structure3.idN)
+logReader.calcSegmentData(robotsData, geneIndex, 1, stage2Step - 1)
+logReader.calcSegmentData(robotsData, geneIndex, stage2Step, stage3Step - 1)
+logReader.calcSegmentData(robotsData, geneIndex, stage3Step, nil)
+
 logReader.calcSegmentLowerBound(robotsData, geneIndex, 
 	{
 		time_period = 0.2;
@@ -89,7 +91,8 @@ local robotNumber = countRobots(robotsData)
 local result_data, data_length = readDataInFile("result_data.txt")
 local sum, count = sumDataFromSteps(result_data, data_length - 50, data_length)
 local average_error = sum * 1.0 / count
-local converge_step = findDataStepBelowValue(result_data, 100, average_error)
+--local converge_step = findDataStepBelowValue(result_data, 100, average_error)
+local converge_step = findDataStepBelowValue(result_data, 100, 0.1)
 os.execute("echo " .. tostring(robotNumber) .. " " .. tostring(average_error) .. " " .. tostring(converge_step) .. " > result_formation_data.txt")
 
 ------- time and comm measure  ------------------------------------------------------------------------------
@@ -114,6 +117,138 @@ function getDataFileList(dir, data_ext)
 	return robotNameList, robotNumber
 end
 
+-------------------------------------------------------------------
+function loadTimeDataInFile(fileName)
+	print(fileName)
+	local f = io.open(fileName, "r")
+	local line_count = 0
+	data = {}
+	for line in f:lines() do
+		line_count = line_count + 1
+
+		numbers = {}
+		for numberStr in line:gmatch("%S+") do 
+			table.insert(numbers, tonumber(numberStr))
+		end
+			--[[
+			1	timeMeasurePre
+			2	ttimeMeasureBT
+			3	timeMeasurePost
+			4	timeMeasureEnd
+
+			5	timeMeasureCoreConnector
+			6	timeMeasureCoreAssigner
+			7	timeMeasureCoreScalemanager
+			8	timeMeasureCoreStabilizer
+			9	timeMeasureCoreAllocator
+			10	timeMeasureCoreIntersectiondetector
+			11	timeMeasureCoreAvoider
+			12	timeMeasureCoreSpreader
+			13	timeMeasureCoreBrainkeeper
+			--]]
+		local numberN = numbers[2]
+		              + numbers[3]
+		              + numbers[4]
+		table.insert(data, numberN)
+	end
+	io.close(f)
+	return data
+end
+
+function loadTimeDataInFiles(folder, fileNameList)
+	timeDatas = {}
+	for i, fileName in ipairs(fileNameList) do
+		timeDatas[i] = {
+			name = fileName,
+			data = loadTimeDataInFile(folder .. "/" .. fileName)
+		}
+	end
+	return timeDatas
+end
+
+function findMaxTimeForEachStep(timeDatas, step)
+	local max = 0
+	for i, robotData in ipairs(timeDatas) do
+		if robotData.data[step] > max then
+			max = robotData.data[step]
+		end
+	end
+	return max
+end
+
+function sumMaxTime(folder, fileNameList, from, to)
+	local timeDatas = loadTimeDataInFiles(folder, fileNameList)
+	local sum = 0
+	local count = 0
+	for i = from, to do
+		sum = sum + findMaxTimeForEachStep(timeDatas, i)
+		count = count + 1
+	end
+
+	return sum, count
+end
+
+---------------------------------------------------------
+function sumTimeDataInFile(fileName, from, to)
+	print(fileName)
+	local f = io.open(fileName, "r")
+	local sum = 0
+	local count = 0
+	local line_count = 0
+	for line in f:lines() do
+		line_count = line_count + 1
+		if (from ~= nil and to ~= nil and 
+		   from <= line_count and line_count <= to) or
+		   (from == nil and to == nil) then
+			numbers = {}
+			for numberStr in line:gmatch("%S+") do 
+				table.insert(numbers, tonumber(numberStr))
+			end
+			--[[
+			1	timeMeasurePre
+			2	ttimeMeasureBT
+			3	timeMeasurePost
+			4	timeMeasureEnd
+
+			5	timeMeasureCoreConnector
+			6	timeMeasureCoreAssigner
+			7	timeMeasureCoreScalemanager
+			8	timeMeasureCoreStabilizer
+			9	timeMeasureCoreAllocator
+			10	timeMeasureCoreIntersectiondetector
+			11	timeMeasureCoreAvoider
+			12	timeMeasureCoreSpreader
+			13	timeMeasureCoreBrainkeeper
+			--]]
+			local numberN = numbers[9]
+			sum = sum + numberN
+			count = count + 1
+		end
+	end
+	io.close(f)
+	return sum, count
+end
+
+function sumTimeDataInFiles(folder, fileNameList, from, to)
+	local total_sum = 0
+	local total_count = 0
+	for i, fileName in ipairs(fileNameList) do
+		local sum, count = sumTimeDataInFile(folder .. "/" .. fileName, from, to)
+		total_sum = total_sum + sum
+		total_count = total_count + count
+	end
+	return total_sum, total_count
+end
+
+----- time -----------
+local time_file_list, robotNumber = getDataFileList("./logs", "time_dat")
+--local sum, count = sumTimeDataInFiles("./logs", time_file_list, 1950, 2000)
+--local sum, count = sumTimeDataInFiles("./logs", time_file_list, 1950, 2000)
+local sum, count = sumMaxTime("./logs", time_file_list, 1950, 2000)
+local average = sum * 1.0 / count
+os.execute("echo " .. tostring(robotNumber) .. " " .. tostring(average) .. " > result_time_data.txt")
+
+----- comm -----------
 function sumDataInFile(fileName, from, to)
 	local f = io.open(fileName, "r")
 	local sum = 0
@@ -143,15 +278,57 @@ function sumDataInFiles(folder, fileNameList, from, to)
 	end
 	return total_sum, total_count
 end
+----------------------------------------------------------------------
+function loadCommDataInFile(fileName)
+	print(fileName)
+	local f = io.open(fileName, "r")
+	local line_count = 0
+	data = {}
+	for line in f:lines() do
+		line_count = line_count + 1
 
------ time -----------
-local time_file_list, robotNumber = getDataFileList("./logs", "time_dat")
-local sum, count = sumDataInFiles("./logs", time_file_list, 1950, 2000)
-local average = sum * 1.0 / count
-os.execute("echo " .. tostring(robotNumber) .. " " .. tostring(average) .. " > result_time_data.txt")
+		table.insert(data, tonumber(line))
+	end
+	io.close(f)
+	return data
+end
 
------ comm -----------
+function loadCommDataInFiles(folder, fileNameList)
+	commDatas = {}
+	for i, fileName in ipairs(fileNameList) do
+		commDatas[i] = {
+			name = fileName,
+			data = loadCommDataInFile(folder .. "/" .. fileName)
+		}
+	end
+	return commDatas
+end
+
+function findMaxCommForEachStep(commDatas, step)
+	local max = 0
+	for i, robotData in ipairs(commDatas) do
+		if robotData.data[step] > max then
+			max = robotData.data[step]
+		end
+	end
+	return max
+end
+
+function sumMaxComm(folder, fileNameList, from, to)
+	local commDatas = loadCommDataInFiles(folder, fileNameList)
+	local sum = 0
+	local count = 0
+	for i = from, to do
+		sum = sum + findMaxCommForEachStep(commDatas, i)
+		count = count + 1
+	end
+
+	return sum, count
+end
+
+---------------------------------------------------------------------------------------
 local comm_file_list, robotNumber = getDataFileList("./logs", "comm_dat")
-local sum, count = sumDataInFiles("./logs", comm_file_list, 1950, 2000)
+--local sum, count = sumDataInFiles("./logs", comm_file_list, 1950, 2000)
+local sum, count = sumMaxComm("./logs", comm_file_list, 1950, 2000)
 local average = sum * 1.0 / count
 os.execute("echo " .. tostring(robotNumber) .. " " .. tostring(average) .. " > result_comm_data.txt")
