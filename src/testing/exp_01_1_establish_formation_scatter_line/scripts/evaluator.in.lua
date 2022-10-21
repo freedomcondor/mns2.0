@@ -14,3 +14,4 @@ local robotsData = logReader.loadData("./logs")
 logReader.calcSegmentData(robotsData, geneIndex)
 
 logReader.saveData(robotsData, "result_data.txt")
+logReader.saveMNSNumber(robotsData, "result_MNSNumber_data.txt")

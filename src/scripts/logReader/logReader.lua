@@ -174,6 +174,32 @@ function logReader.smoothData(robotsData, window)
 	end
 end
 
+function logReader.saveMNSNumber(robotsData, saveFile, startStep, endStep)
+	-- fill start and end if not provided
+	if startStep == nil then startStep = 1 end
+	if endStep == nil then 
+		endStep = logReader.getEndStep(robotsData)
+	end
+
+	local f = io.open(saveFile, "w")
+	for step = startStep, endStep do
+		-- put all brain to brainIndex
+		local brainIndex = {}
+		for robotName, robotData in pairs(robotsData) do
+			local brainID = robotData[step].brainID
+			brainIndex[brainID] = true
+		end
+		-- count brainIndex
+		local count = 0
+		for id, value in pairs(brainIndex) do
+			count = count + 1
+		end
+		f:write(tostring(count).."\n")
+	end
+	io.close(f)
+	print("save MNSNumber finish")
+end
+
 function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
 	-- fill start and end if not provided
 	if startStep == nil then startStep = 1 end

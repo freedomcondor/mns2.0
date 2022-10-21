@@ -22,28 +22,15 @@ local gene = create_back_line_morphology_with_drone_number(n_drone, droneDis, pi
 local geneIndex = logReader.calcMorphID(gene)
 
 local robotsData = logReader.loadData("./logs")
-logReader.smoothData(robotsData, 200)
+
+logReader.saveMNSNumber(robotsData, "result_MNSNumber_data.txt")
 
 logReader.calcSegmentData(robotsData, geneIndex)
-
---[[
-local stage2Step = logReader.checkIDFirstAppearStep(robotsData, structure2.idN)
-local stage3Step = logReader.checkIDFirstAppearStep(robotsData, structure3.idN)
-logReader.calcSegmentData(robotsData, geneIndex, 1, stage2Step - 1)
-logReader.calcSegmentData(robotsData, geneIndex, stage2Step, stage3Step - 1)
-logReader.calcSegmentData(robotsData, geneIndex, stage3Step, nil)
-
-logReader.calcSegmentLowerBound(robotsData, geneIndex, 
-	{
-		time_period = 0.2;
-		default_speed = 0.03;
-		slowdown_dis = 0.35;
-		stop_dis = 0.01;
-	}
-)
---]]
-
 logReader.saveData(robotsData, "result_data.txt")
+
+logReader.smoothData(robotsData, 200)
+logReader.calcSegmentData(robotsData, geneIndex)
+logReader.saveData(robotsData, "result_smoothed_data.txt")
 --logReader.saveData(robotsData, "result_lowerbound.txt", "lowerBoundError")
 
 ------- error and converge speed measure  -------------------------------------------------------------------
@@ -88,12 +75,32 @@ function findDataStepBelowValue(data, fromStep, value)
 end
 
 local robotNumber = countRobots(robotsData)
+
+-- calc origin error
 local result_data, data_length = readDataInFile("result_data.txt")
 local sum, count = sumDataFromSteps(result_data, data_length - 50, data_length)
 local average_error = sum * 1.0 / count
 --local converge_step = findDataStepBelowValue(result_data, 100, average_error)
+
+-- calc smoothed error
+local result_data, data_length = readDataInFile("result_smoothed_data.txt")
+local sum, count = sumDataFromSteps(result_data, data_length - 50, data_length)
+local average_smoothed_error = sum * 1.0 / count
+
+-- calc converge from smoothed data
 local converge_step = findDataStepBelowValue(result_data, 100, 0.1)
-os.execute("echo " .. tostring(robotNumber) .. " " .. tostring(average_error) .. " " .. tostring(converge_step) .. " > result_formation_data.txt")
+
+-- calc mns recruit step
+local MNS_number_data, data_length = readDataInFile("result_MNSNumber_data.txt")
+local recruit_step = findDataStepBelowValue(MNS_number_data, 1, 1.5)
+
+os.execute("echo " .. tostring(robotNumber) .. " " 
+                   .. tostring(average_error) .. " " 
+                   .. tostring(average_smoothed_error) .. " " 
+                   .. tostring(converge_step) .. " " 
+                   .. tostring(recruit_step) 
+                   .. " > result_formation_data.txt"
+          )
 
 ------- time and comm measure  ------------------------------------------------------------------------------
 function getDataFileList(dir, data_ext)
