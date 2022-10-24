@@ -1,18 +1,19 @@
 diff --git a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.cpp b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.cpp
-index 24e4708..8f883d0 100644
+index caa75b8..2a72406 100644
 --- a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.cpp
 +++ b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_main_window.cpp
-@@ -84,7 +84,7 @@ namespace argos {
+@@ -83,30 +83,17 @@ namespace argos {
        }
  
        virtual QSize sizeHint () const {
 -         return QSize(640,480);
-+         return QSize(1920, 1080);
++         return QSize(1920,1080);
        }
++
        virtual void setGeometry(const QRect& r) {
           /* Set the layout geometry */
-@@ -92,22 +92,8 @@ namespace argos {
-          if(m_pcQTOpenGLItem != nullptr) {
+          QLayout::setGeometry(r);
+          if(m_pcQTOpenGLItem != NULL) {
              /* Calculate the candidate sizes for the QTOpenGL widget */
              /* One is height-driven */
 -            QRect cCandidate1(r.x(), r.y(), (r.height() * 4) / 3, r.height());
@@ -37,7 +38,7 @@ index 24e4708..8f883d0 100644
        }
  
 diff --git a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.cpp b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.cpp
-index fe70c6d..82c3a82 100644
+index d7b9aac..c05fee6 100644
 --- a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.cpp
 +++ b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_widget.cpp
 @@ -31,7 +31,7 @@
@@ -50,8 +51,8 @@ index fe70c6d..82c3a82 100644
     /****************************************/
     /****************************************/
 @@ -56,8 +56,7 @@ namespace argos {
-       m_pcFloorTexture(nullptr),
-       m_pcGroundTexture(nullptr) {
+       m_pcFloorTexture(NULL),
+       m_pcGroundTexture(NULL) {
        /* Set the widget's size policy */
 -      QSizePolicy cSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 -      cSizePolicy.setHeightForWidth(true);
@@ -64,7 +65,7 @@ index fe70c6d..82c3a82 100644
        initializeOpenGLFunctions();
        /* Set clear color */
 -      glClearColor(0, .5, .5, 255); // dark cyan
-+      glClearColor(1.0, 1.0, 1.0, 1.0); // white
++      glClearColor(1.0, 1.0, 1.0, 1.0); // dark cyan
        /* Set up the texture parameters for the floor plane
           (here we refer to the standard floor, not the floor entity) */
        m_pcGroundTexture = new QOpenGLTexture(QImage(m_cMainWindow.GetTextureDir() + "/ground.png"));
