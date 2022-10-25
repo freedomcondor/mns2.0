@@ -5,16 +5,10 @@ exec(compile(open(createArgosFileName, "rb").read(), createArgosFileName, 'exec'
 import os
 import math
 
-#exp_scale = 1
+# abuse Experiment_length as drone number
+n_drone = Experiment_length
 
-#n_drone = exp_scale * 6 + 1
-repeat=10
-n_drone = math.ceil(Inputseed / repeat)
-# 1 - 20 -- 1
-# 21 - 40 -- 1
-
-print("n_drone = ", n_drone)
-
+print("n_drone", n_drone)
 
 n_pipuck = n_drone * 4
 arena_size = n_drone * 3 + 2
@@ -57,7 +51,7 @@ generate_argos_file("@CMAKE_CURRENT_BINARY_DIR@/vns_template.argos",
                     "vns.argos",
 	[
 		["RANDOMSEED",        str(Inputseed)],
-		["TOTALLENGTH",       str((Experiment_length or 2000)/5)],
+		["TOTALLENGTH",       str((2000)/5)],
 		["DRONES",            drone_xml], 
 		["PIPUCKS",           pipuck_xml], 
 		#["WALL",              wall_xml], 

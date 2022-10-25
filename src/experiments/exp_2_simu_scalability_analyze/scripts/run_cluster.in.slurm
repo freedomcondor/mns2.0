@@ -28,6 +28,16 @@ TMPDIR=/tmp/wzhu/mns_exp_2_simu_scalability_analyze
 #JOB_ID=1
 JOB_ID=$SLURM_ARRAY_TASK_ID
 
+# Repeat
+REPEAT=10
+
+#
+N_DRONE=$[(JOB_ID+REPEAT-1)/REPEAT]
+
+echo JOB_ID=$JOB_ID
+echo REPEAT=$REPEAT
+echo N_DRONE=$N_DRONE
+
 # TODO check exist
 mkdir -p $DATADIR
 
@@ -36,8 +46,8 @@ rm -rf $TMPDIR/run$JOB_ID/*
 
 cd $TMPDIR/run$JOB_ID
 mkdir logs
-python3 @CMAKE_CURRENT_BINARY_DIR@/../run.py -r $JOB_ID -v false
-lua @CMAKE_CURRENT_BINARY_DIR@/evaluator.lua 
+python3 @CMAKE_CURRENT_BINARY_DIR@/../run.py -r $JOB_ID -l $N_DRONE -v false
+lua @CMAKE_CURRENT_BINARY_DIR@/evaluator.lua $N_DRONE
 
 cd ..
 mv run$JOB_ID $DATADIR
