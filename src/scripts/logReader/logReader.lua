@@ -142,8 +142,8 @@ function logReader.smoothRobotData(stepTable, window)
 	local goalAcc_n = 0
 	for i, stepData in ipairs(stepTable) do
 		smoothedData[i] = {
-			orientationQ     = quaternion(stepTable[i].orientationQ),
-			goalOrientationQ = quaternion(stepTable[i].goalOrientationQ),
+			orientationQ     = quaternion:createFromHardValue(vector3(stepTable[i].orientationQ.v), stepTable[i].orientationQ.w),
+			goalOrientationQ = quaternion:createFromHardValue(vector3(stepTable[i].goalOrientationQ.v), stepTable[i].goalOrientationQ.w),
 			targetID = stepTable[i].targetID,
 			brainID  = stepTable[i].brainID,
 		}
@@ -168,9 +168,16 @@ end
 
 function logReader.smoothData(robotsData, window)
 	for robotName, stepTable in pairs(robotsData) do
+		if robotName == "drone1" then
+			logger(robotName)
+			logger("before")
+			logger(robotsData[robotName][1000])
+		end
 		robotsData[robotName] = logReader.smoothRobotData(stepTable, window)
-		logger(robotName)
-		logger(robotsData[robotName][1])
+		if robotName == "drone1" then
+			logger("after")
+			logger(robotsData[robotName][1000])
+		end
 	end
 end
 
