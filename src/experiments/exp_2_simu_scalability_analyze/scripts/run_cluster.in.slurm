@@ -21,8 +21,8 @@ module load readline-8.1.mod
 
 #srun my_program   # run your program here 
 #DATADIR=@CMAKE_CURRENT_BINARY_DIR@/../data
-DATADIR=@CMAKE_BINARY_DIR@/data_exp_09
-TMPDIR=/tmp/wzhu/mns_exp_09
+DATADIR=@CMAKE_BINARY_DIR@/data_simu
+TMPDIR=/tmp/wzhu/mns_exp_2_simu_scalability_analyze
 
 # job id
 #JOB_ID=1

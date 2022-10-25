@@ -8,7 +8,11 @@ import math
 #exp_scale = 1
 
 #n_drone = exp_scale * 6 + 1
-n_drone = Inputseed % 26
+repeat=10
+n_drone = math.ceil(Inputseed / repeat)
+# 1 - 20 -- 1
+# 21 - 40 -- 1
+
 print("n_drone = ", n_drone)
 
 
