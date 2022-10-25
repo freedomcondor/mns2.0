@@ -266,28 +266,28 @@ def generate_real_scenario_object() :
 	</box-->
 
 	<!-- arena -->
-	<box id="south_arena_inner" size="0.02,2.84,0.10" movable="false" mass="10">
+	<box id="south_arena_inner" size="0.02,2.62,0.10" movable="false" mass="10">
 	  <body position="-4.31,0,0"  orientation="0,0,0" />
 	</box>
-	<box id="north_arena_inner" size="0.02,2.84,0.10" movable="false" mass="10">
+	<box id="north_arena_inner" size="0.02,2.62,0.10" movable="false" mass="10">
 	  <body position="4.31,0,0"  orientation="0,0,0" />
 	</box>
-	<box id="west_arena_inner" size="6.90,0.02,0.10" movable="false" mass="10">
+	<box id="west_arena_inner" size="6.62,0.02,0.10" movable="false" mass="10">
 	  <body position="0, -2.31,0"  orientation="0,0,0" />
 	</box>
-	<box id="east_arena_inner" size="6.90,0.02,0.10" movable="false" mass="10">
+	<box id="east_arena_inner" size="6.62,0.02,0.10" movable="false" mass="10">
 	  <body position="-, 2.31,0"  orientation="0,0,0" />
 	</box>
-	<box id="south_west_arena_inner" size="0.02,1.34,0.10" movable="false" mass="10">
+	<box id="south_west_arena_inner" size="0.02,1.42,0.10" movable="false" mass="10">
 	  <body position="-3.81,-1.81,0"  orientation="45,0,0" />
 	</box>
-	<box id="south_east_arena_inner" size="0.02,1.34,0.10" movable="false" mass="10">
+	<box id="south_east_arena_inner" size="0.02,1.42,0.10" movable="false" mass="10">
 	  <body position="3.81,-1.81,0"  orientation="-45,0,0" />
 	</box>
-	<box id="north_east_arena_inner" size="0.02,1.34,0.10" movable="false" mass="10">
+	<box id="north_east_arena_inner" size="0.02,1.42,0.10" movable="false" mass="10">
 	  <body position="3.81,1.81,0"  orientation="45,0,0" />
 	</box>
-	<box id="north_west_arena_inner" size="0.02,1.34,0.10" movable="false" mass="10">
+	<box id="north_west_arena_inner" size="0.02,1.42,0.10" movable="false" mass="10">
 	  <body position="-3.81,1.81,0"  orientation="-45,0,0" />
 	</box>
 
