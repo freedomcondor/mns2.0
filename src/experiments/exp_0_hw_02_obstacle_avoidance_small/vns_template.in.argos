@@ -21,7 +21,8 @@
   <!-- * Arena configuration * -->
   <!-- *********************** -->
   <arena size="15, 12, 3.5" center="0, 0, 1">
-    <floor id="floor" source="loop_functions" pixels_per_meter="1" />
+    <!--floor id="floor" source="loop_functions" pixels_per_meter="1" /-->
+    <floor id="floor" source="image" path="wood_floor.png" />
     <!-- real scenario -->
     REAL_SCENARIO
 
