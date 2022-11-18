@@ -1,0 +1,14 @@
+diff --git a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_box.cpp b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_box.cpp
+index bf2b519..119c82b 100644
+--- a/src/plugins/simulator/visualizations/qt-opengl/qtopengl_box.cpp
++++ b/src/plugins/simulator/visualizations/qt-opengl/qtopengl_box.cpp
+@@ -17,7 +17,8 @@ namespace argos {
+ 
+    static const Real LED_RADIUS     = 0.01f;
+    const GLfloat MOVABLE_COLOR[]    = { 1.0f, 0.0f, 0.0f, 1.0f };
+-   const GLfloat NONMOVABLE_COLOR[] = { 0.7f, 0.7f, 0.7f, 1.0f };
++   //const GLfloat NONMOVABLE_COLOR[] = { 0.7f, 0.7f, 0.7f, 1.0f };
++   const GLfloat NONMOVABLE_COLOR[] = { 0.0f, 0.569f, 0.678f, 1.0f };
+    const GLfloat SPECULAR[]         = { 0.0f, 0.0f, 0.0f, 1.0f };
+    const GLfloat SHININESS[]        = { 0.0f                   };
+    const GLfloat EMISSION[]         = { 0.0f, 0.0f, 0.0f, 1.0f };
