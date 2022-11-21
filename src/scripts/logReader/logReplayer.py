@@ -93,10 +93,13 @@ def openRobotLogs(nameList) :
 #def closeRobotLogs(nameList) :
 #	for file_name in nameList :
 
-def readNextLine(file) :
+def readNextLine(file, return_none=False) :
 	line = file.readline()
 	if len(line) == 0 :
-		exit()
+		if return_none == True:
+			return None
+		else:
+			exit()
 	lineList = line.split(",")
 	step = {
 		"position": [float(lineList[0]), 
