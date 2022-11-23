@@ -3,3 +3,5 @@ configure_file( drawLine.in.py       drawLine.py)
 configure_file( replayLogs.in.py     replayLogs.py)
 configure_file( run_100.in.sh        run_100.sh)
 configure_file( run_cluster.in.slurm run_cluster.slurm)
+
+configure_file( trackLogs.in.py      trackLogs.py)

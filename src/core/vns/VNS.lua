@@ -286,6 +286,10 @@ function VNS.logLoopFunctionInfoHW(vns)
 		targetID = vns.allocator.target.idN
 	end
 
+	local parentID = nil
+	if vns.parentR ~= nil then
+		parentID = vns.parentR.idS
+	end
 	VNS.Msg.sendTable{
 		toS = "LOGINFO",
 		stepCount = vns.api.stepCount,
@@ -294,6 +298,7 @@ function VNS.logLoopFunctionInfoHW(vns)
 		goalOrientationQ = vns.goal.orientationQ,
 		targetID = targetID,
 		vnsID = vns.idS,
+		parentID = parentID
 	}
 end
 
@@ -321,6 +326,13 @@ function VNS.logLoopFunctionInfo(vns)
 
 	-- log brain name
 	str = str .. "," .. tostring(vns.idS)
+
+	-- log parent name
+	if vns.parentR ~= nil then
+		str = str .. "," .. tostring(vns.parentR.idS)
+	else
+		str = str .. "," .. tostring(nil)
+	end
 
 	robot.debug.write(str)
 end

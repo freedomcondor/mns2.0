@@ -46,14 +46,14 @@ if input_file == "":
 
 #-------------------------------------------------------------------
 # draw
-def drawVector3(ax, startV3, endV3, color='blue'):
+def drawVector3(ax, startV3, endV3, color='blue', linewidth='1.5'):
 	'''
 	ax.quiver(startV3[0], startV3[1], startV3[2],
 			  endV3[0],   endV3[1],   endV3[2],
 			  color=color
 	)
 	'''
-	ax.plot3D([startV3[0], endV3[0]], [startV3[1], endV3[1]], [startV3[2], endV3[2]], color=color)
+	ax.plot3D([startV3[0], endV3[0]], [startV3[1], endV3[1]], [startV3[2], endV3[2]], color=color, linewidth=linewidth)
 
 def drawRobot(ax, positionV3, orientationQ, color='blue', size=0.05):
 	drawVector3(ax, positionV3, positionV3 + orientationQ.rotate(np.array([size*3, 0,      0     ])), color)
@@ -65,6 +65,7 @@ def drawRobot(ax, positionV3, orientationQ, color='blue', size=0.05):
 
 def findRobotLogs(path, robotType) :
 	robotLogNames = []
+	robotNames = []
 	for folder in os.walk(path) :
 		if folder[0] == path :
 			for file in folder[2] :
@@ -76,11 +77,13 @@ def findRobotLogs(path, robotType) :
 				if robotType == "ALL" :
 					if name_head == "drone" or name_head == "pipuck" or name_head == "obstacle" or name_head == "target":
 						robotLogNames.append(path + "/" + file)
+						robotNames.append(name)
 				else :
 					if name_head == robotType :
 						robotLogNames.append(path + "/" + file)
+						robotNames.append(name)
 	
-	return robotLogNames
+	return robotLogNames, robotNames
 
 def openRobotLogs(nameList) :
 	robotLogs = []
@@ -100,7 +103,7 @@ def readNextLine(file, return_none=False) :
 			return None
 		else:
 			exit()
-	lineList = line.split(",")
+	lineList = line.strip().split(",")
 	step = {
 		"position": [float(lineList[0]), 
 		             float(lineList[1]),
@@ -137,5 +140,13 @@ def readNextLine(file, return_none=False) :
 
 		step["goal_position_global"] = step["virtual_orientation"].rotate(np.array(step["goal_position"])) + step["position"]
 		step["goal_orientation_global"] = step["virtual_orientation"] * step["goal_orientation"]
+
+		step["target"] = str(lineList[15])
+		step["brain"] = str(lineList[16])
+
+		if len(lineList) >= 18 :   # legacy mode, old data logs doesn't have parent so check 18
+			step["parent"] = str(lineList[17])
+		else:
+			step["parent"] = "nil"
 
 	return step

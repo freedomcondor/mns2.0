@@ -8,7 +8,7 @@ def setAxParameters(ax):
 	ax.set_xlabel("x")
 	ax.set_ylabel("y")
 	ax.set_zlabel("z")
-	ax.set_xlim([-3.5, 4.5])
+	ax.set_xlim([-4, 4])
 	ax.set_ylim([-4, 4])
 	ax.set_zlim([-1.0, 7.0])
 	ax.set_zticks([0, 5])
@@ -42,9 +42,8 @@ n_colors = len(pipuckLogs + droneLogs)
 #n_colors = 3
 colours = cm.rainbow(np.linspace(0, 1, n_colors))
 
-key_frame = [300, 1200]
-#key_frame = []
-#key_frame_style = ['v', 's']
+#key_frame = [400, 600, 950]
+key_frame = [400, 770, 1250]
 
 # for each robot, draw line
 robot_count = 0
@@ -90,7 +89,7 @@ for pipuckLog in pipuckLogs + droneLogs:
 		re = np.convolve(interval, window, 'same')
 		return re
 
-	window = 70
+	window = 50
 	T_smooth = T
 	X_smooth = moving_average(X, window)
 	Y_smooth = moving_average(Y, window)
