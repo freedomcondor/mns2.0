@@ -28,3 +28,40 @@ def getSubfolders(data_dir) :
 		subfolders.append(rundir)
 	
 	return subfolders
+
+def getSubfiles(data_dir) :
+	# get the self folder item of os.walk
+	walk_dir_item=[]
+	for folder in os.walk(data_dir) :
+		if folder[0] == data_dir :
+			walk_dir_item=folder
+			break
+
+	# iterate subdir
+	subfiles =[]
+	for subfile in walk_dir_item[2] :
+		rundir = walk_dir_item[0] + "/" + subfile
+		subfiles.append(rundir)
+	
+	return subfiles
+
+def transferTimeDataToBoxData(robotsData, step_number = 50, step_length = 50) :
+	boxdata = []
+	positions = []
+	robot_count = 0
+	# for each robot
+	for robotData in robotsData :
+		# for each step of this robot
+		box_count = 0
+		for i in range(0, len(robotData)) :
+			# if a right step
+			if i % step_length == 0 :
+				if robot_count == 0 :
+					boxdata.append([])
+					positions.append(i)
+				boxdata[box_count].append(robotData[i])
+				box_count = box_count + 1
+
+		robot_count = robot_count + 1
+
+	return boxdata, positions

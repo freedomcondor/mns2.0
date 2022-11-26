@@ -286,6 +286,32 @@ function logReader.calcSegmentLowerBound(robotsData, geneIndex, parameters, star
 	end
 end
 
+function logReader.calcSegmentLowerBoundErrorInc(robotsData, geneIndex, startStep, endStep)
+	-- fill start and end if not provided
+	if startStep == nil then startStep = 1 end
+	if endStep == nil then 
+		local length
+		for robotName, stepTable in pairs(robotsData) do
+			length = #stepTable
+			break
+		end
+		endStep = length
+	end
+
+
+	for step = startStep, endStep do
+		for robotName, robotData in pairs(robotsData) do
+			if robotData[step].error == nil or
+			   robotData[step].lowerBoundError == nil then
+				print("error: error or lowerBoundError is nil")
+			end
+			robotData[step].lowerBoundInc = 
+				robotData[step].error -
+				robotData[step].lowerBoundError
+		end
+	end
+end
+
 function logReader.saveData(robotsData, saveFile, attribute)
 	if attribute == nil then attribute = 'error' end
 	-- fill start and end if not provided
@@ -310,6 +336,28 @@ function logReader.saveData(robotsData, saveFile, attribute)
 	end
 	io.close(f)
 	print("save data finish")
+end
+
+function logReader.saveEachRobotData(robotsData, saveFolder, attribute)
+	if attribute == nil then attribute = 'error' end
+	-- fill start and end if not provided
+	local startStep = 1
+	local length
+	for robotName, stepTable in pairs(robotsData) do
+		length = #stepTable
+		break
+	end
+	local endStep = length
+
+	os.execute("mkdir " .. saveFolder)
+	for robotName, robotData in pairs(robotsData) do
+		local pathName = saveFolder .. "/" .. robotName .. ".txt"
+		local f = io.open(pathName, "w")
+		for step = startStep, endStep do
+			f:write(tostring(robotData[step][attribute]).."\n")
+		end
+		io.close(f)
+	end
 end
 
 ------------------------------------------------------------------------
