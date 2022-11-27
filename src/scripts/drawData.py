@@ -56,7 +56,8 @@ def transferTimeDataToBoxData(robotsData, step_number = 50, step_length = 50) :
 		for i in range(0, len(robotData)) :
 			# if a right step
 			if i % step_length == 0 :
-				if robot_count == 0 :
+				#if robot_count == 0 :
+				if len(boxdata) <= box_count:
 					boxdata.append([])
 					positions.append(i)
 				boxdata[box_count].append(robotData[i])

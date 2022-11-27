@@ -89,6 +89,7 @@ function logReader.loadData(dir, typelist)
 	local robotNameList = logReader.getCSVList(dir, typelist)
 	-- for each robot
 	local robotsData = {}
+	local stepNumber = nil
 	for i, robotName in ipairs(robotNameList) do
 		-- open file
 		local filename = dir .. "/" .. robotName .. ".log"
@@ -97,14 +98,27 @@ function logReader.loadData(dir, typelist)
 		if f == nil then print("load file " .. filename .. " error") return end
 		-- for each line
 		robotData = {}
-		--count = 0
+		local count = 0
 		for l in f:lines() do 
-			--count = count + 1
+			count = count + 1
 			--print("reading line", count)
 			table.insert(robotData, logReader.readLine(l)) 
 		end
 		-- close file
 		io.close(f)
+		-- tune stepNumber
+		if i == 1 then
+			stepNumber = count
+		elseif count + 1 == stepNumber then
+			print(robotName, "less 1 step")
+			table.insert(robotData, robotData[#robotData])
+		elseif count == stepNumber + 1 then
+			print(robotName, "more 1 step")
+			robotData[#robotData] = nil
+		elseif count ~= stepNumber then
+			print(robotName, "something wrong: count = ", count, "stepNumber = ", stepNumber)
+		end
+		-- record data
 		robotsData[robotName] = robotData
 		--[[
 		for i, v in ipairs(robotData) do
