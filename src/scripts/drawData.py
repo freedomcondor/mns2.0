@@ -13,6 +13,9 @@ def readDataFrom(fileName) :
 def drawData(data) :
 	plt.plot(data)
 
+def drawDataInSubplot(data, subplot) :
+	subplot.plot(data)
+
 def getSubfolders(data_dir) :
 	# get the self folder item of os.walk
 	walk_dir_item=[]

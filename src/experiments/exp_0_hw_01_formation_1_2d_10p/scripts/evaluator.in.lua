@@ -20,9 +20,11 @@ lowerBoundParameters = {
 }
 logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, 1, 149)
 logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, 150)
+
 logReader.calcSegmentLowerBoundErrorInc(robotsData, geneIndex)
 
 logReader.saveData(robotsData, "result_data.txt")
 logReader.saveData(robotsData, "result_lowerbound_data.txt", "lowerBoundError")
 logReader.saveData(robotsData, "result_lowerbound_inc_data.txt", "lowerBoundInc")
 logReader.saveEachRobotData(robotsData, "result_each_robot_lowerbound_inc_data", "lowerBoundInc")
+logReader.saveEachRobotData(robotsData, "result_each_robot_error")
