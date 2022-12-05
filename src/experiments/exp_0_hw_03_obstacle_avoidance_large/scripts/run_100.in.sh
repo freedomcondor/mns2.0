@@ -1,7 +1,9 @@
 #!/bin/bash
 source @CMAKE_SOURCE_DIR@/scripts/run_threads.sh
 
-DATADIR=@CMAKE_CURRENT_SOURCE_DIR@/../data
+#DATADIR=@CMAKE_CURRENT_SOURCE_DIR@/../data
+DATADIR=@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_03_obstacle_avoidance_large/data_hw/data
+
 TMPDIR=threads
 #THREADS_LOG_OUTPUT="/home/harry/code/mns2.0/build/out.log"
 

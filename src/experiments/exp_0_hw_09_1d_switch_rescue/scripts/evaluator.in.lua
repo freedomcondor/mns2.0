@@ -24,7 +24,8 @@ local gene = {
 
 local geneIndex = logReader.calcMorphID(gene)
 
-local robotsData = logReader.loadData("./logs")
+--local robotsData = logReader.loadData("./logs")  -- for simulation
+local robotsData = logReader.loadData("./logs_pkl")  -- for hardware
 
 local stage2Step = logReader.checkIDFirstAppearStep(robotsData, structure2.idN, nil)
 local stage3Step = logReader.checkIDFirstAppearStep(robotsData, structure3.idN, nil)
@@ -42,4 +43,24 @@ logReader.calcSegmentData(robotsData, geneIndex, stage3Step, stage4Step - 1)
 logReader.calcSegmentData(robotsData, geneIndex, stage4Step, stage5Step - 1)
 logReader.calcSegmentData(robotsData, geneIndex, stage5Step, nil)
 
+------------------------------------------------------------------------
+lowerBoundParameters = {
+	time_period = 0.2,
+	default_speed = 0.1,
+	slowdown_dis = 0.1,
+	stop_dis = 0.01,
+}
+
+logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, 1, stage2Step - 1)
+logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, stage2Step, stage3Step - 1)
+logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, stage3Step, stage4Step - 1)
+logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, stage4Step, stage5Step - 1)
+logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, stage5Step, nil)
+
+logReader.calcSegmentLowerBoundErrorInc(robotsData, geneIndex)
+
 logReader.saveData(robotsData, "result_data.txt")
+logReader.saveData(robotsData, "result_lowerbound_data.txt", "lowerBoundError")
+logReader.saveData(robotsData, "result_lowerbound_inc_data.txt", "lowerBoundInc")
+logReader.saveEachRobotData(robotsData, "result_each_robot_lowerbound_inc_data", "lowerBoundInc")
+logReader.saveEachRobotData(robotsData, "result_each_robot_error")

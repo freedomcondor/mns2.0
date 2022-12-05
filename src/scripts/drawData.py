@@ -16,6 +16,9 @@ def drawData(data) :
 def drawDataInSubplot(data, subplot) :
 	subplot.plot(data)
 
+def drawDataWithXInSubplot(X, data, subplot) :
+	subplot.plot(X, data)
+
 def getSubfolders(data_dir) :
 	# get the self folder item of os.walk
 	walk_dir_item=[]
@@ -48,7 +51,7 @@ def getSubfiles(data_dir) :
 	
 	return subfiles
 
-def transferTimeDataToBoxData(robotsData, step_number = 50, step_length = 50) :
+def transferTimeDataToBoxData(robotsData, step_number = 50, step_length = 50, interval_steps = False) :
 	boxdata = []
 	positions = []
 	robot_count = 0
@@ -65,6 +68,10 @@ def transferTimeDataToBoxData(robotsData, step_number = 50, step_length = 50) :
 					positions.append(i)
 				boxdata[box_count].append(robotData[i])
 				box_count = box_count + 1
+			# if count interval steps
+			if interval_steps == True:
+				boxdata[box_count-1].append(robotData[i])
+
 
 		robot_count = robot_count + 1
 

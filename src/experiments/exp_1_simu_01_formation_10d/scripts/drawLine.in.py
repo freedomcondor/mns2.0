@@ -4,7 +4,8 @@ exec(compile(open(drawDataFileName, "rb").read(), drawDataFileName, 'exec'))
 
 import statistics
 
-dataFolder = "/Users/harry/Desktop/exp_0_hw_01_formation_1_2d_10p/data_hw/data"
+#dataFolder = "/Users/harry/Desktop/exp_0_hw_01_formation_1_2d_10p/data_hw/data"
+dataFolder = "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_1_simu_01_formation_10d/data_simu/data"
 
 
 '''

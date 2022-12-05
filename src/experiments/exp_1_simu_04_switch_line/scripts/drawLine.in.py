@@ -4,7 +4,8 @@ exec(compile(open(drawDataFileName, "rb").read(), drawDataFileName, 'exec'))
 
 import statistics
 
-dataFolder = "/Users/harry/Desktop/exp_1_simu_04_switch_line/data_hw/data"
+#dataFolder = "/Users/harry/Desktop/exp_1_simu_04_switch_line/data_hw/data"
+dataFolder = "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_1_simu_04_switch_line/data_simu/data"
 
 
 '''
@@ -38,6 +39,7 @@ for subFolder in getSubfolders(dataFolder) :
 
 #drawData(readDataFrom("result_data.txt"))
 
+#boxdata, positions = transferTimeDataToBoxData(robotsData, None, 5, True)
 boxdata, positions = transferTimeDataToBoxData(robotsData, None, 1)
 
 mean = []
@@ -56,7 +58,8 @@ for stepData in boxdata :
 	mini.append(minvalue)
 	maxi.append(maxvalue)
 
-drawDataInSubplot(mean, axs[0])
+#drawDataInSubplot(mean, axs[0])
+drawDataWithXInSubplot(positions, mean, axs[0])
 axs[0].fill_between(
     positions, mini, maxi, color='b', alpha=.10)
 axs[0].fill_between(
