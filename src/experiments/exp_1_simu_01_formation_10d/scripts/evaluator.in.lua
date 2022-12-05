@@ -13,4 +13,18 @@ local robotsData = logReader.loadData("./logs")
 
 logReader.calcSegmentData(robotsData, geneIndex)
 
+lowerBoundParameters = {
+	time_period = 0.2,
+	default_speed = 0.1,
+	slowdown_dis = 0.1,
+	stop_dis = 0.01,
+}
+
+logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters)
+logReader.calcSegmentLowerBoundErrorInc(robotsData, geneIndex)
+
 logReader.saveData(robotsData, "result_data.txt")
+logReader.saveData(robotsData, "result_lowerbound_data.txt", "lowerBoundError")
+logReader.saveData(robotsData, "result_lowerbound_inc_data.txt", "lowerBoundInc")
+logReader.saveEachRobotData(robotsData, "result_each_robot_lowerbound_inc_data", "lowerBoundInc")
+logReader.saveEachRobotData(robotsData, "result_each_robot_error")
