@@ -160,6 +160,12 @@ function Quaternion:inv()
 	return Quaternion:createFromHardValue(0,0,0,0)
 end
 
+function Quaternion.__eq(a,b)
+	local eqError = 0.0001
+	return a.v == b.v and 
+	       -eqError < a.w - b.w and a.w - b.w < eqError
+end
+
 function Quaternion:__tostring()
 	local c = "(" .. "(" .. self.v.x .. "," .. self.v.y .. "," .. self.v.z .. ")"
 	c = c .. "," .. self.w .. ")"

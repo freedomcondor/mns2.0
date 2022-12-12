@@ -130,7 +130,16 @@ function Vector3.__pow(a,b)
 end
 
 function Vector3.__eq(a,b)
-	return a.x == b.x and a.y == b.y and a.z == b.z
+	local eqError = 0.0001
+	return -eqError < a.x - b.x and a.x - b.x < eqError and
+	       -eqError < a.y - b.y and a.y - b.y < eqError and
+	       -eqError < a.z - b.z and a.z - b.z < eqError
+end
+
+function Vector3.XYequ(a,b)
+	local eqError = 0.0001
+	return -eqError < a.x - b.x and a.x - b.x < eqError and
+	       -eqError < a.y - b.y and a.y - b.y < eqError
 end
 
 --function Vector3.__lt(a,b)  <

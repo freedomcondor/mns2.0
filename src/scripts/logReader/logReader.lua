@@ -67,8 +67,12 @@ function logReader.readLine(str)
 		targetID = tonumber(strList[16]),
 		brainID = strList[17],
 	}
+	stepData.originGoalPositionV3 = stepData.goalPositionV3
+	stepData.originGoalOrientationQ = stepData.goalOrientationQ
+
 	stepData.goalPositionV3 = stepData.positionV3 + stepData.orientationQ:toRotate(stepData.goalPositionV3)
 	stepData.goalOrientationQ = stepData.orientationQ * stepData.goalOrientationQ
+
 	return stepData
 end
 
@@ -207,8 +211,10 @@ function logReader.saveMNSNumber(robotsData, saveFile, startStep, endStep)
 		-- put all brain to brainIndex
 		local brainIndex = {}
 		for robotName, robotData in pairs(robotsData) do
-			local brainID = robotData[step].brainID
-			brainIndex[brainID] = true
+			if robotData[step].failed == nil then
+				local brainID = robotData[step].brainID
+				brainIndex[brainID] = true
+			end
 		end
 		-- count brainIndex
 		local count = 0
@@ -221,17 +227,60 @@ function logReader.saveMNSNumber(robotsData, saveFile, startStep, endStep)
 	print("save MNSNumber finish")
 end
 
+function logReader.markFailedRobot(robotsData, endStep)
+	for robotName, robotData in pairs(robotsData) do
+		if robotData[endStep].originGoalPositionV3:XYequ(robotData[endStep-1].originGoalPositionV3) == true and
+		   robotData[endStep-1].originGoalPositionV3:XYequ(robotData[endStep-2].originGoalPositionV3) == true and
+		   robotData[endStep-2].originGoalPositionV3:XYequ(robotData[endStep-3].originGoalPositionV3) == true and
+		   robotData[endStep].originGoalOrientationQ == robotData[endStep-1].originGoalOrientationQ and
+		   robotData[endStep-1].originGoalOrientationQ == robotData[endStep-2].originGoalOrientationQ and
+		   robotData[endStep-2].originGoalOrientationQ == robotData[endStep-3].originGoalOrientationQ and
+		   ((robotData[endStep].originGoalPositionV3 ~= vector3() 
+		     and
+		     robotData[endStep].originGoalOrientationQ ~= quaternion()
+		    ) 
+		    or 
+		    robotData[endStep].brainID ~= robotName
+		   ) then
+			robotData[endStep].failed = true
+			print(robotName, "failed at", endStep)
+		end
+	end
+end
+
 function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
+	logReader.calcSegmentDataWithGoalReferenceOption(robotsData, geneIndex, true, startStep, endStep)
+end
+
+function logReader.calcSegmentDataWithGoalReferenceOption(robotsData, geneIndex, goalReferenceOption, startStep, endStep)
 	-- fill start and end if not provided
 	if startStep == nil then startStep = 1 end
 	if endStep == nil then 
 		endStep = logReader.getEndStep(robotsData)
 	end
 
+	logReader.markFailedRobot(robotsData, endStep)
+	-- count last frame swarm size
+	for robotName, robotData in pairs(robotsData) do
+		robotData[endStep].swarmSize = 0
+	end
+	for robotName, robotData in pairs(robotsData) do
+		if robotData[endStep].failed == nil then
+			local brainName = robotData[endStep].brainID
+			robotsData[brainName][endStep].swarmSize = robotsData[brainName][endStep].swarmSize + 1
+		end
+	end
+	-- after count,  robotsData["Drone1"][endStep].swarmSize = size
+	-- but non-brain robotsData["pipuck5"][endStep].swarmSize = 0
+
+	-- calc data
 	for step = startStep, endStep do
 		for robotName, robotData in pairs(robotsData) do
 			local brainName = robotData[endStep].brainID
 			local brainData = robotsData[brainName]
+			robotData[step].swarmSize = brainData[endStep].swarmSize 
+			if robotData[step].failed == true then robotData[step].swarmSize = 0 end
+			robotData[step].failed = robotData[endStep].failed
 
 			-- the predator, targetID == nil, consider its error is always 0
 			local targetRelativePositionV3 = geneIndex[robotData[endStep].targetID or 1].globalPositionV3
@@ -239,6 +288,11 @@ function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
 			--                               brainData[step].orientationQ:toRotate(targetRelativePositionV3)
 			local targetGlobalPositionV3 = brainData[step].goalPositionV3 +
 			                               brainData[step].goalOrientationQ:toRotate(targetRelativePositionV3)
+			if goalReferenceOption == false then
+				targetGlobalPositionV3 = brainData[step].positionV3 +
+				                         brainData[step].orientationQ:toRotate(targetRelativePositionV3)
+			end
+
 			local disV3 = targetGlobalPositionV3 - robotData[step].positionV3
 			--local disV3 = targetGlobalPositionV3 - robotData[step].goalPositionV3
 			disV3.z = 0
@@ -342,8 +396,10 @@ function logReader.saveData(robotsData, saveFile, attribute)
 		local error = 0
 		local n = 0
 		for robotName, robotData in pairs(robotsData) do
-			error = error + robotData[step][attribute]
-			n = n + 1
+			--if robotData[step].failed == nil then
+				error = error + robotData[step][attribute]
+				n = n + 1
+			--end
 		end
 		error = error / n
 		f:write(tostring(error).."\n")
@@ -352,7 +408,32 @@ function logReader.saveData(robotsData, saveFile, attribute)
 	print("save data finish")
 end
 
-function logReader.saveEachRobotData(robotsData, saveFolder, attribute)
+function logReader.saveDataAveragedBySwarmSize(robotsData, saveFile, attribute)
+	if attribute == nil then attribute = 'error' end
+	-- fill start and end if not provided
+	local startStep = 1
+	local length
+	for robotName, stepTable in pairs(robotsData) do
+		length = #stepTable
+		break
+	end
+	local endStep = length
+
+	local f = io.open(saveFile, "w")
+	for step = startStep, endStep do
+		local error = 0
+		for robotName, robotData in pairs(robotsData) do
+			if robotData[step].failed == nil then
+				error = error + robotData[step][attribute] / robotData[step].swarmSize
+			end
+		end
+		f:write(tostring(error).."\n")
+	end
+	io.close(f)
+	print("save data finish")
+end
+
+function logReader.saveEachRobotData(robotsData, saveFolder, attribute, failPlaceHolder)
 	if attribute == nil then attribute = 'error' end
 	-- fill start and end if not provided
 	local startStep = 1
@@ -368,7 +449,39 @@ function logReader.saveEachRobotData(robotsData, saveFolder, attribute)
 		local pathName = saveFolder .. "/" .. robotName .. ".txt"
 		local f = io.open(pathName, "w")
 		for step = startStep, endStep do
-			f:write(tostring(robotData[step][attribute]).."\n")
+			if robotData[step].failed == nil then
+				f:write(tostring(robotData[step][attribute]).."\n")
+			else
+				f:write(tostring(failPlaceHolder or 5.0).."\n")
+			end
+		end
+		io.close(f)
+	end
+end
+
+function logReader.saveEachRobotDataAveragedBySwarmSize(robotsData, saveFolder, attribute)
+	if attribute == nil then attribute = 'error' end
+	-- fill start and end if not provided
+	local startStep = 1
+	local length
+	for robotName, stepTable in pairs(robotsData) do
+		length = #stepTable
+		break
+	end
+	local endStep = length
+
+	os.execute("mkdir " .. saveFolder)
+	for robotName, robotData in pairs(robotsData) do
+		local pathName = saveFolder .. "/" .. robotName .. ".txt"
+		local f = io.open(pathName, "w")
+		for step = startStep, endStep do
+			local data
+			if robotData[step].failed == true then 
+				data = 0
+			else 
+				data = robotData[step][attribute] / robotData[step].swarmSize
+			end
+			f:write(tostring(data).."\n")
 		end
 		io.close(f)
 	end
@@ -428,6 +541,38 @@ function logReader.checkIDFirstAppearStep(robotsData, ID, startStep, specificRob
 					return i, robotName
 				end
 			end
+		end
+	end
+
+	return length
+end
+
+function logReader.checkIDLastDisAppearStep(robotsData, ID, endStep, specificRobotName)
+	-- get end step
+	local length
+	for robotName, stepTable in pairs(robotsData) do
+		length = #stepTable
+		break
+	end
+
+	if endStep == nil then endStep = length end
+	for i = endStep, 1, -1 do
+		-- check ID exists
+		local flag = false
+		for robotName, robotData in pairs(robotsData) do
+			if robotData[i].targetID == ID then
+				if specificRobotName == nil or specificRobotName == robotName then
+					flag = true
+					break
+				end
+			end
+		end
+		if flag == false then
+			local disappearStep = i
+			if disappearStep ~= endStep then
+				disappearStep = disappearStep + 1
+			end
+			return disappearStep
 		end
 	end
 

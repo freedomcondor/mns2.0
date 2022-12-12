@@ -10,8 +10,11 @@ def readDataFrom(fileName) :
 	file.close()
 	return data
 
-def drawData(data) :
-	plt.plot(data)
+def drawData(data, color = None) :
+	if color == None:
+		plt.plot(data)
+	else:
+		plt.plot(data, color=color)
 
 def drawDataInSubplot(data, subplot) :
 	subplot.plot(data)
