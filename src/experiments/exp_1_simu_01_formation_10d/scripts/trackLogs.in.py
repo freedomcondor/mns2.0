@@ -12,7 +12,8 @@ def setAxParameters(ax):
 	ax.set_ylim([-4, 4])
 	ax.set_zlim([-1.0, 7.0])
 	ax.set_zticks([0, 3])
-	ax.view_init(45, -70)
+	#ax.view_init(45, -70)  # 3D view
+	ax.view_init(90, -90)
 	#ax.grid(visible=None)
 	ax.grid(b=None)
 
