@@ -3,6 +3,7 @@ drawDataFileName = "@CMAKE_SOURCE_DIR@/scripts/drawData.py"
 exec(compile(open(drawDataFileName, "rb").read(), drawDataFileName, 'exec'))
 
 import statistics
+import math
 
 #dataFolder = "/Users/harry/Desktop/exp_0_hw_01_formation_1_2d_10p/data_hw/data"
 dataFolder = "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_02_obstacle_avoidance_small/data_hw/data"
@@ -28,7 +29,7 @@ robotsData = []
 #for subfolder in getSubfolders("@CMAKE_CURRENT_SOURCE_DIR@/../data") :
 for subFolder in getSubfolders(dataFolder) :
 	#drawData(readDataFrom(subfolder + "result_data.txt"))
-	#drawData(readDataFrom(subfolder + "result_lowerbound_data.txt"))
+	drawDataInSubplot(readDataFrom(subFolder + "result_lowerbound_data.txt"), axs[0])
 	# choose a folder
 	#if subFolder != dataFolder + "/test_20220621_7_success_2/" :
 	#	continue
@@ -52,8 +53,10 @@ for stepData in boxdata :
 	minvalue = min(stepData)
 	maxvalue = max(stepData)
 	mean.append(meanvalue)
-	upper.append(meanvalue + stdev)
-	lower.append(meanvalue - stdev)
+	count = len(stepData)
+	interval =1.96 * stdev / math.sqrt(count)
+	upper.append(meanvalue + interval)
+	lower.append(meanvalue - interval)
 	mini.append(minvalue)
 	maxi.append(maxvalue)
 
