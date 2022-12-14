@@ -31,7 +31,10 @@ targetLogs = openRobotLogs(targetLogNames)
 obstacleLogNames, obstacleNames = findRobotLogs(input_file, "obstacle")
 obstacleLogs = openRobotLogs(obstacleLogNames)
 
+count = 0
+
 while True:
+	count = count + 1
 	plt.pause(0.01)
 	ax.clear()
 	steps = 1
@@ -65,4 +68,9 @@ while True:
 	setAxParameters(ax)
 	plt.draw()
 
+	#temp = input()
+
+	# save images
+	plt.savefig("test_" + str(count).zfill(5) + ".png")
+	# waiting for spaces
 	#temp = input()

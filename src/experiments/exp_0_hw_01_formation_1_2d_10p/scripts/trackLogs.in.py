@@ -12,7 +12,8 @@ def setAxParameters(ax):
 	ax.set_ylim([-2, 2])
 	ax.set_zlim([-1.0, 3.0])
 	ax.set_zticks([0, 3])
-	ax.view_init(30, -60)
+	#ax.view_init(30, -60)
+	ax.view_init(90, -90)
 	ax.grid(visible=None)
 
 fig = plt.figure()
