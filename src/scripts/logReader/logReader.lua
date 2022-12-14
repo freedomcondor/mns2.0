@@ -279,8 +279,8 @@ function logReader.calcSegmentDataWithGoalReferenceOption(robotsData, geneIndex,
 			local brainName = robotData[endStep].brainID
 			local brainData = robotsData[brainName]
 			robotData[step].swarmSize = brainData[endStep].swarmSize 
-			if robotData[step].failed == true then robotData[step].swarmSize = 0 end
 			robotData[step].failed = robotData[endStep].failed
+			if robotData[step].failed == true then robotData[step].swarmSize = 0 end
 
 			-- the predator, targetID == nil, consider its error is always 0
 			local targetRelativePositionV3 = geneIndex[robotData[endStep].targetID or 1].globalPositionV3
@@ -396,10 +396,10 @@ function logReader.saveData(robotsData, saveFile, attribute)
 		local error = 0
 		local n = 0
 		for robotName, robotData in pairs(robotsData) do
-			--if robotData[step].failed == nil then
+			if robotData[step].failed == nil then
 				error = error + robotData[step][attribute]
 				n = n + 1
-			--end
+			end
 		end
 		error = error / n
 		f:write(tostring(error).."\n")
@@ -452,7 +452,8 @@ function logReader.saveEachRobotData(robotsData, saveFolder, attribute, failPlac
 			if robotData[step].failed == nil then
 				f:write(tostring(robotData[step][attribute]).."\n")
 			else
-				f:write(tostring(failPlaceHolder or 5.0).."\n")
+				--f:write(tostring(failPlaceHolder or 5.0).."\n")
+				f:write(tostring(failPlaceHolder or robotData[step][attribute]).."\n")
 			end
 		end
 		io.close(f)

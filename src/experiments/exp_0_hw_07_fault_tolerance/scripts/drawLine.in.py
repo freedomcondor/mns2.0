@@ -26,19 +26,32 @@ axs[1, 0].set_yticks([1,8])
 
 #-------------------------------------------------------------------------
 # read one case and shade fill each robot data
+failure_step = 500
+
 robotsData = []
 #for subfolder in getSubfolders("@CMAKE_CURRENT_SOURCE_DIR@/../data") :
 for subFolder in getSubfolders(dataFolder) :
-	if subFolder != dataFolder + "/test_20220712_6_success_5/" :
+	if subFolder != dataFolder + "/test_20220712_2_success_1/" :
+	#if subFolder != dataFolder + "/test_20220712_3_success_2/" :
+	#if subFolder != dataFolder + "/test_20220712_4_success_3/" :
+	#if subFolder != dataFolder + "/test_20220712_5_success_4/" :
+	#if subFolder != dataFolder + "/test_20220712_6_success_5/" :
+	#if subFolder != dataFolder + "/test_20220712_7_success_6/" :
 		continue
+	# check failure step
+	if os.path.isfile(subFolder + "failure_step.txt") :
+		failure_step = readDataFrom(subFolder + "failure_step.txt")[0]
 	#drawData(readDataFrom(subfolder + "result_data.txt"))
 	# choose a folder
 	drawDataInSubplot(readDataFrom(subFolder + "result_lowerbound_data.txt"), axs[0, 0])
 	drawDataInSubplot(readDataFrom(subFolder + "result_MNSNumber_data.txt"), axs[1, 0])
 	for subFile in getSubfiles(subFolder + "result_each_robot_error") :
 		robotsData.append(readDataFrom(subFile))
-		#drawDataInSubplot(readDataFrom(subFile), axs[0])
+		#drawDataInSubplot(readDataFrom(subFile), axs[0, 0])
 	break
+
+axs[0,0].axvline(x = failure_step, color="red", linestyle=":")
+axs[1,0].axvline(x = failure_step, color="red", linestyle=":")
 
 #drawData(readDataFrom("result_data.txt"))
 
@@ -49,12 +62,12 @@ upper = []
 lower = []
 mini = []
 maxi = []
-failurePlaceHolder = 3.0
+failurePlaceHolder = 0
 for stepData in boxdata :
-	minvalue = min(stepData)
-	maxvalue = max(stepData)
 	while failurePlaceHolder in stepData :
 		stepData.remove(failurePlaceHolder)
+	minvalue = min(stepData)
+	maxvalue = max(stepData)
 	meanvalue = statistics.mean(stepData)
 	stdev = statistics.stdev(stepData)
 	count = len(stepData)
