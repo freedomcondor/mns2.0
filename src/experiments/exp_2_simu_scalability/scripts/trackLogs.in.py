@@ -42,7 +42,9 @@ n_colors = len(pipuckLogs + droneLogs)
 #n_colors = 3
 colours = cm.rainbow(np.linspace(0, 1, n_colors))
 
-key_frame = [1200, 4000]
+#key_frame = [1200, 4000]  # scale 4
+#key_frame = [600, 2350]  # scale 2
+key_frame = [800]  # scale 2
 
 # for each robot, draw line
 robot_count = 0
