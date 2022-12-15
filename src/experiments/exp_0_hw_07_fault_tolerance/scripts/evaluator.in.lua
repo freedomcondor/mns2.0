@@ -108,11 +108,12 @@ print("stage3 start at", stage3Step)
 print("stage4 start at", stage4Step)
 print("stage5 start at", stage5Step)
 
-logReader.calcSegmentData(robotsData, geneIndex, 1, stage2Step - 1)
-logReader.calcSegmentData(robotsData, geneIndex, stage2Step, stage3Step - 1)
-logReader.calcSegmentData(robotsData, geneIndex, stage3Step, stage4Step - 1)
-logReader.calcSegmentData(robotsData, geneIndex, stage4Step, stage5Step - 1)
-logReader.calcSegmentData(robotsData, geneIndex, stage5Step, nil)
+
+logReader.calcSegmentDataWithFailureCheck(robotsData, geneIndex, 1, stage2Step - 1)
+logReader.calcSegmentDataWithFailureCheck(robotsData, geneIndex, stage2Step, stage3Step - 1)
+logReader.calcSegmentDataWithFailureCheck(robotsData, geneIndex, stage3Step, stage4Step - 1)
+logReader.calcSegmentDataWithFailureCheck(robotsData, geneIndex, stage4Step, stage5Step - 1)
+logReader.calcSegmentDataWithFailureCheck(robotsData, geneIndex, stage5Step, nil)
 
 lowerBoundParameters = {
 	time_period = 0.2,
@@ -136,14 +137,20 @@ logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, sta
 
 logReader.calcSegmentLowerBoundErrorInc(robotsData, geneIndex)
 
+
 os.execute("echo " .. saveStartStep.. " > saveStartStep.txt")
+
+os.execute("echo " .. tostring(structure2Step - saveStartStep) .. " > formationSwitch.txt")
+os.execute("echo " .. tostring(stage4Step - saveStartStep) .. " >> formationSwitch.txt")
+os.execute("echo " .. tostring(stage5Step - saveStartStep) .. " >> formationSwitch.txt")
+
 logReader.saveMNSNumber(robotsData, "result_MNSNumber_data.txt", saveStartStep)
 
 logReader.saveData(robotsData, "result_data.txt", "error", saveStartStep)
-logReader.saveDataAveragedBySwarmSize(robotsData, "result_data_averaged_by_focal_size.txt", "error", saveStartStep)
-logReader.saveEachRobotData(robotsData, "result_each_robot_error", "error", "0.0", saveStartStep)
+--logReader.saveDataAveragedBySwarmSize(robotsData, "result_data_averaged_by_focal_size.txt", "error", saveStartStep)
+logReader.saveEachRobotDataWithFailurePlaceHolder(robotsData, "result_each_robot_error", "error", "0.0", saveStartStep)
 --logReader.saveEachRobotData(robotsData, "result_each_robot_error", "error")
-logReader.saveEachRobotDataAveragedBySwarmSize(robotsData, "result_each_robot_error_averaged_by_focal_size", "error", saveStartStep)
+--logReader.saveEachRobotDataAveragedBySwarmSize(robotsData, "result_each_robot_error_averaged_by_focal_size", "error", saveStartStep)
 
 logReader.saveData(robotsData, "result_lowerbound_data.txt", "lowerBoundError", saveStartStep)
 logReader.saveData(robotsData, "result_lowerbound_inc_data.txt", "lowerBoundInc", saveStartStep)

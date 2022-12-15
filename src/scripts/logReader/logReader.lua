@@ -281,17 +281,23 @@ function logReader.markFailedRobot(robotsData, endStep)
 end
 
 function logReader.calcSegmentData(robotsData, geneIndex, startStep, endStep)
-	logReader.calcSegmentDataWithGoalReferenceOption(robotsData, geneIndex, true, startStep, endStep)
+	logReader.calcSegmentDataWithFailureCheckAndGoalReferenceOption(robotsData, geneIndex, false, true, startStep, endStep)
 end
 
-function logReader.calcSegmentDataWithGoalReferenceOption(robotsData, geneIndex, goalReferenceOption, startStep, endStep)
+function logReader.calcSegmentDataWithFailureCheck(robotsData, geneIndex, startStep, endStep)
+	logReader.calcSegmentDataWithFailureCheckAndGoalReferenceOption(robotsData, geneIndex, true, true, startStep, endStep)
+end
+
+function logReader.calcSegmentDataWithFailureCheckAndGoalReferenceOption(robotsData, geneIndex, failureCheckOption, goalReferenceOption, startStep, endStep)
 	-- fill start and end if not provided
 	if startStep == nil then startStep = 1 end
 	if endStep == nil then 
 		endStep = logReader.getEndStep(robotsData)
 	end
 
-	logReader.markFailedRobot(robotsData, endStep)
+	if failureCheckOption == true then
+		logReader.markFailedRobot(robotsData, endStep)
+	end
 	-- count last frame swarm size
 	for robotName, robotData in pairs(robotsData) do
 		robotData[endStep].swarmSize = 0
@@ -465,7 +471,11 @@ function logReader.saveDataAveragedBySwarmSize(robotsData, saveFile, attribute, 
 	print("save data finish")
 end
 
-function logReader.saveEachRobotData(robotsData, saveFolder, attribute, failPlaceHolder, startStep, endStep)
+function logReader.saveEachRobotData(robotsData, saveFolder, attribute, startStep, endStep)
+	logReader.saveEachRobotDataWithFailurePlaceHolder(robotsData, saveFolder, attribute, nil, startStep, endStep)
+end
+
+function logReader.saveEachRobotDataWithFailurePlaceHolder(robotsData, saveFolder, attribute, failPlaceHolder, startStep, endStep)
 	if attribute == nil then attribute = 'error' end
 	-- fill start and end if not provided
 	local startStep = startStep or 1

@@ -16,11 +16,11 @@ def drawData(data, color = None) :
 	else:
 		plt.plot(data, color=color)
 
-def drawDataInSubplot(data, subplot) :
-	subplot.plot(data)
+def drawDataInSubplot(data, subplot, color = None) :
+	subplot.plot(data, color=color)
 
-def drawDataWithXInSubplot(X, data, subplot) :
-	subplot.plot(X, data)
+def drawDataWithXInSubplot(X, data, subplot, color = None) :
+	subplot.plot(X, data, color=color)
 
 def getSubfolders(data_dir) :
 	# get the self folder item of os.walk
@@ -53,6 +53,15 @@ def getSubfiles(data_dir) :
 		subfiles.append(rundir)
 	
 	return subfiles
+
+def sparceDataEveryXSteps(data, step_length) :
+	X = []
+	return_data = []
+	for i in range(0, len(data)) :
+		if i % step_length == 0 :
+			X.append(i)
+			return_data.append(data[i])
+	return X, return_data
 
 def transferTimeDataToBoxData(robotsData, step_number = 50, step_length = 50, interval_steps = False) :
 	boxdata = []
