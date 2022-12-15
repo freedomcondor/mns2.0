@@ -2,7 +2,7 @@ package.path = package.path .. ";@CMAKE_SOURCE_DIR@/scripts/logReader/?.lua"
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/core/utils/?.lua"
 --package.path = package.path .. ";@CMAKE_CURRENT_BINARY_DIR@/../simu/?.lua"
 package.path = package.path .. ";@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_07_fault_tolerance/data_hw/data/test_20220712_6_success_5/hw/?.lua"
---DATADIR=@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_07_fault_tolerance/data_hw/data
+--package.path = package.path .. ";/Users/harry/Desktop/exp_0_hw_07_fault_tolerance/data_hw/data/test_20220712_6_success_5/hw/?.lua"
 
 logger = require("Logger")
 logReader = require("logReader")
@@ -121,21 +121,29 @@ lowerBoundParameters = {
 	stop_dis = 0.01,
 }
 
+local firstRecruitStep = logReader.calcFirstRecruitStep(robotsData)
+local saveStartStep = firstRecruitStep - 10
+
 logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, 1, structure2Step - 1)
+logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, saveStartStep, structure2Step - 1)
+
 logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, structure2Step, stage4Step - 1)
+
 logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, stage4Step, stage5Step - 1)
 logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, stage4Step + 5, stage5Step - 1)
+
 logReader.calcSegmentLowerBound(robotsData, geneIndex, lowerBoundParameters, stage5Step, nil)
 
 logReader.calcSegmentLowerBoundErrorInc(robotsData, geneIndex)
 
-logReader.saveMNSNumber(robotsData, "result_MNSNumber_data.txt")
+os.execute("echo " .. saveStartStep.. " > saveStartStep.txt")
+logReader.saveMNSNumber(robotsData, "result_MNSNumber_data.txt", saveStartStep)
 
-logReader.saveData(robotsData, "result_data.txt")
-logReader.saveDataAveragedBySwarmSize(robotsData, "result_data_averaged_by_focal_size.txt")
-logReader.saveEachRobotData(robotsData, "result_each_robot_error", "error", "0.0")
+logReader.saveData(robotsData, "result_data.txt", "error", saveStartStep)
+logReader.saveDataAveragedBySwarmSize(robotsData, "result_data_averaged_by_focal_size.txt", "error", saveStartStep)
+logReader.saveEachRobotData(robotsData, "result_each_robot_error", "error", "0.0", saveStartStep)
 --logReader.saveEachRobotData(robotsData, "result_each_robot_error", "error")
-logReader.saveEachRobotDataAveragedBySwarmSize(robotsData, "result_each_robot_error_averaged_by_focal_size")
+logReader.saveEachRobotDataAveragedBySwarmSize(robotsData, "result_each_robot_error_averaged_by_focal_size", "error", saveStartStep)
 
-logReader.saveData(robotsData, "result_lowerbound_data.txt", "lowerBoundError")
-logReader.saveData(robotsData, "result_lowerbound_inc_data.txt", "lowerBoundInc")
+logReader.saveData(robotsData, "result_lowerbound_data.txt", "lowerBoundError", saveStartStep)
+logReader.saveData(robotsData, "result_lowerbound_inc_data.txt", "lowerBoundInc", saveStartStep)

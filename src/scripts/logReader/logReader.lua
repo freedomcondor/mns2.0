@@ -199,6 +199,38 @@ function logReader.smoothData(robotsData, window)
 	end
 end
 
+function logReader.calcFirstRecruitStep(robotsData, saveFile)
+	local MNSs = nil
+	local step = 0
+	while true do
+		step = step + 1
+
+		local brainIndex = {}
+		for robotName, robotData in pairs(robotsData) do
+			if robotData[step] == nil then
+				return step - 1
+			end
+			if robotData[step].failed == nil then
+				local brainID = robotData[step].brainID
+				brainIndex[brainID] = true
+			end
+		end
+		-- count brainIndex
+		local count = 0
+		for id, value in pairs(brainIndex) do
+			count = count + 1
+		end
+
+		if MNSs == nil then
+			MNSs = count
+		else
+			if MNSs ~= count then
+				return step
+			end
+		end
+	end
+end
+
 function logReader.saveMNSNumber(robotsData, saveFile, startStep, endStep)
 	-- fill start and end if not provided
 	if startStep == nil then startStep = 1 end
@@ -380,16 +412,16 @@ function logReader.calcSegmentLowerBoundErrorInc(robotsData, geneIndex, startSte
 	end
 end
 
-function logReader.saveData(robotsData, saveFile, attribute)
+function logReader.saveData(robotsData, saveFile, attribute, startStep, endStep)
 	if attribute == nil then attribute = 'error' end
 	-- fill start and end if not provided
-	local startStep = 1
+	local startStep = startStep or 1
 	local length
 	for robotName, stepTable in pairs(robotsData) do
 		length = #stepTable
 		break
 	end
-	local endStep = length
+	local endStep = endStep or length
 
 	local f = io.open(saveFile, "w")
 	for step = startStep, endStep do
@@ -408,16 +440,16 @@ function logReader.saveData(robotsData, saveFile, attribute)
 	print("save data finish")
 end
 
-function logReader.saveDataAveragedBySwarmSize(robotsData, saveFile, attribute)
+function logReader.saveDataAveragedBySwarmSize(robotsData, saveFile, attribute, startStep, endStep)
 	if attribute == nil then attribute = 'error' end
 	-- fill start and end if not provided
-	local startStep = 1
+	local startStep = startStep or 1
 	local length
 	for robotName, stepTable in pairs(robotsData) do
 		length = #stepTable
 		break
 	end
-	local endStep = length
+	local endStep = endStep or length
 
 	local f = io.open(saveFile, "w")
 	for step = startStep, endStep do
@@ -433,16 +465,16 @@ function logReader.saveDataAveragedBySwarmSize(robotsData, saveFile, attribute)
 	print("save data finish")
 end
 
-function logReader.saveEachRobotData(robotsData, saveFolder, attribute, failPlaceHolder)
+function logReader.saveEachRobotData(robotsData, saveFolder, attribute, failPlaceHolder, startStep, endStep)
 	if attribute == nil then attribute = 'error' end
 	-- fill start and end if not provided
-	local startStep = 1
+	local startStep = startStep or 1
 	local length
 	for robotName, stepTable in pairs(robotsData) do
 		length = #stepTable
 		break
 	end
-	local endStep = length
+	local endStep = endStep or length
 
 	os.execute("mkdir " .. saveFolder)
 	for robotName, robotData in pairs(robotsData) do
@@ -460,16 +492,16 @@ function logReader.saveEachRobotData(robotsData, saveFolder, attribute, failPlac
 	end
 end
 
-function logReader.saveEachRobotDataAveragedBySwarmSize(robotsData, saveFolder, attribute)
+function logReader.saveEachRobotDataAveragedBySwarmSize(robotsData, saveFolder, attribute, startStep, endStep)
 	if attribute == nil then attribute = 'error' end
 	-- fill start and end if not provided
-	local startStep = 1
+	local startStep = startStep or 1
 	local length
 	for robotName, stepTable in pairs(robotsData) do
 		length = #stepTable
 		break
 	end
-	local endStep = length
+	local endStep = endStep or length
 
 	os.execute("mkdir " .. saveFolder)
 	for robotName, robotData in pairs(robotsData) do

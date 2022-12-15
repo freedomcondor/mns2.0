@@ -5,7 +5,6 @@ exec(compile(open(drawDataFileName, "rb").read(), drawDataFileName, 'exec'))
 import statistics
 import math 
 
-#dataFolder = "/Users/harry/Desktop/exp_0_hw_01_formation_1_2d_10p/data_hw/data"
 #dataFolder = "/Users/harry/Desktop/exp_0_hw_07_fault_tolerance/data_hw/data"
 dataFolder = "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_07_fault_tolerance/data_hw/data"
 
@@ -31,16 +30,18 @@ failure_step = 500
 robotsData = []
 #for subfolder in getSubfolders("@CMAKE_CURRENT_SOURCE_DIR@/../data") :
 for subFolder in getSubfolders(dataFolder) :
-	if subFolder != dataFolder + "/test_20220712_2_success_1/" :
+	#if subFolder != dataFolder + "/test_20220712_2_success_1/" :
 	#if subFolder != dataFolder + "/test_20220712_3_success_2/" :
 	#if subFolder != dataFolder + "/test_20220712_4_success_3/" :
 	#if subFolder != dataFolder + "/test_20220712_5_success_4/" :
 	#if subFolder != dataFolder + "/test_20220712_6_success_5/" :
-	#if subFolder != dataFolder + "/test_20220712_7_success_6/" :
+	if subFolder != dataFolder + "/test_20220712_7_success_6/" :
 		continue
 	# check failure step
 	if os.path.isfile(subFolder + "failure_step.txt") :
 		failure_step = readDataFrom(subFolder + "failure_step.txt")[0]
+	if os.path.isfile(subFolder + "saveStartStep.txt") :
+		failure_step = failure_step - readDataFrom(subFolder + "saveStartStep.txt")[0] + 1
 	#drawData(readDataFrom(subfolder + "result_data.txt"))
 	# choose a folder
 	drawDataInSubplot(readDataFrom(subFolder + "result_lowerbound_data.txt"), axs[0, 0])
