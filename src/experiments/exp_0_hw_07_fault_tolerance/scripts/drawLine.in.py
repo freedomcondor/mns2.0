@@ -97,10 +97,13 @@ upper = []
 lower = []
 mini = []
 maxi = []
+failurePlaceHolder = 0
 for stepData in boxdata :
 	#meanvalue = statistics.mean(stepData)
 	#stdev = statistics.stdev(stepData)
 
+	while failurePlaceHolder in stepData :
+		stepData.remove(failurePlaceHolder)
 	meanvalue = scipy.mean(stepData)
 	stdev = stats.tstd(stepData)
 

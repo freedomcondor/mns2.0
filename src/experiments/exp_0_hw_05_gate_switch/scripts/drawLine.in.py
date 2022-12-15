@@ -27,6 +27,7 @@ fig, axs = plt.subplots(2, 2, gridspec_kw={'width_ratios': [5, 1], 'height_ratio
 fig.subplots_adjust(hspace=0.05)  # adjust space between axes
 axs[0,0].axis('off')
 axs[0,1].set_ylim([5, 5.5])
+axs[0,1].yaxis.set_ticks([5.2, 5.5])
 
 axs[1,0].set_ylim([-0.5, 3.5])
 
@@ -37,6 +38,7 @@ axs[0,1].spines.bottom.set_visible(False)
 axs[1,1].spines.top.set_visible(False)
 axs[0,1].xaxis.tick_top()
 axs[0,1].tick_params(labeltop=False)  # don't put tick labels at the top
+axs[0,1].tick_params(labelbottom=False)  # don't put tick labels at the top
 #ax2.xaxis.tick_bottom()
 d = .5  # proportion of vertical to horizontal extent of the slanted line
 kwargs = dict(marker=[(-1, -d), (1, d)], markersize=12,
