@@ -26,6 +26,7 @@ for subfolder in getSubfolders("@CMAKE_CURRENT_SOURCE_DIR@/../data") :
 fig, axs = plt.subplots(1, 2, gridspec_kw={'width_ratios': [5, 1]})
 axs[0].set_ylim([-0.5, 3.5])
 axs[1].set_ylim([-0.5, 3.5])
+axs[1].tick_params(labelbottom=False)  # don't put tick labels at the top
 
 '''
 axs[0,1].spines.bottom.set_visible(False)

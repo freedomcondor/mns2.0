@@ -23,7 +23,7 @@ fi
 if [ "$EVA_FLAG" != "false" ]; then
 	echo "Evaluating"
 	evaluate $DATADIR \
-	         "lua @CMAKE_CURRENT_BINARY_DIR@/evaluator.lua" "result_data.txt"
+	         "lua @CMAKE_CURRENT_BINARY_DIR@/evaluator.lua"
 	#         "rm result_data.txt"
 else
 	echo "skip evaluating"
