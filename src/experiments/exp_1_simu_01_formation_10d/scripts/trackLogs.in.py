@@ -44,7 +44,7 @@ n_colors = len(pipuckLogs + droneLogs)
 #n_colors = 3
 colours = cm.rainbow(np.linspace(0, 1, n_colors))
 
-key_frame = []
+key_frame = [0]
 
 # for each robot, draw line
 robot_count = 0
@@ -162,7 +162,9 @@ for obstacleLog in targetLogs:
 # draw key frame
 usualcolor = 'black'
 braincolor = 'blue'
+count = 0
 for key_frame in key_frame_robots :
+	count = 1
 	for robotID, robotData in key_frame.items() : 
 		robotType = robotID.rstrip(string.digits)
 		marker = 'o'
@@ -174,6 +176,9 @@ for key_frame in key_frame_robots :
 			color = braincolor
 		else :
 			color = usualcolor
+		
+		if count == 1:
+			marker = 'x'
 		# draw dot
 		ax.plot3D([robotData["position"][0]], 
 		          [robotData["position"][1]],
