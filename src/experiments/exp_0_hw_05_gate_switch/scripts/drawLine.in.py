@@ -27,7 +27,7 @@ fig, axs = plt.subplots(2, 2, gridspec_kw={'width_ratios': [5, 1], 'height_ratio
 fig.subplots_adjust(hspace=0.05)  # adjust space between axes
 axs[0,0].axis('off')
 axs[0,1].set_ylim([5, 5.5])
-axs[0,1].yaxis.set_ticks([5.2, 5.5])
+#axs[0,1].yaxis.set_ticks([5.2, 5.5])
 
 axs[1,0].set_ylim([-0.5, 3.5])
 
@@ -55,8 +55,8 @@ for subFolder in getSubfolders(dataFolder) :
 	#drawData(readDataFrom(subfolder + "result_data.txt"))
 	#drawData(readDataFrom(subfolder + "result_lowerbound_data.txt"))
 	# choose a folder
-	#if subFolder != dataFolder + "/test_20220621_7_success_2/" :
-	#	continue
+	if subFolder != dataFolder + "/test_20220630_12_success_3/" :
+		continue
 	# draw lowerbound
 	X, sparseLowerbound = sparceDataEveryXSteps(readDataFrom(subFolder + "result_lowerbound_data.txt"), 5)
 	#drawDataWithXInSubplot(X, sparseLowerbound, axs[0], 'hotpink')
@@ -104,6 +104,7 @@ for stepData in boxdata :
 	#interval999 = 3.291 * stdev / math.sqrt(count)
 	interval99999 = 4.417 * stdev / math.sqrt(count)
 
+	'''
 	upper.append(meanvalue + interval95)
 	lower.append(meanvalue - interval95)
 	mini.append(meanvalue - interval99999)
@@ -128,7 +129,6 @@ for stepData in boxdata :
 		maxi.append(meanvalue + interval99999)
 	else :
 		maxi.append(mask_min)
-	'''
 
 #drawDataWithXInSubplot(positions, mean, axs[0], 'royalblue')
 drawDataWithXInSubplot(X, mean, subplot_ax, 'royalblue')
@@ -191,5 +191,9 @@ axs[1].boxplot(boxdata, widths=5, flierprops=flierprops)
 '''
 axs[0,1].violinplot(boxdata)
 axs[1,1].violinplot(boxdata)
+
+maxvalue = max(boxdata)
+axs[0,1].yaxis.set_ticks([maxvalue])
+
 
 plt.show()

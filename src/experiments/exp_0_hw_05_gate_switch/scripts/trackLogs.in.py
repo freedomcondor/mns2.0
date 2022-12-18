@@ -5,15 +5,27 @@ logGeneratorFileName = "@CMAKE_SOURCE_DIR@/scripts/logReader/logReplayer.py"
 exec(compile(open(logGeneratorFileName, "rb").read(), logGeneratorFileName, 'exec'))
 
 def setAxParameters(ax):
-	ax.set_xlabel("x")
-	ax.set_ylabel("y")
-	ax.set_zlabel("z")
+	# back ground color white
+	#ax.w_xaxis.pane.fill = False
+	#ax.w_yaxis.pane.fill = False
+	ax.w_xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+	ax.w_yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+	ax.w_zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+
+	#ax.set_xlabel("x")
+	#ax.set_ylabel("y")
+	#ax.set_zlabel("z")
 	ax.set_xlim([-3.5, 4.5])
 	ax.set_ylim([-4, 4])
 	ax.set_zlim([-1.0, 7.0])
-	ax.set_zticks([0, 5])
+	# hide z axis
+	ax.w_zaxis.line.set_lw(0)
+	ax.set_zticks([])
+	# look from
 	ax.view_init(90, -90)
-	ax.grid(visible=None)
+	# hide grid
+	ax.grid(visible=None)  # for mac
+	ax.grid(b=None)        # for linux
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
@@ -21,6 +33,12 @@ ax = fig.add_subplot(projection='3d')
 #plt.ion()
 #setAxParameters(ax)
 #plt.show()
+
+dataFolder = "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_05_gate_switch/data_hw/data"
+case_name = "test_20220630_12_success_3"
+
+input_file = dataFolder + "/" + case_name + "/logs"
+print("overwrite input file to", input_file)
 
 pipuckLogNames, pipuckNames = findRobotLogs(input_file, "pipuck")
 pipuckLogs = openRobotLogs(pipuckLogNames)
@@ -42,7 +60,7 @@ n_colors = len(pipuckLogs + droneLogs)
 #n_colors = 3
 colours = cm.rainbow(np.linspace(0, 1, n_colors))
 
-key_frame = [300, 1200]
+key_frame = [0, 300, 1200]
 #key_frame = []
 #key_frame_style = ['v', 's']
 
@@ -118,6 +136,10 @@ for pipuckLog in pipuckLogs + droneLogs:
 				"parent" : P[i],
 				"brain" : B[i]
 			}
+
+			if key_frame[key_frame_i] == 0 :
+				key_frame_robots[key_frame_i][robotName]["color"] = colours[robot_count - 1]
+
 			key_frame_i = key_frame_i + 1
 		'''
 		if i > key_frame[key_frame_i] :
@@ -174,6 +196,8 @@ for key_frame in key_frame_robots :
 			color = braincolor
 		else :
 			color = usualcolor
+		if "color" in robotData :
+			color = robotData["color"]
 		# draw dot
 		ax.plot3D([robotData["position"][0]], 
 		          [robotData["position"][1]],
