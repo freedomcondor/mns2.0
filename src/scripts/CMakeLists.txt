@@ -1,0 +1,1 @@
+configure_file( generateSRFigs.in.sh        generateSRFigs.sh   @ONLY)

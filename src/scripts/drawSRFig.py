@@ -14,7 +14,11 @@ def drawSRFig(option) :
 
 	if 'split_right' in option and option['split_right'] == True:
 		# 4 subfigures
-		fig, axs = plt.subplots(2, 2, gridspec_kw={'width_ratios': [5, 1], 'height_ratios': [1, 8]})
+		height_ratios = [1, 8]
+		if 'height_ratios' in option :
+			height_ratios = option['height_ratios']
+
+		fig, axs = plt.subplots(2, 2, gridspec_kw={'width_ratios': [5, 1], 'height_ratios': height_ratios})
 		fig.subplots_adjust(hspace=0.05)  # adjust space between axes
 
 		main_ax = axs[1,0]
@@ -22,19 +26,21 @@ def drawSRFig(option) :
 		violin_ax_top = axs[0,1]
 		axs[0,0].axis('off')
 
-		violin_ax_top_lim_from = option['violin_ax_top_lim_from']
-		violin_ax_top_lim_to = option['violin_ax_top_lim_to']
-		violin_ax_top.set_ylim([violin_ax_top_lim_from, violin_ax_top_lim_to])
+		violin_ax_top.set_ylim(option['violin_ax_top_lim'])
 
 		# draw slides between the break
 		axs[0,1].spines.bottom.set_visible(False)
 		axs[1,1].spines.top.set_visible(False)
 
-		#axs[0,1].xaxis.tick_top()
+		axs[0,1].xaxis.tick_top()
+		axs[0,1].set_xticks([])
 		axs[0,1].tick_params(labeltop=False)  # don't put tick labels at the top
 		axs[0,1].tick_params(labelbottom=False)  # don't put tick labels at the top
 		axs[1,1].tick_params(labeltop=False)  # don't put tick labels at the top
 		axs[1,1].tick_params(labelbottom=False)  # don't put tick labels at the top
+		axs[1,1].set_xticks([])
+		axs[0,1].set_xlim([0.7, 1.3])
+		axs[1,1].set_xlim([0.7, 1.3])
 
 		#ax2.xaxis.tick_bottom()
 		d = .5  # proportion of vertical to horizontal extent of the slanted line
@@ -52,11 +58,11 @@ def drawSRFig(option) :
 
 		axs[1].tick_params(labeltop=False)  # don't put tick labels at the top
 		axs[1].tick_params(labelbottom=False)  # don't put tick labels at the top
+		axs[1].set_xticks([])
+		axs[1].set_xlim([0.7, 1.3])
 
-	main_ax_lim_from = option['main_ax_lim_from']
-	main_ax_lim_to = option['main_ax_lim_to']
-	main_ax.set_ylim([main_ax_lim_from, main_ax_lim_to])
-	violin_ax.set_ylim([main_ax_lim_from, main_ax_lim_to])
+	main_ax.set_ylim(option['main_ax_lim'])
+	violin_ax.set_ylim(option['main_ax_lim'])
 
 	main_ax.set_xlabel('Time(s)')
 	main_ax.set_ylabel('Error(m)')
@@ -84,11 +90,11 @@ def drawSRFig(option) :
 			switchTime = []
 			for data in switchSteps :
 				switchTime.append(data/5)
-		break
 
-	# draw vertical line for switch
-	for data in switchTime :
-		main_ax.axvline(x = data, color="black", linestyle=":")
+			# draw vertical line for switch
+			for data in switchTime :
+				main_ax.axvline(x = data, color="black", linestyle=":")
+		break
 
 	#drawData(readDataFrom("result_data.txt"))
 	boxdata, positions = transferTimeDataToBoxData(robotsData, None, 5)
@@ -145,7 +151,8 @@ def drawSRFig(option) :
 			maxi.append(mask_min)
 
 	#drawDataWithXInSubplot(positions, mean, axs[0], 'royalblue')
-	drawDataWithXInSubplot(X, mean, main_ax, 'royalblue')
+	#drawDataWithXInSubplot(X, mean, main_ax, 'royalblue')
+	drawDataWithXInSubplot(X, mean, main_ax, 'b')
 	main_ax.fill_between(
 	    #positions, mini, maxi, color='b', alpha=.10)
 	    X, mini, maxi, color='b', alpha=.10)
@@ -154,27 +161,38 @@ def drawSRFig(option) :
 	    X, lower, upper, color='b', alpha=.30)
 
 	#-------------------------------------------------------------------------
-	# read all each robot data and make it a total box plot
-
+	# read all each robot data and make it a total box/violin plot
 	boxdata = []
 	for subFolder in getSubfolders(dataFolder) :
 		for subFile in getSubfiles(subFolder + "result_each_robot_error") :
 			boxdata = boxdata + readDataFrom(subFile)
 
-	violin_return_1 = violin_ax.violinplot(boxdata)
+	violin_return_1 = violin_ax.violinplot(boxdata, showmeans=True)
 	violin_returns = [violin_return_1]
 	if violin_ax_top != None :
-		violin_return_2 = violin_ax_top.violinplot(boxdata)
+		violin_return_2 = violin_ax_top.violinplot(boxdata, showmeans=True)
 		violin_returns.append(violin_return_2)
 
+	# set font and style for violin plot (both top and bottom if existed)
 	for violin in violin_returns :
-		for line in [violin['cbars'], violin['cmins'], violin['cmaxes']] :
-			line.set_linewidth(1.3)
+		for line in [violin['cbars'], violin['cmins'], violin['cmeans'], violin['cmaxes']] :
+			line.set_linewidth(1.5)
+			line.set_facecolor('b')
+			line.set_edgecolor('b')
+		for pc in violin['bodies']:
+			#pc.set_facecolor('royalblue')
+			#pc.set_edgecolor('royalblue')
+			pc.set_facecolor('b')
+			pc.set_edgecolor('b')
 
+
+	# set right top tick as the max value of the boxdata
 	if violin_ax_top != None :
 		maxvalue = round(max(boxdata), 1)
 		violin_ax_top.yaxis.set_ticks([maxvalue])
 
+	#-------------------------------------------------------------------------
+	# save or show plot
 	if 'SRFig_save' in option :
 		plt.savefig(option['SRFig_save'])
 	if 'SRFig_show' in option and option['SRFig_show'] == True :

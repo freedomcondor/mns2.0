@@ -27,8 +27,7 @@ option = {
 	'SRFig_show'             : False,
 	'trackLog_show'          : False,
 
-	'main_ax_lim_from'       : -0.5,
-	'main_ax_lim_to'         : 3.5,
+	'main_ax_lim'            : [-0.5, 3.5],
 
 #	'split_right'            : True,
 #	'violin_ax_top_lim_from' : 5,
@@ -71,9 +70,9 @@ option = {
 		},
 	] ,
 
-	'x_lim'     :  [-4, 4]    ,
-	'y_lim'     :  [-4, 4]        ,
-	'z_lim'     :  [-1.0, 7.0]    ,
+	'x_lim'     :  [-4, 4.5]           ,
+	'y_lim'     :  [-4.25, 4.25]       ,
+	'z_lim'     :  [-1.0, 7.5]         ,
 }
 
 drawSRFig(option)

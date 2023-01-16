@@ -60,6 +60,8 @@ make_directory(logs)
 add_subdirectory(testing)
 #add experiments sub directory
 add_subdirectory(experiments)
+#add script sub directory
+add_subdirectory(scripts)
 
 #add copy floor 
 configure_file( qtopengl_extensions/wood_floor.png     wood_floor.png    COPYONLY)

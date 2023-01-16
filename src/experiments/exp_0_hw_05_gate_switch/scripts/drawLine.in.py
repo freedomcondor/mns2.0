@@ -20,12 +20,10 @@ option = {
 	'SRFig_show'             : False,
 	'trackLog_show'          : False,
 
-	'main_ax_lim_from'       : -0.3,
-	'main_ax_lim_to'         : 4.0,
+	'main_ax_lim'            : [-0.3, 4.0],
 
 	'split_right'            : True,
-	'violin_ax_top_lim_from' : 5,
-	'violin_ax_top_lim_to'   : 5.5,
+	'violin_ax_top_lim'      : [5, 5.5],
 
 #------------------------------------------------
 	'key_frame' :  [0, 300, 1200] ,
