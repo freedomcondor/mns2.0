@@ -1,4 +1,6 @@
 from matplotlib import cm
+import math
+
 #from scipy.interpolate import make_interp_spline
 
 def setAxParameters(ax, option):
@@ -9,20 +11,44 @@ def setAxParameters(ax, option):
 	ax.w_yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
 	ax.w_zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
 
-	#ax.set_xlabel("x")
-	#ax.set_ylabel("y")
+	ax.set_xlabel("x(m)")
+	ax.set_ylabel("y(m)")
 	#ax.set_zlabel("z")
 	ax.set_xlim(option['x_lim'])
 	ax.set_ylim(option['y_lim'])
 	ax.set_zlim(option['z_lim'])
-	# hide z axis
+	# hide xyz axis
 	ax.w_zaxis.line.set_lw(0)
+	ax.w_xaxis.line.set_lw(0)
+	ax.w_yaxis.line.set_lw(0)
+
+	# draw border
+	ax.patch.set_edgecolor('black')  
+	ax.spines['bottom'].set_color('0.5')
+	ax.spines['top'].set_color('0.5')
+	ax.spines['right'].set_color('0.5')
+	ax.spines['left'].set_color(None)
+	bottom_left  = [option['x_lim'][0], option['y_lim'][0], 0]
+	bottom_right = [option['x_lim'][1], option['y_lim'][0], 0]
+	top_left     = [option['x_lim'][0], option['y_lim'][1], 0]
+	top_right    = [option['x_lim'][1], option['y_lim'][1], 0]
+	color = 'black'
+	width = 1.0
+	drawVector3(ax, top_left,    top_right,    color, width)
+	drawVector3(ax, top_right,   bottom_right, color, width)
+	drawVector3(ax, bottom_left, bottom_right, color, width)
+	drawVector3(ax, top_left,    bottom_left,  color, width)
+
+	# set ticks
+	ax.set_xticks(range(math.ceil(option['x_lim'][0]), math.ceil(option['x_lim'][1]), 1))
+	ax.set_yticks(range(math.ceil(option['y_lim'][0]), math.ceil(option['y_lim'][1]), 1))
 	ax.set_zticks([])
+
 	# look from
 	if 'look_from' in option:
 		ax.view_init(option['look_from'])
 	else:
-		ax.view_init(90, -90)
+		ax.view_init(89.99999, -90.00001) # to make X axis on the bottom and Y on the left
 
 	# hide grid
 	# check wether on linux or mac
@@ -30,6 +56,7 @@ def setAxParameters(ax, option):
 		ax.grid(b=None)        # for linux
 	else :
 		ax.grid(visible=None)   # for mac
+	
 
 def drawTrackLog(option):
 	dataFolder = option['dataFolder']
@@ -42,7 +69,11 @@ def drawTrackLog(option):
 		break
 
 	input_file = case_name + "logs"
-	print("trackLog input file:", input_file)
+	if 'overwrite_trackFig_log_foler' in option :
+		input_file = option['overwrite_trackFig_log_foler']
+		print("overwrite trackLog input file:", input_file)
+	else :
+		print("trackLog input file:", input_file)
 
 	pipuckLogNames, pipuckNames = findRobotLogs(input_file, "pipuck")
 	pipuckLogs = openRobotLogs(pipuckLogNames)
@@ -153,8 +184,10 @@ def drawTrackLog(option):
 					print("set keyframe", key_frame_i, robotName, "'s parent to",key_frame_robots[key_frame_i][robotName]["parent"])
 
 				# add a color for start step
+				# remove parent for start step
 				if key_frame[key_frame_i] == 0 :
 					key_frame_robots[key_frame_i][robotName]["color"] = colours[robot_count - 1]
+					key_frame_robots[key_frame_i][robotName]["parent"] = "nil"
 
 				key_frame_i = key_frame_i + 1
 			'''
@@ -237,6 +270,29 @@ def drawTrackLog(option):
 				          [robotData["position"][2], parentData["position"][2]],
 				          linewidth="1.2",
 				          color = color)
+
+		#draw brain at last to cover the lines
+		for robotID, robotData in key_frame.items() : 
+			if robotData['brain'] == robotID :
+				robotType = robotID.rstrip(string.digits)
+				marker = 'o'
+				markersize = '3.5'
+				if robotType == "drone" :
+					marker = '*'
+					markersize = '7'
+				if robotData["brain"] == robotID :
+					color = braincolor
+				else :
+					color = usualcolor
+				if "color" in robotData :
+					color = robotData["color"]
+				ax.plot3D([robotData["position"][0]], 
+				          [robotData["position"][1]],
+				          [robotData["position"][2]],
+				          color = color, 
+				          marker = marker,
+				          markersize=markersize
+				         )
 
 	# save images
 
