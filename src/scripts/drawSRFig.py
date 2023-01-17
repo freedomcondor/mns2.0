@@ -80,7 +80,7 @@ def drawSRFig(option) :
 		# draw lowerbound
 		X, sparseLowerbound = sparceDataEveryXSteps(readDataFrom(subFolder + "result_lowerbound_data.txt"), 5)
 		#drawDataWithXInSubplot(X, sparseLowerbound, axs[0], 'hotpink')
-		drawDataInSubplot(sparseLowerbound, main_ax, 'hotpink')
+		legend_handle_lowerbound, = drawDataInSubplot(sparseLowerbound, main_ax, 'hotpink')
 		for subFile in getSubfiles(subFolder + "result_each_robot_error") :
 			robotsData.append(readDataFrom(subFile))
 			#drawDataInSubplot(readDataFrom(subFile), main_ax)
@@ -152,13 +152,23 @@ def drawSRFig(option) :
 
 	#drawDataWithXInSubplot(positions, mean, axs[0], 'royalblue')
 	#drawDataWithXInSubplot(X, mean, main_ax, 'royalblue')
-	drawDataWithXInSubplot(X, mean, main_ax, 'b')
-	main_ax.fill_between(
+	legend_handle_mean, = drawDataWithXInSubplot(X, mean, main_ax, 'b')
+	legend_handle_minmax = main_ax.fill_between(
 	    #positions, mini, maxi, color='b', alpha=.10)
 	    X, mini, maxi, color='b', alpha=.10)
-	main_ax.fill_between(
+	legend_handle_lowerupper = main_ax.fill_between(
 	    #positions, lower, upper, color='b', alpha=.30)
 	    X, lower, upper, color='b', alpha=.30)
+	main_ax.legend([legend_handle_mean,
+	                legend_handle_lowerupper,
+	                legend_handle_minmax,
+	                legend_handle_lowerbound], 
+	               ['mean value',
+	                '95% confidence interval',
+	                '99.999% confidence interval',
+	                'lowerbound value'],
+	    loc="upper right"
+	)
 
 	#-------------------------------------------------------------------------
 	# read all each robot data and make it a total box/violin plot
