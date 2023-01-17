@@ -1,4 +1,5 @@
 from matplotlib import cm
+from matplotlib.legend_handler import HandlerTuple
 import math
 
 #from scipy.interpolate import make_interp_spline
@@ -293,6 +294,39 @@ def drawTrackLog(option):
 				          marker = marker,
 				          markersize=markersize
 				         )
+
+	# legend
+	legend_handle_usual_robot, = ax.plot([], [],
+	          color = usualcolor, 
+	          marker = 'o',
+	          markersize = '3.5',
+	          linestyle = 'None'
+	)
+	legend_handle_usual_drone, = ax.plot([], [],
+	          color = usualcolor, 
+	          marker = '*',
+	          markersize = '7',
+	          linestyle = 'None'
+	)
+	legend_handle_brain_drone, = ax.plot([], [],
+	          color = braincolor, 
+	          marker = '*',
+	          markersize = '7',
+	          linestyle = 'None'
+	)
+	ax.legend([legend_handle_brain_drone,
+	           legend_handle_usual_drone,
+	           legend_handle_usual_robot,
+	          ], 
+	          ['the brain drone',
+	           'non-brain drones',
+	           'non-brain pipucks',
+	          ],
+	    handler_map={tuple: HandlerTuple(ndivide=None)},  # to make two markers share one label [(a, b)], ['label']
+	    loc="right",
+	    #bbox_to_anchor=(option['x_lim'][1], option['y_lim'][0])
+	    bbox_to_anchor=(1.33, 0.7)
+	)
 
 	# save images
 

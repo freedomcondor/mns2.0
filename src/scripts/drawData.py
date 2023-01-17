@@ -12,15 +12,15 @@ def readDataFrom(fileName) :
 
 def drawData(data, color = None) :
 	if color == None:
-		plt.plot(data)
+		return plt.plot(data)
 	else:
-		plt.plot(data, color=color)
+		return plt.plot(data, color=color)
 
 def drawDataInSubplot(data, subplot, color = None) :
-	subplot.plot(data, color=color)
+	return subplot.plot(data, color=color)
 
 def drawDataWithXInSubplot(X, data, subplot, color = None) :
-	subplot.plot(X, data, color=color)
+	return subplot.plot(X, data, color=color)
 
 def getSubfolders(data_dir) :
 	# get the self folder item of os.walk
