@@ -13,6 +13,8 @@ drawTrackLogFileName = "@CMAKE_SOURCE_DIR@/scripts/drawTrackLogs.py"
 exec(compile(open(drawTrackLogFileName, "rb").read(), drawTrackLogFileName, 'exec'))
 
 dataFolder = "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_02_obstacle_avoidance_small/data_hw/data"
+#doubleRight
+dataFolder2 = "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_03_obstacle_avoidance_large/data_hw/data"
 #sample_run = "test_20220622_success_1"
 #sample_run = "test_20220622_success_2"
 #sample_run = "test_20220622_success_3"
@@ -30,11 +32,14 @@ option = {
 	'SRFig_show'             : False,
 	'trackLog_show'          : False,
 
-	'main_ax_lim'            : [-0.2, 2],
+	'main_ax_lim'            : [-0.1, 2],
 
 	'split_right'            : True,
-	'violin_ax_top_lim'      : [3.4, 3.6],
-	'height_ratios'          : [1, 10],
+	'violin_ax_top_lim'      : [3.4, 4.1],
+	'height_ratios'          : [1, 3],
+
+	'double_right'           : True,
+	'double_right_dataFolder': dataFolder2,
 
 #------------------------------------------------
 	'key_frame' :  [0, 400] ,

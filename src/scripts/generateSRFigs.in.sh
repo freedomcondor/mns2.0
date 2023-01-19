@@ -9,6 +9,9 @@ exp_0_hw_03_obstacle_avoidance_large \
 exp_0_hw_04_switch_line \
 exp_0_hw_05_gate_switch \
 exp_1_simu_01_formation_10d \
+exp_1_simu_02_obstacle_avoidance_small_10d \
+exp_1_simu_03_obstacle_avoidance_large_10d \
+exp_1_simu_04_switch_line \
 )
 
 for exp_name in ${EXPERIMENT_LIST[@]}
