@@ -41,8 +41,20 @@ def setAxParameters(ax, option):
 	drawVector3(ax, top_left,    bottom_left,  color, width)
 
 	# set ticks
-	ax.set_xticks(range(math.ceil(option['x_lim'][0]), math.ceil(option['x_lim'][1]), 1))
-	ax.set_yticks(range(math.ceil(option['y_lim'][0]), math.ceil(option['y_lim'][1]), 1))
+	ax.set_xticks(range(math.ceil(option['x_lim'][0]),
+	                    math.ceil(option['x_lim'][1]),
+	                    math.ceil(
+	                        (option['x_lim'][1] - option['x_lim'][0]) / 5
+	                    )
+	                   )
+	             )
+	ax.set_yticks(range(math.ceil(option['y_lim'][0]),
+	                    math.ceil(option['y_lim'][1]),
+	                    math.ceil(
+	                        (option['y_lim'][1] - option['y_lim'][0]) / 5
+	                    )
+	                   )
+	             )
 	ax.set_zticks([])
 
 	# look from
@@ -314,18 +326,49 @@ def drawTrackLog(option):
 	          markersize = '7',
 	          linestyle = 'None'
 	)
-	ax.legend([legend_handle_brain_drone,
-	           legend_handle_usual_drone,
-	           legend_handle_usual_robot,
-	          ], 
-	          ['the brain drone',
-	           'non-brain drones',
-	           'non-brain pipucks',
-	          ],
+	legend_handles = [legend_handle_brain_drone,
+	                  legend_handle_usual_drone,
+	                  legend_handle_usual_robot,
+	                 ]
+	labels = ['the brain drone',
+	          'non-brain drones',
+	          'non-brain pipucks',
+	         ]
+
+	legend_position = (0.815, 0.75)
+	legend_col = 1
+
+	if 'legend_obstacle' in option and option['legend_obstacle'] :
+		legend_handle_obstacle, = ax.plot([], [],
+		          color = 'red', 
+		          marker = 's',
+		          markersize = '3.5',
+		          linestyle = 'None'
+		)
+		legend_handles.append(legend_handle_obstacle)
+		labels.append('obstacles')
+
+		legend_handle_target, = ax.plot([], [],
+		          color = 'red', 
+		          marker = 'v',
+		          markersize = '3.5',
+		          linestyle = 'None'
+		)
+		legend_handles.append(legend_handle_target)
+		labels.append('target')
+
+		#legend_position = (0.815, 0.73)  # col = 2 and position doesn't need to change
+		legend_col = 2
+	
+	ax.legend(
+	    legend_handles, 
+	    labels,
 	    handler_map={tuple: HandlerTuple(ndivide=None)},  # to make two markers share one label [(a, b)], ['label']
 	    loc="right",
-	    #bbox_to_anchor=(option['x_lim'][1], option['y_lim'][0])
-	    bbox_to_anchor=(1.33, 0.7)
+	    #bbox_to_anchor=(1.33, 0.7),   # position outside
+	    bbox_to_anchor=legend_position,
+	    fontsize="xx-small",
+	    ncol=legend_col
 	)
 
 	# save images
