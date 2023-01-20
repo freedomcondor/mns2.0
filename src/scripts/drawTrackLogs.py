@@ -12,8 +12,8 @@ def setAxParameters(ax, option):
 	ax.w_yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
 	ax.w_zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
 
-	ax.set_xlabel("x(m)")
-	ax.set_ylabel("y(m)")
+	ax.set_xlabel("x distance(m)")
+	ax.set_ylabel("y distance(m)", rotation=45)
 	#ax.set_zlabel("z")
 	ax.set_xlim(option['x_lim'])
 	ax.set_ylim(option['y_lim'])
@@ -240,7 +240,7 @@ def drawTrackLog(option):
 		ax.plot3D([step["position"][0]], 
 		          [step["position"][1]],
 		          [step["position"][2]],
-		          color = color, linewidth='0.5', markersize='3.5', marker = 's')
+		          color = color, linewidth='0.5', markersize='2.5', marker = 's')
 
 	for obstacleLog in targetLogs:
 		step = readNextLine(obstacleLog, True)    # True means asking readNextLine to return none if pipuckLog ends, otherwise it returns exit()
@@ -248,7 +248,7 @@ def drawTrackLog(option):
 		ax.plot3D([step["position"][0]], 
 		          [step["position"][1]],
 		          [step["position"][2]],
-		          color = color, linewidth='0.5', markersize='3.5', marker = 'v')
+		          color = color, linewidth='0.5', markersize='2.5', marker = 'v')
 
 	# draw key frame
 	usualcolor = 'black'
@@ -284,6 +284,7 @@ def drawTrackLog(option):
 				          linewidth="1.2",
 				          color = color)
 
+		'''
 		#draw brain at last to cover the lines
 		for robotID, robotData in key_frame.items() : 
 			if robotData['brain'] == robotID :
@@ -306,6 +307,7 @@ def drawTrackLog(option):
 				          marker = marker,
 				          markersize=markersize
 				         )
+		'''
 
 	# legend
 	legend_handle_usual_robot, = ax.plot([], [],
@@ -330,9 +332,9 @@ def drawTrackLog(option):
 	                  legend_handle_usual_drone,
 	                  legend_handle_usual_robot,
 	                 ]
-	labels = ['the brain drone',
-	          'non-brain drones',
-	          'non-brain pipucks',
+	labels = ['brain',
+	          'aerial robots',
+	          'ground robots',
 	         ]
 
 	legend_position = (0.815, 0.75)
@@ -342,7 +344,7 @@ def drawTrackLog(option):
 		legend_handle_obstacle, = ax.plot([], [],
 		          color = 'red', 
 		          marker = 's',
-		          markersize = '3.5',
+		          markersize = '2.5',
 		          linestyle = 'None'
 		)
 		legend_handles.append(legend_handle_obstacle)
@@ -351,7 +353,7 @@ def drawTrackLog(option):
 		legend_handle_target, = ax.plot([], [],
 		          color = 'red', 
 		          marker = 'v',
-		          markersize = '3.5',
+		          markersize = '2.5',
 		          linestyle = 'None'
 		)
 		legend_handles.append(legend_handle_target)

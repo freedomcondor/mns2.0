@@ -4,6 +4,7 @@ import statistics
 #from scipy import stats
 import math
 #from brokenaxes import brokenaxes
+from matplotlib.ticker import FormatStrFormatter
 
 def drawSRFig(option) :
 	dataFolder = option['dataFolder']
@@ -26,7 +27,7 @@ def drawSRFig(option) :
 	elif ('split_right'  not in option or  option['split_right']  != True) and \
 	     ('double_right'     in option and option['double_right'] == True) :
 		# 3 subfigures
-		fig, axs = plt.subplots(1, 3, gridspec_kw={'width_ratios': [5, 1]})
+		fig, axs = plt.subplots(1, 3, gridspec_kw={'width_ratios': [5, 1, 1]})
 		fig.subplots_adjust(hspace=0.05)  # adjust space between axes
 
 		main_ax = axs[0]
@@ -109,6 +110,7 @@ def drawSRFig(option) :
 	main_ax.set_xlabel('Time(s)')
 	main_ax.set_ylabel('Error(m)')
 
+	main_ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
 	# set right x lim and tick
 	if violin_ax != None :
 		violin_ax.set_xlim([0.7, 1.3])
@@ -122,6 +124,7 @@ def drawSRFig(option) :
 		violin_ax_top.set_xlim([0.7, 1.3])
 		violin_ax_top.set_xticks([])
 		violin_ax_top.set_yticks([])
+		violin_ax_top.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
 	if violin2_ax_top != None :
 		violin2_ax_top.set_xlim([0.7, 1.3])
 		violin2_ax_top.set_xticks([])
@@ -154,6 +157,7 @@ def drawSRFig(option) :
 			robotsData.append(readDataFrom(subFile))
 			#drawDataInSubplot(readDataFrom(subFile), main_ax)
 
+		# check switch time
 		if os.path.isfile(subFolder + "formationSwitch.txt") :
 			switchSteps = readDataFrom(subFolder + "formationSwitch.txt")
 			switchTime = []
@@ -163,6 +167,15 @@ def drawSRFig(option) :
 			# draw vertical line for switch
 			for data in switchTime :
 				main_ax.axvline(x = data, color="black", linestyle=":")
+		
+		# check failure time
+		if os.path.isfile(subFolder + "failure_step.txt") :
+			failure_step = readDataFrom(subFolder + "failure_step.txt")[0]
+			if os.path.isfile(subFolder + "saveStartStep.txt") :
+				failure_step = failure_step - readDataFrom(subFolder + "saveStartStep.txt")[0] + 1
+			failure_time = failure_step / 5
+			main_ax.axvline(x = failure_time, color="red", linestyle=":")
+
 		break
 
 	#drawData(readDataFrom("result_data.txt"))
@@ -232,10 +245,10 @@ def drawSRFig(option) :
 	                legend_handle_lowerupper,
 	                legend_handle_minmax,
 	                legend_handle_lowerbound], 
-	               ['mean value',
+	               ['mean',
 	                '95% confidence interval',
 	                '99.999% confidence interval',
-	                'lowerbound value'],
+	                'lowerbound'],
 	    loc="upper right",
 	    fontsize="xx-small"
 	)
@@ -270,7 +283,11 @@ def drawSRFig(option) :
 	# set font and style for violin plot (both top and bottom if existed)
 	for violin in violin_returns :
 		for line in [violin['cbars'], violin['cmins'], violin['cmeans'], violin['cmaxes']] :
-			line.set_linewidth(1.5)
+			line.set_linewidth(1.2) # used to be 1.5
+		for line in [violin['cbars'], violin['cmins'], violin['cmaxes']] :
+			line.set_facecolor('grey')
+			line.set_edgecolor('grey')
+		for line in [violin['cmeans']] :
 			line.set_facecolor('b')
 			line.set_edgecolor('b')
 		for pc in violin['bodies']:
@@ -281,13 +298,15 @@ def drawSRFig(option) :
 
 	# set right top tick as the max value of the boxdata
 	max_values = []
-	if violin_ax_top != None :
-		maxvalue = round(max(boxdata), 1)
-		max_values.append(maxvalue)
 	if boxdata2 != None :
-		maxvalue = round(max(boxdata2), 1)
+		#maxvalue = round(max(boxdata2), 1)
+		maxvalue = max(boxdata2)
 		max_values.append(maxvalue)
-	violin_ax_top.yaxis.set_ticks(max_values)
+	if violin_ax_top != None :
+		#maxvalue = round(max(boxdata), 1)
+		maxvalue = max(boxdata)
+		max_values.append(maxvalue)
+		violin_ax_top.yaxis.set_ticks(max_values)
 
 	#-------------------------------------------------------------------------
 	# save or show plot

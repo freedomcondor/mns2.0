@@ -13,30 +13,31 @@ drawTrackLogFileName = "@CMAKE_SOURCE_DIR@/scripts/drawTrackLogs.py"
 exec(compile(open(drawTrackLogFileName, "rb").read(), drawTrackLogFileName, 'exec'))
 
 option = {
-	'dataFolder' : "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_1_simu_01_formation_10d/data_simu/data",
+	'dataFolder' : "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_2_simu_scalability/data_simu_scale_2/data",
 	'sample_run'             : "run1",
-	'SRFig_save'             : "exp_1_simu_01_formation_10d_SRFig.pdf",
-	'trackLog_save'          : "exp_1_simu_01_formation_10d_trackLog.pdf",
+	'SRFig_save'             : "exp_2_simu_scalability_scale2_SRFig.pdf",
+	'trackLog_save'          : "exp_2_simu_scalability_scale2_trackLog.pdf",
 	'SRFig_show'             : False,
 	'trackLog_show'          : False,
 
-	'main_ax_lim'            : [-0.2, 2.70],
+	'main_ax_lim'            : [-0.5, 7.5],
 
 	'split_right'            : True,
-	'violin_ax_top_lim'      : [5.21, 5.5],
-
-	'double_right'           : True,
+	'violin_ax_top_lim'      : [9.5, 10],
 
 #------------------------------------------------
-	'key_frame' :  [0] ,
+	#'key_frame' :  [0, 300, 2000] ,  # option 1
+	'key_frame' :  [0, 600] ,
 	'overwrite_trackFig_log_foler' : 
-		"@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_1_simu_01_formation_10d/data_simu/track_fig_logs"
+		"@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_2_simu_scalability/track_fig_logs_scale_2"
 	,
 
-	'x_lim'     :  [-4, 4]    ,
-	'y_lim'     :  [-3, 5]        ,
-	'z_lim'     :  [-1.0, 7.0]    ,
+	'legend_obstacle'  : True,
+
+	'x_lim'     :  [-12, 12]    ,
+	'y_lim'     :  [-12, 12]        ,
+	'z_lim'     :  [-4.0,8.0]    ,
 }
 
-drawSRFig(option)
+#drawSRFig(option)
 drawTrackLog(option)

@@ -13,6 +13,7 @@ drawTrackLogFileName = "@CMAKE_SOURCE_DIR@/scripts/drawTrackLogs.py"
 exec(compile(open(drawTrackLogFileName, "rb").read(), drawTrackLogFileName, 'exec'))
 
 dataFolder = "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_01_formation_1_2d_10p/data_hw/data"
+dataFolder2 = "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_0_hw_10_formation_1_2d_6p_group_start/data_hw/data"
 #sample_run = "test_20220621_6_success_1"
 #sample_run = "test_20220621_7_success_2"
 #sample_run = "test_20220621_8_success_3"
@@ -30,9 +31,12 @@ option = {
 	'main_ax_lim'            : [-0.2, 2],
 
 	'split_right'            : True,
-	'violin_ax_top_lim'      : [5.75, 6],
-	'height_ratios'          : [1, 10],
+	#'violin_ax_top_lim'      : [5.75, 6],
+	'violin_ax_top_lim'      : [2.3, 6.2],
+	#'height_ratios'          : [1, 10],
 
+	'double_right'           : True,
+	'double_right_dataFolder': dataFolder2,
 #------------------------------------------------
 	'key_frame' :  [0] ,
 
