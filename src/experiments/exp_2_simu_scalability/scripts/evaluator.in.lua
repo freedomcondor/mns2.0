@@ -9,8 +9,8 @@ require("morphologiesGenerator")
 
 logger.enable()
 
-local expScale = 2
---local expScale = 4
+--local expScale = 2
+local expScale = 4
 local droneDis = 1.5
 local pipuckDis = 0.7
 local height = 1.8

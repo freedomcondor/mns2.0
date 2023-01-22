@@ -100,7 +100,13 @@ def drawTrackLog(option):
 	obstacleLogNames, obstacleNames = findRobotLogs(input_file, "obstacle")
 	obstacleLogs = openRobotLogs(obstacleLogNames)
 
-	fig = plt.figure()
+	fig = None
+	if 'figsize' in option :
+		fig = plt.figure(figsize=(option['figsize'][0], option['figsize'][1]))
+	else :
+		# default size should be 5x5
+		fig = plt.figure()
+
 	ax = fig.add_subplot(projection='3d')
 
 	count = 0
@@ -284,7 +290,6 @@ def drawTrackLog(option):
 				          linewidth="1.2",
 				          color = color)
 
-		'''
 		#draw brain at last to cover the lines
 		for robotID, robotData in key_frame.items() : 
 			if robotData['brain'] == robotID :
@@ -307,7 +312,6 @@ def drawTrackLog(option):
 				          marker = marker,
 				          markersize=markersize
 				         )
-		'''
 
 	# legend
 	legend_handle_usual_robot, = ax.plot([], [],
