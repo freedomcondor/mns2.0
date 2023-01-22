@@ -23,7 +23,7 @@ option = {
 	'main_ax_lim'            : [-0.5, 13],
 
 	'split_right'            : True,
-	'violin_ax_top_lim'      : [14, 16],
+	'violin_ax_top_lim'      : [17.5, 19.5],
 
 #------------------------------------------------
 	#'key_frame' :  [0, 300, 2000] ,  # option 1
