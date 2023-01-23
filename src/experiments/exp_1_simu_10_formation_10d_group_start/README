@@ -1,0 +1,8 @@
+This is a simple formation case, but with 10 drones.
+Robots scatter randomly in the beginning. In the end, the swarm is supposed to form a formation with 10 drones and 40 pipucks.
+
+
+Video: 
+ 1. Top down view to show how the topology changes and converge towards the target formation.
+ 2. (Optional) 3D view to show the 3D structure like this:
+
