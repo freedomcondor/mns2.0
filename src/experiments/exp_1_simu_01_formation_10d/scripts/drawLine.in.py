@@ -23,9 +23,10 @@ option = {
 	'main_ax_lim'            : [-0.2, 2.70],
 
 	'split_right'            : True,
-	'violin_ax_top_lim'      : [5.21, 5.5],
+	'violin_ax_top_lim'      : [2.80, 5.6],
 
 	'double_right'           : True,
+	'double_right_dataFolder': "@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_1_simu_10_formation_10d_group_start/data_simu/data",
 
 #------------------------------------------------
 	'key_frame' :  [0] ,
