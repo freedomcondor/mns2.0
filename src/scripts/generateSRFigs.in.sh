@@ -37,7 +37,7 @@ exp_2_simu_scalability/scripts/drawLine_scale_2.py
 
 for script_name in ${SPECIAL_LIST[@]}
 do
-	drawLinePyScript=$EXP_DIR$script_name
+	drawLinePyScript=$EXP_DIR/$script_name
 	echo "running" $drawLinePyScript
 	python3 $drawLinePyScript
 done
