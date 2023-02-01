@@ -28,6 +28,8 @@ option = {
 	'split_right'            : True,
 	'violin_ax_top_lim'      : [10, 12],
 
+	'failure_place_holder'   : 0,
+
 #------------------------------------------------
 	#'key_frame' :  [0, 250, 950] ,
 	'key_frame' :  [0, 500] ,
@@ -44,6 +46,6 @@ option = {
 }
 
 drawSRFig(option)
-#drawTrackLog(option)
+drawTrackLog(option)
 
 

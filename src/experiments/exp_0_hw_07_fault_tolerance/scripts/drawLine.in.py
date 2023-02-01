@@ -34,6 +34,8 @@ option = {
 #	'violin_ax_top_lim_from' : 5,
 #	'violin_ax_top_lim_to'   : 5.5,
 
+	'failure_place_holder'   : 0,
+
 #------------------------------------------------
 	'key_frame' :  [0, 250, 950] ,
 

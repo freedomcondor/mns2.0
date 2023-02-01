@@ -190,7 +190,17 @@ def drawSRFig(option) :
 	mini = []
 	maxi = []
 	mask_min = 0
+
+	failurePlaceHolder = None
+	if 'failure_place_holder' in option :
+		failurePlaceHolder = option['failure_place_holder']
+
 	for stepData in boxdata :
+		# filter failure robot data
+		if failurePlaceHolder != None :
+			while failurePlaceHolder in stepData :
+				stepData.remove(failurePlaceHolder)
+
 		meanvalue = statistics.mean(stepData)
 		stdev = statistics.stdev(stepData)
 
