@@ -1,7 +1,12 @@
 #!/bin/bash
 source @CMAKE_SOURCE_DIR@/scripts/run_threads.sh
 
-DATADIR=@CMAKE_CURRENT_SOURCE_DIR@/../data
+#DATADIR=@CMAKE_CURRENT_SOURCE_DIR@/../data
+
+DATADIR=@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_3_simu_03_fault_tolerance_communication/data_simu_0.5s/data
+#DATADIR=@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_3_simu_03_fault_tolerance_communication/data_simu_1s/data
+#DATADIR=@CMAKE_SOURCE_DIR@/../../mns2.0-data/src/experiments/exp_3_simu_03_fault_tolerance_communication/data_simu_30s/data
+
 TMPDIR=threads
 #run 2 3 "python3 @CMAKE_CURRENT_BINARY_DIR@/../run.py -l 50" $DATADIR
 #run_single_thread 2 4 4 "python3 @CMAKE_CURRENT_BINARY_DIR@/../run.py -l 60" $DATADIR
@@ -21,7 +26,7 @@ fi
 if [ "$EVA_FLAG" != "false" ]; then
 	echo "Evaluating"
 	evaluate $DATADIR \
-	         "lua @CMAKE_CURRENT_BINARY_DIR@/evaluator.lua" "result_data.txt"
+	         "lua @CMAKE_CURRENT_BINARY_DIR@/evaluator.lua" #"result_data_.txt"
 	#         "rm result_data.txt"
 else
 	echo "skip evaluating"

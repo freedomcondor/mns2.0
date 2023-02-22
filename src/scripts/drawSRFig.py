@@ -14,9 +14,12 @@ def drawSRFig(option) :
 	violin_ax_top = None
 	violin2_ax = None
 	violin2_ax_top = None
+	violin3_ax = None
+	violin3_ax_top = None
 
 	if ('split_right'  not in option or option['split_right']  != True) and \
-	   ('double_right' not in option or option['double_right'] != True) :
+	   ('double_right' not in option or option['double_right'] != True) and \
+	   ('trible_right' not in option or option['trible_right'] != True) :
 		# 2 subfigures
 		fig, axs = plt.subplots(1, 2, gridspec_kw={'width_ratios': [5, 1]})
 		fig.subplots_adjust(hspace=0.05)  # adjust space between axes
@@ -34,8 +37,20 @@ def drawSRFig(option) :
 		violin_ax = axs[1]
 		violin2_ax = axs[2]
 
+	elif ('split_right'  not in option or  option['split_right']  != True) and \
+	     ('trible_right'     in option and option['trible_right'] == True) :
+		# 4 subfigures
+		fig, axs = plt.subplots(1, 4, gridspec_kw={'width_ratios': [5, 1, 1, 1]})
+		fig.subplots_adjust(hspace=0.05)  # adjust space between axes
+
+		main_ax = axs[0]
+		violin_ax = axs[1]
+		violin2_ax = axs[2]
+		violin3_ax = axs[3]
+
 	elif ('split_right'      in option and option['split_right']  == True) and \
-	     ('double_right' not in option or  option['double_right'] != True) :
+	     ('double_right' not in option or  option['double_right'] != True) and \
+	     ('trible_right' not in option or  option['trible_right'] != True) :
 		# 4 subfigures
 		height_ratios = [1, 8]
 		if 'height_ratios' in option :
@@ -65,6 +80,26 @@ def drawSRFig(option) :
 		violin_ax_top = axs[0,1]
 		violin2_ax = axs[1,2]
 		violin2_ax_top = axs[0,2]
+	
+
+	elif ('split_right'  in option and option['split_right']  == True) and \
+	     ('trible_right' in option and option['trible_right'] == True) :
+		# 6 subfigures
+		height_ratios = [1, 8]
+		if 'height_ratios' in option :
+			height_ratios = option['height_ratios']
+
+		fig, axs = plt.subplots(2, 4, gridspec_kw={'width_ratios': [5, 1, 1, 1], 'height_ratios': height_ratios})
+		fig.subplots_adjust(hspace=0.05)  # adjust space between axes
+
+		axs[0,0].axis('off')
+		main_ax = axs[1,0]
+		violin_ax = axs[1,1]
+		violin_ax_top = axs[0,1]
+		violin2_ax = axs[1,2]
+		violin2_ax_top = axs[0,2]
+		violin3_ax = axs[1,3]
+		violin3_ax_top = axs[0,3]
 
 	# draw slides between the break
 	if violin_ax_top != None :
@@ -100,12 +135,32 @@ def drawSRFig(option) :
 		              linestyle="none", color='k', mec='k', mew=1, clip_on=False)
 		violin2_ax_top.plot([0, 1, 0.5], [0, 0, 0], transform=violin2_ax_top.transAxes, **kwargs)
 		violin2_ax.plot(    [0, 1, 0.5], [1, 1, 1], transform=    violin2_ax.transAxes, **kwargs)
+	
+	if violin3_ax_top != None :
+		violin3_ax_top.spines.bottom.set_visible(False)
+		violin3_ax.spines.top.set_visible(False)
+
+		violin3_ax_top.xaxis.tick_top()
+		violin3_ax_top.xaxis.tick_top()
+		violin3_ax_top.tick_params(labeltop=False)  # don't put tick labels at the top
+		violin3_ax_top.tick_params(labelbottom=False)  # don't put tick labels at the top
+		violin3_ax.tick_params(labeltop=False)  # don't put tick labels at the top
+		violin3_ax.tick_params(labelbottom=False)  # don't put tick labels at the top
+		violin3_ax.xaxis.tick_bottom()
+
+		d = .5  # proportion of vertical to horizontal extent of the slanted line
+		kwargs = dict(marker=[(-1, -d), (1, d)], markersize=12,
+		              linestyle="none", color='k', mec='k', mew=1, clip_on=False)
+		violin3_ax_top.plot([0, 1, 0.5], [0, 0, 0], transform=violin3_ax_top.transAxes, **kwargs)
+		violin3_ax.plot(    [0, 1, 0.5], [1, 1, 1], transform=    violin3_ax.transAxes, **kwargs)
 
 	# set main lim
 	main_ax.set_ylim(option['main_ax_lim'])
 	violin_ax.set_ylim(option['main_ax_lim'])
 	if violin2_ax != None:
 		violin2_ax.set_ylim(option['main_ax_lim'])
+	if violin3_ax != None:
+		violin3_ax.set_ylim(option['main_ax_lim'])
 
 	main_ax.set_xlabel('Time(s)')
 	main_ax.set_ylabel('Error(m)')
@@ -120,6 +175,10 @@ def drawSRFig(option) :
 		violin2_ax.set_xlim([0.7, 1.3])
 		violin2_ax.set_xticks([])
 		violin2_ax.set_yticks([])
+	if violin3_ax != None :
+		violin3_ax.set_xlim([0.7, 1.3])
+		violin3_ax.set_xticks([])
+		violin3_ax.set_yticks([])
 	if violin_ax_top != None :
 		violin_ax_top.set_xlim([0.7, 1.3])
 		violin_ax_top.set_xticks([])
@@ -129,6 +188,10 @@ def drawSRFig(option) :
 		violin2_ax_top.set_xlim([0.7, 1.3])
 		violin2_ax_top.set_xticks([])
 		violin2_ax_top.set_yticks([])
+	if violin3_ax_top != None :
+		violin3_ax_top.set_xlim([0.7, 1.3])
+		violin3_ax_top.set_xticks([])
+		violin3_ax_top.set_yticks([])
 
 	# set top lim
 	if violin_ax_top != None:
@@ -137,6 +200,9 @@ def drawSRFig(option) :
 	if violin2_ax_top != None:
 		violin2_ax_top.set_ylim(option['violin_ax_top_lim'])
 		violin2_ax_top.yaxis.set_ticks([])
+	if violin3_ax_top != None:
+		violin3_ax_top.set_ylim(option['violin_ax_top_lim'])
+		violin3_ax_top.yaxis.set_ticks([])
 
 
 	#-------------------------------------------------------------------------
@@ -265,6 +331,9 @@ def drawSRFig(option) :
 
 	#-------------------------------------------------------------------------
 	# read all each robot data and make it a total box/violin plot
+	if "trible_right_dataFolder1" in option :
+		dataFolder = option['trible_right_dataFolder1']
+
 	boxdata = []
 	for subFolder in getSubfolders(dataFolder) :
 		for subFile in getSubfiles(subFolder + "result_each_robot_error") :
@@ -277,9 +346,16 @@ def drawSRFig(option) :
 		violin_returns.append(violin_return_2)
 	
 	boxdata2 = None
-	if violin2_ax != None and 'double_right_dataFolder' in option :
+	if violin2_ax != None and \
+	  ('double_right_dataFolder' in option or \
+	   'trible_right_dataFolder2' in option):
+		double_right_dataFolder = None
+		if 'double_right_dataFolder' in option:
+			double_right_dataFolder = option['double_right_dataFolder']
+		elif 'trible_right_dataFolder2' in option:
+			double_right_dataFolder = option['trible_right_dataFolder2']
+
 		boxdata2 = []
-		double_right_dataFolder = option['double_right_dataFolder']
 		for subFolder in getSubfolders(double_right_dataFolder) :
 			for subFile in getSubfiles(subFolder + "result_each_robot_error") :
 				boxdata2 = boxdata2 + readDataFrom(subFile)
@@ -290,6 +366,21 @@ def drawSRFig(option) :
 			violin_return_4 = violin2_ax_top.violinplot(boxdata2, showmeans=True)
 			violin_returns.append(violin_return_4)
 	
+	boxdata3 = None
+	if violin3_ax != None and 'trible_right_dataFolder3' in option :
+		dataFolder3 = option['trible_right_dataFolder3']
+
+		boxdata3 = []
+		for subFolder in getSubfolders(dataFolder3) :
+			for subFile in getSubfiles(subFolder + "result_each_robot_error") :
+				boxdata3 = boxdata3 + readDataFrom(subFile)
+
+		violin_return_5 = violin3_ax.violinplot(boxdata3, showmeans=True)
+		violin_returns.append(violin_return_5)
+		if violin3_ax_top != None :
+			violin_return_6 = violin3_ax_top.violinplot(boxdata3, showmeans=True)
+			violin_returns.append(violin_return_6)
+		
 	# set font and style for violin plot (both top and bottom if existed)
 	for violin in violin_returns :
 		for line in [violin['cbars'], violin['cmins'], violin['cmeans'], violin['cmaxes']] :
@@ -312,6 +403,12 @@ def drawSRFig(option) :
 		#maxvalue = round(max(boxdata2), 1)
 		maxvalue = max(boxdata2)
 		max_values.append(maxvalue)
+
+	if boxdata3 != None :
+		#maxvalue = round(max(boxdata2), 1)
+		maxvalue = max(boxdata3)
+		max_values.append(maxvalue)
+
 	if violin_ax_top != None :
 		#maxvalue = round(max(boxdata), 1)
 		maxvalue = max(boxdata)

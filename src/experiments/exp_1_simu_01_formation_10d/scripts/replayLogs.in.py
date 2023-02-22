@@ -17,16 +17,16 @@ ax = fig.add_subplot(projection='3d')
 setAxParameters(ax)
 #plt.show()
 
-pipuckLogNames = findRobotLogs(input_file, "pipuck")
+pipuckLogNames, pipuckNames = findRobotLogs(input_file, "pipuck")
 pipuckLogs = openRobotLogs(pipuckLogNames)
 
-droneLogNames = findRobotLogs(input_file, "drone")
+droneLogNames, droneNames = findRobotLogs(input_file, "drone")
 droneLogs = openRobotLogs(droneLogNames)
 
-targetLogNames = findRobotLogs(input_file, "target")
+targetLogNames, targetNames = findRobotLogs(input_file, "target")
 targetLogs = openRobotLogs(targetLogNames)
 
-obstacleLogNames = findRobotLogs(input_file, "obstacle")
+obstacleLogNames, obstacleNames = findRobotLogs(input_file, "obstacle")
 obstacleLogs = openRobotLogs(obstacleLogNames)
 
 count = 0
